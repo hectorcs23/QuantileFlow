@@ -1,0 +1,35 @@
+% ============================================================================
+\clearpage
+\section{Qué priorizar y qué posponer}\label{sec:prioridades}
+% ============================================================================
+
+La prioridad inmediata es todo lo que hace creíble una conclusión, sea positiva o negativa: datos
+correctos, SSVI restringido con una comparación alternativa, cuantiles con bandas, $W_1$ y $W_2$ con la
+dirección de las colas, filtrado causal, innovación condicionada, pronósticos físicos sencillos,
+calibración, CVaR con costos, pruebas incrementales y trazabilidad (\figref{fig:prioridades}).
+
+En una segunda etapa entran la detección de régimen, la autorregresión en espacio de Wasserstein, el
+conjunto de modelos y la optimización robusta. Como investigación avanzada quedan los modelos neuronales de
+dinámica de opciones sin arbitraje, si el volumen y la diversidad de datos lo permiten; existen trabajos
+específicos de neural SDE para superficies y riesgo \citep{cohen2021}, pero no constituyen evidencia de
+rentabilidad de esta estrategia.
+
+Se posponen el reinforcement learning, los transformers extensos, la generación de trayectorias por
+difusión y el criterio de Kelly agresivo. Su complejidad y su sensibilidad a simuladores y pronósticos no se
+justifican antes de demostrar la utilidad de las señales y la calidad de los datos. Ningún modelo se
+incorpora solo por ser más sofisticado.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.94\linewidth}{!}{\input{diagramas/d10_prioridades}}
+\caption{Hoja de ruta. Cada columna exige que la anterior haya superado sus criterios.}
+\label{fig:prioridades}
+\end{figure}
+
+\begin{ideaclavefinal}[En resumen]
+La decisión arquitectónica central es conservar separadas la medición $\Q$, la predicción $\P$ y la acción
+sobre la posición. La hipótesis más valiosa para investigar primero es si la innovación de las colas,
+medida con incertidumbre y relativa al mercado, mejora la gestión de una posición existente. Todo el resto
+del sistema existe para poder responder esa pregunta con honestidad, incluida la posibilidad de que la
+respuesta sea no.
+\end{ideaclavefinal}

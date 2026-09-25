@@ -1,0 +1,36 @@
+% Arquitectura: módulos separados, almacenamiento, registro, API e interfaz.
+\begin{tikzpicture}[
+  mod/.style={caja=#1,text width=2.05cm,minimum height=10mm},
+  bd/.style={cylinder,shape border rotate=90,aspect=0.22,draw=tinta2,fill=grisclaro,line width=0.6pt,
+    font=\sffamily\scriptsize,text=tinta,align=center,text width=2.3cm,minimum height=15mm,inner sep=2pt},
+  x=1cm,y=1cm]
+% Módulos del motor (serpiente)
+\node[mod=qazul] (m1) at (3.9,0.9) {Ingestión};
+\node[mod=qazul] (m2) at (6.45,0.9) {Control de\\ calidad};
+\node[mod=qazul] (m3) at (9.0,0.9) {Superficies};
+\node[mod=qazul] (m4) at (11.55,0.9) {Distribuciones};
+\node[mod=qazul] (m5) at (14.1,0.9) {Transporte\\ y factores};
+\node[mod=qnaranja] (m6) at (14.1,-0.85) {Predicción $\P$};
+\node[mod=qnaranja] (m7) at (11.55,-0.85) {Calibración};
+\node[mod=qaqua] (m8) at (9.0,-0.85) {Escenarios};
+\node[mod=qaqua] (m9) at (6.45,-0.85) {Decisión};
+\node[mod=qaqua] (m10) at (3.9,-0.85) {Simulación};
+\foreach \a/\b in {m1/m2,m2/m3,m3/m4,m4/m5,m6/m7,m7/m8,m8/m9,m9/m10} \draw[flecha] (\a) -- (\b);
+\draw[flecha] (m5) -- (m6);
+\node[nota,anchor=south] at (9.0,1.5) {motor cuantitativo en Python: cada módulo con entradas y salidas versionadas};
+% Almacenamiento
+\node[bd] (s1) at (0.6,0.9) {Snapshots\\ inmutables\\ \tiny Parquet + DuckDB};
+\node[bd] (s2) at (0.6,-1.6) {Corridas y\\ posiciones\\ \tiny SQLite};
+\draw[flecha] (s1) -- (m1);
+% Registro transversal
+\node[caja=tenue,text width=12.1cm,minimum height=8mm] (reg) at (9.0,-2.3) {\textbf{Registro}: hashes de entrada,
+  versión de modelo, parámetros, hora de corte y motivo de abstención de cada resultado};
+\draw[flecha] (reg.west) -- (s2.east |- reg.west);
+% Servicios
+\node[caja=tenue,text width=2.6cm] (api) at (5.3,-3.75) {API independiente};
+\node[caja=tenue,text width=2.6cm] (ui) at (9.0,-3.75) {Interfaz web};
+\node[caja=qaqua,text width=2.6cm] (paper) at (12.7,-3.75) {Conector de paper};
+\draw[flecha] (reg.south -| api.north) -- (api.north);
+\draw[flecha] (api) -- (ui);
+\draw[flecha] (reg.south -| paper.north) -- (paper.north);
+\end{tikzpicture}

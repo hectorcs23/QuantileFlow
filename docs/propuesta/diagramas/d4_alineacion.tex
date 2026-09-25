@@ -1,0 +1,21 @@
+% Alineación temporal del aprendizaje supervisado: variables, decisión y etiqueta.
+\begin{tikzpicture}[x=0.62cm,y=1cm]
+% Ventana de variables (pasado)
+\fill[qazul!14] (-4,0.3) rectangle (0,1.9);
+\node[nota,text=tinta,align=center] at (-2,1.1) {\textbf{variables}\\ información hasta\\ el corte};
+% Instante de decisión
+\draw[tinta,line width=0.9pt] (0,2.35) -- (0,-0.1);
+\node[nota,anchor=south,text=tinta] at (0,2.35) {\textbf{decisión en $t$}};
+% Etiquetas por horizonte
+\foreach \y/\h in {1.55/1,1.0/5,0.45/20}{
+  \fill[qnaranja!25] (0,\y-0.15) rectangle (\h,\y+0.15);
+  \draw[qnaranja,line width=0.7pt] (\h,\y-0.15) -- (\h,\y+0.15);
+  \node[nota,anchor=west,text=tinta] at (\h+0.2,\y) {$h=\h$};}
+% Eje de sesiones
+\draw[guia,line width=0.7pt] (-4,0) -- (22,0);
+\foreach \s in {0,1,...,21} \draw[guia] (\s,0) -- (\s,-0.08);
+\foreach \s/\e in {0/t,1/t+1,5/t+5,20/t+20} \node[nota,anchor=north] at (\s,-0.1) {$\e$};
+\node[nota,anchor=north,text width=12cm,align=center] at (9,-0.5) {La etiqueta de horizonte $h$ es el rendimiento
+  en $(t,\,t+h]$. Solo después de madurar, en $t+h$, puede entrar al entrenamiento, a la calibración o a la
+  actualización conformal.};
+\end{tikzpicture}

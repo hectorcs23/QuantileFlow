@@ -1,0 +1,22 @@
+% Escalera de modelos P y combinación de pronósticos.
+\begin{tikzpicture}[
+  m/.style={caja=qnaranja,text width=3.05cm,minimum height=16mm},
+  node distance=5mm and 5mm]
+\node[m] (m1) {\textbf{Referencia histórica}\\ volatilidad dinámica y residuos estandarizados};
+\node[m,right=of m1] (m2) {\textbf{Regresión cuantílica}\\ regularizada ($L_1$), un modelo por $\tau$};
+\node[m,right=of m2] (m3) {\textbf{Boosting cuantílico}\\ con corrección de cruces};
+\node[m,right=of m3] (m4) {\textbf{NGBoost}\\ distribución condicional; familia elegida en validación};
+\draw[flecha] (m1) -- (m2); \draw[flecha] (m2) -- (m3); \draw[flecha] (m3) -- (m4);
+\node[nota,above=1mm of m2.north east,anchor=south] {cada peldaño debe ganarle al anterior fuera de muestra};
+\coordinate (medio) at ($(m2.south)!0.5!(m3.south)$);
+\node[caja=qnaranja,text width=7.2cm,minimum height=12mm,below=11mm of medio] (comb)
+  {\textbf{Combinación}: pesos $w_k\ge 0$, $\sum_k w_k=1$, aprendidos en validación temporal
+  y comparados con pesos iguales};
+\coordinate (bus) at ($(comb.north)+(0,0.45)$);
+\foreach \m in {m1,m2,m3,m4} \draw[line width=0.6pt,draw=tinta2] (\m.south) |- (bus);
+\draw[flecha] (bus) -- (comb.north);
+\node[caja=tenue,text width=13.9cm,minimum height=9mm,below=6mm of comb] (obj)
+  {\textbf{Un objetivo explícito por horizonte} (1, 5 y 20 sesiones): rendimiento $\cdot$ probabilidad de superar
+  costos $\cdot$ cuantiles de pérdida $\cdot$ volatilidad futura};
+\draw[flecha] (comb) -- (obj);
+\end{tikzpicture}

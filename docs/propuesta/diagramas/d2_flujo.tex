@@ -1,0 +1,24 @@
+% Reconstrucción de Q: de cotizaciones a cuantiles con bandas.
+\begin{tikzpicture}[
+  n/.style={caja=qazul,text width=3.15cm,minimum height=15mm},
+  chk/.style={nota,text width=3.15cm,align=center,text=tinta2},
+  node distance=6mm and 5.5mm]
+\node[n] (s1) {\textbf{1. Snapshot inmutable}\\ bid, ask, tamaños, sellos de tiempo, subyacente};
+\node[n,right=of s1] (s2) {\textbf{2. Filtros de calidad}\\ cruces, bid nulo, spreads, datos rancios};
+\node[n,right=of s2] (s3) {\textbf{3. Forward y descuento}\\ paridad, tasas y dividendos};
+\node[n,right=of s3] (s4) {\textbf{4. Desamericanización}\\ equivalente europeo o exclusión};
+\node[n,below=12mm of s4] (s5) {\textbf{5. Ajuste en precios}\\ SSVI restringido, pérdida por banda};
+\node[n,left=of s5] (s6) {\textbf{6. Contraste}\\ ajuste monótono y convexo};
+\node[n,left=of s6] (s7) {\textbf{7. Densidad}\\ Breeden--Litzenberger y controles};
+\node[n,left=of s7] (s8) {\textbf{8. Cuantiles y bandas}\\ plazo constante, colas marcadas};
+\foreach \a/\b in {s1/s2,s2/s3,s3/s4,s5/s6,s6/s7,s7/s8} \draw[flecha] (\a) -- (\b);
+\draw[flecha] (s4) -- (s5);
+\node[chk,below=0.5mm of s1] {sin sobrescribir nada};
+\node[chk,below=0.5mm of s2] {motivo de cada exclusión};
+\node[chk,below=0.5mm of s3] {forward coherente con paridad};
+\node[chk,above=0.5mm of s4.north] {error de conversión acotado};
+\node[chk,below=0.5mm of s5] {restricciones por construcción};
+\node[chk,below=0.5mm of s6] {discrepancia = riesgo de modelo};
+\node[chk,below=0.5mm of s7] {$q\ge 0$, masa $\approx 1$, media $=F$};
+\node[chk,below=0.5mm of s8] {sensibilidad, no confianza};
+\end{tikzpicture}

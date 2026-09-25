@@ -1,0 +1,32 @@
+% Autorregresión en el espacio tangente del baricentro de Wasserstein.
+\begin{tikzpicture}[x=1cm,y=1cm]
+% Superficie curva: espacio de distribuciones con la métrica W2
+\fill[qazul!6] (0,0) .. controls (2.5,1.6) and (6.5,1.6) .. (9,0.2)
+  .. controls (9.6,-1.2) and (9.2,-2.6) .. (8.4,-3.4)
+  .. controls (6,-2.1) and (2.8,-2.2) .. (0.4,-3.2)
+  .. controls (-0.3,-2.2) and (-0.4,-1) .. (0,0);
+\draw[qazul!60,line width=0.6pt] (0,0) .. controls (2.5,1.6) and (6.5,1.6) .. (9,0.2)
+  .. controls (9.6,-1.2) and (9.2,-2.6) .. (8.4,-3.4)
+  .. controls (6,-2.1) and (2.8,-2.2) .. (0.4,-3.2)
+  .. controls (-0.3,-2.2) and (-0.4,-1) .. (0,0);
+\node[nota,anchor=west] at (0.3,-2.75) {distribuciones con la métrica $W_2$ (no lineal)};
+% Plano tangente en el baricentro
+\coordinate (B) at (4.6,-0.9);
+\fill[qnaranja!10,draw=qnaranja!70,line width=0.6pt] (1.9,0.35) -- (7.9,0.35) -- (7.2,-2.05) -- (1.2,-2.05) -- cycle;
+\node[nota,anchor=east,text=tinta] at (7.05,-1.8) {espacio tangente $T_{\bar{Q}}$ (lineal)};
+\fill[tinta] (B) circle (2.2pt);
+\node[font=\sffamily\scriptsize,anchor=north] at (B) {$\bar{Q}$};
+% Log de dos sesiones y predicción
+\draw[flecha,draw=qazuloscuro] (B) -- (2.6,-0.3) node[anchor=east,font=\sffamily\scriptsize]{$v_{t-1}$};
+\draw[flecha,draw=qazuloscuro] (B) -- (3.4,0.05) node[anchor=south,font=\sffamily\scriptsize]{$v_t$};
+\draw[flecha,draw=qnaranja,line width=0.9pt] (B) -- (5.4,0.1) node[anchor=south west,font=\sffamily\scriptsize]{$\hat v_{t+1}=A\,v_t$};
+% Distribuciones en la superficie
+\fill[qazul] (1.7,1.05) circle (2pt) node[anchor=south,font=\sffamily\scriptsize]{$Q_{t-1}$};
+\fill[qazul] (3.2,1.25) circle (2pt) node[anchor=south,font=\sffamily\scriptsize]{$Q_t$};
+\fill[qnaranja] (6.3,1.2) circle (2pt) node[anchor=south,font=\sffamily\scriptsize]{$\widehat{Q}_{t+1}$};
+\draw[flecha,draw=tenue,densely dotted] (1.7,1.0) -- (2.55,-0.2);
+\draw[flecha,draw=tenue,densely dotted] (3.2,1.2) -- (3.4,0.15);
+\draw[flecha,draw=qnaranja,densely dotted] (5.45,0.2) -- (6.25,1.1);
+\node[nota,anchor=west,align=left] at (9.4,1.0) {$\exp$ y proyección a\\ funciones cuantil crecientes};
+\node[nota,anchor=east,align=right] at (-0.45,0.6) {$\log$ en una dimensión:\\ $v_t(u)=x_t(u)-\bar{x}(u)$};
+\end{tikzpicture}

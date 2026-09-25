@@ -1,0 +1,29 @@
+% Walk-forward con purga y embargo; tramos de entrenamiento, ajuste, calibración y prueba.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  tramo/.style={minimum height=5.2mm,inner sep=0pt,font=\sffamily\tiny,text=tinta,anchor=west},
+  purga/.style={minimum height=5.2mm,inner sep=0pt,anchor=west,pattern=north east lines,pattern color=tenue,
+    draw=tenue,line width=0.3pt}]
+\def\bloque#1#2{% #1 = fila (y), #2 = longitud del entrenamiento
+  \node[tramo,fill=qazul!40,minimum width=#2 cm] (e) at (0,#1) {entrenamiento};
+  \node[purga,minimum width=3.5mm] (g1) at (e.east) {};
+  \node[tramo,fill=qnaranja!40,minimum width=1.35cm] (h) at (g1.east) {\ ajuste hiperp.};
+  \node[purga,minimum width=3.5mm] (g2) at (h.east) {};
+  \node[tramo,fill=qaqua!40,minimum width=1.35cm] (c) at (g2.east) {\ calibración};
+  \node[purga,minimum width=3.5mm] (g3) at (c.east) {};
+  \node[tramo,fill=tinta2!45,minimum width=1.2cm,text=white] (p) at (g3.east) {\ prueba};}
+\node[titulo,anchor=east] at (-0.15,0) {Ventana 1};
+\bloque{0}{3.2}
+\node[titulo,anchor=east] at (-0.15,-0.75) {Ventana 2};
+\bloque{-0.75}{4.4}
+\node[titulo,anchor=east] at (-0.15,-1.5) {Ventana 3};
+\bloque{-1.5}{5.6}
+% Prueba final reservada
+\fill[pattern=crosshatch,pattern color=eje] (11.35,0.35) rectangle (14.3,-1.85);
+\draw[tinta2,line width=0.6pt] (11.35,0.35) rectangle (14.3,-1.85);
+\node[nota,text=tinta,align=center,fill=white,inner sep=2pt] at (12.82,-0.75) {\textbf{prueba final}\\ se abre una\\ sola vez};
+% Eje y leyenda
+\draw[flecha,draw=tinta2] (0,-2.2) -- (14.5,-2.2);
+\node[nota,anchor=north east] at (14.5,-2.25) {tiempo};
+\node[purga,minimum width=3.5mm] at (0,-2.75) {};
+\node[nota,anchor=west] at (0.45,-2.75) {purga y embargo: se eliminan observaciones cuya etiqueta cruza la frontera, más un margen};
+\end{tikzpicture}

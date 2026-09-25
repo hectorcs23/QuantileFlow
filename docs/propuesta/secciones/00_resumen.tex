@@ -1,0 +1,59 @@
+% ============================================================================
+\section*{Resumen ejecutivo}
+\addcontentsline{toc}{section}{Resumen ejecutivo}
+\markboth{Resumen ejecutivo}{}
+% ============================================================================
+
+Cada sesión, el sistema hace cinco cosas en un orden fijo. Primero \emph{mide} lo que descuentan
+las opciones: reconstruye, a partir de cotizaciones de compra y venta, la distribución implícita
+$\Q$ del rendimiento a un plazo constante, con bandas que reflejan los spreads. Después
+\emph{describe el cambio} respecto de la sesión anterior y separa la parte que ya explicaban el
+precio, la volatilidad y el mercado. Luego \emph{pronostica} la distribución física $\P$ de los
+rendimientos posteriores al instante de decisión y comprueba si la información de opciones la
+mejora. Con ello \emph{decide}, comparando mantener la posición actual con modificarla bajo
+incertidumbre, costos y riesgo conjunto de la cartera. Por último \emph{registra} todo lo necesario
+para reproducir la corrida.
+
+\begin{ideaclave}[La decisión arquitectónica central]
+Mantener separadas tres capas: la \textbf{medición $\Q$}, la \textbf{predicción $\P$} y la
+\textbf{acción sobre la posición}. $\Q$ entra a los modelos como variable, nunca como probabilidad
+física por decreto; $\P$ se estima con rendimientos realizados y se calibra fuera de muestra; la
+acción pasa siempre por costos, riesgo y una regla explícita de abstención.
+\end{ideaclave}
+
+\paragraph{Hipótesis que se quiere contrastar} Las \emph{innovaciones} en la forma de las
+distribuciones implícitas, una vez descontada la información ya observable en precio, volatilidad y
+mercado, pueden mejorar los pronósticos de riesgo o de rendimiento. Es una hipótesis que hay que
+contrastar, no una ventaja demostrada: el documento describe cómo medirla y qué resultados la
+refutarían. La primera pregunta que conviene responder es si la innovación de las colas, medida con
+incertidumbre y relativa al mercado, mejora la gestión de una posición existente.
+
+\paragraph{Qué contiene y qué no} Una arquitectura, un conjunto de métodos y un protocolo de
+evidencia. No contiene resultados empíricos ni modelos entrenados. Las gráficas se construyen con un
+mundo sintético de parámetros conocidos (apéndice~\ref{ap:reproducibilidad}); su función es mostrar
+qué calcula cada etapa y qué puede salir mal, no anticipar el desempeño.
+
+\paragraph{Cómo leer este documento} Cada sección corresponde a una etapa del proceso y empieza con
+una ficha de \emph{entradas, proceso, salidas y controles}. Cinco tipos de recuadro se repiten:
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}l>{\RaggedRight\arraybackslash}X@{}}
+\iconoidea\ \textsf{\textbf{Idea clave}} & el concepto que conviene retener de la etapa.\\
+\iconoalerta\ \textsf{\textbf{Qué no concluir}} & interpretaciones tentadoras que el método no permite.\\
+\iconocheck\ \textsf{\textbf{Criterio para avanzar}} & condición verificable antes de pasar a la siguiente etapa.\\
+\iconopendiente\ \textsf{\textbf{Pendiente de definir}} & decisiones del usuario que parametrizan el sistema.\\
+\icononota\ \textsf{\textbf{Nota técnica}} & detalle de implementación o advertencia matemática.\\
+\end{tabularx}
+\end{center}
+
+La \figref{fig:mapa} resume el recorrido completo. Los colores se mantienen en todos los diagramas:
+azul para la medición $\Q$, naranja para la predicción $\P$ y verde para la acción.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d0_mapa}}
+\caption{Mapa del proceso diario. Las flechas entre capas son deliberadamente estrechas: de $\Q$ a
+$\P$ solo pasan variables candidatas, y de $\P$ a la acción solo pasan distribuciones físicas
+calibradas. El registro y la evaluación de confianza atraviesan todas las etapas.}
+\label{fig:mapa}
+\end{figure}

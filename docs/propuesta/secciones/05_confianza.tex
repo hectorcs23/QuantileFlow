@@ -1,0 +1,130 @@
+% ============================================================================
+\clearpage
+\section{Regímenes y confianza medible}\label{sec:confianza}
+% ============================================================================
+
+\ficha{Errores de pronóstico ya madurados, factores filtrados, indicadores de calidad de datos y de
+ajuste.}
+{Detectar cambios de comportamiento, medir calibración, construir intervalos adaptativos y decidir si
+abstenerse.}
+{Probabilidad de cambio reciente, métricas de calibración, intervalos con nivel efectivo y estado de
+confianza por dimensión.}
+{Calibración en un tramo temporal separado; actualización solo con resultados madurados; abstención con
+motivo registrado.}
+
+\subsection{Detección de cambios de régimen}\label{sec:bocpd}
+
+La detección bayesiana en línea de puntos de cambio \citep{adams2007} mantiene la distribución posterior
+de la \emph{longitud de corrida} $r_t$, el número de sesiones desde el último cambio. Con una probabilidad
+de riesgo $H$ por sesión y la predictiva $\pi_t^{(r)}=p(x_t\mid r_{t-1}=r,\ x^{(r)})$ calculada con los
+datos de la corrida,
+\begin{align}
+P(r_t=r+1,\,x_{1:t}) &= P(r_{t-1}=r,\,x_{1:t-1})\;\pi_t^{(r)}\;(1-H),\label{eq:bocpd1}\\
+P(r_t=0,\,x_{1:t}) &= \textstyle\sum_{r}P(r_{t-1}=r,\,x_{1:t-1})\;\pi_t^{(r)}\;H .\label{eq:bocpd2}
+\end{align}
+Con una previa normal--gamma inversa, la predictiva es una $t$ de Student y la recursión es exacta. Se
+aplica sobre errores de pronóstico o factores, y se compara primero con un detector simple por umbral
+(figuras~\ref{fig:umbral} a~\ref{fig:cambio_reciente}).
+
+\grafica[0.6]{s5_umbral}{Errores estandarizados de pronóstico en un mundo sintético con un cambio de
+varianza en la sesión 160, y alarmas de un detector por umbral (dos de las últimas cinco sesiones con
+$|z|>2.5$).}{fig:umbral}
+
+\grafica[0.6]{s5_corrida}{Posterior de la longitud de corrida de BOCPD en escala logarítmica. Tras el
+cambio, la masa colapsa a corridas cortas y vuelve a crecer desde cero.}{fig:corrida}
+
+\grafica[0.6]{s5_cambio_reciente}{Probabilidad posterior de que haya ocurrido un cambio en las últimas diez
+sesiones. Es alta justo después del cambio verdadero y baja el resto del tiempo.}{fig:cambio_reciente}
+
+\begin{noconcluir}
+Una probabilidad alta de cambio de régimen dice que el comportamiento reciente difiere del aprendido; no
+es una probabilidad de caída del precio. Su uso natural es degradar la confianza y ampliar la
+incertidumbre, no generar señales direccionales.
+\end{noconcluir}
+
+\subsection{Cuatro dimensiones de confianza}\label{sec:dimensiones}
+
+La salida del sistema distingue cuatro fuentes de duda que no deben mezclarse en un solo número
+(\figref{fig:confianza}). Un alto número de contratos observados no equivale a muchas sesiones
+independientes: cien strikes de un mismo día son una sola observación del estado del mercado
+(\secref{sec:particiones}).
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d5_confianza}}
+\caption{Dimensiones de confianza y sus indicadores. Cada dimensión se reporta con un estado explícito y
+su etiqueta; el color nunca comunica el estado por sí solo.}
+\label{fig:confianza}
+\end{figure}
+
+\subsection{Calibración y reglas de puntuación}\label{sec:calibracion}
+
+La calibración de probabilidades se ajusta en un tramo temporal separado del de entrenamiento y del de
+prueba. Las reglas de puntuación son propias \citep{gneiting2007}:
+\begin{align}
+\text{Brier} &= \tfrac1N\textstyle\sum_i (p_i-o_i)^2 \quad\text{para eventos binarios,}\label{eq:brier}\\
+\mathrm{CRPS}(F,y) &= \int_{-\infty}^{\infty}\bigl(F(z)-\mathbb 1\{y\le z\}\bigr)^2dz
+  = 2\int_0^1\rho_\tau\bigl(y-F^{-1}(\tau)\bigr)\,d\tau ,\label{eq:crps}
+\end{align}
+y la pérdida cuantílica $\rho_\tau$ para percentiles individuales. La segunda igualdad de \eqref{eq:crps}
+conecta directamente los pronósticos cuantílicos con el CRPS \citep{gneiting2011}. Las puntuaciones se
+acompañan de curvas de calibración, cobertura y ancho de intervalos (figuras~\ref{fig:fiabilidad}
+y~\ref{fig:pit}).
+
+\grafica[0.58]{s5_fiabilidad}{Diagrama de fiabilidad de un pronóstico de evento en el mundo sintético.
+El modelo sobreconfiado empuja las probabilidades hacia los extremos: su curva es más plana que la
+diagonal y su Brier, peor.}{fig:fiabilidad}
+
+\grafica[0.58]{s5_pit}{Histogramas PIT de pronósticos de distribución. Un pronóstico calibrado da valores
+$F(y)$ uniformes; intervalos demasiado estrechos producen forma de U y demasiado anchos, una
+joroba.}{fig:pit}
+
+\subsection{Conformal adaptativo}\label{sec:conformal}
+
+Como envoltura de intervalos se prueba la inferencia conformal adaptativa \citep{gibbs2021}. Si
+$\mathrm{err}_t=\mathbb 1\{y_t\notin\widehat C_t(\alpha_t)\}$, el nivel efectivo se actualiza como
+\begin{equation}
+\alpha_{t+1}=\alpha_t+\gamma\,(\alpha-\mathrm{err}_t),
+\qquad
+\Bigl|\tfrac1T\textstyle\sum_{t=1}^{T}\mathrm{err}_t-\alpha\Bigr|\le\frac{\max\{\alpha_1,1-\alpha_1\}+\gamma}{\gamma\,T}.
+\label{eq:aci}
+\end{equation}
+La cota garantiza que la tasa de error \emph{promedio a largo plazo} converge a $\alpha$ sin supuestos
+sobre la distribución. Con horizonte $h$, el error de la etiqueta que vence en $t$ solo se conoce en $t$:
+la actualización usa exclusivamente errores madurados (\figref{fig:alineacion}).
+
+\grafica[0.62]{s5_conformal_intervalos}{Intervalos del 90\% ante un cambio de volatilidad en la sesión 500
+y otro en la 750 (datos sintéticos). El método de nivel fijo tarda en ajustar su ventana; el adaptativo
+reacciona antes.}{fig:conformal_intervalos}
+
+\grafica[0.62]{s5_conformal_cobertura}{Cobertura móvil de 50 sesiones. Ambos métodos terminan cerca del
+90\% en el promedio de largo plazo, pero el de nivel fijo pasa muchas sesiones por debajo del 75\%: la
+garantía agregada oculta fallas locales.}{fig:conformal_cobertura}
+
+\grafica[0.58]{s5_conformal_alfa}{Trayectoria del nivel efectivo $\alpha_t$: baja cuando los errores se
+acumulan y sube cuando sobra cobertura.}{fig:conformal_alfa}
+
+\begin{noconcluir}
+El control de cobertura a largo plazo no implica que mañana, o en cada régimen, exista exactamente la
+cobertura nominal; tampoco convierte el intervalo en una probabilidad de rentabilidad.
+\end{noconcluir}
+
+\subsection{Abstención}\label{sec:abstencion}
+
+Una entrada nueva requiere tres cosas a la vez: datos aptos, estabilidad suficiente del ajuste y evidencia
+predictiva relevante (\figref{fig:abstencion}). Si falta cualquiera, se bloquean los incrementos basados
+en señal y se comunica el problema. Las reducciones exigidas por límites de riesgo definidos de antemano se
+evalúan aparte, con datos adecuados.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.92\linewidth}{!}{\input{diagramas/d5_abstencion}}
+\caption{Regla de abstención. La rama de la izquierda no depende del modelo: abstenerse de la señal no
+significa ignorar una exposición existente.}
+\label{fig:abstencion}
+\end{figure}
+
+\begin{criterio}
+Calibración aceptable en el tramo reservado, cobertura estable por subperiodos y regla de abstención
+ejercitada en sesiones con datos degradados sin producir decisiones basadas en señal.
+\end{criterio}

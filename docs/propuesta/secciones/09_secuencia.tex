@@ -1,0 +1,44 @@
+% ============================================================================
+\clearpage
+\section{Secuencia de construcción}\label{sec:secuencia}
+% ============================================================================
+
+La construcción avanza por etapas con un criterio verificable de salida (\tabref{tab:secuencia}). Ninguna
+etapa se considera terminada porque su código exista: se considera terminada cuando supera su criterio.
+
+\begin{table}[H]
+\centering\small
+\caption{Etapas, entregables y criterios para avanzar.}
+\label{tab:secuencia}
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight}p{2.6cm} Y Y@{}}
+\toprule
+\encab{Etapa} & \encab{Entregable} & \encab{Criterio para avanzar}\\
+\midrule
+Datos y especificación & Muestra auditada, eventos, horarios y contrato de datos & Cadenas reconstruibles en
+el instante de decisión; cobertura y costo conocidos\\
+Distribuciones & Superficies restringidas, cuantiles, bandas y \emph{replay} & Coherencia matemática y
+estabilidad frente a spreads y colas\\
+Dinámica & Transporte, factores filtrados e innovaciones & Separar ruido de cambios persistentes; cálculo
+sin información futura\\
+Pronóstico & Referencias y modelos $\P$ con calibración temporal & Mejora incremental fuera de muestra o
+delimitación honesta de su utilidad\\
+Decisión & Escenarios, CVaR, costos y zona de no operación & Riesgo factible y resultados estables en
+pruebas de estrés\\
+Paper & Informe diario y reconciliación & Operación reproducible y fallos manejados sin órdenes duplicadas\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La estimación inicial de ingeniería es de 6 a 10 semanas para un prototipo integrado con un universo
+pequeño, si los datos adecuados están disponibles (\figref{fig:calendario_obra}). No incluye esperar
+suficientes observaciones prospectivas para evaluar habilidad predictiva, y se revisa después de auditar la
+muestra de datos.
+
+\grafica[0.62]{s9_calendario}{Secuencia tentativa. El reparto por etapa es ilustrativo y se superpone
+parcialmente; lo que la propuesta fija es el total de 6 a 10 semanas de ingeniería, que se revisará tras la
+auditoría de datos.}{fig:calendario_obra}
+
+\begin{noconcluir}
+La investigación puede concluir que el transporte ayuda al riesgo y no al rendimiento, o que no añade valor
+sobre las referencias. Ambos son resultados válidos del programa, no fracasos del calendario.
+\end{noconcluir}

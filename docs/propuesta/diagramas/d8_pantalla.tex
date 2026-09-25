@@ -1,0 +1,30 @@
+% Maqueta de la pantalla principal (solo estructura; sin datos).
+\begin{tikzpicture}[x=1cm,y=1cm,
+  panel/.style={draw=eje,fill=white,rounded corners=2pt,line width=0.6pt,anchor=north west,
+    font=\sffamily\scriptsize,text=tinta,align=left,inner sep=5pt},
+  etiq/.style={font=\sffamily\scriptsize\bfseries,text=tinta,anchor=north west}]
+\draw[eje,fill=grisfondo,rounded corners=3pt,line width=0.7pt] (0,0) rectangle (15.4,-9.2);
+% Barra superior
+\fill[qazul!10] (0.05,-0.05) rectangle (15.35,-0.75);
+\node[etiq] at (0.25,-0.18) {SPY \textperiodcentered{} 25 sep 2026 \textperiodcentered{} corte 09:45 ET};
+\node[font=\sffamily\scriptsize,text=tinta,anchor=north east] at (15.2,-0.18)
+  {\tikz[baseline=-0.6ex]\node[circle,fill=bueno,minimum size=2mm,inner sep=0pt]{}; datos: apto
+   \quad \tikz[baseline=-0.6ex]\node[circle,fill=alerta,minimum size=2mm,inner sep=0pt]{}; ajuste: degradado};
+% Fila 1
+\node[panel,minimum width=7.45cm,minimum height=3.05cm,text width=7.1cm] at (0.25,-0.95)
+  {\textbf{Distribución $\Q$ con bandas}\\ densidad y cuantiles a 30 días; colas no identificadas marcadas};
+\node[panel,minimum width=7.45cm,minimum height=3.05cm,text width=7.1cm] at (7.9,-0.95)
+  {\textbf{Mapa temporal de cuantiles}\\ últimas 60 sesiones; choques y datos faltantes señalados};
+% Fila 2
+\node[panel,minimum width=7.45cm,minimum height=2.2cm,text width=7.1cm] at (0.25,-4.2)
+  {\textbf{Cambios de cola e innovaciones}\\ $\Delta x_t(u)$ firmado; innovación propia y relativa al mercado};
+\node[panel,minimum width=7.45cm,minimum height=2.2cm,text width=7.1cm] at (7.9,-4.2)
+  {\textbf{Pronósticos $\P$ (distintos de $\Q$)}\\ cuantiles a 1, 5 y 20 sesiones; calibración reciente};
+% Fila 3
+\node[panel,minimum width=4.85cm,minimum height=2.45cm,text width=4.5cm] at (0.25,-6.6)
+  {\textbf{Posición actual frente a propuesta}\\ región de pesos estables; costos; riesgo conjunto};
+\node[panel,minimum width=4.85cm,minimum height=2.45cm,text width=4.5cm] at (5.3,-6.6)
+  {\textbf{Razón de la decisión}\\ texto generado a partir de cifras estructuradas; motivo de abstención};
+\node[panel,minimum width=4.85cm,minimum height=2.45cm,text width=4.5cm] at (10.35,-6.6)
+  {\textbf{Historial de calibración}\\ cobertura, PIT y aciertos por horizonte ya maduro};
+\end{tikzpicture}

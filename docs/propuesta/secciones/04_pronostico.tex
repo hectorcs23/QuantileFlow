@@ -1,0 +1,144 @@
+% ============================================================================
+\clearpage
+\section{De la información implícita Q a pronósticos reales P}\label{sec:pronostico}
+% ============================================================================
+
+\ficha{Variables de $\Q$ (factores, colas, innovaciones), información base y rendimientos realizados
+después de cada snapshot.}
+{Entrenar modelos supervisados por objetivo y horizonte, corregir cruces de cuantiles y combinar.}
+{Distribuciones físicas $\P$ por horizonte: cuantiles, probabilidades de evento y volatilidad
+esperada.}
+{Etiquetas alineadas con el instante de decisión; mejora incremental medida dentro de una misma
+familia de modelos.}
+
+\subsection{Por qué Q no es P}\label{sec:qp}
+
+$\Q$ y $\P$ son dos distribuciones distintas del mismo rendimiento. $\Q$ es la que hace coherentes los
+precios de las opciones; $\P$ describe con qué frecuencia ocurren las cosas. Las une un núcleo de
+valoración (factor estocástico de descuento proyectado) $m$:
+\begin{equation}
+q(x)=\frac{m(x)\,p(x)}{\E^{\P}[m]}.
+\label{eq:nucleo}
+\end{equation}
+Sin supuestos adicionales $m$ no está identificado: la misma $q$ es compatible con muchas parejas $(m,p)$.
+Los intentos de ``recuperar'' $\P$ a partir de $\Q$ requieren supuestos fuertes \citep{ross2015} cuya
+validez está en discusión \citep{borovicka2016}. Para índices bursátiles se documenta, en promedio, una
+prima de varianza: la dispersión implícita tiende a superar a la realizada \citep{carrwu2009}. La
+\figref{fig:q_vs_p} ilustra un supuesto de ese tipo y la \figref{fig:nucleo} el núcleo que implicaría.
+
+\grafica[0.62]{s4_q_vs_p}{Una distribución $\Q$ y una $\P$ supuesta para el mismo activo. La media de $\Q$
+está fijada por el forward; la de $\P$ incorpora una prima. La cola izquierda de $\Q$ es más pesada.
+Ilustrativo: la relación real entre ambas es lo que se estima, no lo que se supone.}{fig:q_vs_p}
+
+\grafica[0.62]{s4_nucleo}{Cociente $q/p$ implícito en el supuesto de la \figref{fig:q_vs_p}. Otra elección
+de $p$ daría otro cociente con la misma $q$: por eso $\P$ se estima con rendimientos realizados y no se
+deduce de $\Q$.}{fig:nucleo}
+
+\subsection{Diseño supervisado y alineación temporal}\label{sec:alineacion}
+
+Los modelos se entrenan con rendimientos efectivamente realizados \emph{después} de cada snapshot. Las
+variables de $\Q$ entran como regresores; no se etiquetan como probabilidades físicas por decreto. La
+etiqueta de horizonte $h$ solo existe en $t+h$, y hasta entonces no puede usarse para entrenar, calibrar ni
+actualizar intervalos (\figref{fig:alineacion}).
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d4_alineacion}}
+\caption{Alineación temporal. Las variables se calculan con información hasta el corte; la etiqueta es el
+rendimiento posterior al instante de decisión y madura al final de su horizonte.}
+\label{fig:alineacion}
+\end{figure}
+
+\subsection{Escalera de modelos}\label{sec:escalera}
+
+El orden propuesto va de lo simple a lo flexible, y cada peldaño debe ganarle al anterior fuera de muestra
+para justificar su complejidad (\figref{fig:escalera}):
+
+\begin{enumerate}
+\item \textbf{Referencia histórica con volatilidad dinámica}: cuantiles de residuos estandarizados
+históricos escalados por una volatilidad EWMA o GARCH.
+\item \textbf{Regresión cuantílica regularizada} \citep{koenker1978}: para cada nivel $\tau$,
+\begin{equation}
+\hat\beta_\tau=\arg\min_\beta\sum_t\rho_\tau\bigl(y_t-z_t^\top\beta\bigr)+\lambda\lVert\beta_{-0}\rVert_1,
+\qquad \rho_\tau(e)=e\,\bigl(\tau-\mathbb 1\{e<0\}\bigr),
+\label{eq:qr}
+\end{equation}
+un programa lineal (\figref{fig:pinball}).
+\item \textbf{Boosting cuantílico} con la misma pérdida y corrección de cruces.
+\item \textbf{NGBoost} \citep{duan2020}, que estima con gradiente natural los parámetros de una familia de
+distribuciones condicional. La familia y sus colas se eligen por validación, sin imponer normalidad por
+comodidad.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d4_escalera}}
+\caption{Escalera de modelos $\P$, combinación y objetivos por horizonte.}
+\label{fig:escalera}
+\end{figure}
+
+\grafica[0.56]{s4_pinball}{Pérdida cuantílica para $\tau=0.05$, $0.50$ y $0.95$. Su asimetría es la que
+hace que el minimizador sea el cuantil $\tau$.}{fig:pinball}
+
+Estimar cada cuantil por separado puede producir \emph{cruces}: en una zona de extrapolación el cuantil
+del 25\% queda por debajo del 5\% (\figref{fig:cruces}). El reordenamiento creciente de los cuantiles
+estimados en cada punto corrige el problema sin empeorar la estimación
+\citep{chernozhukov2010} (\figref{fig:reordenado}).
+
+\grafica[0.6]{s4_cruces}{Regresiones cuantílicas estimadas por separado con 70 observaciones sintéticas. Fuera del rango observado
+de la variable, dos cuantiles se cruzan (punto rojo).}{fig:cruces}
+
+\grafica[0.6]{s4_reordenado}{Los mismos cuantiles después de reordenarlos en cada valor de la variable: siempre crecientes en
+$\tau$.}{fig:reordenado}
+
+\subsection{Objetivos por horizonte}\label{sec:objetivos}
+
+Cada objetivo tiene su pérdida y se entrena por separado. La información de opciones podría mejorar el
+riesgo sin mejorar el signo del rendimiento; ambas conclusiones son útiles y se muestran por separado.
+
+\begin{table}[H]
+\centering\small
+\caption{Objetivos, pronósticos y pérdidas. Horizontes candidatos: 1, 5 y 20 sesiones.}
+\label{tab:objetivos}
+\begin{tabularx}{\linewidth}{@{}l Y Y@{}}
+\toprule
+\encab{Objetivo} & \encab{Pronóstico} & \encab{Pérdida y diagnóstico}\\
+\midrule
+Rendimiento & Distribución completa; mediana & CRPS; pinball en $\tau=0.5$; calibración de cuantiles\\
+Superar costos & Probabilidad de que el rendimiento neto sea positivo & Brier y log score; diagrama de fiabilidad\\
+Cuantiles de pérdida & $q_{0.05}$ y $q_{0.10}$ & Pinball; cobertura y ancho de intervalos\\
+Volatilidad futura & Varianza realizada esperada & QLIKE, robusta a proxies ruidosos \citep{patton2011}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Combinación de pronósticos}\label{sec:combinacion}
+
+Los pronósticos se combinan con pesos no negativos que suman uno, aprendidos en validación temporal
+---por ejemplo, minimizando el CRPS de la mezcla o la pérdida cuantílica del promedio de cuantiles--- y se
+comparan siempre con pesos iguales, que en la práctica son difíciles de superar \citep{timmermann2006}.
+El acuerdo entre modelos parecidos no es evidencia independiente: si comparten variables y ventana de
+entrenamiento, sus errores están correlacionados.
+
+\subsection{Una referencia estructural: Martin y Wagner}\label{sec:martin}
+
+\citet{martin2019} proponen una expresión del rendimiento esperado de una acción a partir de índices de
+varianza implícita, derivada de \citet{martin2017}:
+\begin{equation}
+\frac{\E_t[R_{i,t+1}]-R_{f,t+1}}{R_{f,t+1}}=\mathrm{SVIX}_t^2+\tfrac12\Bigl(\mathrm{SVIX}_{i,t}^2-\overline{\mathrm{SVIX}}_t^2\Bigr),
+\label{eq:martin}
+\end{equation}
+donde $\mathrm{SVIX}_t$ es el del mercado, $\mathrm{SVIX}_{i,t}$ el de la acción y
+$\overline{\mathrm{SVIX}}_t^2$ el promedio ponderado por valor de la sección transversal. Queda como
+referencia estructural si se dispone de esos insumos de mercado y de sección transversal; no sustituye la
+calibración diaria descrita arriba.
+
+\begin{noconcluir}
+Ni la \eqref{eq:martin} ni ningún modelo de esta sección convierte a $\Q$ en $\P$. Todo pronóstico $\P$ se
+valida con rendimientos realizados y con las reglas de puntuación de la \secref{sec:calibracion}.
+\end{noconcluir}
+
+\begin{criterio}
+Mejora incremental fuera de muestra respecto de la referencia, dentro de la misma familia de modelos, o
+una delimitación honesta de dónde no hay utilidad.
+\end{criterio}

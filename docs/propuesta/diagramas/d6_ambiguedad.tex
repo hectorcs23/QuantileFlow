@@ -1,0 +1,19 @@
+% Conjunto de ambigüedad de Wasserstein alrededor de la distribución estimada.
+\begin{tikzpicture}[x=1cm,y=1cm]
+\fill[qaqua!8] (0,0) circle (2.1);
+\draw[qaqua,line width=0.8pt] (0,0) circle (2.1);
+\fill[tinta] (0,0) circle (2.2pt);
+\node[font=\sffamily\scriptsize,anchor=north] at (0,-0.08) {$\widehat{P}_t$};
+\foreach \a/\r in {20/1.2,75/0.8,130/1.5,200/1.1,250/1.7,310/0.9,345/1.6}
+  \fill[tenue] (\a:\r) circle (1.6pt);
+\fill[qnaranja] (35:2.1) circle (2.6pt);
+\node[font=\sffamily\scriptsize,anchor=south west] at (35:2.15) {$Q^\ast(w)$: peor caso para la cartera $w$};
+\draw[flecha,draw=tinta2] (0,0) -- (-145:2.1);
+\node[nota,anchor=north east] at (-150:1.2) {radio $\varepsilon$};
+\node[font=\sffamily\scriptsize,star,star points=5,fill=qazul,inner sep=1.4pt] at (-40:1.35) {};
+\node[nota,anchor=west] at (-40:1.5) {$P$ verdadera (desconocida)};
+\node[nota,anchor=west,text width=5.2cm,align=left] at (3.2,0.4) {\textbf{Conjunto de ambigüedad}\\[1pt]
+  $\mathcal{B}_\varepsilon(\widehat P_t)=\{Q: W(Q,\widehat P_t)\le\varepsilon\}$.\\[3pt]
+  $\varepsilon$ se elige por validación temporal y pruebas de sensibilidad: pequeño, optimiza para la
+  estimación; grande, se vuelve excesivamente conservador.};
+\end{tikzpicture}

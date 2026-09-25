@@ -1,0 +1,34 @@
+% Tres horizontes: observación, distribución implícita y decisión/pronóstico.
+\begin{tikzpicture}[x=0.36cm,y=1cm,nota/.style={font=\sffamily\scriptsize,text=tinta2,align=left}]
+% Etiquetas de fila
+\node[titulo,anchor=east,align=right] at (-0.8,0) {Frecuencia de\\ observación};
+\node[titulo,anchor=east,align=right] at (-0.8,-1.35) {Horizonte de la\\ distribución $\Q$};
+\node[titulo,anchor=east,align=right] at (-0.8,-2.95) {Horizonte de decisión\\ y pronóstico $\P$};
+% Fines de semana sombreados
+\foreach \s in {5,12,19,26} \fill[grisclaro] (\s-0.5,0.45) rectangle (\s+1.5,-3.75);
+% Instante de decisión
+\draw[tinta,line width=0.6pt] (0,0.55) -- (0,-3.75);
+\node[nota,anchor=south] at (0,0.55) {instante de decisión $t$};
+% Observación: cada sesión hábil
+\foreach \d in {0,...,30}{%
+  \pgfmathtruncatemacro{\w}{mod(\d,7)}%
+  \ifnum\w<5 \fill[tenue] (\d,0) circle (2.1pt);\fi}
+\node[nota,anchor=west] at (31.2,0) {cada sesión: apertura\\ y cierre, sin operar\\ necesariamente};
+% Distribución implícita a plazo constante
+\draw[line width=6pt,qazul!55] (0,-1.15) -- (30,-1.15);
+\draw[line width=6pt,qazul!22] (1,-1.55) -- (31,-1.55);
+\node[nota,anchor=west] at (31.2,-1.15) {$\tau=30$ días calendario};
+\node[nota,anchor=west] at (31.2,-1.62) {en $t+1$ el plazo sigue\\ siendo 30 días (interpolado)};
+% Horizontes de decisión
+\draw[flecha,draw=qnaranja,line width=0.9pt] (0,-2.45) -- (1,-2.45);
+\node[nota,anchor=west] at (1.3,-2.45) {1 sesión};
+\draw[flecha,draw=qnaranja,line width=0.9pt] (0,-2.95) -- (7,-2.95);
+\node[nota,anchor=west] at (7.3,-2.95) {5 sesiones};
+\draw[flecha,draw=qnaranja,line width=0.9pt] (0,-3.45) -- (28,-3.45);
+\node[nota,anchor=west] at (28.3,-3.45) {20 sesiones};
+% Eje de tiempo
+\draw[guia] (-0.5,-3.9) -- (31,-3.9);
+\foreach \d in {0,7,14,21,28}{\draw[guia] (\d,-3.9) -- (\d,-4.0);
+  \node[nota,anchor=north] at (\d,-4.02) {\d};}
+\node[nota,anchor=north] at (15,-4.35) {días calendario desde $t$ (sombreado: fines de semana)};
+\end{tikzpicture}

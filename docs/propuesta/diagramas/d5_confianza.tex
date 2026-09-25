@@ -1,0 +1,29 @@
+% Cuatro dimensiones de confianza, cada una con indicadores y estados.
+\begin{tikzpicture}[
+  tarjeta/.style={draw=#1,fill=#1!5,rounded corners=3pt,line width=0.6pt,text width=6.9cm,
+    minimum height=2.55cm,align=left,inner sep=6pt,font=\sffamily\scriptsize,text=tinta,anchor=north west},
+  estado/.style={circle,fill=#1,minimum size=2.2mm,inner sep=0pt}]
+\node[tarjeta=qazul] (c1) at (0,0) {\textbf{\small 1. Calidad de datos}\\[2pt]
+  ¿Se puede reconstruir $\Q$ en el corte?\\[2pt]
+  \textcolor{tinta2}{Spread relativo, strikes válidos por vencimiento, retraso de la fuente, snapshots
+  faltantes, sincronía con el subyacente.}};
+\node[tarjeta=qazul] (c2) at (7.45,0) {\textbf{\small 2. Sensibilidad del ajuste}\\[2pt]
+  ¿Cuánto cambia $\Q$ dentro de lo compatible con los datos?\\[2pt]
+  \textcolor{tinta2}{Ancho de bandas de cuantiles, discrepancia SSVI frente a ajuste convexo, restricciones
+  activas, error de desamericanización.}};
+\node[tarjeta=qnaranja] (c3) at (0,-2.85) {\textbf{\small 3. Incertidumbre predictiva}\\[2pt]
+  ¿Qué tan dispersa y qué tan calibrada es la predicción $\P$?\\[2pt]
+  \textcolor{tinta2}{Ancho de intervalos, cobertura y PIT recientes, probabilidad de cambio de régimen,
+  desempeño del último tramo maduro.}};
+\node[tarjeta=qaqua] (c4) at (7.45,-2.85) {\textbf{\small 4. Estabilidad de la decisión}\\[2pt]
+  ¿Cambiaría la recomendación ante perturbaciones plausibles?\\[2pt]
+  \textcolor{tinta2}{Dispersión de pesos óptimos remuestreados, distancia a la región casi óptima,
+  sensibilidad a costos y a escenarios de estrés.}};
+% Leyenda de estados (icono + etiqueta; el color nunca va solo)
+\node[estado=bueno] (e1) at (0.25,-5.95) {};
+\node[nota,anchor=west,text=tinta] at (e1.east) {\ \textbf{apto}: se usa sin restricciones};
+\node[estado=alerta] (e2) at (5.0,-5.95) {};
+\node[nota,anchor=west,text=tinta] at (e2.east) {\ \textbf{degradado}: solo reducciones o mantener};
+\node[estado=critico] (e3) at (10.15,-5.95) {};
+\node[nota,anchor=west,text=tinta] at (e3.east) {\ \textbf{bloqueado}: sin decisiones basadas en señal};
+\end{tikzpicture}

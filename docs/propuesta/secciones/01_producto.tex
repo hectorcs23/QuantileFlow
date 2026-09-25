@@ -1,0 +1,129 @@
+% ============================================================================
+\clearpage
+\section{Producto y pregunta de investigación}\label{sec:producto}
+% ============================================================================
+
+\ficha{Cadenas de opciones con bid/ask, precio del subyacente, posiciones actuales, calendario de
+resultados y dividendos.}
+{Medir $\Q$, describir su cambio, pronosticar $\P$ y comparar mantener con modificar.}
+{Recomendación con bandas de incertidumbre, o abstención motivada; registro reproducible.}
+{Separación estricta entre $\Q$, $\P$ y acción; ninguna decisión sin calibración ni riesgo conjunto.}
+
+\subsection{Qué hace el sistema en cada sesión}
+
+El producto responde, al inicio de cada sesión, una pregunta operativa concreta: \emph{dado lo que
+descuentan hoy las opciones y lo que ya se sabe por el precio, ¿conviene mantener la posición o
+modificarla?} Para llegar a esa respuesta encadena cinco pasos, cada uno con su propia salida
+verificable:
+
+\begin{enumerate}
+\item \textbf{Reconstruir lo que descuentan las opciones.} A partir de un \emph{snapshot} de
+cotizaciones se obtiene una superficie de volatilidad sin arbitraje estático y, de ella, la
+distribución implícita $\Q_t$ del rendimiento a plazo constante, con bandas que reflejan el ancho de
+los spreads.
+\item \textbf{Cuantificar cómo cambió.} Se compara $\Q_t$ con $\Q_{t-1}$ mediante distancias entre
+funciones cuantil, cambios firmados por percentil y factores funcionales filtrados.
+\item \textbf{Estimar si esa información mejora el pronóstico.} Los cambios --- en especial su parte
+no explicada por la información base --- entran como variables candidatas a modelos que pronostican la
+distribución física $\P$ de rendimientos futuros, evaluados fuera de muestra.
+\item \textbf{Comparar mantener con modificar.} Con escenarios conjuntos de la cartera se evalúa el
+rendimiento esperado, el CVaR y los costos de cada alternativa; los cambios pequeños que no superan
+costos e incertidumbre se descartan.
+\item \textbf{Registrar.} Cada resultado conserva las entradas, versiones, parámetros, hora de corte y
+motivo de abstención, de modo que la corrida pueda repetirse exactamente.
+\end{enumerate}
+
+\subsection{Hipótesis principal y cómo se contrasta}\label{sec:hipotesis}
+
+Sea $Y_{t,h}$ una variable objetivo medida entre el instante de decisión $t$ y $t+h$ (rendimiento,
+pérdida o volatilidad realizada), $\mathcal{I}^{base}_t$ la información ya observable en precio,
+volatilidad y mercado, y $\epsilon_t$ la innovación de la distribución implícita definida en la
+\secref{sec:innovacion}. Con una regla de puntuación propia $S$ (menor es mejor) y dos pronósticos de
+la \emph{misma familia} de modelos, uno con $\mathcal{I}^{base}_t$ y otro con
+$\mathcal{I}^{base}_t\cup\{\epsilon_t\}$, se define el diferencial de pérdida
+\begin{equation}
+d_{t,h}=S\bigl(\widehat F^{\,base}_{t,h},\,Y_{t,h}\bigr)-S\bigl(\widehat F^{\,base+\epsilon}_{t,h},\,Y_{t,h}\bigr).
+\label{eq:diferencial}
+\end{equation}
+La hipótesis de trabajo es $H_1:\ \E[d_{t,h}]>0$ fuera de muestra, frente a $H_0:\ \E[d_{t,h}]\le 0$.
+Se evalúa por separado para cada objetivo y horizonte, con intervalos que respetan la dependencia
+temporal (\secref{sec:evidencia}).
+
+\begin{noconcluir}
+\begin{itemize}
+\item Una mejora en el pronóstico del \emph{riesgo} no implica una mejora en el \emph{signo} del
+rendimiento, ni al revés; ambas conclusiones son útiles y se reportan por separado.
+\item Una mejora en el pronóstico no implica una mejor política de posición: puede no pagar sus
+costos. Son dos pruebas distintas (\secref{sec:dos_pruebas}).
+\item La hipótesis no presupone una dirección rentable; esa dirección, si existe, se mide.
+\end{itemize}
+\end{noconcluir}
+
+\subsection{Alcance de la primera versión}
+
+La primera versión se limita a SPY y entre tres y cinco acciones líquidas, con posiciones en
+acciones o ETF y sin apalancamiento como supuesto inicial de investigación. Gestionar opciones como
+posición exigiría una fase específica de valoración y escenarios conjuntos (\secref{sec:opciones}).
+
+\begin{table}[H]
+\centering\small
+\caption{Alcance de la primera versión.}
+\label{tab:alcance}
+\begin{tabularx}{\linewidth}{@{}l l Y@{}}
+\toprule
+\encab{Elemento} & \encab{Estado} & \encab{Comentario}\\
+\midrule
+Universo & Propuesto & SPY y 3--5 acciones líquidas; lista definitiva pendiente.\\
+Instrumentos gestionados & Supuesto inicial & Acciones y ETF; opciones como fase aparte.\\
+Apalancamiento & Supuesto de investigación & Sin apalancamiento en la primera versión.\\
+Capital de referencia & Pendiente & 50,000; falta definir la moneda.\\
+Posiciones actuales & Pendiente & Necesarias para evaluar ``mantener frente a modificar''.\\
+Horizonte de decisión & Pendiente & Candidatos: 1, 5 y 20 sesiones.\\
+Presupuesto de datos & Pendiente & Condiciona la fuente y la historia disponible.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{pendiente}
+Universo definitivo, moneda de los 50,000, posiciones, horizonte y presupuesto de datos. No son
+necesarios para \emph{diseñar} el motor, pero sí para \emph{parametrizar} su uso: sin ellos no se
+pueden fijar límites de concentración, costos ni el benchmark comparable.
+\end{pendiente}
+
+\subsection{Tres horizontes que no deben mezclarse}\label{sec:horizontes}
+
+El sistema maneja tres escalas de tiempo distintas (\figref{fig:horizontes}). La \textbf{frecuencia
+de observación} es cada sesión, incluidas las ventanas de apertura. El \textbf{horizonte de la
+distribución implícita} es el plazo de las opciones que se interpolan; inicialmente 30 días
+calendario y constante, de modo que en $t+1$ se sigue midiendo a 30 días y no a 29. El
+\textbf{horizonte de decisión y pronóstico} es aquel sobre el que se evalúa el rendimiento de una
+decisión, por ejemplo 1, 5 y 20 sesiones.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d1_horizontes}}
+\caption{Los tres horizontes. Observar cada sesión no obliga a operar cada sesión; la distribución
+implícita se mide siempre a 30 días calendario; los pronósticos se evalúan a 1, 5 y 20 sesiones.}
+\label{fig:horizontes}
+\end{figure}
+
+La distinción importa porque una distribución a 30 días \emph{no se convierte por simple escalado} en
+una distribución a una sesión. La varianza no se acumula de manera uniforme: los fines de semana
+aportan poco, un día de resultados trimestrales aporta mucho, y la estructura temporal de
+volatilidades rara vez es plana. Las figuras~\ref{fig:acumulacion} y~\ref{fig:riesgo_sesion}
+lo ilustran con un calendario sintético de 30 días que incluye un anuncio de resultados.
+
+\grafica{s1_acumulacion_varianza}{Acumulación de varianza en 30 días calendario (datos sintéticos).
+La escalera muestra una acumulación plausible: casi nada en fines de semana y un salto el día de
+resultados. La recta es lo que supone un escalado lineal en días calendario.}{fig:acumulacion}
+
+\grafica{s1_riesgo_sesion}{Desviación estándar de una sesión (datos sintéticos). Las dos primeras
+barras son los valores del mundo sintético para una sesión normal y para la sesión de resultados; las
+dos últimas, lo que se obtiene escalando la varianza a 30 días por días calendario o por sesiones.
+Ningún escalado recupera el riesgo de la sesión de resultados.}{fig:riesgo_sesion}
+
+\begin{ideaclave}
+El plazo de $\Q$ describe qué se mide; el horizonte de decisión describe qué se evalúa. Pasar de uno a
+otro exige un modelo explícito (calendario de eventos, estructura temporal, supuestos sobre fines de
+semana), nunca una regla de raíz del tiempo aplicada por defecto.
+\end{ideaclave}

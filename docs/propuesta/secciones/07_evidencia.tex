@@ -1,0 +1,160 @@
+% ============================================================================
+\clearpage
+\section{Protocolo de evidencia}\label{sec:evidencia}
+% ============================================================================
+
+\ficha{Registro previo de objetivos, transformaciones y variantes; series de pronósticos y decisiones
+fuera de muestra.}
+{Particiones temporales con purga, comparación incremental, pruebas de pronóstico y de política,
+corrección por selección y estrés.}
+{Estimaciones de mejora con intervalos por bloques, veredicto por objetivo y horizonte, informe de
+estrés.}
+{Umbrales fijados antes del holdout; ``evidencia insuficiente'' cuando el intervalo no se separa de cero.}
+
+\subsection{Registro previo}\label{sec:preregistro}
+
+Antes de probar nada se registran los objetivos, las transformaciones de variables y el número de variantes
+que se evaluarán. Cada experimento posterior queda en el registro, haya funcionado o no: el número total
+de pruebas es un insumo de la corrección por selección (\secref{sec:seleccion}).
+
+\subsection{Particiones temporales, purga y tamaño efectivo}\label{sec:particiones}
+
+Se separan cuatro tramos con funciones distintas: entrenamiento, ajuste de hiperparámetros, calibración y
+prueba final. La validación es \emph{walk-forward}, sin particiones aleatorias, y con purga de las
+observaciones cuya etiqueta cruza una frontera entre tramos \citep{lopezdeprado2018}. Cuando el esquema
+pueda reintroducir observaciones correlacionadas se añade un embargo (\figref{fig:walkforward}).
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d7_walkforward}}
+\caption{Validación walk-forward. Cada ventana entrena con el pasado, ajusta, calibra y prueba en tramos
+sucesivos separados por purga y embargo; la prueba final queda reservada hasta el final.}
+\label{fig:walkforward}
+\end{figure}
+
+La dependencia reduce la información disponible más de lo que sugiere el número de filas. Con etiquetas
+solapadas de $h$ sesiones, la autocorrelación inducida es $1-k/h$ y el tamaño efectivo es
+aproximadamente $n/h$ (\figref{fig:obs_efectivas}); con $N$ activos de correlación media $\bar\rho$, el
+número de activos independientes equivalentes es $N/[1+(N-1)\bar\rho]$ (\figref{fig:activos_efectivos}).
+Por eso los intervalos se calculan con bloques temporales y teniendo en cuenta la dependencia entre activos.
+
+\grafica[0.54]{s7_obs_efectivas}{Observaciones efectivas en 500 sesiones según el horizonte de la
+etiqueta: un pronóstico a 20 sesiones tiene del orden de 25 observaciones independientes.}{fig:obs_efectivas}
+
+\grafica[0.54]{s7_activos_efectivos}{Activos independientes equivalentes según la correlación media. Cinco
+acciones con correlación 0.6 equivalen a menos de dos.}{fig:activos_efectivos}
+
+\subsection{Comparación incremental}\label{sec:incremental}
+
+La pregunta de investigación se responde con una escalera de conjuntos de información
+(\figref{fig:incremental}): A, precio, volumen y volatilidad; B, A más la distribución $\Q$ actual; C, B
+más cambios simples; D, C más transporte e innovaciones; E, D más aceleración y regímenes. Se compara
+dentro de una misma familia de predicción para atribuir el cambio a la información adicional y no al
+aumento simultáneo de capacidad del modelo.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d7_incremental}}
+\caption{Comparación incremental A--E. La hipótesis principal corresponde al paso de C a D.}
+\label{fig:incremental}
+\end{figure}
+
+\subsection{Dos pruebas independientes: pronóstico y política}\label{sec:dos_pruebas}
+
+Una señal puede predecir mejor y no pagar sus costos. Por eso hay dos pruebas separadas:
+
+\begin{itemize}
+\item \textbf{Mejora de pronóstico}: diferencial de reglas de puntuación \eqref{eq:diferencial} por
+objetivo y horizonte.
+\item \textbf{Mejora de política de posición}: rendimiento neto, drawdown, pérdidas de cola, rotación y
+exceso frente a un benchmark de riesgo comparable, contra las referencias de la \tabref{tab:referencias}.
+\end{itemize}
+
+\begin{table}[H]
+\centering\small
+\caption{Referencias para la prueba de política. Se alinean moneda, aportaciones, horarios y exposición.}
+\label{tab:referencias}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Referencia} & \encab{Qué controla}\\
+\midrule
+Mantener las posiciones & El valor de no hacer nada, incluidos costos evitados.\\
+SPY con dividendos & La exposición pasiva al mercado.\\
+Control de volatilidad sencillo & Si la mejora es solo gestión de riesgo genérica.\\
+Pesos iguales & Para selección de acciones: si el modelo supera una asignación ingenua.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Sesgo de selección}\label{sec:seleccion}
+
+Probar muchas variantes y quedarse con la mejor infla el resultado aunque ninguna tenga ventaja real. Bajo
+la hipótesis nula, el máximo esperado de $N$ ratios de Sharpe independientes con varianza $V$ es
+aproximadamente \citep{bailey2014}
+\begin{equation}
+\widehat{SR}_0=\sqrt{V}\Bigl[(1-\gamma)\,\Phi^{-1}\!\Bigl(1-\tfrac1N\Bigr)+\gamma\,\Phi^{-1}\!\Bigl(1-\tfrac{1}{Ne}\Bigr)\Bigr],
+\label{eq:sr0}
+\end{equation}
+con $\gamma$ la constante de Euler--Mascheroni. El Sharpe deflactado es la probabilidad de que el Sharpe
+verdadero supere ese umbral, corrigiendo por asimetría $\hat\gamma_3$ y curtosis $\hat\gamma_4$ de $T$
+rendimientos:
+\begin{equation}
+\mathrm{DSR}=\Phi\!\left(\frac{(\widehat{SR}-\widehat{SR}_0)\sqrt{T-1}}{\sqrt{1-\hat\gamma_3\,\widehat{SR}+\frac{\hat\gamma_4-1}{4}\,\widehat{SR}^2}}\right).
+\label{eq:dsr}
+\end{equation}
+Se usa como diagnóstico adicional, junto con la evaluación fuera de muestra y el bootstrap por bloques; no
+como certificado definitivo (figuras~\ref{fig:maximo_sharpe} y~\ref{fig:sharpe_deflactado}).
+
+\grafica[0.56]{s7_maximo_sharpe}{Sharpe anual máximo esperado entre $N$ estrategias sin ninguna ventaja
+real. Con dos años de datos diarios y cien variantes, el mejor resultado ronda 1.8 por puro azar; los
+puntos confirman la aproximación por simulación.}{fig:maximo_sharpe}
+
+\grafica[0.56]{s7_sharpe_deflactado}{Sharpe deflactado de un mismo resultado observado según el número
+de variantes probadas (supuestos en el eje).}{fig:sharpe_deflactado}
+
+\subsection{Intervalos por bloques y evidencia insuficiente}\label{sec:bootstrap}
+
+La mejora media del diferencial de pérdida se estima con bootstrap de bloques móviles \citep{kunsch1989},
+que conserva la dependencia dentro de cada bloque. Si el intervalo no permite distinguir la mejora de cero,
+el veredicto es \emph{evidencia insuficiente}, no ``casi significativo''
+(figuras~\ref{fig:bootstrap_distinguible} y~\ref{fig:bootstrap_insuficiente}).
+
+\grafica[0.56]{s7_bootstrap_distinguible}{Distribución bootstrap de la mejora media del modelo D sobre el C
+(serie sintética con autocorrelación). El intervalo del 90\% excluye el cero.}{fig:bootstrap_distinguible}
+
+\grafica[0.56]{s7_bootstrap_insuficiente}{Una mejora media menor con la misma variabilidad: el intervalo
+contiene el cero y el veredicto es evidencia insuficiente.}{fig:bootstrap_insuficiente}
+
+\subsection{Pruebas de estrés}\label{sec:estres}
+
+\begin{table}[H]
+\centering\small
+\caption{Pruebas de estrés. Ningún horario ni umbral se selecciona con el periodo final.}
+\label{tab:estres}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Perturbación} & \encab{Qué se observa}\\
+\midrule
+Choques de mercado y de correlación & CVaR, límites y cambio de recomendación.\\
+Spreads más amplios & Ancho de bandas, estados de confianza y abstención.\\
+Retrasos y cotizaciones incompletas & Que la decisión use solo datos disponibles en el corte.\\
+Interrupciones y degradación del proveedor & Que un fallo no se convierta en orden.\\
+Resultados trimestrales y cambios de dividendo & Conversión americana, forward y deformación por plazo.\\
+Revisiones de datos & Reproducibilidad con los datos conocidos en cada momento.\\
+Órdenes parcialmente ejecutadas & Reconciliación de posiciones y caja.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Regla de avance}\label{sec:avance}
+
+\begin{criterio}
+Un modelo avanza si mejora la métrica definida de antemano, mantiene una calibración aceptable y produce
+decisiones estables frente a perturbaciones plausibles. Los umbrales numéricos se fijan antes del holdout
+con el presupuesto de riesgo acordado.
+\end{criterio}
+
+\begin{noconcluir}
+Llegar a diciembre con el sistema operativo no equivale a haber demostrado ventaja estadística. Un sistema
+que funciona sin fallas y una hipótesis confirmada son dos entregables distintos.
+\end{noconcluir}

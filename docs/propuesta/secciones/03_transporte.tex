@@ -1,0 +1,258 @@
+% ============================================================================
+\clearpage
+\section{Transporte, dinámica y extracción de señal}\label{sec:transporte}
+% ============================================================================
+
+\ficha{Distribuciones $\Q_t$ a plazo constante con bandas y soporte identificado; información base de
+precio, volatilidad y mercado.}
+{Representar por cuantiles, medir distancias y cambios firmados, reducir dimensión, filtrar causalmente
+y calcular la innovación.}
+{Series de distancias, factores filtrados con incertidumbre, variables de cola e innovaciones.}
+{Todo ajuste usa solo el pasado; reconstrucciones ordenadas; medidas recortadas declaradas como tales.}
+
+\subsection{Representación por cuantiles relativos al forward}\label{sec:cuantiles}
+
+Cada distribución se representa por su función cuantil de rendimientos logarítmicos relativos al
+forward, a plazo constante $\tau$:
+\begin{equation}
+x_t(u,\tau)=F^{-1}_{\Q_t}(u),\qquad \text{con } x=\ln\!\bigl(S_{t+\tau}/F_{t,\tau}\bigr),\quad u\in(0,1).
+\label{eq:cuantil}
+\end{equation}
+Medir respecto del forward retira el desplazamiento puramente mecánico del nivel de precios: si el
+subyacente sube 1\% y nada más cambia, $x_t(u)$ no se mueve. La vista en precios absolutos se conserva
+por separado para interpretar la posición. El plazo constante se obtiene interpolando $\theta_T$ entre
+vencimientos listados; como $\theta$ interpolado linealmente sigue siendo no decreciente, se preserva la
+ausencia de arbitraje de calendario. Por construcción $\E^{\Q}\bigl[e^{x}\bigr]=1$.
+
+\subsection{Distancias entre distribuciones y cambios firmados}\label{sec:distancias}
+
+En una dimensión, el transporte óptimo entre dos distribuciones es el \emph{reordenamiento monótono}: cada
+cuantil se desplaza a su homólogo, $T=F_t^{-1}\circ F_{t-1}$ \citep{peyre2019}. La distancia de
+Wasserstein de orden 2 se calcula entonces directamente sobre las funciones cuantil:
+\begin{equation}
+W_2^2(\Q_t,\Q_{t-1})=\int_0^1\bigl[x_t(u)-x_{t-1}(u)\bigr]^2\,du,\qquad
+W_1(\Q_t,\Q_{t-1})=\int_0^1\bigl|x_t(u)-x_{t-1}(u)\bigr|\,du .
+\label{eq:w2}
+\end{equation}
+$W_1$ es menos sensible que $W_2$ a desplazamientos extremos y equivale al área entre las dos funciones
+de distribución. Para familias de posición y escala, $W_2^2=(\Delta\mu)^2+(\Delta\sigma)^2$, lo que ayuda
+a leer su magnitud. Si solo existe cobertura fiable del 5\% al 95\%, se reporta la versión recortada
+$W_{2,[a,b]}^2=\int_a^b[\Delta x(u)]^2du$ con su rango, nunca como distancia de toda la distribución.
+
+\grafica[0.6]{s3_densidades_choque}{Distribución implícita a 30 días antes y después de un choque común en
+el mundo sintético: más dispersión y una cola izquierda más larga.}{fig:densidades_choque}
+
+\grafica[0.6]{s3_mapa_transporte}{Mapa de transporte óptimo entre las dos sesiones de la
+\figref{fig:densidades_choque}: cada cuantil anterior (eje horizontal) se envía al mismo cuantil posterior
+(eje vertical). La pendiente mayor que uno indica más dispersión; la diagonal sería ``sin cambio''.}{fig:mapa_transporte}
+
+\grafica[0.6]{s3_funciones_cuantil}{Funciones cuantil antes y después del choque. $W_2$ es la distancia
+$L^2$ entre ellas; la leyenda compara la versión completa, la recortada a $[0.05,0.95]$ y $W_1$.}{fig:funciones_cuantil}
+
+La magnitud sola no dice qué cambió. Por eso se registran también los \emph{cambios firmados}
+$\Delta x_t(u)$ en percentiles clave, que distinguen deformaciones con distancias parecidas
+(figuras~\ref{fig:cambios_firmados} y~\ref{fig:distancias_arquetipos}).
+
+\grafica[0.6]{s3_cambios_firmados}{Perfil firmado de tres deformaciones arquetípicas de una misma
+distribución: más dispersión, cola izquierda más pesada y cambio solo en las alas. Un $\Delta x<0$ con
+$u<1/2$ significa que la cola izquierda se alarga.}{fig:cambios_firmados}
+
+\grafica[0.6]{s3_distancias_arquetipos}{Distancias de los tres arquetipos. $W_2$ pesa más el cambio en las
+alas que $W_1$; la versión recortada casi no lo ve. Ninguna cifra aislada identifica el tipo de cambio.}{fig:distancias_arquetipos}
+
+\grafica[0.64]{s3_mapa_cuantiles}{Mapa temporal de cuantiles: desviación de cada $x_t(u)$ respecto de su
+media de entrenamiento, por sesión. El choque común de la sesión 170 alarga ambas colas; las columnas en
+blanco son snapshots faltantes.}{fig:mapa_cuantiles}
+
+\grafica[0.64]{s3_distancias_diarias}{Distancias entre sesiones consecutivas. Los puntos rojos son sesiones
+con spreads amplios, donde parte de la distancia es ruido de ajuste y no cambio de distribución: una
+razón para filtrar antes de interpretar.}{fig:distancias_diarias}
+
+\subsection{Cadencia, velocidad y aceleración}\label{sec:cadencia}
+
+Las velocidades se definen sobre una cadencia fija y con diferencias hacia atrás,
+$v_t(u)=x_t(u)-x_{t-1}(u)$, en canales separados: \emph{cierre--apertura} y \emph{apertura--apertura}.
+Fines de semana, feriados y ventanas intradía son intervalos de tipo distinto y se etiquetan como tales;
+no se mezclan como si fueran idénticos ni se escalan por tiempo calendario sin un modelo. La aceleración
+$a_t(u)=v_t(u)-v_{t-1}(u)$ queda como candidata secundaria por una razón aritmética: si cada $x_t$ tiene
+ruido de medición independiente de varianza $\sigma^2$, la velocidad hereda $2\sigma^2$ y la aceleración
+$6\sigma^2$ (figuras~\ref{fig:senal_ruido} y~\ref{fig:aceleracion}).
+
+\grafica[0.6]{s3_senal_ruido}{Cociente entre la varianza de la señal y la del ruido de medición para el
+nivel, la velocidad y la aceleración de un factor sintético. Diferenciar multiplica la desviación estándar
+del ruido por $\sqrt2$ y $\sqrt6$ mientras la señal se vuelve más pequeña.}{fig:senal_ruido}
+
+\grafica[0.6]{s3_aceleracion}{Aceleración latente frente al ruido de medición que contiene la aceleración
+observada: fuera del choque son de magnitud comparable.}{fig:aceleracion}
+
+\subsection{Reducción de dimensión: componentes funcionales y variables de cola}\label{sec:fpca}
+
+Para resumir la forma se aplica un análisis de componentes principales funcional a los cuantiles
+centrados, con pesos de cuadratura en la malla de $u$ y ajustado \emph{únicamente con datos de
+entrenamiento}:
+\begin{equation}
+x_t(u)\approx\bar x(u)+\sum_{j=1}^{J}s_{tj}\,\phi_j(u),\qquad
+s_{tj}=\int_0^1\bigl[x_t(u)-\bar x(u)\bigr]\phi_j(u)\,du .
+\label{eq:fpca}
+\end{equation}
+Se conservan factores suficientes para explicar dispersión y asimetría. Pero una PCA global puede ignorar
+las colas precisamente porque explican poca varianza total (figuras~\ref{fig:fpca_autofunciones}
+y~\ref{fig:fpca_varianza}); por eso se añaden variables explícitas de cola, por ejemplo el ancho de la cola
+izquierda $x_t(0.10)-x_t(0.01)$ dentro del rango identificado, o la asimetría por cuantiles
+$[x_t(0.9)+x_t(0.1)-2x_t(0.5)]/[x_t(0.9)-x_t(0.1)]$.
+
+\grafica[0.6]{s3_fpca_autofunciones}{Primeras autofunciones de la PCA funcional, estimadas solo con las
+sesiones de entrenamiento del mundo sintético. La primera captura dispersión; la segunda, asimetría; la
+tercera, las alas.}{fig:fpca_autofunciones}
+
+\grafica[0.6]{s3_fpca_varianza}{Varianza explicada por componente, en escala logarítmica. La componente
+de colas explica una fracción ínfima de la varianza total aunque pueda ser la más relevante para el
+riesgo.}{fig:fpca_varianza}
+
+Toda reconstrucción debe seguir siendo una función cuantil válida, es decir, creciente en $u$. Con pocos
+factores eso no está garantizado; se corrige con el reordenamiento creciente \citep{chernozhukov2010}, que
+no aumenta la distancia $L^p$ a la función verdadera, o se trabaja en una transformación que garantice
+monotonía, como el logaritmo de la densidad cuantílica \citep{petersen2016}.
+
+\subsection{Filtrado causal con incertidumbre de observación}\label{sec:kalman}
+
+Los factores observados cada sesión mezclan cambio real y error de ajuste. Se filtran con un modelo de
+estado lineal y el filtro de Kalman \citep{kalman1960}:
+\begin{equation}
+f_t=A f_{t-1}+\eta_t,\quad \eta_t\sim\mathcal N(0,Q);\qquad
+y_t=f_t+\varepsilon_t,\quad \varepsilon_t\sim\mathcal N(0,R_t),
+\label{eq:kalman}
+\end{equation}
+donde la varianza de observación $R_t$ \emph{depende de la calidad} de la sesión: ancho de spreads, número
+de strikes válidos y error de ajuste. Con calidad baja, el filtro confía menos en la observación y más en
+la dinámica. Si falta el snapshot, solo se ejecuta la predicción. Los parámetros $(A,Q,R_0)$ se estiman
+por máxima verosimilitud con datos de entrenamiento.
+
+Solo se usa el \emph{filtro}, que emplea información hasta $t$. Un suavizador que incorpore observaciones
+futuras produce series más limpias y backtests inválidos. La comparación obligada es con una media
+exponencial (EWMA) y con la persistencia: un filtro más complejo puede borrar señales rápidas
+(figuras~\ref{fig:kalman} y~\ref{fig:kalman_error}).
+
+\grafica[0.64]{s3_kalman}{Filtrado del primer factor en el mundo sintético. El filtro de Kalman, con $R_t$
+mayor en las sesiones de spreads amplios, sigue al factor latente; la EWMA suaviza el ruido pero llega
+tarde al choque de la sesión 170.}{fig:kalman}
+
+\grafica[0.6]{s3_kalman_error}{Error frente al factor latente por ventana de evaluación. Ningún método
+domina: la persistencia es casi tan buena con calidad normal, el filtro ayuda cuando los spreads son
+amplios y la EWMA falla tras el choque.}{fig:kalman_error}
+
+\subsection{La propuesta diferenciadora: la innovación}\label{sec:innovacion}
+
+Buena parte del cambio diario de la distribución implícita es predecible con información que ya está en
+el precio: si el mercado cae, la cola izquierda suele alargarse. Lo potencialmente informativo es lo que
+\emph{no} se explica así. Se define la innovación
+\begin{equation}
+\epsilon_t(u)=\Delta x_t(u)-\widehat{\E}\bigl[\Delta x_t(u)\mid\mathcal{I}_t^{base}\bigr],
+\label{eq:innovacion}
+\end{equation}
+donde $\mathcal I_t^{base}$ incluye el retorno ya observado del subyacente, su volatilidad, el movimiento
+de mercado y sector, el gap de apertura y el calendario conocido de resultados y dividendos
+(\figref{fig:innovacion_diagrama}). El modelo de expectativa se entrena \emph{solo con fechas anteriores};
+para una acción, además, se calcula la innovación relativa al mercado,
+$\epsilon^A_t-\beta\,\epsilon^M_t$, para separar señal idiosincrática de choque común.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d3_innovacion}}
+\caption{Construcción de la innovación. La resta se hace con una expectativa estimada exclusivamente con
+el pasado.}
+\label{fig:innovacion_diagrama}
+\end{figure}
+
+\grafica[0.6]{s3_innovacion_dispersion}{Cambio observado del cuantil 5\% de la acción A frente al esperado
+dado la información base. La distancia vertical a la diagonal es la innovación. El evento idiosincrático
+(círculo) alarga la cola sin movimiento de precio; el choque común (cuadrado) se explica solo en
+parte.}{fig:innovacion_dispersion}
+
+\grafica[0.64]{s3_innovacion_serie}{Innovación del mercado e innovación de la acción A relativa al mercado.
+En la versión relativa el choque común casi se cancela y el evento propio de A sobresale.}{fig:innovacion_serie}
+
+\begin{noconcluir}
+La innovación no prueba información privada ni causalidad. Es una variable candidata para pronosticar
+rendimientos \emph{posteriores} al instante de decisión, y su utilidad se mide fuera de muestra con el
+protocolo de la \secref{sec:evidencia}. En el mundo sintético de estas figuras, por diseño, la innovación
+no predice nada: solo se muestra cómo se calcula.
+\end{noconcluir}
+
+\subsection{Experimentos concretos}\label{sec:experimentos}
+
+La \tabref{tab:experimentos} lista los primeros experimentos. En ninguno se asume una dirección rentable
+antes de medirla.
+
+\begin{table}[H]
+\centering\small
+\caption{Primeros experimentos sobre la señal.}
+\label{tab:experimentos}
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight}p{3.4cm} Y Y@{}}
+\toprule
+\encab{Experimento} & \encab{Variable} & \encab{Pregunta}\\
+\midrule
+Cola izquierda frente al mercado & $\epsilon^A_t(u)-\beta\,\epsilon^M_t(u)$ para $u\le 0.10$ & ¿Aporta la
+deformación idiosincrática de la cola a los pronósticos de riesgo o rendimiento?\\
+Deformación entre plazos & Diferencia de $\Delta x_t(u)/\sqrt{\tau}$ entre 7, 30 y 60 días & ¿Distingue
+eventos de corto plazo de choques de nivel? Requiere cotizaciones suficientes en cada plazo.\\
+Persistencia & Autocorrelación de $\epsilon_t$ y su vida media & ¿La innovación se revierte, persiste o se
+incorpora al precio?\\
+Idiosincrático frente a común & Descomposición de $\epsilon^A_t$ en componente de mercado y residual & ¿Qué
+parte, si alguna, contiene información que no está en el mercado?\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\grafica[0.6]{s3_plazos_comun}{Cambio de cuantiles por plazo, normalizado por $\sqrt{\tau}$, ante un
+choque común de volatilidad: el perfil es parecido en los tres plazos, algo mayor en el corto.}{fig:plazos_comun}
+
+\grafica[0.6]{s3_plazos_evento}{Ante un evento dentro de los próximos 7 días, la distribución a 7 días se
+deforma mucho más que las de 30 y 60: la diferencia entre plazos es la huella del
+evento.}{fig:plazos_evento}
+
+\subsection{Dinámica de distribuciones como objetos}\label{sec:war}
+
+Como modelo avanzado se compara la autorregresión de factores con una autorregresión en espacio de
+Wasserstein \citep{zhang2022}. La idea: el espacio de distribuciones no es lineal, pero alrededor del
+baricentro de Wasserstein $\bar Q$ tiene un espacio tangente que sí lo es. En una dimensión el baricentro
+es el promedio de funciones cuantil, $\bar x(u)=\E[x_t(u)]$, y el ``logaritmo'' de $Q_t$ es simplemente
+$v_t(u)=x_t(u)-\bar x(u)$. Se ajusta un autorregresivo sobre $v_t$ y se regresa a funciones cuantil,
+proyectando cuando el pronóstico deja de ser creciente (\figref{fig:tangente}).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.86\linewidth}{!}{\input{diagramas/d3_tangente}}
+\caption{Autorregresión en el espacio tangente del baricentro. En una dimensión el espacio tangente
+coincide con el de cuantiles centrados, así que la PCA funcional de la \secref{sec:fpca} y este modelo son
+parientes cercanos: difieren en cómo parametrizan la dinámica.}
+\label{fig:tangente}
+\end{figure}
+
+Esta familia permite pronosticar distribuciones como objetos. Su uso aquí es una adaptación de
+investigación: no demuestra capacidad para anticipar el precio de las acciones.
+
+\subsection{Límites del transporte}\label{sec:limites}
+
+El transporte óptimo entre marginales \emph{no} identifica un proceso temporal del precio ni probabilidades
+de tocar un stop. Las figuras~\ref{fig:trayectorias_difusion} y~\ref{fig:trayectorias_transporte} lo
+muestran con 20\,000 trayectorias: ambas tienen exactamente las mismas distribuciones a 30 y 60 días, pero
+en una se reordenan como si cada cuantil siguiera su propio camino.
+
+\grafica[0.6]{s3_trayectorias_difusion}{Trayectorias de una difusión (muestra de 70). La probabilidad de
+tocar un stop en 90 antes de 60 días es la que indica el título.}{fig:trayectorias_difusion}
+
+\grafica[0.6]{s3_trayectorias_transporte}{Las mismas marginales leídas como trayectorias del mapa monótono:
+la probabilidad de tocar el stop cae casi a la mitad. Las marginales no deciden cuál de las dos es la
+correcta.}{fig:trayectorias_transporte}
+
+\begin{ideaclave}
+El campo de transporte es una descripción geométrica de cómo cambió la distribución, no una ley física
+que deba imponerse al mercado. Las probabilidades de trayectoria (stops, barreras, máximos) requieren un
+modelo dinámico explícito y su propia validación.
+\end{ideaclave}
+
+\begin{criterio}
+Separar ruido de cambios persistentes con filtros causales; todas las series de esta etapa calculables sin
+información futura y reproducibles con el snapshot de cada sesión.
+\end{criterio}

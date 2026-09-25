@@ -1,0 +1,122 @@
+% ============================================================================
+\clearpage
+\section{Arquitectura y operación diaria}\label{sec:arquitectura}
+% ============================================================================
+
+\ficha{Snapshots, parámetros versionados, posiciones y caja, calendario de mercado.}
+{Ejecutar la cadena de módulos en horarios fijos, registrar cada resultado y exponerlo por API e
+interfaz.}
+{Informe diario, recomendación o abstención, órdenes simuladas idempotentes y reconciliadas.}
+{Corrida reproducible con el mismo snapshot; ningún fallo aguas arriba se convierte en orden.}
+
+\subsection{Componentes}\label{sec:componentes}
+
+La implementación propuesta separa un motor cuantitativo en Python, almacenamiento de snapshots en
+Parquet consultable mediante DuckDB, metadatos de corridas y posiciones en SQLite, una API independiente y
+una interfaz web para distribuciones y decisiones (\figref{fig:arquitectura}). Es una propuesta de
+arquitectura, sin selección final de versiones ni benchmark de rendimiento.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d8_arquitectura}}
+\caption{Módulos del motor y servicios. Los colores siguen las tres capas: medición $\Q$ (azul),
+predicción $\P$ (naranja) y acción (verde).}
+\label{fig:arquitectura}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\caption{Responsabilidad de cada módulo. El paquete de referencia \texttt{quantileflow/} del repositorio
+contiene versiones mínimas de los bloques matemáticos, usadas para las figuras.}
+\label{tab:modulos}
+\begin{tabularx}{\linewidth}{@{}l Y l@{}}
+\toprule
+\encab{Módulo} & \encab{Responsabilidad} & \encab{Referencia}\\
+\midrule
+Ingestión & Capturar snapshots inmutables con ambos sellos de tiempo & ---\\
+Control de calidad & Filtros, estados de confianza y motivos de exclusión & ---\\
+Superficies & SSVI restringido, ajuste convexo, desamericanización & \texttt{superficies}, \texttt{opciones}\\
+Distribuciones & Breeden--Litzenberger, controles, cuantiles y soporte & \texttt{distribuciones}\\
+Transporte y factores & $W_1$, $W_2$, cambios firmados, PCA funcional, filtros & \texttt{transporte}, \texttt{filtrado}\\
+Predicción $\P$ & Modelos por objetivo y horizonte & \texttt{pronostico}\\
+Calibración & Reglas de puntuación, PIT, conformal adaptativo & \texttt{calibracion}\\
+Escenarios y decisión & Escenarios conjuntos, CVaR, costos, región casi óptima & \texttt{decision}\\
+Regímenes y evidencia & BOCPD, Sharpe deflactado, bootstrap, particiones & \texttt{regimenes}, \texttt{evidencia}\\
+Simulación y registro & Paper, reconciliación y trazabilidad & ---\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Trazabilidad y reproducibilidad}\label{sec:trazabilidad}
+
+Cada resultado conserva hashes de entrada, versión del modelo, parámetros, hora de corte y motivo de
+abstención. Con el mismo snapshot, la corrida se reproduce exactamente. El siguiente registro es un ejemplo
+ilustrativo de su forma, no una salida real:
+
+\begin{lstlisting}[style=registro]
+{
+  "corrida": "2026-09-25T09:45:00-04:00/SPY",
+  "hora_corte": "2026-09-25T09:45:00-04:00",
+  "snapshot": {"sha256": "3f9a...c21e", "fuente": "proveedor-a", "retraso_s": 0},
+  "codigo": {"version": "0.1.0", "commit": "a1b2c3d"},
+  "modelos": {"superficie": "ssvi-potencia", "p_h5": "qr-l1", "intervalos": "aci-gamma-0.01"},
+  "parametros_sha256": "9d04...7b10",
+  "confianza": {"datos": "apto", "ajuste": "degradado", "prediccion": "apto", "decision": "apto"},
+  "salida": {"accion": "mantener", "region_peso": [0.30, 0.46], "cvar95_5s": 0.031},
+  "abstencion": {"incrementos": "bloqueados", "motivo": "ajuste degradado: bandas de cola anchas"}
+}
+\end{lstlisting}
+
+\subsection{Calendario diario}\label{sec:calendario}
+
+La captura empieza en la apertura regular; la primera evaluación se hace alrededor de las 09:45 ET si la
+calidad alcanza el umbral, con una comprobación posterior a las 10:00 y un registro próximo al cierre
+(\figref{fig:calendario}). Las medias sesiones y los cambios de horario ajustan la agenda. Los canales
+cierre--apertura y apertura--apertura se mantienen separados.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d8_calendario}}
+\caption{Agenda de una sesión y canales de cambio. Con una fuente retrasada, el instante ejecutable de
+decisión se mueve.}
+\label{fig:calendario}
+\end{figure}
+
+\subsection{Pantalla}\label{sec:pantalla}
+
+La pantalla muestra distribuciones con bandas, el mapa temporal de cuantiles, los cambios de cola y sus
+innovaciones, los pronósticos $\P$ diferenciados de $\Q$, la posición actual frente a la propuesta con costos
+y riesgo conjunto, la razón de la decisión y el historial de calibración (\figref{fig:pantalla}).
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\linewidth}{!}{\input{diagramas/d8_pantalla}}
+\caption{Maqueta de la pantalla principal (estructura, sin datos). Los estados de confianza aparecen en la
+barra superior con icono y etiqueta.}
+\label{fig:pantalla}
+\end{figure}
+
+\begin{noconcluir}
+Un componente de lenguaje puede explicar resultados estructurados, pero no inventar cifras ni decidir
+tamaños por texto libre. Todo número que aparezca en la explicación debe provenir del registro de la
+corrida.
+\end{noconcluir}
+
+\subsection{Conector de paper y órdenes}\label{sec:ordenes}
+
+El conector de paper es un componente separado: órdenes idempotentes, reconciliación de posiciones y caja,
+cancelación y estado de ejecuciones (\figref{fig:ordenes}). Inicialmente el producto solo recomienda y
+registra; la simulación de ejecución se incorpora después de comprobar el motor.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d8_ordenes}}
+\caption{Ciclo de una orden simulada. La puerta de validación impide que un fallo de superficie o de datos
+se convierta silenciosamente en una orden; la clave idempotente evita duplicados en los reintentos.}
+\label{fig:ordenes}
+\end{figure}
+
+\begin{criterio}
+Operación reproducible en paper durante un periodo acordado, con fallos inyectados (datos faltantes,
+proveedor caído, ejecuciones parciales) manejados sin órdenes duplicadas ni posiciones descuadradas.
+\end{criterio}

@@ -1,0 +1,92 @@
+% ============================================================================
+% QuantileFlow — Propuesta técnica (versión de investigación)
+% Compilación: latexmk -pdf main.tex   (o `make pdf` desde la raíz)
+% ============================================================================
+\documentclass[11pt,letterpaper,oneside]{article}
+\input{preambulo}
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+% Portada
+% ---------------------------------------------------------------------------
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[qazul] (current page.north west) rectangle ([yshift=-0.32in]current page.north east);
+\end{tikzpicture}
+\vspace*{0.35in}
+
+{\sffamily\small\bfseries\color{qazul}QUANTILEFLOW\hfill
+\color{tinta2}\mdseries Versión de investigación \textperiodcentered{} 25 de septiembre de 2026}
+
+\vspace{0.9in}
+{\sffamily\fontsize{27}{32}\selectfont\bfseries\color{tinta}
+Seguimiento de distribuciones\\[2pt] implícitas y gestión diaria\\[2pt] de posiciones\par}
+
+\vspace{0.22in}
+{\sffamily\large\color{tinta2}Guía técnica del proceso: de las cotizaciones de opciones\\
+a la decisión sobre la posición\par}
+
+\vspace{0.55in}
+\begin{center}
+\begin{tikzpicture}[
+  capa/.style={rounded corners=4pt,minimum width=4.35cm,minimum height=2.2cm,align=center,
+    font=\sffamily,text=white},
+  sub/.style={font=\sffamily\footnotesize,text=white,align=center}]
+\node[capa,fill=qazul] (q) {\Large\bfseries Medición $\mathbb{Q}$\\[3pt]
+  \footnotesize lo que descuentan\\ \footnotesize las opciones};
+\node[capa,fill=qnaranja,right=0.55cm of q] (p) {\Large\bfseries Predicción $\mathbb{P}$\\[3pt]
+  \footnotesize lo que se espera\\ \footnotesize que ocurra};
+\node[capa,fill=qaqua,right=0.55cm of p] (a) {\Large\bfseries Acción\\[3pt]
+  \footnotesize mantener o\\ \footnotesize modificar la posición};
+\draw[-{Stealth[length=3mm,width=2.4mm]},line width=1.2pt,tinta2] (q) -- (p);
+\draw[-{Stealth[length=3mm,width=2.4mm]},line width=1.2pt,tinta2] (p) -- (a);
+\node[font=\sffamily\small,text=tinta2,below=4mm of p] {tres capas separadas, cada una con su propia evidencia};
+\end{tikzpicture}
+\end{center}
+
+\vfill
+\begin{tcolorbox}[enhanced,boxrule=0pt,arc=0pt,colback=grisfondo,borderline west={2.2pt}{0pt}{qazul},
+  left=10pt,right=10pt,top=8pt,bottom=8pt]
+\small\sffamily
+\textbf{Alcance.} Este documento explica, etapa por etapa, la arquitectura y el programa de
+experimentos de un sistema independiente que mide lo que descuentan las opciones, evalúa si esa
+información mejora los pronósticos de rendimiento y riesgo, y compara mantener o modificar una posición.
+\textbf{No presenta resultados empíricos ni modelos entrenados.} Todas las figuras numéricas se
+construyen con datos \emph{sintéticos} y semillas fijas (apéndice~\ref{ap:reproducibilidad}); sirven para
+explicar el método, no para sugerir su desempeño.
+\end{tcolorbox}
+\end{titlepage}
+
+% ---------------------------------------------------------------------------
+% Índice
+% ---------------------------------------------------------------------------
+\pagenumbering{roman}
+\setcounter{page}{2}
+{\hypersetup{linkcolor=tinta}
+\renewcommand{\contentsname}{Contenido}
+\linespread{1.0}\selectfont
+\tableofcontents}
+\clearpage
+\pagenumbering{arabic}
+
+\input{secciones/00_resumen}
+\input{secciones/01_producto}
+\input{secciones/02_datos}
+\input{secciones/03_transporte}
+\input{secciones/04_pronostico}
+\input{secciones/05_confianza}
+\input{secciones/06_decision}
+\input{secciones/07_evidencia}
+\input{secciones/08_arquitectura}
+\input{secciones/09_secuencia}
+\input{secciones/10_prioridades}
+
+\appendix
+\input{secciones/apendices}
+
+\clearpage
+\input{secciones/referencias}
+
+\end{document}

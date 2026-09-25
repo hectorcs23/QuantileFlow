@@ -1,0 +1,288 @@
+% ============================================================================
+\clearpage
+\section{Datos y reconstrucción: la primera capa de robustez}\label{sec:datos}
+% ============================================================================
+
+\ficha{Cotizaciones bid/ask de cadenas completas, subyacente sincronizado, tasas, dividendos y eventos
+corporativos, con sellos de tiempo de mercado y de recepción.}
+{Filtrar, estimar forward y descuento, convertir opciones americanas, ajustar una superficie sin
+arbitraje y extraer la densidad.}
+{Distribución $\Q_t$ a plazo constante, cuantiles, bandas de sensibilidad y soporte identificado.}
+{Nada se sobrescribe; densidad no negativa, masa próxima a uno y media igual al forward; colas sin
+soporte marcadas.}
+
+Todo lo que viene después depende de esta etapa. Un error aquí no produce una señal débil: produce una
+señal falsa con apariencia de precisión. Por eso la reconstrucción se diseña como una cadena de pasos
+auditables (\figref{fig:flujo_q}), cada uno con un control explícito.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d2_flujo}}
+\caption{Cadena de reconstrucción de $\Q$. Debajo de cada paso, el control que debe superar antes de
+alimentar al siguiente.}
+\label{fig:flujo_q}
+\end{figure}
+
+\subsection{Snapshots inmutables y datos puntuales en el tiempo}\label{sec:snapshots}
+
+Cada captura se guarda como un \emph{snapshot inmutable}: nunca se corrige en sitio; una corrección es
+un registro nuevo con su propia hora de publicación. Esto permite responder, para cualquier instante
+pasado, la única pregunta válida en un backtest: \emph{¿qué se sabía en ese momento?}
+La \tabref{tab:campos} resume los campos mínimos y por qué importan.
+
+\begin{table}[H]
+\centering\small
+\caption{Campos mínimos de cada snapshot.}
+\label{tab:campos}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Campo} & \encab{Por qué importa}\\
+\midrule
+Bid, ask y tamaños & La banda $[b,a]$ es la observación; el mid es solo un punto interior.\\
+Hora de mercado y de recepción & Separan cuándo ocurre un dato de cuándo se conoce (\figref{fig:puntual}).\\
+Subyacente sincronizado & Un desfase de segundos contamina el forward y la volatilidad implícita.\\
+Strike, vencimiento, estilo, multiplicador & Definen el contrato; el estilo americano exige conversión.\\
+Dividendos, tasas y eventos corporativos & Determinan forward, descuento y ajustes de contrato.\\
+Revisiones y open interest & Se guardan con su hora efectiva de disponibilidad, no con la del dato.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\resizebox{0.96\linewidth}{!}{\input{diagramas/d2_puntual}}
+\caption{Hora en que ocurre un dato frente a hora en que se conoce. En el corte de las 09:45 solo son
+utilizables las flechas que llegan a la línea inferior antes del corte: la cotización en tiempo real,
+el open interest del cierre anterior y, con una fuente retrasada, lo ocurrido a las 09:30. La revisión
+publicada a las 11:05 no existe para esa decisión aunque se refiera a un dato anterior.}
+\label{fig:puntual}
+\end{figure}
+
+\subsection{Contrato de datos y fuentes candidatas}\label{sec:contrato}
+
+Antes de adquirir historia extensa conviene validar una muestra contra un contrato explícito. El
+primer contrato debe demostrar, como mínimo:
+
+\begin{itemize}
+\item cadenas \emph{completas}, incluidos contratos ya vencidos, y paginación sin huecos;
+\item cobertura histórica \emph{a la hora de decisión}, no solo al cierre;
+\item acceso a cotizaciones de compra y venta. Las barras OHLC de operaciones no sustituyen una cadena
+contemporánea de cotizaciones: una operación puede ser antigua, aislada o fuera del spread;
+\item sellos de tiempo suficientes para reconstruir la sincronía con el subyacente.
+\end{itemize}
+
+\begin{table}[H]
+\centering\small
+\caption{Fuentes candidatas según la documentación citada en la propuesta. Cobertura, licencia y precio
+deben cotizarse; no se asumen.}
+\label{tab:fuentes}
+\begin{tabularx}{\linewidth}{@{}l Y Y@{}}
+\toprule
+\encab{Fuente} & \encab{Lo que documenta} & \encab{Uso previsto}\\
+\midrule
+Alpaca & Históricos de opciones desde febrero de 2024; el feed indicativo modifica cotizaciones
+\citep{alpaca}. & Explorar la integración. No se asume suficiente para estudiar cambios diarios pequeños
+de distribución.\\
+Cboe DataShop & Snapshots NBBO por intervalos con historia desde enero de 2012; entrega intradía estándar
+con 15 minutos de retraso \citep{cboe}. & Investigación histórica. Una decisión en apertura exige una
+fuente con latencia adecuada o retrasar explícitamente la decisión.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{criterio}
+Cadenas reconstruibles en el instante de decisión, con cobertura y costo conocidos, validadas sobre una
+muestra antes de comprar historia extensa.
+\end{criterio}
+
+\subsection{De cotizaciones a precios ajustados}\label{sec:ajuste_precios}
+
+\paragraph{Forward y descuento} Para opciones europeas, la paridad put--call
+$C(K)-P(K)=D\,(F-K)$ permite estimar $D$ y $F$ por regresión de $C-P$ sobre $K$ cerca del dinero. Con
+opciones americanas con dividendos la paridad es solo una desigualdad; entonces $D$ proviene de la curva
+de tasas y $F$ del subyacente, las tasas y los dividendos esperados, y la paridad se usa como control de
+calidad.
+
+\paragraph{Selección y filtros} Se trabaja con opciones fuera del dinero (puts bajo el forward, calls por
+encima), más líquidas y con menor valor intrínseco. Se excluyen, registrando el motivo, las cotizaciones
+cruzadas, rancias o con spread anómalo. Una cotización con bid nulo no se descarta sin más: su ask sigue
+siendo una cota superior útil, aunque no identifica la cola (\figref{fig:cotizaciones}).
+
+\grafica{s2_cotizaciones_precio}{Cotizaciones OTM a 30 días en el mundo sintético. Cada segmento vertical
+es un intervalo bid--ask; los triángulos son cotizaciones con bid nulo, que solo acotan el precio por
+arriba. La curva es el ajuste SSVI en espacio de precios.}{fig:cotizaciones}
+
+\paragraph{Ajuste en espacio de precios} El midpoint no es una verdad exacta: cualquier precio dentro de
+$[b_i,a_i]$ es compatible con la cotización. Por eso el residuo de cada contrato es su \emph{distancia a la
+banda}, medida en medios spreads $s_i=\max\{(a_i-b_i)/2,\ \text{tick}\}$:
+\begin{equation}
+\min_{\vartheta\in\Theta}\ \sum_i \omega_i\left[\frac{(b_i-C_i(\vartheta))^+ + (C_i(\vartheta)-a_i)^+}{s_i}\right]^2
++\eta\sum_i \omega_i\left[\frac{C_i(\vartheta)-m_i}{s_i}\right]^2+\mathcal{R}(\vartheta),
+\label{eq:perdida_banda}
+\end{equation}
+donde $C_i(\vartheta)$ es el precio del modelo, $m_i$ el mid, $\eta$ un peso pequeño que solo desempata
+entre precios igualmente compatibles y $\mathcal R$ una regularización, por ejemplo hacia el ajuste de la
+sesión anterior. Ajustar en precios y no en volatilidades evita dar peso excesivo a las alas, donde un
+spread de un tick equivale a varios puntos de volatilidad (\figref{fig:cotizaciones_vol}).
+
+\grafica{s2_cotizaciones_vol}{La misma cadena en volatilidad implícita. Los intervalos se ensanchan en las
+alas y las cotizaciones con bid nulo solo dan cotas superiores cada vez más altas: en volatilidad, esas
+cotas parecen ``información'' sobre la cola derecha que en realidad no existe.}{fig:cotizaciones_vol}
+
+\grafica[0.6]{s2_perdida_banda}{Pérdida de una cotización con bid 1.00 y ask 1.20. La pérdida cuadrática
+al mid penaliza precios perfectamente compatibles; la distancia a la banda es casi nula dentro del
+intervalo y crece fuera de él.}{fig:perdida_banda}
+
+\subsection{SSVI y ausencia de arbitraje estático}\label{sec:ssvi}
+
+El modelo base es SSVI \citep{gatheral2014}, que describe la varianza implícita total $w=\sigma^2T$ como
+función del log-moneyness $k=\ln(K/F)$ y de la varianza total en el dinero $\theta_T$ de cada vencimiento:
+\begin{equation}
+w(k,\theta_T)=\frac{\theta_T}{2}\Bigl\{1+\rho\,\varphi(\theta_T)\,k+\sqrt{\bigl(\varphi(\theta_T)k+\rho\bigr)^2+1-\rho^2}\Bigr\},
+\qquad \varphi(\theta)=\frac{\eta}{\theta^{\gamma}(1+\theta)^{1-\gamma}}.
+\label{eq:ssvi}
+\end{equation}
+El parámetro $\rho$ controla la asimetría, $\varphi$ la curvatura y el peso de las alas, y $\theta_T$ el
+nivel por vencimiento. Una SVI sin restricciones no garantiza ausencia de arbitraje; SSVI admite
+condiciones suficientes sencillas:
+
+\begin{itemize}
+\item \textbf{Calendario:} $\theta_T$ no decreciente en $T$ y
+$0\le\partial_\theta\bigl(\theta\varphi(\theta)\bigr)\le\rho^{-2}\bigl(1+\sqrt{1-\rho^2}\bigr)\varphi(\theta)$.
+\item \textbf{Mariposa:} $\theta\varphi(\theta)(1+|\rho|)<4$ y $\theta\varphi(\theta)^2(1+|\rho|)\le 4$.
+\item \textbf{Función de potencia:} con $0<\gamma\le 1/2$ y $\eta(1+|\rho|)\le 2$ se cumplen ambas familias
+de condiciones, siempre que $\theta_T$ sea no decreciente.
+\end{itemize}
+
+La primera condición de mariposa es coherente con la fórmula de momentos de \citet{lee2004}: la pendiente
+asintótica de la varianza total no puede superar 2.
+
+\begin{notatecnica}[Restricciones por construcción]
+En la implementación de referencia las restricciones no se verifican a posteriori: se imponen con una
+reparametrización sin restricciones, $\rho=0.999\tanh(a)$, $\gamma=\tfrac12\,\sigma(b)$,
+$\eta=2\sigma(c)/(1+|\rho|)$ y $\theta_i=\sum_{j\le i}e^{d_j}$, con $\sigma$ la función logística. Cuando
+el ajuste queda en la frontera de la región suficiente (como en la \figref{fig:ssvi_region}), conviene
+registrarlo: la región es suficiente, no necesaria, y una restricción activa puede estar sesgando la
+forma.
+\end{notatecnica}
+
+\grafica[0.6]{s2_ssvi_rebanadas}{Rebanadas de varianza total ajustadas para 7, 30, 60 y 91 días en el mundo
+sintético. No se cruzan: esa es la forma gráfica de la ausencia de arbitraje de calendario.}{fig:ssvi_rebanadas}
+
+\grafica[0.6]{s2_ssvi_region}{Región suficiente de la función de potencia en el plano $(|\rho|,\eta)$ con
+$\gamma\le 1/2$. El cuadrado es el valor verdadero del mundo sintético; el círculo, el ajuste, que queda
+en la frontera.}{fig:ssvi_region}
+
+La prueba directa de mariposa usa la función $g$ de Durrleman, en la forma de \citet{gatheral2014}:
+con $w'$ y $w''$ derivadas respecto de $k$,
+\begin{equation}
+g(k)=\Bigl(1-\frac{k\,w'}{2w}\Bigr)^2-\frac{(w')^2}{4}\Bigl(\frac1w+\frac14\Bigr)+\frac{w''}{2},
+\label{eq:g}
+\end{equation}
+y la densidad de $x=\ln(S_T/F)$ es $p(k)=g(k)\,(2\pi w)^{-1/2}\exp\{-d_-(k)^2/2\}$ con
+$d_-(k)=-k/\sqrt{w}-\sqrt{w}/2$. Una rebanada tiene densidad no negativa si y solo si $g\ge 0$
+(\figref{fig:funcion_g}).
+
+\grafica[0.6]{s2_funcion_g}{Función $g(k)$ para una rebanada SSVI restringida y para una SVI sin
+restricciones con parámetros publicados como contraejemplo en \citet{gatheral2014}. Donde $g<0$ la
+densidad implícita sería negativa: un arbitraje de mariposa.}{fig:funcion_g}
+
+\paragraph{Comparación independiente} Como contraste se ajusta, sin forma paramétrica de volatilidad, una
+densidad discreta $q_j\ge 0$ sobre una malla $x_j$:
+\begin{equation}
+C(K)=D\sum_j q_j\,(x_j-K)^+,\qquad \sum_j q_j=1,\qquad \sum_j q_j x_j=F.
+\label{eq:convexo}
+\end{equation}
+Cualquier $q\ge0$ produce precios decrecientes y convexos en $K$, y las dos igualdades fijan la masa y la
+media del forward. Con un precio auxiliar $p_i\in[b_i,a_i]$ por cotización, la pérdida por banda se vuelve
+un problema de mínimos cuadrados lineales con cotas, convexo y rápido de resolver, al que se añade una
+penalización de suavidad sobre $q$. Donde SSVI y este ajuste discrepan hay \emph{riesgo de modelo}, no un
+dato \citep{aitsahalia1998}.
+
+\subsection{Opciones americanas y equivalentes europeos}\label{sec:americanas}
+
+SPY y las acciones individuales tienen opciones americanas; la identidad de extracción de la
+\secref{sec:bl} es europea. Hay dos caminos: convertir cada cotización en un equivalente europeo con un
+modelo que incluya ejercicio anticipado y dividendos, o excluir las observaciones donde la conversión sea
+demasiado incierta. La conversión estándar (\emph{desamericanización}) tiene dos pasos: invertir el precio
+americano con un árbol binomial \citep{cox1979} o diferencias finitas con dividendos discretos para obtener
+una volatilidad, y valorar con ella la opción europea equivalente \citep{burkovska2018}.
+
+Seleccionar opciones fuera del dinero reduce el problema pero no lo elimina
+(figuras~\ref{fig:americanas_puts} y~\ref{fig:americanas_calls}). El error de conversión depende del
+modelo y de los dividendos supuestos; por eso se contrasta dentro de los escenarios de incertidumbre
+(\secref{sec:bandas}) en lugar de tratarlo como exacto.
+
+\grafica[0.6]{s2_americanas_puts}{Sesgo, en puntos de volatilidad, de tratar puts americanas como europeas
+(líneas continuas), comparado con medio spread expresado en volatilidad (discontinuas). A 91 días el sesgo
+de puts cerca del dinero ya es comparable con medio spread, aunque estén fuera del dinero.}{fig:americanas_puts}
+
+\grafica[0.6]{s2_americanas_calls}{Lo mismo para calls con un dividendo en efectivo dentro del plazo. Las
+calls dentro del dinero antes de la fecha ex-dividendo tienen una prima de ejercicio anticipado grande; las
+calls fuera del dinero apenas se ven afectadas.}{fig:americanas_calls}
+
+\subsection{Extracción de la densidad}\label{sec:bl}
+
+Para calls europeas y descuento determinista $D(t,T)$ se cumple \citep{breeden1978}
+\begin{equation}
+q^{\Q}_t(K,T)=\frac{1}{D(t,T)}\,\frac{\partial^2 C_t(K,T)}{\partial K^2},\qquad
+\Q_t(S_T\le K)=1+\frac{1}{D(t,T)}\,\frac{\partial C_t(K,T)}{\partial K}.
+\label{eq:bl}
+\end{equation}
+La identidad se aplica al \emph{precio ajustado}, nunca a diferencias de cotizaciones crudas: una segunda
+derivada amplifica el ruido de redondeo y de spread hasta producir densidades negativas
+(figuras~\ref{fig:densidad_cruda} y~\ref{fig:densidad_ajustada}).
+
+\grafica[0.62]{s2_densidad_cruda}{Segundas diferencias de los mids crudos (mundo sintético con strikes cada
+punto). La curva discontinua es la densidad verdadera, desconocida en la práctica; los puntos rojos son
+valores negativos, imposibles para una densidad.}{fig:densidad_cruda}
+
+\grafica[0.62]{s2_densidad_ajustada}{La misma identidad sobre precios ajustados. La densidad SSVI integra
+0.9998 en la malla y su media es $1.0001F$; el ajuste monótono--convexo, independiente, coincide en el
+cuerpo.}{fig:densidad_ajustada}
+
+Los controles mínimos de cada densidad son tres, y se registran con su valor numérico:
+
+\begin{enumerate}
+\item \textbf{No negatividad} en toda la malla evaluada.
+\item \textbf{Masa próxima a uno}. La masa que falta está en colas sin strikes y se reporta; no se
+redistribuye en silencio.
+\item \textbf{Primer momento compatible con el forward}: $\E^{\Q}[S_T]=F$.
+\end{enumerate}
+
+También se documentan el error numérico (paso de la malla, diferencias finitas) y la sensibilidad a la
+extrapolación de strikes extremos.
+
+\begin{noconcluir}
+La media de $\Q$ está fijada por el forward. No es una expectativa de rentabilidad real y no contiene, por
+construcción, ninguna opinión del mercado sobre el signo del rendimiento esperado.
+\end{noconcluir}
+
+\subsection{Conjunto de superficies plausibles y colas no identificadas}\label{sec:bandas}
+
+Un solo ajuste oculta cuánto podría variar la distribución sin dejar de ser compatible con las
+cotizaciones. Por eso se mantiene un \emph{conjunto} de superficies plausibles, coherentes con los spreads
+y las restricciones: se sortean precios objetivo dentro de cada $[b_i,a_i]$, se reajustan ambos métodos y
+se repite con supuestos alternativos de dividendos y desamericanización. De ese conjunto salen bandas para
+cuantiles y probabilidades de cola (figuras~\ref{fig:bandas_densidad} y~\ref{fig:bandas_cuantiles}).
+
+\grafica[0.62]{s2_bandas_densidad}{Bandas de densidades compatibles con los spreads, en escala logarítmica.
+La banda SSVI es estrecha incluso donde no hay strikes fiables (más allá de los cuadrados): esa precisión
+la pone la forma paramétrica, no los datos. El ajuste monótono--convexo muestra cuánto se ignora
+realmente en las colas.}{fig:bandas_densidad}
+
+\grafica[0.62]{s2_bandas_cuantiles}{Ancho de la banda de sensibilidad de cada cuantil. Los cuadrados marcan
+el rango identificado $[u_{\min},u_{\max}]$, definido por los strikes fiables más extremos; fuera de él
+los cuantiles se reportan como no identificados.}{fig:bandas_cuantiles}
+
+\begin{noconcluir}
+Estas bandas son de \emph{sensibilidad}: describen qué distribuciones son compatibles con los datos y los
+supuestos. No son intervalos de confianza estadísticos, porque no hay un modelo de observación que lo
+justifique. Si falta soporte en una cola, se marca como no identificada; no se rellena con precisión
+artificial.
+\end{noconcluir}
+
+\begin{criterio}
+Coherencia matemática (controles de la \secref{sec:bl} superados en cada sesión) y estabilidad de
+cuantiles y colas frente a perturbaciones plausibles de spreads y supuestos.
+\end{criterio}

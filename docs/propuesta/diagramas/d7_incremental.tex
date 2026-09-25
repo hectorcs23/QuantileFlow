@@ -1,0 +1,14 @@
+% Comparación incremental A-E: cada paso añade información, no capacidad del modelo.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  paso/.style={draw=qazul,fill=qazul!#1,rounded corners=2pt,line width=0.6pt,anchor=south west,
+    text width=2.55cm,align=center,font=\sffamily\scriptsize,text=tinta,inner sep=3pt}]
+\node[paso=6,minimum height=1.0cm] (A) at (0,0) {\textbf{A}\\ precio, volumen\\ y volatilidad};
+\node[paso=12,minimum height=1.55cm] (B) at (2.95,0) {\textbf{B = A +}\\ distribución $\Q$ actual};
+\node[paso=18,minimum height=2.1cm] (C) at (5.9,0) {\textbf{C = B +}\\ cambios simples};
+\node[paso=24,minimum height=2.65cm] (D) at (8.85,0) {\textbf{D = C +}\\ transporte e\\ innovaciones};
+\node[paso=30,minimum height=3.2cm] (E) at (11.8,0) {\textbf{E = D +}\\ aceleración y\\ regímenes};
+\foreach \a/\b in {A/B,B/C,C/D,D/E} \draw[flecha] (\a.east) ++(0,0.3) -- ++(0.36,0);
+\draw[guia,line width=0.7pt] (-0.1,-0.05) -- (14.5,-0.05);
+\node[nota,anchor=north] at (7.2,-0.15) {misma familia de predicción e hiperparámetros equivalentes en cada comparación:
+  la mejora se atribuye a la información añadida, no a más capacidad};
+\end{tikzpicture}

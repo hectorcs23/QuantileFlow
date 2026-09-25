@@ -1,0 +1,41 @@
+% Mapa del proceso: medición Q, predicción P y acción, con capas transversales.
+\begin{tikzpicture}[
+  n/.style={caja=#1,text width=2.28cm,minimum height=11.5mm},
+  etq/.style={cajallena=#1,text width=1.62cm,minimum height=11.5mm,font=\sffamily\tiny\bfseries},
+  node distance=4.2mm and 4.2mm]
+% --- Medición Q -------------------------------------------------------------
+\node[etq=qazul] (lq) {MEDICIÓN\\ Q};
+\node[n=qazul,right=of lq] (q1) {Snapshots bid/ask\\ sincronizados};
+\node[n=qazul,right=of q1] (q2) {Calidad, forward\\ y desamericanización};
+\node[n=qazul,right=of q2] (q3) {Superficie sin\\ arbitraje (SSVI)};
+\node[n=qazul,right=of q3] (q4) {Densidad, cuantiles\\ y bandas};
+\node[n=qazul,right=of q4] (q5) {Transporte, factores\\ e innovación};
+\foreach \a/\b in {q1/q2,q2/q3,q3/q4,q4/q5} \draw[flecha] (\a) -- (\b);
+% --- Predicción P -----------------------------------------------------------
+\node[etq=qnaranja,below=10mm of lq] (lp) {PREDICCIÓN\\ P};
+\node[n=qnaranja,right=of lp] (p1) {Información base:\\ precio, vol., mercado};
+\node[n=qnaranja,right=of p1] (p2) {Modelos P por\\ objetivo y horizonte};
+\node[n=qnaranja,right=of p2] (p3) {Combinación y\\ calibración temporal};
+\node[n=qnaranja,right=of p3] (p4) {Pronósticos P\\ calibrados};
+\node[n=qnaranja,right=of p4] (p5) {Regímenes y\\ confianza medible};
+\foreach \a/\b in {p1/p2,p2/p3,p3/p4,p4/p5} \draw[flecha] (\a) -- (\b);
+% --- Acción -----------------------------------------------------------------
+\node[etq=qaqua,below=10mm of lp] (la) {ACCIÓN};
+\node[n=qaqua,right=of la] (a1) {Escenarios\\ conjuntos P};
+\node[n=qaqua,right=of a1] (a2) {Costo, riesgo y\\ rendimiento (CVaR)};
+\node[n=qaqua,right=of a2] (a3) {Zona de no\\ operación};
+\node[n=qaqua,right=of a3] (a4) {Recomendación\\ o abstención};
+\node[n=qaqua,right=of a4] (a5) {Paper, registro y\\ reconciliación};
+\foreach \a/\b in {a1/a2,a2/a3,a3/a4,a4/a5} \draw[flecha] (\a) -- (\b);
+% --- Conexiones entre capas -------------------------------------------------
+\draw[flecha] (q5.south) -- ++(0,-0.32) -| (p2.north);
+\draw[flecha] (p4.south) -- ++(0,-0.32) -| (a1.north);
+\draw[flecha] (p5.south) -- ++(0,-0.6) -| (a4.north);
+% --- Capas transversales ----------------------------------------------------
+\node[caja=tenue,below=7mm of a1.south west,anchor=north west,minimum width=14.85cm,text width=14.5cm,
+  minimum height=7mm] (reg) {\textbf{Registro reproducible}: hashes de entrada, versión de modelo, parámetros,
+  hora de corte y motivo de abstención en cada corrida};
+\node[caja=tenue,below=2mm of reg,minimum width=14.85cm,text width=14.5cm,minimum height=7mm] (conf)
+  {\textbf{Confianza}: calidad de datos $\cdot$ sensibilidad del ajuste $\cdot$ incertidumbre predictiva
+  $\cdot$ estabilidad de la decisión};
+\end{tikzpicture}

@@ -1,0 +1,37 @@
+% Calendario diario (hora del Este) y canales de cambio.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  hito/.style={circle,fill=#1,minimum size=2.6mm,inner sep=0pt},
+  nota/.style={font=\sffamily\scriptsize,text=tinta2,align=center}]
+% Agenda vertical
+\draw[guia,line width=0.8pt] (0,0.3) -- (0,-4.6);
+\node[hito=qazul] at (0,0) {};
+\node[titulo,anchor=east] at (-0.3,0) {09:30};
+\node[nota,anchor=west,text=tinta,align=left] at (0.35,0) {\textbf{Apertura regular}: empieza la captura de snapshots};
+\node[hito=qazul] at (0,-1.1) {};
+\node[titulo,anchor=east] at (-0.3,-1.1) {09:45};
+\node[nota,anchor=west,text=tinta,align=left] at (0.35,-1.1) {\textbf{Primera evaluación}, solo si la calidad\\ alcanza el umbral};
+\node[hito=qazul] at (0,-2.2) {};
+\node[titulo,anchor=east] at (-0.3,-2.2) {10:00};
+\node[nota,anchor=west,text=tinta,align=left] at (0.35,-2.2) {\textbf{Comprobación posterior}: ¿la recomendación\\ es estable respecto de la de 09:45?};
+\node[hito=qaqua] at (0,-3.3) {};
+\node[titulo,anchor=east] at (-0.3,-3.3) {$\approx$15:50};
+\node[nota,anchor=west,text=tinta,align=left] at (0.35,-3.3) {\textbf{Registro} próximo al cierre};
+\node[hito=tenue] at (0,-4.35) {};
+\node[titulo,anchor=east] at (-0.3,-4.35) {16:00};
+\node[nota,anchor=west,text=tinta,align=left] at (0.35,-4.35) {Cierre; medias sesiones y cambios de horario\\ ajustan esta agenda};
+% Canales de cambio
+\begin{scope}[xshift=8.3cm,yshift=-0.4cm]
+\node[titulo,anchor=west] at (0,1.0) {Dos canales que no se mezclan};
+\fill[grisclaro] (0,-0.9) rectangle (2.2,-0.5);
+\fill[grisclaro] (3.2,-0.9) rectangle (5.4,-0.5);
+\node[nota,anchor=north] at (1.1,-0.95) {sesión $t-1$};
+\node[nota,anchor=north] at (4.3,-0.95) {sesión $t$};
+\draw[flecha,draw=qnaranja,line width=0.8pt] (2.2,-0.45) .. controls (2.5,0.15) and (2.9,0.15) .. (3.2,-0.45);
+\node[nota,anchor=south] at (2.7,0.2) {cierre $\to$ apertura};
+\draw[flecha,draw=qazul,line width=0.8pt] (0.25,-1.35) .. controls (1.4,-2.0) and (2.3,-2.0) .. (3.45,-1.35);
+\node[nota,anchor=north] at (1.85,-1.95) {apertura $\to$ apertura};
+\node[nota,anchor=north west,text width=6.2cm,align=left] at (0,-2.45) {Con una fuente retrasada 15 minutos, el
+  instante \emph{ejecutable} de decisión se mueve en la misma cantidad: la evaluación de 09:45 solo puede
+  usar datos hasta 09:30.};
+\end{scope}
+\end{tikzpicture}

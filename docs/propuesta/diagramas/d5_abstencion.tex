@@ -1,0 +1,27 @@
+% Regla de abstención: los incrementos exigen tres condiciones; las reducciones por límites van aparte.
+\begin{tikzpicture}[
+  pregunta/.style={diamond,aspect=2.6,draw=qazul,fill=qazul!7,line width=0.6pt,align=center,
+    font=\sffamily\scriptsize,text=tinta,inner sep=1.2pt,text width=2.7cm},
+  bloque/.style={caja=critico,text width=3.6cm},
+  permite/.style={caja=bueno,text width=3.6cm},
+  node distance=6mm and 9mm]
+\node[caja=tenue,text width=3.4cm] (ini) {Nueva sesión: snapshot, ajuste y pronósticos};
+\node[pregunta,below=of ini] (d1) {¿Datos aptos?\\ cobertura, spreads, retraso};
+\node[pregunta,below=of d1] (d2) {¿Ajuste estable?\\ bandas, contraste de métodos};
+\node[pregunta,below=of d2] (d3) {¿Evidencia predictiva\\ relevante y calibrada?};
+\node[permite,below=of d3] (ok) {Se permiten incrementos basados en señal, dentro de límites y fuera de la zona de no operación};
+\node[bloque,right=of d1] (b1) {Bloquear incrementos basados en señal y comunicar el problema};
+\node[caja=alerta,text width=3.6cm,right=of d3] (b3) {Sin nuevas entradas: mantener o reducir; registrar el motivo};
+\draw[flecha] (ini) -- (d1);
+\draw[flecha] (d1) -- node[nota,right]{sí} (d2);
+\draw[flecha] (d2) -- node[nota,right]{sí} (d3);
+\draw[flecha] (d3) -- node[nota,right]{sí} (ok);
+\draw[flecha] (d1) -- node[nota,above]{no} (b1);
+\draw[flecha] (d2.east) -| node[nota,pos=0.25,above]{no} (b1.south);
+\draw[flecha] (d3) -- node[nota,above]{no} (b3);
+% Rama independiente de límites de riesgo
+\node[caja=qaqua,text width=3.5cm,left=14mm of d2] (lim) {Límites de riesgo definidos de antemano (concentración, CVaR, pérdidas)};
+\node[caja=qaqua,text width=3.5cm,below=of lim] (red) {Evaluar reducciones con datos adecuados, aunque el modelo se abstenga};
+\draw[flecha] (lim) -- (red);
+\node[nota,text width=3.6cm,below=1mm of red] {abstenerse del modelo no significa ignorar una exposición existente};
+\end{tikzpicture}

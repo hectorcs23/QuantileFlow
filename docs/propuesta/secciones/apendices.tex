@@ -1,0 +1,131 @@
+% ============================================================================
+\clearpage
+\section{Notación}\label{ap:notacion}
+% ============================================================================
+
+\begin{table}[H]
+\centering\small
+\caption{Símbolos principales. Algunos se reutilizan con significado local ($\alpha$, $\varepsilon$, $r$);
+el contexto de cada sección los desambigua.}
+\label{tab:notacion}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Símbolo} & \encab{Significado}\\
+\midrule
+$S_t$, $F_{t,\tau}$, $D(t,T)$ & Precio del subyacente, forward al plazo $\tau$ y factor de descuento\\
+$K$, $T$, $\tau$ & Strike, vencimiento y plazo constante de la distribución implícita (30 días)\\
+$k=\ln(K/F)$, $w=\sigma^2T$ & Log-moneyness y varianza implícita total\\
+$\theta_T$, $\rho$, $\varphi$, $\eta$, $\gamma$ & Parámetros SSVI: varianza ATM, asimetría, curvatura y función de potencia\\
+$b_i$, $a_i$, $m_i$, $s_i$ & Bid, ask, mid y medio spread de la cotización $i$\\
+$q^{\Q}(K)$, $g(k)$ & Densidad implícita del precio y función de Durrleman\\
+$x_t(u)$, $u$ & Cuantil de $\ln(S_{t+\tau}/F_{t,\tau})$ bajo $\Q_t$ y nivel de probabilidad\\
+$W_1$, $W_2$, $\Delta x_t(u)$ & Distancias de Wasserstein y cambio firmado de cuantiles\\
+$\phi_j(u)$, $s_{tj}$ & Autofunciones y puntajes de la PCA funcional\\
+$f_t$, $A$, $Q$, $R_t$ & Estado, transición, ruido de estado y ruido de observación del filtro\\
+$\mathcal I^{base}_t$, $\epsilon_t(u)$ & Información base e innovación de la distribución implícita\\
+$Y_{t,h}$, $d_{t,h}$ & Objetivo a horizonte $h$ y diferencial de pérdida entre modelos\\
+$\rho_\tau$, CRPS, Brier & Pérdida cuantílica y reglas de puntuación\\
+$r_t$, $H$ & Longitud de corrida y probabilidad de riesgo de BOCPD\\
+$\alpha_t$, $\gamma$ & Nivel efectivo y paso del conformal adaptativo\\
+$w$, $\kappa$, $\lambda$, $\mathcal C_t$ & Pesos, costos proporcionales, aversión al riesgo y conjunto factible\\
+$\CVaR_\alpha$, $\mathcal R_\delta$ & Valor en riesgo condicional al nivel $\alpha$ y región casi óptima\\
+$\mathcal B_\varepsilon(\widehat P_t)$ & Bola de Wasserstein de radio $\varepsilon$ alrededor de la distribución estimada\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+\section{Glosario}\label{ap:glosario}
+% ============================================================================
+
+\begin{description}[leftmargin=0pt,itemsep=3pt,font=\sffamily\bfseries\small]
+\item[Arbitraje estático.] Combinación de opciones de un mismo instante que asegura ganancia sin riesgo. Sus
+dos formas son de \emph{calendario} (entre vencimientos) y de \emph{mariposa} (entre strikes).
+\item[Breeden--Litzenberger.] Identidad que obtiene la densidad implícita como segunda derivada del precio
+de las calls respecto del strike.
+\item[BOCPD.] Detección bayesiana en línea de puntos de cambio mediante la posterior de la longitud de corrida.
+\item[Conformal adaptativo.] Método de intervalos que ajusta su nivel efectivo según los errores recientes y
+garantiza la tasa de error promedio a largo plazo.
+\item[CRPS.] Regla de puntuación de pronósticos de distribución; integra la pérdida cuantílica en todos los niveles.
+\item[CVaR.] Promedio de las pérdidas en la cola especificada (por ejemplo, el 5\% peor) bajo los escenarios supuestos.
+\item[Desamericanización.] Conversión de precios de opciones americanas en equivalentes europeos mediante un
+modelo con ejercicio anticipado y dividendos.
+\item[Embargo y purga.] Eliminación de observaciones cuya etiqueta cruza una frontera temporal entre tramos, más
+un margen de seguridad.
+\item[Idempotencia.] Propiedad de una orden cuyo reintento con la misma clave no crea duplicados.
+\item[Innovación.] Parte del cambio de la distribución implícita no explicada por la información base.
+\item[PIT.] Valor $F(y)$ del pronóstico en el resultado observado; uniforme si el pronóstico está calibrado.
+\item[$\Q$ y $\P$.] Distribución implícita en los precios de las opciones y distribución física de los
+rendimientos.
+\item[Región casi óptima.] Conjunto de carteras factibles cuyo valor estimado está dentro de la incertidumbre
+del óptimo; base de la zona de no operación.
+\item[Sharpe deflactado.] Probabilidad de que el Sharpe verdadero supere el máximo esperado por azar dado el
+número de variantes probadas.
+\item[SSVI.] Parametrización de la superficie de varianza implícita con condiciones suficientes sencillas de
+ausencia de arbitraje estático.
+\item[Transporte óptimo.] Forma de mover la masa de una distribución a otra con costo mínimo; en una dimensión
+es el reordenamiento monótono de cuantiles.
+\end{description}
+
+% ============================================================================
+\section{Decisiones pendientes}\label{ap:pendientes}
+% ============================================================================
+
+\begin{table}[H]
+\centering\small
+\caption{Decisiones que parametrizan el sistema y dónde se usan.}
+\label{tab:pendientes}
+\begin{tabularx}{\linewidth}{@{}c l Y@{}}
+\toprule
+& \encab{Decisión} & \encab{Dónde se usa}\\
+\midrule
+\iconopendiente & Universo definitivo & Datos, escenarios conjuntos, límites de concentración\\
+\iconopendiente & Moneda de los 50,000 & Costos, conversión, benchmark comparable\\
+\iconopendiente & Posiciones actuales & Comparación mantener frente a modificar; zona de no operación\\
+\iconopendiente & Horizonte de decisión principal & Objetivos, pérdidas, etiquetas y purga\\
+\iconopendiente & Presupuesto y proveedor de datos & Historia disponible, latencia y horario de decisión\\
+\iconopendiente & Modelo de costos & Programa lineal y zona de no operación\\
+\iconopendiente & Presupuesto de riesgo y límites & Conjunto factible $\mathcal C_t$ y reducciones obligatorias\\
+\iconopendiente & ¿Se gestionarán opciones? & Rama de revaluación completa\\
+\iconopendiente & Umbrales de la regla de avance & Deben fijarse antes de abrir la prueba final\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+\section{Reproducibilidad de las figuras}\label{ap:reproducibilidad}
+% ============================================================================
+
+Todas las gráficas se generan con datos sintéticos, semillas fijas y el paquete de referencia
+\texttt{quantileflow/} del repositorio. Se dibujan con matplotlib en su estilo por defecto, una figura por
+gráfica y con textos en inglés; los pies, en español, explican cada una. Desde la raíz del repositorio:
+
+\begin{lstlisting}[style=registro]
+pip install -r requirements.txt
+python -m pytest                              # pruebas de propiedades del núcleo
+python docs/propuesta/figuras_src/generar.py  # regenera las 62 figuras PNG
+make pdf                                      # compila este documento
+\end{lstlisting}
+
+\begin{table}[H]
+\centering\small
+\caption{Origen de las figuras.}
+\label{tab:origen}
+\begin{tabularx}{\linewidth}{@{}l l Y@{}}
+\toprule
+\encab{Figuras} & \encab{Script} & \encab{Mundo sintético}\\
+\midrule
+\texttt{s1\_*}, \texttt{s2\_*} & \texttt{fig\_s1\_s2.py} & Calendario de 30 días; cadena SSVI con spreads y bid nulo\\
+\texttt{s3\_*} & \texttt{fig\_s3.py} & Panel de 260 sesiones: mercado y acción A, choque común y evento idiosincrático\\
+\texttt{s4\_*}, \texttt{s5\_*} & \texttt{fig\_s4\_s5.py} & Supuesto $\Q$/$\P$; regresión cuantílica; cambio de varianza; desplazamiento de volatilidad\\
+\texttt{s6\_*}, \texttt{s7\_*}, \texttt{s9\_*} & \texttt{fig\_s6\_s7.py} & Cópulas; cartera de cuatro activos; remuestreo de óptimos; nulas de Sharpe\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Las pruebas verifican, entre otras propiedades, que la superficie de referencia cumple las condiciones
+suficientes de SSVI, que el contraejemplo SVI tiene $g<0$, que la densidad por Breeden--Litzenberger
+coincide con la analítica e integra a uno con media igual al forward, que $W_2$ de una traslación es la
+traslación, que el CVaR del programa lineal coincide con el empírico, que costos altos producen no
+operación, que el conformal adaptativo cumple su cota de largo plazo y que el máximo Sharpe esperado
+coincide con la simulación.

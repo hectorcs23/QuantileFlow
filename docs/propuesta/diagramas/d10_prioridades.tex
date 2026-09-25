@@ -1,0 +1,37 @@
+% Hoja de ruta: qué priorizar, qué dejar para después y qué posponer.
+\begin{tikzpicture}[
+  col/.style={cajallena=#1,text width=3.25cm,minimum height=9mm,font=\sffamily\scriptsize\bfseries},
+  item/.style={caja=#1,text width=3.25cm,minimum height=7mm,font=\sffamily\tiny},
+  node distance=1.6mm and 3mm]
+\node[col=qazul] (c1) {INMEDIATO};
+\node[col=qnaranja,right=of c1] (c2) {SEGUNDA ETAPA};
+\node[col=qvioleta,right=of c2] (c3) {INVESTIGACIÓN AVANZADA};
+\node[col=tenue,right=of c3] (c4) {POSPUESTO};
+% Inmediato
+\node[item=qazul,below=of c1] (i1) {Datos correctos y contrato de datos};
+\node[item=qazul,below=of i1] (i2) {SSVI restringido y comparación alternativa};
+\node[item=qazul,below=of i2] (i3) {Cuantiles y bandas de sensibilidad};
+\node[item=qazul,below=of i3] (i4) {$W_1$ y $W_2$ con dirección de colas};
+\node[item=qazul,below=of i4] (i5) {Filtrado causal};
+\node[item=qazul,below=of i5] (i6) {Innovación condicionada};
+\node[item=qazul,below=of i6] (i7) {Pronósticos físicos sencillos y calibración};
+\node[item=qazul,below=of i7] (i8) {CVaR con costos};
+\node[item=qazul,below=of i8] (i9) {Pruebas incrementales y trazabilidad};
+% Segunda etapa
+\node[item=qnaranja,below=of c2] (s1) {Detección de régimen};
+\node[item=qnaranja,below=of s1] (s2) {Autorregresión Wasserstein};
+\node[item=qnaranja,below=of s2] (s3) {Conjunto de modelos};
+\node[item=qnaranja,below=of s3] (s4) {Optimización robusta};
+% Investigación avanzada
+\node[item=qvioleta,below=of c3,text width=3.25cm] (a1) {Modelos neuronales de dinámica de opciones sin
+  arbitraje, si el volumen y la diversidad de datos lo permiten};
+% Pospuesto
+\node[item=tenue,below=of c4] (p1) {Reinforcement learning};
+\node[item=tenue,below=of p1] (p2) {Transformers extensos};
+\node[item=tenue,below=of p2] (p3) {Trayectorias por difusión};
+\node[item=tenue,below=of p3] (p4) {Kelly agresivo};
+\node[nota,text width=3.25cm,below=2mm of p4] {su complejidad y su sensibilidad a simuladores y pronósticos no
+  se justifican antes de demostrar la utilidad de las señales};
+\node[nota,text width=3.25cm,below=2mm of a1] {existen trabajos de neural SDE para superficies y riesgo, sin
+  evidencia de rentabilidad para esta estrategia};
+\end{tikzpicture}

@@ -1,0 +1,217 @@
+% ============================================================================
+% Preámbulo: tipografía, color, cajas y estilos de diagramas
+% ============================================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noshorthands,es-tabla,es-nolists,es-nodecimaldot]{babel}
+\usepackage[sc]{mathpazo}
+\linespread{1.06}
+\usepackage[scaled=0.90]{helvet}
+\renewcommand\ttdefault{lmtt}
+\usepackage{microtype}
+\usepackage[letterpaper,textwidth=6.5in,textheight=8.9in,top=1.0in,headsep=0.28in,footskip=0.42in]{geometry}
+
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{babel,positioning,arrows.meta,calc,fit,backgrounds,shapes.geometric,
+  shapes.misc,decorations.pathreplacing,patterns,matrix,shadows}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs,tabularx,array,multirow,makecell}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{pifont}
+\usepackage{listings}
+\usepackage[round,sort]{natbib}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage{ragged2e}
+
+% ---------------------------------------------------------------------------
+% Paleta (misma que las figuras; orden categórico validado para daltonismo)
+% ---------------------------------------------------------------------------
+\definecolor{qazul}{HTML}{2A78D6}
+\definecolor{qazuloscuro}{HTML}{104281}
+\definecolor{qnaranja}{HTML}{EB6834}
+\definecolor{qaqua}{HTML}{1BAF7A}
+\definecolor{qamarillo}{HTML}{EDA100}
+\definecolor{qvioleta}{HTML}{4A3AA7}
+\definecolor{tinta}{HTML}{0B0B0B}
+\definecolor{tinta2}{HTML}{52514E}
+\definecolor{tenue}{HTML}{898781}
+\definecolor{rejilla}{HTML}{E1E0D9}
+\definecolor{eje}{HTML}{C3C2B7}
+\definecolor{grisclaro}{HTML}{F0EFEC}
+\definecolor{grisfondo}{HTML}{F7F7F5}
+\definecolor{bueno}{HTML}{0CA30C}
+\definecolor{alerta}{HTML}{FAB219}
+\definecolor{serio}{HTML}{EC835A}
+\definecolor{critico}{HTML}{D03B3B}
+\definecolor{azulfondo}{HTML}{EEF4FC}
+\definecolor{naranjafondo}{HTML}{FDF1EB}
+\definecolor{aquafondo}{HTML}{E8F7F1}
+\definecolor{alertafondo}{HTML}{FFF7E6}
+\definecolor{buenofondo}{HTML}{EAF6EA}
+
+\hypersetup{colorlinks=true,linkcolor=qazuloscuro,citecolor=qazuloscuro,urlcolor=qazuloscuro,
+  pdftitle={QuantileFlow: seguimiento de distribuciones implícitas y gestión diaria de posiciones},
+  pdfsubject={Propuesta técnica (versión de investigación)},pdfauthor={QuantileFlow},
+  pdfkeywords={SSVI, Breeden-Litzenberger, Wasserstein, Kalman, BOCPD, CVaR, conformal}}
+
+% ---------------------------------------------------------------------------
+% Títulos, encabezados e índice
+% ---------------------------------------------------------------------------
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\titleformat{\section}{\sffamily\LARGE\bfseries\color{tinta}}
+  {\color{qazul}\thesection}{0.55em}{}[\vspace{3pt}{\color{eje}\titlerule[0.6pt]}]
+\titlespacing*{\section}{0pt}{0pt}{12pt}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{tinta}}{\color{qazul}\thesubsection}{0.6em}{}
+\titlespacing*{\subsection}{0pt}{16pt}{6pt}
+\titleformat{\subsubsection}{\sffamily\normalsize\bfseries\color{tinta}}{\color{qazul}\thesubsubsection}{0.6em}{}
+\titlespacing*{\subsubsection}{0pt}{11pt}{4pt}
+\titleformat{\paragraph}[runin]{\sffamily\normalsize\bfseries\color{tinta}}{}{0pt}{}[.]
+
+\titlecontents{section}[1.8em]{\addvspace{2.5pt}\sffamily\bfseries}
+  {\contentslabel[\color{qazul}\thecontentslabel]{1.8em}}{}{\hfill\contentspage}
+\titlecontents{subsection}[4.2em]{\small}
+  {\contentslabel[\color{tinta2}\thecontentslabel]{2.4em}}{}{\titlerule*[0.6pc]{.}\contentspage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{{\color{eje}\hrule width\headwidth height\headrulewidth}}
+\fancyhead[L]{\sffamily\scriptsize\color{tinta2}QuantileFlow \textperiodcentered{} Propuesta técnica \textperiodcentered{} Versión de investigación}
+\fancyhead[R]{\sffamily\scriptsize\color{tinta2}\nouppercase{\leftmark}}
+\fancyfoot[C]{\sffamily\footnotesize\color{tinta2}\thepage}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection\quad #1}{}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\sffamily\footnotesize\color{tinta2}\thepage}}
+
+% ---------------------------------------------------------------------------
+% Pies de figura, listas y tablas
+% ---------------------------------------------------------------------------
+\captionsetup{font={small,sf},labelfont={bf,color=qazuloscuro},labelsep=period,
+  justification=justified,singlelinecheck=false,skip=6pt}
+\captionsetup[table]{position=top}
+\setlist{itemsep=2pt,topsep=4pt,parsep=0pt,leftmargin=1.4em}
+\setlist[itemize,1]{label={\color{qazul}\small\textbullet}}
+\setlist[itemize,2]{label={\color{tenue}\textendash}}
+\setlist[enumerate,1]{label={\sffamily\bfseries\color{qazul}\arabic*.}}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\aboverulesep}{0.3ex}
+\setlength{\belowrulesep}{0.5ex}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\newcommand{\encab}[1]{\textsf{\bfseries\footnotesize #1}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\emergencystretch}{2em}
+\raggedbottom
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+
+% ---------------------------------------------------------------------------
+% Iconos
+% ---------------------------------------------------------------------------
+\newcommand{\iconoidea}{\tikz[baseline=-0.7ex]\node[circle,fill=qazul,text=white,
+  font=\sffamily\bfseries\fontsize{6}{6}\selectfont,inner sep=0pt,minimum size=3mm]{i};}
+\newcommand{\iconoalerta}{\tikz[baseline=-0.35ex]{\fill[alerta,rounded corners=0.3pt]
+  (0,0)--(0.34,0)--(0.17,0.30)--cycle;\node[font=\sffamily\bfseries\fontsize{5.5}{5.5}\selectfont,
+  text=tinta] at (0.17,0.105){!};}}
+\newcommand{\iconocheck}{\tikz[baseline=-0.7ex]\node[circle,fill=bueno,text=white,
+  font=\fontsize{6}{6}\selectfont,inner sep=0pt,minimum size=3mm]{\ding{51}};}
+\newcommand{\iconopendiente}{\tikz[baseline=-0.7ex]\node[circle,draw=tenue,line width=0.6pt,
+  text=tinta2,font=\sffamily\bfseries\fontsize{6}{6}\selectfont,inner sep=0pt,minimum size=3mm]{?};}
+\newcommand{\icononota}{\tikz[baseline=-0.7ex]\node[rectangle,rounded corners=0.6pt,fill=qvioleta,
+  text=white,font=\sffamily\bfseries\fontsize{6}{6}\selectfont,inner sep=0pt,minimum size=3mm]{N};}
+\newcommand{\si}{\textcolor{bueno}{\ding{51}}}
+\newcommand{\no}{\textcolor{critico}{\ding{55}}}
+
+% ---------------------------------------------------------------------------
+% Cajas temáticas
+% ---------------------------------------------------------------------------
+\tcbset{
+  qfbase/.style={enhanced,breakable,boxrule=0pt,arc=0pt,outer arc=0pt,left=9pt,right=9pt,
+    top=6pt,bottom=6pt,fontupper=\small,before skip=9pt,after skip=9pt,
+    fonttitle=\sffamily\bfseries\small,coltitle=tinta,attach title to upper={\par\smallskip}},
+}
+\newtcolorbox{ideaclave}[1][Idea clave]{qfbase,colback=azulfondo,
+  borderline west={2.2pt}{0pt}{qazul},title={\iconoidea\hspace{0.45em}#1}}
+\newtcolorbox{ideaclavefinal}[1][Idea clave]{qfbase,unbreakable,colback=azulfondo,
+  borderline west={2.2pt}{0pt}{qazul},title={\iconoidea\hspace{0.45em}#1}}
+\newtcolorbox{noconcluir}[1][Qué no concluir]{qfbase,colback=alertafondo,
+  borderline west={2.2pt}{0pt}{alerta},title={\iconoalerta\hspace{0.45em}#1}}
+\newtcolorbox{criterio}[1][Criterio para avanzar]{qfbase,colback=buenofondo,
+  borderline west={2.2pt}{0pt}{bueno},title={\iconocheck\hspace{0.45em}#1}}
+\newtcolorbox{pendiente}[1][Pendiente de definir]{qfbase,colback=grisfondo,
+  borderline west={2.2pt}{0pt}{tenue},title={\iconopendiente\hspace{0.45em}#1}}
+\newtcolorbox{notatecnica}[1][Nota técnica]{qfbase,colback=grisfondo,
+  borderline west={2.2pt}{0pt}{qvioleta},title={\icononota\hspace{0.45em}#1}}
+\newtcolorbox{algoritmo}[1]{qfbase,colback=white,colframe=eje,boxrule=0.5pt,
+  borderline west={0pt}{0pt}{white},title={#1},fontupper=\small}
+
+% Ficha de etapa: entradas, proceso, salidas y controles
+\newcommand{\ficha}[4]{%
+  \begin{tcolorbox}[enhanced,boxrule=0pt,arc=1.5pt,colback=grisfondo,left=7pt,right=7pt,top=6pt,
+    bottom=5pt,before skip=4pt,after skip=12pt]
+  \small
+  \begin{tabularx}{\linewidth}{@{}>{\RaggedRight}X@{\hspace{10pt}}>{\RaggedRight}X@{\hspace{10pt}}>{\RaggedRight}X@{\hspace{10pt}}>{\RaggedRight\arraybackslash}X@{}}
+  {\sffamily\bfseries\footnotesize\color{qazul}ENTRADAS} &
+  {\sffamily\bfseries\footnotesize\color{qazul}PROCESO} &
+  {\sffamily\bfseries\footnotesize\color{qazul}SALIDAS} &
+  {\sffamily\bfseries\footnotesize\color{qazul}CONTROLES}\\[2pt]
+  \footnotesize #1 & \footnotesize #2 & \footnotesize #3 & \footnotesize #4
+  \end{tabularx}
+  \end{tcolorbox}}
+
+% ---------------------------------------------------------------------------
+% Estilos TikZ
+% ---------------------------------------------------------------------------
+\tikzset{
+  >={Stealth[length=2.1mm,width=1.5mm]},
+  base/.style={font=\sffamily\scriptsize,text=tinta,align=center},
+  caja/.style={base,draw=#1,fill=#1!7,rounded corners=2pt,line width=0.6pt,inner sep=4pt,
+    minimum height=7mm},
+  caja/.default=tenue,
+  cajallena/.style={base,draw=none,fill=#1,text=white,rounded corners=2pt,inner sep=4pt,
+    minimum height=7mm,font=\sffamily\scriptsize\bfseries},
+  flecha/.style={->,line width=0.6pt,draw=tinta2},
+  flechagruesa/.style={->,line width=1.1pt,draw=tinta2},
+  guia/.style={line width=0.5pt,draw=eje},
+  nota/.style={font=\sffamily\fontsize{6.4}{7.6}\selectfont,text=tinta2,align=center},
+  titulo/.style={font=\sffamily\scriptsize\bfseries,text=tinta},
+  capa/.style={rounded corners=3pt,fill=#1!5,draw=#1!45,line width=0.5pt},
+}
+
+% Listados (registro de corridas)
+\lstdefinestyle{registro}{basicstyle=\ttfamily\scriptsize,columns=fullflexible,keepspaces=true,
+  frame=none,backgroundcolor=\color{grisfondo},xleftmargin=6pt,xrightmargin=6pt,aboveskip=6pt,
+  belowskip=6pt,showstringspaces=false,stringstyle=\color{qazuloscuro},
+  literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1}
+
+% ---------------------------------------------------------------------------
+% Notación
+% ---------------------------------------------------------------------------
+\newcommand{\Q}{\mathbb{Q}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\CVaR}{\operatorname{CVaR}}
+\newcommand{\VaR}{\operatorname{VaR}}
+\newcommand{\sintetico}{\textsf{\scriptsize\color{tenue}[datos sintéticos]}}
+\newcommand{\grafica}[4][0.66]{%
+  \begin{figure}[H]\centering
+  \includegraphics[width=#1\linewidth]{figuras/#2}
+  \caption{#3}\label{#4}
+  \end{figure}}
+\newcommand{\figref}[1]{figura~\ref{#1}}
+\newcommand{\Figref}[1]{Figura~\ref{#1}}
+\newcommand{\secref}[1]{sección~\ref{#1}}
+\newcommand{\tabref}[1]{tabla~\ref{#1}}

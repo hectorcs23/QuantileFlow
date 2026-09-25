@@ -1,0 +1,30 @@
+% Ciclo de una orden en el conector de paper: validación, idempotencia y reconciliación.
+\begin{tikzpicture}[
+  est/.style={caja=#1,text width=2.35cm,minimum height=10mm},
+  node distance=7mm and 8mm]
+\node[est=qaqua] (rec) {Recomendación};
+\node[diamond,aspect=2.4,draw=qazul,fill=qazul!7,line width=0.6pt,font=\sffamily\scriptsize,align=center,
+  text=tinta,inner sep=1pt,text width=2.4cm,right=of rec] (puerta) {Puerta de\\ validación};
+\node[est=tenue,right=of puerta] (prop) {Orden propuesta\\ \tiny clave idempotente};
+\node[est=tenue,right=of prop] (env) {Enviada};
+\node[est=bueno,below=of env] (ejec) {Ejecutada};
+\node[est=tenue,left=of ejec] (parc) {Parcialmente\\ ejecutada};
+\node[est=alerta,right=of ejec] (canc) {Cancelada o\\ rechazada};
+\node[est=qaqua,below=of parc] (recon) {Reconciliación\\ posiciones y caja};
+\node[est=tenue,left=of recon] (regi) {Registro};
+\node[est=critico,below=of puerta] (sin) {Sin orden:\\ abstención registrada};
+\draw[flecha] (rec) -- (puerta);
+\draw[flecha] (puerta) -- node[nota,above]{pasa} (prop);
+\draw[flecha] (puerta) -- node[nota,right,align=left]{datos o superficie\\ inválidos, límites} (sin);
+\draw[flecha] (prop) -- (env);
+\draw[flecha] (env) -- (parc);
+\draw[flecha] (env) -- (ejec);
+\draw[flecha] (env) -- (canc);
+\draw[flecha] (parc) -- (ejec);
+\draw[flecha] (parc) -- (recon);
+\draw[flecha] (ejec) |- (recon);
+\draw[flecha] (canc) |- (recon);
+\draw[flecha] (recon) -- (regi);
+\draw[flecha] (sin) |- (regi);
+\draw[flecha,draw=tenue,densely dashed] (env.north) .. controls +(0,0.9) and +(0,0.9) .. node[nota,above]{reintento con la misma clave: no duplica} (prop.north);
+\end{tikzpicture}

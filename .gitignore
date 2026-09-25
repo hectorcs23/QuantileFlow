@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+
+# LaTeX (el PDF final se copia a docs/QuantileFlow_propuesta_tecnica.pdf)
+docs/propuesta/*.aux
+docs/propuesta/*.log
+docs/propuesta/*.out
+docs/propuesta/*.toc
+docs/propuesta/*.fls
+docs/propuesta/*.fdb_latexmk
+docs/propuesta/*.synctex.gz
+docs/propuesta/*.bbl
+docs/propuesta/*.blg
+docs/propuesta/*.lof
+docs/propuesta/*.lot
+docs/propuesta/main.pdf

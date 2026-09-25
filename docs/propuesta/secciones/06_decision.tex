@@ -1,0 +1,195 @@
+% ============================================================================
+\clearpage
+\section{Decisión de posición y riesgo conjunto}\label{sec:decision}
+% ============================================================================
+
+\ficha{Pronósticos $\P$ calibrados por activo y horizonte, posición actual, costos, límites y estado de
+confianza.}
+{Construir escenarios conjuntos, optimizar rendimiento, CVaR y costos, y aplicar una zona de no
+operación.}
+{Región de pesos estables o acción discreta (mantener, aumentar, reducir), con su razón y su riesgo
+conjunto.}
+{Unidades y horizontes compatibles; ninguna recomendación sin pasar por límites y abstención.}
+
+\subsection{Escenarios conjuntos físicos}\label{sec:escenarios}
+
+El riesgo de una cartera depende de cómo se mueven juntos sus activos; la suma de riesgos individuales no
+lo reproduce. Los escenarios conjuntos se construyen con un modelo de factores de mercado y sector,
+$R_i=\alpha_i+\beta_i^\top f+\varepsilon_i$, y una covarianza regularizada por contracción hacia una matriz
+estructurada \citep{ledoit2004}. Como competidor se usa dependencia $t$ \citep{demarta2005}, que produce
+más movimientos extremos conjuntos con la misma correlación lineal
+(figuras~\ref{fig:copula_gauss} y~\ref{fig:copula_t}), y escenarios de estrés en los que la dependencia es
+distinta de la de calma (\figref{fig:calma_crisis}).
+
+\grafica[0.54]{s6_copula_gauss}{Cópula gaussiana con correlación 0.5 (datos sintéticos). En rojo, los
+escenarios en que ambos activos quedan por debajo de su cuantil 2.5\%.}{fig:copula_gauss}
+
+\grafica[0.54]{s6_copula_t}{Cópula $t$ con tres grados de libertad y la misma correlación: la frecuencia de
+caídas conjuntas extremas casi se duplica.}{fig:copula_t}
+
+\grafica[0.54]{s6_calma_crisis}{Dos regímenes con dependencia distinta. Un modelo que impone la misma
+dependencia en calma y en crisis subestima el riesgo conjunto justo cuando importa.}{fig:calma_crisis}
+
+\subsection{El problema costo--riesgo--rendimiento}\label{sec:problema}
+
+Para acciones y ETF, con pesos $w$, retorno aleatorio conjunto $R$ al horizonte de decisión y posición
+actual $w_{\text{actual}}$, el problema inicial es
+\begin{equation}
+\min_{w\in\mathcal C_t}\ -\E_{\widehat P_t}\bigl[w^\top R\bigr]
++\lambda\,\CVaR_{\alpha,\widehat P_t}\bigl(-w^\top R\bigr)+c\bigl(w-w_{\text{actual}}\bigr).
+\label{eq:objetivo}
+\end{equation}
+Con $S$ escenarios $r_s$ y la representación de \citet{rockafellar2000},
+$\CVaR_\alpha(L)=\min_\zeta\ \zeta+\frac{1}{(1-\alpha)S}\sum_s(L_s-\zeta)^+$, y con costos proporcionales
+$c(\Delta w)=\kappa^\top|\Delta w|$, el problema es un programa lineal:
+\begin{equation}
+\begin{aligned}
+\min_{w,\,b,\,v,\,\zeta,\,z}\quad & -\hat\mu^\top w+\lambda\Bigl(\zeta+\frac{1}{(1-\alpha)S}\sum_{s=1}^{S}z_s\Bigr)+\kappa^\top(b+v)\\
+\text{s.a.}\quad & z_s\ge -r_s^\top w-\zeta,\quad z_s\ge 0,\qquad s=1,\dots,S,\\
+& w=w_{\text{actual}}+b-v,\quad b,v\ge 0,\\
+& \mathbf 1^\top w+\kappa^\top(b+v)\le 1,\quad 0\le w\le w_{\max},\quad w\in\mathcal C_t .
+\end{aligned}
+\label{eq:lp}
+\end{equation}
+$\CVaR_{0.95}$ es el promedio del 5\% peor de las pérdidas simuladas (\figref{fig:perdidas}). El conjunto
+factible $\mathcal C_t$ recoge las restricciones de la \tabref{tab:restricciones}. Rendimiento, riesgo y
+costos deben expresarse en las mismas unidades y el mismo horizonte; los costos incluyen compra y venta,
+fracciones de acción, mínimos por operación y, cuando corresponda, conversión de moneda.
+
+\begin{table}[H]
+\centering\small
+\caption{Restricciones del conjunto factible $\mathcal C_t$.}
+\label{tab:restricciones}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Restricción} & \encab{Forma lineal típica}\\
+\midrule
+Presupuesto y caja & $\mathbf 1^\top w+\text{costos}\le 1$; sin apalancamiento en la primera versión\\
+Concentración & $w_i\le w_{\max}$ por activo\\
+Exposición sectorial & $\sum_{i\in\text{sector}}w_i\le s_{\max}$\\
+Beta de la cartera & $\beta^\top w\le\beta_{\max}$\\
+Rotación & $\mathbf 1^\top(b+v)\le\text{rot}_{\max}$ por sesión\\
+Liquidez & valor negociado $\le$ fracción del volumen diario promedio\\
+Presupuesto de riesgo (opcional) & $\CVaR_\alpha(-w^\top R)\le b_{\text{riesgo}}$\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{notatecnica}[Homogeneidad del objetivo]
+Sin restricciones activas, el objetivo \eqref{eq:objetivo} con costos nulos es positivamente homogéneo:
+duplicar $w$ duplica el rendimiento esperado y el CVaR. La solución tiende entonces a los extremos
+---toda la caja o la frontera de $\mathcal C_t$--- y es muy sensible a $\lambda$. En un experimento
+sintético de la implementación de referencia (prueba \texttt{test\_objetivo\_homogeneo\_lleva\_a\_extremos}),
+con escenarios a cinco sesiones, $\lambda=0.01$ lleva a los límites de concentración y $\lambda=0.02$ a
+caja total. Conviene fijar la escala con un presupuesto de riesgo
+explícito (última fila de la \tabref{tab:restricciones}), que además es más fácil de interpretar.
+\end{notatecnica}
+
+\subsection{CVaR: qué mide y qué no}\label{sec:cvar}
+
+\grafica[0.6]{s6_perdidas}{Distribución simulada de pérdidas a cinco sesiones de una cartera sintética de
+cuatro activos. El VaR 95\% es el umbral del 5\% peor; el CVaR 95\% es el promedio de esa cola.}{fig:perdidas}
+
+\grafica[0.56]{s6_suma_riesgos}{Suma ponderada de los CVaR individuales frente al CVaR de la cartera. La
+diferencia, que es el beneficio de diversificación, casi desaparece en el escenario de estrés.}{fig:suma_riesgos}
+
+\begin{noconcluir}
+El CVaR evalúa el promedio de pérdidas en la cola especificada \emph{bajo los escenarios supuestos}. No
+es un límite garantizado de pérdida: si los escenarios subestiman la dependencia o las colas, el CVaR
+subestima el riesgo.
+\end{noconcluir}
+
+\subsection{Zona de no operación y estabilidad de la decisión}\label{sec:no_operacion}
+
+Un cambio pequeño de peso debe justificar sus costos \emph{y} superar una banda de incertidumbre. El
+rendimiento esperado es la entrada más ruidosa del problema; al remuestrear escenarios y perturbar
+$\hat\mu$, el óptimo recorre buena parte de la frontera del presupuesto de riesgo
+(\figref{fig:region_estable}). Por eso la salida no es un punto sino una \emph{región casi óptima}
+\begin{equation}
+\mathcal R_\delta=\bigl\{w\in\mathcal C_t:\ \hat\mu^\top w\ \ge\ \hat\mu^\top w^\ast-\delta\bigr\},
+\label{eq:region}
+\end{equation}
+con $\delta$ del orden de la dispersión bootstrap del valor del óptimo. La regla es simple: si
+$w_{\text{actual}}\in\mathcal R_\delta$, mantener; si no, moverse solo hasta la región, con el traslado de
+menor costo $\arg\min_{w\in\mathcal R_\delta}\kappa^\top|w-w_{\text{actual}}|$, no hasta el punto
+$w^\ast$. La recomendación se expresa como región o como acción discreta (mantener, aumentar, reducir,
+cerrar), evitando falsa precisión como ``7.431\%'' cuando el rango razonable es amplio
+(\figref{fig:histograma_pesos}).
+
+\grafica[0.62]{s6_region_estable}{Región casi óptima en el plano de pesos de dos activos (supuesto: el
+rendimiento esperado tiene una desviación estándar del 30\% de su valor). Los puntos son óptimos
+remuestreados; la línea discontinua, el borde interior de la región. La cartera actual dentro de la región
+se mantiene; la que excede el presupuesto se reduce solo hasta la región.}{fig:region_estable}
+
+\grafica[0.58]{s6_histograma_pesos}{Distribución del peso óptimo en A entre remuestreos. La cifra puntual
+aparenta una precisión que el rango del 10\% al 90\% desmiente.}{fig:histograma_pesos}
+
+\subsection{Fase posterior: optimización robusta}\label{sec:dro}
+
+En una fase posterior la distribución puntual $\widehat P_t$ se reemplaza por un conjunto de
+distribuciones plausibles y se optimiza el peor caso dentro de él:
+\begin{equation}
+\min_{w\in\mathcal C_t}\ \sup_{Q\in\mathcal B_\varepsilon(\widehat P_t)}\ \E_Q\bigl[\ell(w,R)\bigr],
+\qquad \mathcal B_\varepsilon(\widehat P_t)=\{Q:\ W(Q,\widehat P_t)\le\varepsilon\}.
+\label{eq:dro}
+\end{equation}
+Una bola de Wasserstein es una opción natural (\figref{fig:ambiguedad}); para pérdidas lineales por
+tramos, como la del CVaR, el problema admite reformulaciones tratables \citep{esfahani2018}. El radio se
+selecciona con validación temporal y pruebas de sensibilidad, no a partir de un porcentaje de confianza
+inventado.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.86\linewidth}{!}{\input{diagramas/d6_ambiguedad}}
+\caption{Conjunto de ambigüedad de Wasserstein. La decisión se protege contra el peor caso dentro de la
+bola, que puede no contener a la distribución verdadera.}
+\label{fig:ambiguedad}
+\end{figure}
+
+\begin{noconcluir}
+Las garantías teóricas de esta familia dependen de supuestos (por ejemplo, muestras independientes y
+colas controladas) que no se trasladan automáticamente a mercados dependientes y cambiantes.
+\end{noconcluir}
+
+\subsection{Control predictivo con horizonte móvil}\label{sec:mpc}
+
+Después se prueba el control predictivo: planear varias decisiones, ejecutar solo la primera y recalcular
+con datos nuevos \citep{boyd2017} (\figref{fig:mpc}):
+\begin{equation}
+\max_{w_t,\dots,w_{t+H-1}}\ \sum_{k=0}^{H-1}\Bigl(\hat\mu_{t+k}^\top w_{t+k}-\lambda\,\mathcal{R}_{t+k}(w_{t+k})
+-c\bigl(w_{t+k}-w_{t+k-1}\bigr)\Bigr).
+\label{eq:mpc}
+\end{equation}
+Requiere escenarios temporales coherentes entre horizontes, no simplemente marginales de 1, 5 y 20 días
+ensambladas.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.8\linewidth}{!}{\input{diagramas/d6_mpc}}
+\caption{Horizonte móvil. En cada sesión se optimiza una trayectoria de pesos y solo se ejecuta su primer
+paso.}
+\label{fig:mpc}
+\end{figure}
+
+\subsection{Si se gestionan opciones}\label{sec:opciones}
+
+Si la posición incluye opciones, el P\&L lineal se sustituye por la \emph{revaluación completa} bajo
+escenarios conjuntos de subyacente, superficie, paso del tiempo y ejercicio o asignación. La aproximación
+delta--gamma--vega sirve como diagnóstico, no como valoración fiable de toda opción en movimientos grandes
+(figuras~\ref{fig:opcion_spot} y~\ref{fig:opcion_vol}).
+
+\grafica[0.56]{s6_opcion_spot}{P\&L a un día de un call a 30 días en el dinero: revaluación completa frente
+a aproximaciones por griegas. Para movimientos grandes, delta--gamma sobrestima la ganancia y, a la
+baja, inventa una pérdida que el call no puede tener.}{fig:opcion_spot}
+
+\grafica[0.56]{s6_opcion_vol}{El mismo call cuando la volatilidad sube al caer el precio. Añadir vega no
+arregla la aproximación en los extremos.}{fig:opcion_vol}
+
+\begin{pendiente}
+Confirmar si la posición del usuario incluye o incluirá opciones antes de construir esta rama.
+\end{pendiente}
+
+\begin{criterio}
+Riesgo factible bajo todas las restricciones y resultados estables en pruebas de estrés: la recomendación
+no cambia de signo ante perturbaciones plausibles de escenarios, costos y $\hat\mu$.
+\end{criterio}
