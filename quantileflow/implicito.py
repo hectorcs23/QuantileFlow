@@ -97,6 +97,7 @@ def subyacente_implicito(cotizaciones: pd.DataFrame, capturas, raiz, subyacente,
             "sello_snapshot_utc": usadas["sello_snapshot_utc"].max(), "disponible_utc": usadas["disponible_utc"].max(),
             "recibido_utc": usadas["recibido_utc"].max(), "proveedor": "|".join(sorted(usadas["proveedor"].unique())),
             "feed": f"implicito_paridad_{raiz}_" + "|".join(sorted(usadas["feed"].unique())),
+            "tipo_precio": "implicito",
             "vencimiento_usado": resultado["vencimiento"], "dias_usados": resultado["T"] * base_dias,
             "forward": resultado["forward"], "forward_error": resultado["forward_error"],
             "pares": resultado["pares"], "captura": etiqueta})

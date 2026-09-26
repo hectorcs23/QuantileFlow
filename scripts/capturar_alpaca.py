@@ -12,6 +12,14 @@ captura en ``data/raw/alpaca/capturas/<fecha>/`` y las tablas normalizadas del
 día en ``data/normalized/alpaca/diario/<fecha>/``. Lee las credenciales de
 ``APCA_API_KEY_ID`` y ``APCA_API_SECRET_KEY``; nunca las escribe.
 
+Cada hora termina ``completa``, ``parcial`` (alguna solicitud falló o llegó
+después del corte), ``fallida`` (ninguna cadena a tiempo) o ``perdida`` (sin
+captura y con el corte pasado). Una hora ya capturada no se repite y un fallo
+después del corte no se reemplaza con datos posteriores. El código de salida es
+0 solo si todas las horas quedaron completas, y cada ejecución deja un registro
+en ``data/raw/alpaca/ejecuciones/<fecha>/`` con el disparo, el margen hasta cada
+corte y el estado de cada hora.
+
 Fuera de sesión, ``--ahora`` toma como sesión de referencia la última que ya
 abrió y como corte el menor entre ahora y su cierre: sirve para verificar el
 adaptador con cotizaciones reales, no como sesión del piloto.
@@ -20,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 import sys
 import tomllib
 from pathlib import Path
@@ -30,8 +39,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
 from quantileflow import alpaca, almacen  # noqa: E402
-from quantileflow.calendario import (NUEVA_YORK, apertura, calendario, cierre, es_sesion,  # noqa: E402
-                                     instante)
+from quantileflow.calendario import NUEVA_YORK, apertura, calendario, cierre, es_sesion  # noqa: E402
 from quantileflow.piloto import cargar_config  # noqa: E402
 
 
@@ -84,43 +92,56 @@ def main() -> int:
               file=sys.stderr)
 
     ahora = cliente.reloj()
+    ejecucion = {"inicio_utc": alpaca.iso(ahora), "modo": "inmediata" if args.ahora else "programada",
+                 "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"), "disparo": os.environ.get("DISPARO") or None,
+                 "run_id": os.environ.get("GITHUB_RUN_ID"), "intento": os.environ.get("GITHUB_RUN_ATTEMPT"),
+                 "reloj": estado_reloj, "codigo": almacen.estado_git(RAIZ), "config": info_config}
     if args.ahora:
         fecha, corte_inmediato = sesion_de_referencia(ahora, codigo)
-        planes = [("inmediata", corte_inmediato, f"{fecha}Tinmediata-{ahora:%H%M%S}")]
+        plan = [{"hora": "inmediata", "corte_utc": corte_inmediato, "etiqueta": f"{fecha}Tinmediata-{ahora:%H%M%S}",
+                 "capturas_previas": [], "estado": "pendiente", "accion": "capturar"}]
     else:
         fecha = ahora.tz_convert(NUEVA_YORK).date()
         if not es_sesion(fecha, codigo):
             print(f"{fecha} no es sesión de {codigo}: no hay captura")
             return 0
-        planes, perdidas = [], 0
-        for hora in args.horas or cfg["horas"]:
-            corte, etiqueta = instante(fecha, hora, codigo), f"{fecha}T{hora.replace(':', '')}"
-            if alpaca.ruta_manifiesto(datos, fecha, etiqueta).exists():
-                print(f"{hora}: ya capturada hoy; se omite")
-            elif corte - pd.Timedelta(seconds=cfg["adelanto_s"]) < ahora:
-                print(f"{hora}: el corte ya pasó o está demasiado cerca; se pierde", file=sys.stderr)
-                perdidas += 1
-            else:
-                planes.append((hora, corte, etiqueta))
-        if not planes:
-            return 1 if perdidas else 0
+        plan = alpaca.planificar(datos, fecha, args.horas or cfg["horas"], ahora, cfg["adelanto_s"], codigo)
+    ejecucion["fecha"] = str(fecha)
+    for paso in plan:
+        if paso["accion"] == "omitir":
+            print(f"{paso['hora']}: {paso['estado']}; se omite", file=sys.stderr if paso["estado"] != "completa"
+                  else sys.stdout)
 
-    # Contratos del día: metadatos para normalizar y para elegir vencimientos.
+    def terminar():
+        ejecucion["fin_utc"] = alpaca.iso(cliente.reloj())
+        ejecucion["horas"] = [{k: (alpaca.iso(v) if k == "corte_utc" else v) for k, v in paso.items()}
+                              for paso in plan]
+        ruta = alpaca.escribir_ejecucion(ejecucion, datos)
+        print("horas: " + ", ".join(f"{p['hora']} {p['estado']}" for p in plan) + f" -> {ruta.relative_to(datos)}")
+        return alpaca.codigo_salida(plan)
+
+    pendientes = [p for p in plan if p["accion"] == "capturar"]
+    if not pendientes:
+        return terminar()
+
+    # Contratos del día: metadatos para normalizar y para elegir vencimientos. Cada página se guarda al llegar.
     desde, hasta = fecha, fecha + dt.timedelta(days=int(cfg["ventana_contratos_dias"]))
     pedidos = [alpaca.pedir_contratos(o["subyacente"], desde, hasta, o["raiz"]) for o in cfg["opciones"]]
-    resultados, errores = alpaca.ejecutar(cliente, pedidos, cfg["hilos"])
+    registro = alpaca.Registro(datos)
+    resultados, errores = alpaca.ejecutar(cliente, pedidos, cfg["hilos"], registro)
     if errores:
+        # Sin manifiesto de captura: una ejecución posterior aún puede capturar si llega antes del corte.
         print(f"no se pudieron pedir los contratos: {errores}", file=sys.stderr)
-        return 1
-    tipos = {p.nombre: p.tipo for p in pedidos}
-    tipos["reloj"] = "reloj"
-    previas = alpaca.guardar_respuestas({**resultados, **reloj}, tipos, datos)
+        for paso in pendientes:
+            paso.update(estado="fallida", motivo="sin contratos del día")
+        return terminar()
+    previas = {**registro.entradas, **alpaca.guardar_respuestas(reloj, {"reloj": "reloj"}, datos)}
     meta = alpaca.metadatos_contratos(r.json() for rs in resultados.values() for r in rs)
     seleccion, solicitudes = {}, []
     for o in cfg["opciones"]:
         vencimientos = {c["expiration_date"] for c in meta.values() if c["root_symbol"] == o["raiz"]}
         elegidos, plazos = alpaca.elegir_vencimientos(
-            vencimientos, alpaca.LIQUIDACION[o["raiz"]], planes[0][1], o["objetivo_dias"],
+            vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivo_dias"],
             o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
         seleccion[o["raiz"]] = {"vencimientos": [str(v) for v in elegidos],
                                 "dias": {str(v): round(plazos[v], 4) for v in elegidos}}
@@ -128,29 +149,30 @@ def main() -> int:
         solicitudes += [alpaca.pedir_cadena(o["raiz"], v, cfg["feed_opciones"]) for v in elegidos]
     solicitudes.append(alpaca.pedir_acciones(bruto["captura"]["acciones"]["simbolos"], cfg["feed_acciones"]))
 
-    fallidas = 0
-    for hora, corte, etiqueta in planes:
+    for paso in pendientes:
+        hora, corte = paso["hora"], paso["corte_utc"]
         if hora != "inmediata":
             inicio = corte - pd.Timedelta(seconds=cfg["adelanto_s"])
             print(f"{hora}: esperando hasta {inicio.tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York)")
             alpaca.esperar_hasta(inicio, cliente.reloj)
-        m = {"fecha": str(fecha), "hora": hora, "corte_utc": alpaca.iso(corte), "etiqueta": etiqueta,
+        m = {"fecha": str(fecha), "hora": hora, "corte_utc": alpaca.iso(corte), "etiqueta": paso["etiqueta"],
              "modo": "inmediata" if hora == "inmediata" else "programada", "feed_opciones": cfg["feed_opciones"],
              "feed_acciones": cfg["feed_acciones"], "adelanto_s": cfg["adelanto_s"], "config": info_config,
-             "seleccion": seleccion, "reloj": estado_reloj, "codigo": almacen.estado_git(RAIZ)}
+             "seleccion": seleccion, "reloj": estado_reloj, "codigo": ejecucion["codigo"]}
         try:
             manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"])
         except FileExistsError as error:
             print(f"{hora}: {error}", file=sys.stderr)
-            fallidas += 1
+            paso.update(estado="fallida", motivo=str(error))
             continue
         duracion = (pd.Timestamp(manifiesto["fin_utc"]) - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds()
         n = sum(len(e["paginas"]) for e in manifiesto["solicitudes"].values())
-        print(f"{hora}: {n} respuestas en {duracion:.2f} s; después del corte: "
-              f"{len(manifiesto['respuestas_despues_del_corte'])}; errores: {len(manifiesto['errores'])} -> "
-              f"{ruta.relative_to(datos)}")
-        if manifiesto["errores"] or (hora != "inmediata" and manifiesto["respuestas_despues_del_corte"]):
-            fallidas += 1
+        paso.update(estado=manifiesto["estado"], manifiesto=ruta.relative_to(datos).as_posix(), respuestas=n,
+                    duracion_s=round(duracion, 3), despues_del_corte=len(manifiesto["respuestas_despues_del_corte"]),
+                    errores=sorted(manifiesto["errores"]),
+                    margen_s=round((corte - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds(), 3))
+        print(f"{hora}: {manifiesto['estado']}; {n} respuestas en {duracion:.2f} s; después del corte: "
+              f"{paso['despues_del_corte']}; errores: {len(paso['errores'])} -> {paso['manifiesto']}")
 
     # Tablas normalizadas del día, reconstruidas desde el crudo.
     piloto = cargar_config(args.config_piloto)
@@ -169,7 +191,7 @@ def main() -> int:
         print(f"  subyacente {fila['subyacente']} = {fila['precio']:.2f} ({fila['feed']}) en {fila['captura']}")
     for f in fallos:
         print(f"  subyacente implícito no identificado en {f['captura']}: {f['motivo']}")
-    return 1 if fallidas or (not args.ahora and perdidas) else 0
+    return terminar()
 
 
 if __name__ == "__main__":

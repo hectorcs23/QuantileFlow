@@ -57,22 +57,26 @@ def filtro_kalman(y, A, H, Q, R, f0, P0):
 
 
 def ewma(y, lam):
-    """Media exponencial ``m_t = lam m_{t-1} + (1 - lam) y_t`` (ignora NaN)."""
+    """Media exponencial causal ``m_t = lam m_{t-1} + (1 - lam) y_t``.
+
+    Empieza en la primera observación finita: antes de ella la salida es NaN,
+    nunca un valor futuro. Una observación faltante posterior conserva la media.
+    """
     y = np.asarray(y, dtype=float)
-    salida = np.empty_like(y)
-    m = y[np.isfinite(y)][0]
+    salida = np.full(y.shape, np.nan)
+    m = np.nan
     for t, v in enumerate(y):
         if np.isfinite(v):
-            m = lam * m + (1.0 - lam) * v
+            m = v if np.isnan(m) else lam * m + (1.0 - lam) * v
         salida[t] = m
     return salida
 
 
 def persistencia(y):
-    """Pronóstico ingenuo: el último valor observado."""
+    """Pronóstico ingenuo causal: el último valor observado (NaN antes del primero)."""
     y = np.asarray(y, dtype=float)
-    salida = np.empty_like(y)
-    ultimo = y[np.isfinite(y)][0]
+    salida = np.full(y.shape, np.nan)
+    ultimo = np.nan
     for t, v in enumerate(y):
         if np.isfinite(v):
             ultimo = v

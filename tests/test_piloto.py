@@ -163,3 +163,58 @@ def test_replay_y_datos_posteriores_al_corte(tmp_path, mercado):
     _, m3 = correr(CONFIG, *rutas_tarde, fechas[0], fechas[-1], tmp_path / "salida3", "prueba")
     assert m3["entradas"]["cotizaciones"]["sha256"] != m1["entradas"]["cotizaciones"]["sha256"]
     assert m3["salidas"]["tabla_diaria.csv"] == m1["salidas"]["tabla_diaria.csv"]
+
+
+# --- Regresiones de la revisión del commit e2b92f0 ------------------------------------
+
+def test_fuentes_explicitas_y_cambio_ausente_en_la_transicion(cfg, mercado):
+    # H2: un día con feed indicativo y el siguiente con OPRA.
+    cot, sub, _ = mercado
+    fechas = FECHAS[:2]
+    mezcla = cot.copy()
+    segundo = mezcla["sello_snapshot_utc"].dt.tz_convert("America/New_York").dt.date == fechas[1]
+    mezcla.loc[~segundo, "feed"] = "indicative"
+    mezcla.loc[segundo, "feed"] = "opra"
+    with pytest.raises(ValueError, match="fuentes"):
+        pl.ejecutar(mezcla, sub, fechas, cfg)  # hay dos fuentes y ninguna elegida
+    ambas = pl.ejecutar(mezcla, sub, fechas, cfg, fuentes_opciones=("sintetico/indicative", "sintetico/opra"))
+    p = ambas.principal.set_index("fecha")
+    assert list(p["fuente_opciones"]) == ["sintetico/indicative", "sintetico/opra"]
+    assert np.isnan(p.loc[fechas[1], "cambio_rr25"]) and "segmento" in p.loc[fechas[1], "cambio_rr25_motivo"]
+    assert ambas.dictamen["alcance"]["evaluacion_con_precios_de_mercado"].startswith("no permitida")
+    solo = pl.ejecutar(mezcla, sub, fechas, cfg, fuentes_opciones=("sintetico/opra",)).principal.set_index("fecha")
+    assert solo.loc[fechas[0], "estado_sesion"] == "no disponible"
+    # Dos fuentes en la misma sesión: la sesión queda no disponible, nunca se mezclan.
+    doble = pd.concat([cot, cot.assign(feed="opra", sello_snapshot_utc=cot["sello_snapshot_utc"]
+                                       - pd.Timedelta(seconds=1))], ignore_index=True)
+    r = pl.ejecutar(doble, sub, fechas[:1], cfg,
+                    fuentes_opciones=("sintetico/nbbo_intervalos_sintetico", "sintetico/opra"))
+    assert r.principal.loc[0, "estado_sesion"] == "no disponible"
+    assert "varias fuentes" in r.principal.loc[0, "motivo_sesion"]
+
+
+def test_precio_objetivo_desfasado_o_tardio_deja_la_etiqueta_ausente(cfg, mercado):
+    # H3: la frescura y la disponibilidad del precio objetivo llegan a las etiquetas.
+    cot, sub, _ = mercado
+    fechas = FECHAS[:3]
+    viejo = sub.copy()
+    dia = viejo["sello_snapshot_utc"].dt.tz_convert("America/New_York").dt.date == fechas[1]
+    viejo.loc[dia, "sello_evento_utc"] = viejo.loc[dia, "sello_evento_utc"] - pd.Timedelta(minutes=10)
+    r = pl.ejecutar(cot, viejo, fechas, cfg)
+    e = r.etiquetas[r.etiquetas["horizonte"] == 1].set_index("sesion")
+    assert e.loc[fechas[0], "estado"] == "sin precio final" and "desfasado" in e.loc[fechas[0], "motivo"]
+    tarde = sub.copy()
+    tarde.loc[dia, "disponible_utc"] = tarde.loc[dia, "disponible_utc"] + pd.Timedelta(hours=2)
+    e = pl.ejecutar(cot, tarde, fechas, cfg).etiquetas
+    e = e[e["horizonte"] == 1].set_index("sesion")
+    assert e.loc[fechas[0], "estado"] == "sin precio final" and "después del corte" in e.loc[fechas[0], "motivo"]
+
+
+def test_procedencia_en_la_tabla_diaria(resultado):
+    p = resultado.principal
+    assert set(p["fuente_opciones"]) == {"sintetico/nbbo_intervalos_sintetico"}
+    assert set(p["fuente_subyacente"]) == {"sintetico/indice_sintetico"}
+    assert set(p["tipo_precio_subyacente"]) == {"observado"}
+    assert set(r["fuente"] for _, r in resultado.etiquetas.iterrows()) == {"sintetico/indice_sintetico"}
+    assert resultado.dictamen["alcance"]["precio_objetivo"] == "observado"
+    assert resultado.dictamen["alcance"]["evaluacion_con_precios_de_mercado"] == "no permitida: datos sintéticos"

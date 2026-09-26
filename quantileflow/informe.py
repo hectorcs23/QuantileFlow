@@ -17,7 +17,8 @@ import pandas as pd
 from .piloto import ResultadoPiloto
 
 COLUMNAS_TABLA = [
-    "fecha", "hora", "estado_sesion", "motivo_sesion", "vencimiento_1", "dias_1", "vencimiento_2", "dias_2",
+    "fecha", "hora", "estado_sesion", "motivo_sesion", "fuente_opciones", "fuente_subyacente",
+    "tipo_precio_subyacente", "segmento", "vencimiento_1", "dias_1", "vencimiento_2", "dias_2",
     "spot", "forward", "forward_error", "tasa_implicita", "forward_menos_contractual", "log_forward_spot",
     "rr25_estado", "rr25", "rr25_inferior", "rr25_superior", "rr25_motivo", "cambio_rr25",
     "cambio_rr25_inferior", "cambio_rr25_superior", "cambio_rr25_motivo", "asim_log_estado", "asim_log",
@@ -46,6 +47,13 @@ def _guardar(ruta):
     plt.savefig(ruta)
     plt.close()
     return ruta
+
+
+def objetivo_en_ingles(r: ResultadoPiloto) -> str:
+    """Nombre del precio objetivo para las gráficas: nunca presenta un nivel implícito como el índice."""
+    if r.dictamen.get("alcance", {}).get("tipo_precio_subyacente") == "implicito":
+        return f"Implied {r.config.subyacente} level (option parity)"
+    return r.config.subyacente
 
 
 def figuras(r: ResultadoPiloto, salida: Path, aviso="") -> dict:
@@ -104,7 +112,7 @@ def figuras(r: ResultadoPiloto, salida: Path, aviso="") -> dict:
                        (p.loc[c, "cambio_rr25_superior"] - p.loc[c, "cambio_rr25"]) * 100],
                  fmt="o", capsize=3, label="Sessions with both RR25 values identified")
     plt.axhline(0.0, color="k", linestyle="--", linewidth=1)
-    plt.xlabel("Index move since the previous session at 09:45 (%)")
+    plt.xlabel(f"{objetivo_en_ingles(r)}: move since the previous session at 09:45 (%)")
     plt.ylabel("Daily change in RR25 (vol points)")
     plt.title("RR25 change vs the move already observed" + sufijo)
     plt.legend()
@@ -182,6 +190,7 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
     }
     rutas.update(figuras(r, salida, aviso_figuras if aviso else ""))
     d = r.dictamen
+    al = d["alcance"]
     totales = Counter()
     for t in p["exclusiones"]:
         totales.update(_exclusiones(t))
@@ -197,6 +206,8 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         f"plazo constante de {cfg.objetivo_dias:g} días naturales; etiquetas a {', '.join(map(str, cfg.horizontes))} "
         "sesiones.",
         f"- Sesiones: {len(p)}, del {p['fecha'].min()} al {p['fecha'].max()}.",
+        f"- Fuentes: opciones {', '.join(al['fuentes_opciones']) or 'ninguna'}; precio objetivo "
+        f"{al['fuente_subyacente'] or 'ninguno'} ({al['precio_objetivo']}).",
         f"- Entradas y hashes: `{manifiesto}`.", "",
         "## Dictamen de datos", "", f"**{d['veredicto'].capitalize()}.**", "",
         "| Criterio | Valor | Umbral | Cumple | Crítico |", "|---|---:|---|---|---|",
@@ -209,6 +220,10 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
     lineas += [
         "", "Un criterio crítico incumplido hace el dictamen «insuficiente»; uno no crítico, «apto con "
         "limitaciones». Los umbrales están en la configuración y son provisionales.", "",
+        "**Alcance**, aparte de la aptitud de los datos:", "",
+        f"- Medición: {al['medicion']}.",
+        f"- Precio objetivo: {al['precio_objetivo']}.",
+        f"- Evaluación con precios de mercado: {al['evaluacion_con_precios_de_mercado']}.", "",
         "## Calidad de los datos", "",
         f"- Sesiones procesadas: {int((p['estado_sesion'] == 'procesada').sum())} de {len(p)}.",
     ]
@@ -256,10 +271,17 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         lineas.append("")
         lineas += _detalle_sesion(r, fila) if fila is not None else ["No hay ninguna en la muestra."]
         lineas.append("")
+    if al["tipo_precio_subyacente"] == "implicito":
+        objetivo = (f"- Las etiquetas son rendimientos del nivel de {cfg.subyacente} inferido por paridad de las "
+                    "mismas opciones: comparten fuente y errores de medición con las señales y no sustituyen al "
+                    "índice observado. Antes de evaluar predicción hay que compararlas con una referencia observada.")
+    else:
+        objetivo = (f"- Los rendimientos de {cfg.subyacente} son etiquetas de investigación: el índice no se compra "
+                    "directamente, y una política sobre SPY o futuros necesitará sus propios precios, costos y "
+                    "dividendos.")
     lineas += [
         "## Limitaciones", "",
-        "- Los rendimientos de SPX son etiquetas de investigación: el índice no se compra directamente, y una "
-        "política sobre SPY o futuros necesitará sus propios precios, costos y dividendos.",
+        objetivo,
         "- Las etiquetas a 5 sesiones se solapan: no son observaciones independientes.",
         "- La referencia del forward usa una tasa y un rendimiento de dividendo fijos de la configuración, "
         "no una curva con fuente.",

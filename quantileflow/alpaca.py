@@ -42,6 +42,7 @@ import http.client
 import json
 import os
 import stat
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -54,7 +55,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import almacen, cadenas, contrato, implicito
-from .calendario import CALENDARIO, _fecha, es_sesion, instante_liquidacion, plazo_anios
+from .calendario import CALENDARIO, _fecha, es_sesion, instante, instante_liquidacion, plazo_anios
 
 PROVEEDOR = "alpaca"
 VERSION_ADAPTADOR = "alpaca-0.1"
@@ -204,8 +205,12 @@ class ClienteAlpaca:
                 self.dormir(self._espera(intento, estado, cab))
         raise ErrorAlpaca(estado, ruta, f"sin respuesta válida tras {self.reintentos + 1} intentos: {ultimo}")
 
-    def paginas(self, servicio, ruta, params=(), maximo=200) -> list[Respuesta]:
-        """Todas las páginas de una consulta (``next_page_token``), cada una como respuesta propia."""
+    def paginas(self, servicio, ruta, params=(), maximo=200, al_recibir=None) -> list[Respuesta]:
+        """Todas las páginas de una consulta (``next_page_token``), cada una como respuesta propia.
+
+        ``al_recibir(respuesta, numero)`` se llama en cuanto llega cada página:
+        así una página ya recibida no se pierde si falla la siguiente.
+        """
         respuestas, token = [], None
         while True:
             p = dict(params)
@@ -213,6 +218,8 @@ class ClienteAlpaca:
                 p["page_token"] = token
             respuesta = self.get(servicio, ruta, p)
             respuestas.append(respuesta)
+            if al_recibir is not None:
+                al_recibir(respuesta, len(respuestas))
             cuerpo = respuesta.json()
             token = cuerpo.get("next_page_token") if isinstance(cuerpo, dict) else None
             if not token:
@@ -268,19 +275,47 @@ def pedir_acciones(simbolos, feed) -> Solicitud:
                       symbols=",".join(simbolos), feed=feed)
 
 
-def ejecutar(cliente: ClienteAlpaca, solicitudes, hilos=8):
-    """Ejecuta las solicitudes en paralelo. Devuelve respuestas por nombre y errores por nombre."""
+def ejecutar(cliente: ClienteAlpaca, solicitudes, hilos=8, registro=None):
+    """Ejecuta las solicitudes en paralelo; con ``registro``, guarda cada página en cuanto llega.
+
+    Devuelve las respuestas recibidas por nombre (también las de una consulta
+    interrumpida) y los errores por nombre.
+    """
     nombres = [s.nombre for s in solicitudes]
     if len(set(nombres)) != len(nombres):
         raise ValueError("nombres de solicitud repetidos")
+
+    def una(solicitud):
+        recibidas = []
+
+        def al_recibir(respuesta, numero):
+            recibidas.append(respuesta)
+            if registro is not None:
+                registro.pagina(solicitud, respuesta, numero)
+
+        if registro is not None:
+            registro.iniciar(solicitud)
+        try:
+            cliente.paginas(solicitud.servicio, solicitud.ruta, solicitud.params, al_recibir=al_recibir)
+        except (ErrorAlpaca, OSError, ValueError, http.client.HTTPException) as error:
+            texto = (f"{error} ({len(recibidas)} páginas recibidas antes del fallo; el total es desconocido: "
+                     "la paginación es por cursor)")
+            if registro is not None:
+                registro.terminar(solicitud, texto)
+            return recibidas, texto
+        if registro is not None:
+            registro.terminar(solicitud)
+        return recibidas, None
+
     with ThreadPoolExecutor(max_workers=max(1, int(hilos))) as grupo:
-        futuros = {s.nombre: grupo.submit(cliente.paginas, s.servicio, s.ruta, s.params) for s in solicitudes}
+        futuros = {s.nombre: grupo.submit(una, s) for s in solicitudes}
     resultados, errores = {}, {}
     for nombre, futuro in futuros.items():
-        try:
-            resultados[nombre] = futuro.result()
-        except (ErrorAlpaca, OSError, ValueError) as error:
-            errores[nombre] = str(error)
+        recibidas, error = futuro.result()
+        if recibidas:
+            resultados[nombre] = recibidas
+        if error:
+            errores[nombre] = error
     return resultados, errores
 
 
@@ -293,28 +328,61 @@ def directorio_crudo(raiz_datos) -> Path:
     return Path(raiz_datos) / "raw" / "alpaca"
 
 
-def guardar_respuestas(resultados, tipos, raiz_datos) -> dict:
-    """Guarda cada página como crudo inmutable (gzip); devuelve las entradas del manifiesto por solicitud.
+def guardar_pagina(respuesta: Respuesta, nombre, numero, raiz_datos) -> dict:
+    """Guarda una página como crudo inmutable (gzip) y devuelve su entrada de manifiesto.
 
     ``sha256`` identifica el archivo guardado y ``sha256_contenido`` el cuerpo
     original: la lectura comprueba los dos.
     """
     raiz_datos = Path(raiz_datos)
-    salida = {}
-    for nombre in sorted(resultados):
-        paginas = []
-        for i, r in enumerate(resultados[nombre], start=1):
-            comprimido = gzip.compress(r.cuerpo, compresslevel=9, mtime=0)
-            info = almacen.guardar_crudo_bytes(comprimido, f"{nombre}_p{i}.json.gz", directorio_crudo(raiz_datos))
-            paginas.append({
-                "servicio": r.servicio, "ruta": r.ruta, "params": dict(r.params), "pagina": i,
-                "estado": r.estado, "cabeceras": r.cabeceras, "enviado_utc": iso(r.enviado_utc),
-                "recibido_utc": iso(r.recibido_utc), "intentos": r.intentos,
-                "archivo": Path(info["ruta"]).relative_to(raiz_datos).as_posix(), "sha256": info["sha256"],
-                "bytes": info["bytes"], "sha256_contenido": almacen.sha256_bytes(r.cuerpo),
-                "bytes_contenido": len(r.cuerpo)})
-        salida[nombre] = {"tipo": tipos[nombre], "paginas": paginas}
-    return salida
+    r = respuesta
+    comprimido = gzip.compress(r.cuerpo, compresslevel=9, mtime=0)
+    info = almacen.guardar_crudo_bytes(comprimido, f"{nombre}_p{numero}.json.gz", directorio_crudo(raiz_datos))
+    return {"servicio": r.servicio, "ruta": r.ruta, "params": dict(r.params), "pagina": numero,
+            "estado": r.estado, "cabeceras": r.cabeceras, "enviado_utc": iso(r.enviado_utc),
+            "recibido_utc": iso(r.recibido_utc), "intentos": r.intentos,
+            "archivo": Path(info["ruta"]).relative_to(raiz_datos).as_posix(), "sha256": info["sha256"],
+            "bytes": info["bytes"], "sha256_contenido": almacen.sha256_bytes(r.cuerpo),
+            "bytes_contenido": len(r.cuerpo)}
+
+
+class Registro:
+    """Entradas de manifiesto que se escriben a medida que llegan las páginas (seguro entre hilos).
+
+    Cada solicitud termina ``completa``, ``parcial`` (algunas páginas y un
+    fallo) o ``fallida`` (ninguna página), con la causa del fallo.
+    """
+
+    def __init__(self, raiz_datos):
+        self.raiz_datos = Path(raiz_datos)
+        self.entradas = {}
+        self._candado = threading.Lock()
+
+    def iniciar(self, solicitud):
+        with self._candado:
+            self.entradas[solicitud.nombre] = {"tipo": solicitud.tipo, "estado": "en curso", "paginas": [],
+                                               "error": None}
+
+    def pagina(self, solicitud, respuesta, numero):
+        entrada = guardar_pagina(respuesta, solicitud.nombre, numero, self.raiz_datos)
+        with self._candado:
+            self.entradas[solicitud.nombre]["paginas"].append(entrada)
+
+    def terminar(self, solicitud, error=None):
+        with self._candado:
+            e = self.entradas[solicitud.nombre]
+            if error is None:
+                e["estado"] = "completa"
+            else:
+                e["estado"], e["error"] = ("parcial" if e["paginas"] else "fallida"), str(error)
+
+
+def guardar_respuestas(resultados, tipos, raiz_datos) -> dict:
+    """Guarda respuestas completas ya recibidas; devuelve las entradas del manifiesto por solicitud."""
+    return {nombre: {"tipo": tipos[nombre], "estado": "completa", "error": None,
+                     "paginas": [guardar_pagina(r, nombre, i, raiz_datos)
+                                 for i, r in enumerate(resultados[nombre], start=1)]}
+            for nombre in sorted(resultados)}
 
 
 def reloj_servidor(respuesta: Respuesta) -> dict:
@@ -343,25 +411,97 @@ def escribir_manifiesto(manifiesto: dict, raiz_datos) -> Path:
     return ruta
 
 
+def estado_captura(entradas: dict, tardias, modo=None) -> str:
+    """``completa``, ``parcial`` o ``fallida`` según las solicitudes propias de la captura.
+
+    Es completa si todas sus solicitudes terminaron completas y, salvo en una
+    captura inmediata, ninguna respuesta llegó después del corte. Es fallida si
+    ninguna cadena tiene una página recibida a tiempo.
+    """
+    propias = {n: e for n, e in entradas.items() if e["tipo"] in ("cadena", "acciones")}
+    tardias = set(tardias) if modo != "inmediata" else set()
+    utiles = [e for e in propias.values() if e["tipo"] == "cadena"] or list(propias.values())
+    if not any(p["archivo"] not in tardias for e in utiles for p in e["paginas"]):
+        return "fallida"
+    if not tardias and all(e.get("estado", "completa") == "completa" for e in propias.values()):
+        return "completa"
+    return "parcial"
+
+
+def estado_manifiesto(manifiesto: dict) -> str:
+    """Estado de una captura guardada; los manifiestos sin estado (versión 0.1) se evalúan de nuevo."""
+    if "estado" in manifiesto:
+        return manifiesto["estado"]
+    estado = estado_captura(manifiesto["solicitudes"], manifiesto.get("respuestas_despues_del_corte", []),
+                            manifiesto.get("modo"))
+    return "parcial" if estado == "completa" and manifiesto.get("errores") else estado
+
+
 def capturar(cliente: ClienteAlpaca, solicitudes, raiz_datos, meta: dict, previas=None, hilos=8):
     """Ejecuta una captura, guarda crudo y manifiesto y devuelve ``(manifiesto, ruta)``.
 
     ``meta`` trae al menos ``fecha`` (sesión), ``hora``, ``corte_utc`` y
     ``etiqueta``; ``previas`` son entradas ya guardadas (p. ej., los contratos
     del día) que se incluyen para que el manifiesto se normalice por sí solo.
+    Cada página se guarda en cuanto llega; el manifiesto registra el estado de
+    cada solicitud y el de la captura.
     """
+    registro = Registro(raiz_datos)
     inicio = cliente.reloj()
-    resultados, errores = ejecutar(cliente, solicitudes, hilos)
+    _, errores = ejecutar(cliente, solicitudes, hilos, registro)
     fin = cliente.reloj()
     entradas = dict(previas or {})
-    entradas.update(guardar_respuestas(resultados, {s.nombre: s.tipo for s in solicitudes}, raiz_datos))
+    entradas.update(registro.entradas)
     corte = pd.Timestamp(meta["corte_utc"])
     tardias = [p["archivo"] for e in entradas.values() if e["tipo"] in ("cadena", "acciones")
                for p in e["paginas"] if pd.Timestamp(p["recibido_utc"]) > corte]
     manifiesto = {"proveedor": PROVEEDOR, "version_adaptador": VERSION_ADAPTADOR, "cuenta": cliente.cuenta,
                   **meta, "inicio_utc": iso(inicio), "fin_utc": iso(fin), "solicitudes": entradas,
-                  "errores": errores, "respuestas_despues_del_corte": tardias}
+                  "errores": errores, "respuestas_despues_del_corte": tardias,
+                  "estado": estado_captura(entradas, tardias, meta.get("modo"))}
     return manifiesto, escribir_manifiesto(manifiesto, raiz_datos)
+
+
+def planificar(raiz_datos, fecha, horas, ahora_utc, adelanto_s, codigo=CALENDARIO) -> list[dict]:
+    """Qué hacer con cada hora de una sesión según las capturas guardadas y la hora actual.
+
+    ``completa``: ya hay una captura completa y se omite. ``parcial`` o
+    ``fallida``: la captura de esa hora tuvo problemas y el corte ya pasó; el
+    fallo se conserva y no se reemplaza con datos posteriores. ``perdida``: sin
+    captura y con el corte pasado. ``pendiente``: se capturará.
+    """
+    previas = {}
+    for m in leer_manifiestos(raiz_datos, fecha, fecha):
+        previas.setdefault(m["hora"], []).append(estado_manifiesto(m))
+    plan = []
+    for hora in horas:
+        corte = instante(fecha, hora, codigo)
+        estados = previas.get(hora, [])
+        paso = {"hora": hora, "corte_utc": corte, "capturas_previas": estados,
+                "etiqueta": f"{_fecha(fecha)}T{hora.replace(':', '')}" + (f"-{len(estados) + 1}" if estados else "")}
+        if "completa" in estados:
+            paso.update(estado="completa", accion="omitir")
+        elif corte - pd.Timedelta(seconds=float(adelanto_s)) < pd.Timestamp(ahora_utc):
+            paso.update(estado="parcial" if "parcial" in estados else ("fallida" if estados else "perdida"),
+                        accion="omitir")
+        else:
+            paso.update(estado="pendiente", accion="capturar")
+        plan.append(paso)
+    return plan
+
+
+def codigo_salida(plan) -> int:
+    """0 solo si todas las horas quedaron completas: la existencia de un archivo no es un éxito."""
+    return 0 if plan and all(p["estado"] == "completa" for p in plan) else 1
+
+
+def escribir_ejecucion(registro: dict, raiz_datos) -> Path:
+    """Registro de una ejecución del script (disparo, horas planificadas y su estado), en solo lectura."""
+    ruta = (directorio_crudo(raiz_datos) / "ejecuciones" / registro["fecha"]
+            / f"{pd.Timestamp(registro['inicio_utc']):%Y%m%dT%H%M%S%fZ}.json")
+    almacen.escribir_json(registro, ruta)
+    os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+    return ruta
 
 
 def leer_manifiestos(raiz_datos, desde=None, hasta=None) -> list[dict]:
@@ -493,7 +633,7 @@ def filas_acciones(snapshots: dict, recibido_utc, feed, captura) -> list[dict]:
         filas.append({"subyacente": simbolo, "precio": precio, "bid": bid if bid > 0 else None,
                       "ask": ask if ask > 0 else None, "sello_evento_utc": sello, "sello_snapshot_utc": recibido_utc,
                       "disponible_utc": recibido_utc, "recibido_utc": recibido_utc, "proveedor": PROVEEDOR,
-                      "feed": feed, "fuente_precio": fuente, "captura": captura})
+                      "feed": feed, "tipo_precio": "observado", "fuente_precio": fuente, "captura": captura})
     return filas
 
 
@@ -522,6 +662,9 @@ def normalizar_manifiesto(manifiesto: dict, raiz_datos):
         if problemas:
             raise ValueError(f"{manifiesto['_ruta'] if '_ruta' in manifiesto else captura}: " + "; ".join(problemas))
     resumen = {"captura": captura, "fecha": manifiesto["fecha"], "hora": manifiesto["hora"],
+               "estado": estado_manifiesto(manifiesto),
+               "solicitudes_no_completas": sorted(n for n, e in solicitudes.items()
+                                                  if e.get("estado", "completa") != "completa"),
                "corte_utc": manifiesto["corte_utc"], "contratos_en_metadatos": len(meta),
                **dict(sorted(cuentas.items())),
                "errores": len(manifiesto.get("errores", {})),

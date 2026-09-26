@@ -7,8 +7,9 @@ necesariamente el lunes. Cada etiqueta guarda tres instantes en UTC:
 
 * ``decision_at``: corte más la latencia supuesta (cuándo se podría actuar);
 * ``label_end_at``: fin del periodo del rendimiento;
-* ``label_available_at``: cuándo se conoce la etiqueta (fin más el retraso de
-  publicación).
+* ``label_available_at``: cuándo se conoce la etiqueta: el fin más el retraso
+  de publicación o, si es posterior, la disponibilidad documentada de los
+  precios inicial y final.
 
 Entrenamiento y calibración solo pueden consultar etiquetas con
 ``label_available_at`` anterior o igual al instante simulado
@@ -39,17 +40,32 @@ def _serie_por_sesion(precios, codigo):
     return serie.sort_index()
 
 
+def _por_fecha(valores):
+    if valores is None:
+        return {}
+    return {_fecha(f): v for f, v in pd.Series(valores).items()}
+
+
 def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
-                      retraso_publicacion_s=0.0, codigo=CALENDARIO) -> pd.DataFrame:
+                      retraso_publicacion_s=0.0, codigo=CALENDARIO, disponibles=None,
+                      motivos=None) -> pd.DataFrame:
     """Rendimientos logarítmicos a ``horizontes`` sesiones desde ``hora`` hasta ``hora``.
 
     ``precios`` es una serie indexada por fecha de sesión con el precio a
     ``hora``; un NaN o una fecha ausente deja sin etiqueta a las observaciones
-    que la necesitan.
+    que la necesitan. ``disponibles`` (instante UTC por sesión) retrasa la
+    madurez hasta que el precio se publicó; ``motivos`` explica por qué falta un
+    precio y pasa a la columna ``motivo``.
     """
     serie = _serie_por_sesion(precios, codigo)
+    disponibles, motivos = _por_fecha(disponibles), _por_fecha(motivos)
     latencia = pd.Timedelta(seconds=float(latencia_s))
     retraso = pd.Timedelta(seconds=float(retraso_publicacion_s))
+
+    def motivo(fecha):
+        texto = motivos.get(fecha)
+        return texto if isinstance(texto, str) and texto else f"sin precio de la sesión {fecha}"
+
     filas = []
     for fecha in serie.index:
         inicio = instante(fecha, hora, codigo)
@@ -58,7 +74,7 @@ def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
             fila = {"sesion": fecha, "horizonte": int(h), "inicio_at": inicio,
                     "decision_at": inicio + latencia, "sesion_fin": None, "label_end_at": pd.NaT,
                     "label_available_at": pd.NaT, "precio_inicio": p0, "precio_fin": np.nan,
-                    "retorno_log": np.nan, "estado": "ok"}
+                    "retorno_log": np.nan, "estado": "ok", "motivo": ""}
             try:
                 fin_fecha = sesion_desplazada(fecha, h, codigo)
                 fin = instante(fin_fecha, hora, codigo)
@@ -67,12 +83,14 @@ def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
                 filas.append(fila)
                 continue
             p1 = serie.get(fin_fecha, np.nan)
-            fila.update(sesion_fin=fin_fecha, label_end_at=fin, label_available_at=fin + retraso,
+            publicado = [fin + retraso] + [pd.Timestamp(disponibles[f]) for f in (fecha, fin_fecha)
+                                           if f in disponibles and not pd.isna(disponibles[f])]
+            fila.update(sesion_fin=fin_fecha, label_end_at=fin, label_available_at=max(publicado),
                         precio_fin=p1)
             if not np.isfinite(p0):
-                fila["estado"] = "sin precio inicial"
+                fila.update(estado="sin precio inicial", motivo=motivo(fecha))
             elif not np.isfinite(p1):
-                fila["estado"] = "sin precio final"
+                fila.update(estado="sin precio final", motivo=motivo(fin_fecha))
             else:
                 fila["retorno_log"] = float(np.log(p1 / p0))
             filas.append(fila)

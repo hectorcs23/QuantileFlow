@@ -306,7 +306,7 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                                   "ask": np.nan, "sello_evento_utc": corte - pd.Timedelta(seconds=atraso),
                                   "sello_snapshot_utc": corte, "disponible_utc": corte,
                                   "recibido_utc": recibido_utc, "proveedor": "sintetico",
-                                  "feed": "indice_sintetico"})
+                                  "feed": "indice_sintetico", "tipo_precio": "observado"})
             if fecha not in fechas:
                 continue
             S = spot[(fecha, hora)]

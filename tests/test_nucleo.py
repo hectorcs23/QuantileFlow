@@ -183,3 +183,37 @@ def test_objetivo_homogeneo_lleva_a_extremos():
     w_alto = decision.optimizar_cvar(R, np.array([0.3, 0.3]), lam=0.02, costos=0.0, w_max=0.8)["w"]
     assert np.isclose(w_bajo.sum(), 1.0) or np.any(np.isclose(w_bajo, 0.8))
     assert np.allclose(w_alto, 0.0, atol=1e-9)
+
+
+# --- Regresiones de la revisión del commit e2b92f0 ------------------------------------
+
+def test_filtros_causales_no_rellenan_con_datos_futuros():
+    # H4: antes de la primera observación la salida es NaN, no la observación futura.
+    for filtro in (lambda y: filtrado.ewma(y, 0.5), filtrado.persistencia):
+        assert np.array_equal(filtro([np.nan, np.nan, 10.0]), [np.nan, np.nan, 10.0], equal_nan=True)
+        assert np.all(np.isnan(filtro([np.nan, np.nan])))  # serie completamente ausente
+        rng = np.random.default_rng(3)
+        y = rng.normal(size=40)
+        y[[0, 1, 5, 17, 18]] = np.nan
+        base = filtro(y)
+        for t in range(len(y) - 1):  # cambiar el futuro no cambia el pasado
+            otra = y.copy()
+            otra[t + 1:] = rng.normal(size=len(y) - t - 1) * 100.0
+            assert np.array_equal(filtro(otra)[:t + 1], base[:t + 1], equal_nan=True)
+    assert filtrado.ewma([np.nan, 2.0, np.nan, 4.0], 0.5)[1:].tolist() == [2.0, 2.0, 3.0]
+
+
+def test_iv_sin_raiz_en_el_intervalo_devuelve_ausencia_sin_abortar():
+    # H7: dentro de las cotas de precio pero con la raíz fuera de [vol_min, vol_max].
+    iv, motivo = opciones.vol_implicita_black(99.0, 100.0, 100.0, 1 / 365, 1.0, True, con_motivo=True)
+    assert np.isnan(iv) and "intervalo" in motivo
+    lote = opciones.vol_implicita_black(np.array([99.0, 2.0]), 100.0, 100.0, 1 / 365, 1.0, True)
+    assert np.isnan(lote[0]) and 0.1 < lote[1] < 2.0  # una cotización extrema no aborta las demás
+    precio = opciones.precio_black(100.0, 105.0, 0.2**2 * 0.5, 0.99, True)
+    assert opciones.vol_implicita_black(precio, 100.0, 105.0, 0.5, 0.99, True) == pytest.approx(0.2)
+    for T, D in ((0.0, 1.0), (-1.0, 1.0), (np.nan, 1.0), (0.5, 0.0), (0.5, np.inf)):
+        iv, motivo = opciones.vol_implicita_black(precio, 100.0, 105.0, T, D, True, con_motivo=True)
+        assert np.isnan(iv) and "parámetros" in motivo
+    iv, motivo = opciones.vol_implicita_black(np.array([np.nan, precio]), np.array([100.0, -1.0]), 105.0, 0.5, 0.99,
+                                              True, con_motivo=True)
+    assert np.all(np.isnan(iv)) and all("parámetros" in m for m in motivo)

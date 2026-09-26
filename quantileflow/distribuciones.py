@@ -108,6 +108,21 @@ def _sin_cuantiles(u, estado, motivo, diagnostico):
                      (np.nan, np.nan), motivo, diagnostico)
 
 
+def _inversa_generalizada(x, F, u):
+    """``inf{x : F(x) >= u}`` de una CDF continua y lineal por tramos, con ``F`` no decreciente.
+
+    En una meseta devuelve su extremo izquierdo; por encima de ella interpola en
+    el tramo que sube (conservar solo el extremo izquierdo de cada meseta y
+    usar ``np.interp`` deformaría esa interpolación).
+    """
+    j = np.clip(np.searchsorted(F, u, side="left"), 0, len(F) - 1)  # primer punto con F >= u
+    salida = x[j].astype(float)
+    sube = (j > 0) & (F[j] > u)  # u cae dentro del tramo (j - 1, j), donde F crece
+    i, jj = j[sube] - 1, j[sube]
+    salida[sube] = x[i] + (u[sube] - F[i]) / (F[jj] - F[i]) * (x[jj] - x[i])
+    return salida
+
+
 def cuantiles_desde_cdf(x, cdf, u, rango_x=None, tol_masa=1e-3, tol_monotonia=1e-10):
     """Cuantiles ``F^{-1}(u)`` de una CDF **anclada** evaluada en la malla ``x``.
 
@@ -148,10 +163,8 @@ def cuantiles_desde_cdf(x, cdf, u, rango_x=None, tol_masa=1e-3, tol_monotonia=1e
     dentro = (x > x_lo) & (x < x_hi)
     xs = np.concatenate([[x_lo], x[dentro], [x_hi]])
     fs = np.concatenate([[u_lo], cdf[dentro], [u_hi]])
-    # En tramos planos se toma el extremo izquierdo: F^{-1}(u) = inf{x : F(x) >= u}.
-    unicos, idx = np.unique(fs, return_index=True)
     identificado = (u >= u_lo) & (u <= u_hi)
-    valores = np.where(identificado, np.interp(u, unicos, xs[idx]), np.nan)
+    valores = np.where(identificado, _inversa_generalizada(xs, fs, np.clip(u, u_lo, u_hi)), np.nan)
     estado = np.where(identificado, IDENTIFICADA, NO_IDENTIFICADA).astype(object)
     motivo = ""
     if not np.all(identificado):

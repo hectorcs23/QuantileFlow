@@ -83,3 +83,16 @@ def test_cdf_ssvi_analitica_y_cuantiles_sinteticos():
     x, cobertura = sintetico.cuantiles_ssvi(theta, sup.rho, phi, u)
     assert cobertura > 1.0 - 1e-4
     assert np.max(np.abs(np.interp(x, k, F) - u)) < 1e-5
+
+
+def test_inversa_generalizada_con_mesetas():
+    # H6: CDF lineal por tramos con una meseta en 0.5 entre x = 1 y x = 2.
+    x, F = np.array([0.0, 1.0, 2.0, 3.0]), np.array([0.0, 0.5, 0.5, 1.0])
+    u = np.array([0.0, 0.25, 0.5 - 1e-9, 0.5, 0.5 + 1e-9, 0.75, 1.0])
+    q = ds.cuantiles_desde_cdf(x, F, u).valores
+    esperado = np.array([0.0, 0.5, 1.0 - 2e-9, 1.0, 2.0 + 2e-9, 2.5, 3.0])  # inf{x : F(x) >= u}
+    assert np.allclose(q, esperado, atol=1e-12)
+    # Meseta al principio y dos mesetas seguidas.
+    q = ds.cuantiles_desde_cdf(np.arange(6.0), np.array([0.2, 0.2, 0.6, 0.6, 0.6, 1.0]),
+                               [0.2, 0.4, 0.6, 0.8]).valores
+    assert np.allclose(q, [0.0, 1.5, 2.0, 4.5])

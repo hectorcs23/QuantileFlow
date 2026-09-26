@@ -17,6 +17,14 @@ Para cada sesión y hora de corte (la principal y una secundaria solo de diagnó
 
 Una medida no identificada queda ausente con su motivo; nunca se rellena. El
 piloto valida medición e ingestión: no evalúa capacidad predictiva.
+
+Fuentes. Cada serie usa fuentes elegidas de forma explícita cuando hay más de
+una (``proveedor/feed``): las opciones de una sesión vienen de una sola fuente
+y el precio objetivo de una sola fuente en toda la corrida. Cada fila guarda su
+procedencia; el cambio diario queda ausente cuando cambia el segmento de
+medición (fuente y versión de la configuración). El precio objetivo solo se usa
+si estaba disponible al corte y no está desfasado; si es implícito (inferido de
+las mismas opciones), el dictamen lo declara y no permite evaluar con él.
 """
 from __future__ import annotations
 
@@ -33,6 +41,7 @@ from .calendario import _fecha, es_sesion, instante, instante_liquidacion, plazo
 from .etiquetas import etiquetas_retorno, movimiento_previo
 
 NAN = float("nan")
+PROVEEDORES_SINTETICOS = ("sintetico",)  # generador de quantileflow/sintetico.py
 
 
 @dataclass(frozen=True)
@@ -62,6 +71,8 @@ class ConfigPiloto:
     rendimiento_dividendo: float
     reglas: cadenas.ReglasCalidad
     dictamen: dict
+    feeds_indicativos: tuple
+    edad_maxima_precio_s: float
     fuente: dict
     huella: str
 
@@ -91,7 +102,8 @@ def config_desde_dict(d: dict) -> ConfigPiloto:
         latencia_s=float(d["etiquetas"]["latencia_s"]),
         retraso_publicacion_s=float(d["etiquetas"]["retraso_publicacion_s"]),
         tasa=float(d["referencia"]["tasa"]), rendimiento_dividendo=float(d["referencia"]["rendimiento_dividendo"]),
-        reglas=reglas, dictamen=dict(d["dictamen"]), fuente=d, huella=huella_datos(d))
+        reglas=reglas, dictamen=dict(d["dictamen"]), feeds_indicativos=tuple(d["fuente"]["feeds_indicativos"]),
+        edad_maxima_precio_s=float(d["etiquetas"]["edad_maxima_precio_s"]), fuente=d, huella=huella_datos(d))
 
 
 def cargar_config(ruta) -> ConfigPiloto:
@@ -165,6 +177,7 @@ def plazo_constante(medidas, plazos, T, base_dias=365.0):
 
 def _vacia(fecha, hora):
     return {"fecha": _fecha(fecha), "hora": hora, "estado_sesion": "no disponible", "motivo_sesion": "",
+            "fuente_opciones": "", "fuente_subyacente": "", "tipo_precio_subyacente": "", "segmento": "",
             "vencimiento_1": None, "dias_1": NAN, "vencimiento_2": None, "dias_2": NAN, "spot": NAN,
             "forward": NAN, "forward_error": NAN, "tasa_implicita": NAN, "forward_menos_contractual": NAN,
             "log_forward_spot": NAN, "rr25_estado": "no identificada", "rr25": NAN, "rr25_inferior": NAN,
@@ -176,10 +189,17 @@ def _vacia(fecha, hora):
             "n_alertas": 0, "alertas": ""}
 
 
-def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto):
+def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto, fuente_subyacente=None):
     """Fila de una sesión y hora, y el detalle por vencimiento (capturas y resultados)."""
     fila, detalle = _vacia(fecha, hora), {}
     corte = instante(fecha, hora, cfg.calendario)
+    sesion = contrato._del_dia_hasta(cotizaciones[cotizaciones["raiz"] == cfg.raiz], fecha, corte)
+    fuentes = sorted(set(contrato.fuente(sesion))) if len(sesion) else []
+    if len(fuentes) > 1:
+        fila["motivo_sesion"] = f"varias fuentes de cotizaciones en la sesión ({', '.join(fuentes)}): no se mezclan"
+        return fila, detalle
+    if fuentes:
+        fila.update(fuente_opciones=fuentes[0], segmento=f"{fuentes[0]}|{cfg.version}")
     plazos = {}
     for v in contrato.vencimientos(cotizaciones, cfg.raiz, fecha, hora):
         if es_sesion(v, cfg.calendario):
@@ -193,7 +213,7 @@ def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto):
         try:
             cap, info = contrato.captura_desde_tabla(
                 cotizaciones, subyacente, cfg.raiz, v, fecha, hora, cfg.tasa, cfg.rendimiento_dividendo,
-                base_dias=cfg.base_dias, codigo=cfg.calendario)
+                base_dias=cfg.base_dias, codigo=cfg.calendario, fuente_subyacente=fuente_subyacente)
         except contrato.SinDatos as error:
             fila["motivo_sesion"] = str(error)
             return fila, {}
@@ -216,6 +236,8 @@ def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto):
         fila[f"vencimiento_{i}"], fila[f"dias_{i}"] = v, plazos[v]
     cercano = min(elegidos, key=lambda v: abs(plazos[v] - cfg.objetivo_dias))
     obs = cadenas.fila_informe(detalle[cercano]["resultado"])
+    info = detalle[cercano]["info"]
+    fila.update(fuente_subyacente=info["fuente_subyacente"], tipo_precio_subyacente=info["tipo_precio_subyacente"])
     fila.update(estado_sesion="procesada", spot=detalle[cercano]["captura"].spot, forward=obs["obs_forward"],
                 forward_error=obs["obs_forward_error"], tasa_implicita=obs["obs_tasa_implicita"],
                 forward_menos_contractual=obs["obs_forward_menos_contractual"],
@@ -267,7 +289,11 @@ def _cambios(principal: pd.DataFrame, cfg: ConfigPiloto) -> pd.DataFrame:
             valores, motivo = (NAN,) * 4, "sesión anterior fuera de la muestra"
         else:
             a, b = por_fecha.loc[fecha], por_fecha.loc[previa]
-            if a["rr25_estado"] == b["rr25_estado"] == "identificada":
+            if a["segmento"] and b["segmento"] and a["segmento"] != b["segmento"]:
+                # Una diferencia de medición entre fuentes no es un cambio económico.
+                valores = (NAN,) * 4
+                motivo = f"cambio de segmento de medición: {b['segmento']} -> {a['segmento']}"
+            elif a["rr25_estado"] == b["rr25_estado"] == "identificada":
                 valores = (a["rr25"] - b["rr25"], a["rr25_inferior"] - b["rr25_superior"],
                            a["rr25_superior"] - b["rr25_inferior"],
                            a["asim_log"] - b["asim_log"] if a["asim_log_estado"] == b["asim_log_estado"]
@@ -282,19 +308,30 @@ def _cambios(principal: pd.DataFrame, cfg: ConfigPiloto) -> pd.DataFrame:
     return principal.assign(**extra)
 
 
-def _precios_subyacente(subyacente, fechas, cfg: ConfigPiloto) -> pd.Series:
-    """Precio del subyacente a la hora principal en la muestra y en las sesiones posteriores disponibles."""
+def _precios_subyacente(subyacente, fechas, cfg: ConfigPiloto, fuente_subyacente=None) -> pd.DataFrame:
+    """Precio objetivo a la hora principal en la muestra y en las sesiones posteriores disponibles.
+
+    Solo cuenta un precio disponible al corte y con una antigüedad no mayor que
+    ``edad_maxima_precio_s``; si no, queda NaN con su motivo.
+    """
     locales = subyacente["sello_snapshot_utc"].dt.tz_convert("America/New_York").dt.date
     candidatas = sorted({d for d in locales.unique() if d >= min(fechas) and es_sesion(d, cfg.calendario)}
                         | set(fechas))
-    precios = {}
+    filas = {}
     for d in candidatas:
+        corte = instante(d, cfg.hora_principal, cfg.calendario)
         try:
-            precios[d] = contrato.spot_al_corte(subyacente, cfg.subyacente, d,
-                                                instante(d, cfg.hora_principal, cfg.calendario))[0]
-        except contrato.SinDatos:
-            precios[d] = NAN
-    return pd.Series(precios, dtype=float)
+            info = contrato.precio_al_corte(subyacente, cfg.subyacente, d, corte, fuente_subyacente)
+        except contrato.SinDatos as error:
+            filas[d] = {"precio": NAN, "disponible_utc": pd.NaT, "motivo": str(error)}
+            continue
+        edad = (corte - info["sello_utc"]).total_seconds()
+        if edad > cfg.edad_maxima_precio_s:
+            filas[d] = {"precio": NAN, "disponible_utc": pd.NaT,
+                        "motivo": f"precio de {cfg.subyacente} desfasado {edad:.0f} s al corte de {d}"}
+            continue
+        filas[d] = {"precio": info["precio"], "disponible_utc": info["disponible_utc"], "motivo": ""}
+    return pd.DataFrame.from_dict(filas, orient="index", columns=["precio", "disponible_utc", "motivo"])
 
 
 def dictamen(principal: pd.DataFrame, cfg: ConfigPiloto) -> dict:
@@ -338,16 +375,68 @@ def dictamen(principal: pd.DataFrame, cfg: ConfigPiloto) -> dict:
     return {"veredicto": veredicto, "criterios": criterios}
 
 
-def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: ConfigPiloto) -> ResultadoPiloto:
-    """Mide todas las sesiones y horas, añade cambios, estabilidad y etiquetas, y dictamina."""
+def _elegir_fuentes(tabla, nombre, elegidas):
+    """Filas de las fuentes elegidas; sin elección, exige que haya una sola."""
+    presentes = sorted(set(contrato.fuente(tabla))) if len(tabla) else []
+    if elegidas is None:
+        if len(presentes) > 1:
+            raise ValueError(f"{nombre}: hay varias fuentes ({', '.join(presentes)}); "
+                             "elija explícitamente cuáles usar")
+        return tabla, tuple(presentes)
+    elegidas = tuple(elegidas)
+    if presentes and not set(elegidas) & set(presentes):
+        raise ValueError(f"{nombre}: ninguna fuente elegida está en los datos ({', '.join(presentes)})")
+    return tabla[contrato.fuente(tabla).isin(elegidas)], elegidas
+
+
+def alcance(fuentes_opciones, fuente_subyacente, tipo_precio, cfg: ConfigPiloto) -> dict:
+    """Qué permite concluir la muestra según sus fuentes, aparte de la aptitud de los datos."""
+    indicativas = [f for f in fuentes_opciones if f.split("/", 1)[-1] in cfg.feeds_indicativos]
+    sinteticas = [f for f in (*fuentes_opciones, fuente_subyacente or "")
+                  if f.split("/", 1)[0] in PROVEEDORES_SINTETICOS]
+    motivos = []
+    if sinteticas:
+        motivos.append("datos sintéticos")
+    if indicativas:
+        motivos.append("cotizaciones indicativas, modificadas por el proveedor (" + ", ".join(indicativas) + ")")
+    if tipo_precio == "implicito":
+        motivos.append("precio objetivo inferido de las mismas opciones: no es independiente de las señales")
+    if not fuente_subyacente:
+        motivos.append("sin precio objetivo")
+    return {
+        "fuentes_opciones": list(fuentes_opciones), "fuente_subyacente": fuente_subyacente or "",
+        "tipo_precio_subyacente": tipo_precio or "",
+        "medicion": "sintética" if sinteticas else ("indicativa" if indicativas
+                                                    else "cotizaciones sin modificar según el proveedor"),
+        "precio_objetivo": {"observado": "observado", "implicito": "inferido de las opciones"}.get(tipo_precio,
+                                                                                                  "sin precio"),
+        "evaluacion_con_precios_de_mercado": "permitida" if not motivos else "no permitida: " + "; ".join(motivos),
+    }
+
+
+def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: ConfigPiloto,
+             fuentes_opciones=None, fuente_subyacente=None) -> ResultadoPiloto:
+    """Mide todas las sesiones y horas, añade cambios, estabilidad y etiquetas, y dictamina.
+
+    ``fuentes_opciones`` (``proveedor/feed``, una o varias) y
+    ``fuente_subyacente`` (una) son obligatorias cuando los datos traen más de
+    una fuente para esa serie.
+    """
     fechas = sorted({_fecha(f) for f in fechas})
     no_sesiones = [f for f in fechas if not es_sesion(f, cfg.calendario)]
     if no_sesiones:
         raise ValueError(f"fechas que no son sesiones: {no_sesiones}")
+    cotizaciones, fuentes_op = _elegir_fuentes(cotizaciones[cotizaciones["raiz"] == cfg.raiz],
+                                               f"opciones {cfg.raiz}", fuentes_opciones)
+    subyacente, fuentes_sub = _elegir_fuentes(
+        subyacente[subyacente["subyacente"] == cfg.subyacente], f"subyacente {cfg.subyacente}",
+        None if fuente_subyacente is None else (fuente_subyacente,))
+    fuente_sub = fuentes_sub[0] if fuentes_sub else None
+    tipo_sub = "|".join(sorted(set(subyacente["tipo_precio"]))) if len(subyacente) else ""
     filas, detalles = [], {}
     for fecha in fechas:
         for hora in cfg.horas:
-            fila, detalle = medir(cotizaciones, subyacente, fecha, hora, cfg)
+            fila, detalle = medir(cotizaciones, subyacente, fecha, hora, cfg, fuente_sub)
             filas.append(fila)
             detalles[(fecha, hora)] = detalle
     completa = pd.DataFrame(filas)
@@ -357,12 +446,16 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
         secundaria = completa[completa["hora"] == cfg.hora_secundaria].set_index("fecha")["rr25"]
         principal["rr25_secundaria"] = principal["fecha"].map(secundaria)
         principal["dif_rr25_secundaria"] = principal["rr25_secundaria"] - principal["rr25"]
-    precios = _precios_subyacente(subyacente, fechas, cfg)
-    etiquetas = etiquetas_retorno(precios, cfg.hora_principal, cfg.horizontes, cfg.latencia_s,
-                                  cfg.retraso_publicacion_s, cfg.calendario)
+    precios = _precios_subyacente(subyacente, fechas, cfg, fuente_sub)
+    etiquetas = etiquetas_retorno(precios["precio"], cfg.hora_principal, cfg.horizontes, cfg.latencia_s,
+                                  cfg.retraso_publicacion_s, cfg.calendario, disponibles=precios["disponible_utc"],
+                                  motivos=precios["motivo"])
+    etiquetas["fuente"], etiquetas["tipo_precio"] = fuente_sub or "", tipo_sub
     for h in cfg.horizontes:
         e = etiquetas[etiquetas["horizonte"] == h].set_index("sesion")
         principal[f"ret_{h}"] = principal["fecha"].map(e["retorno_log"])
         principal[f"estado_ret_{h}"] = principal["fecha"].map(e["estado"])
-    principal["retorno_previo"] = principal["fecha"].map(movimiento_previo(precios, cfg.calendario))
-    return ResultadoPiloto(principal, completa, etiquetas, detalles, dictamen(principal, cfg), cfg)
+    principal["retorno_previo"] = principal["fecha"].map(movimiento_previo(precios["precio"], cfg.calendario))
+    veredicto = dictamen(principal, cfg)
+    veredicto["alcance"] = alcance(fuentes_op, fuente_sub, tipo_sub, cfg)
+    return ResultadoPiloto(principal, completa, etiquetas, detalles, veredicto, cfg)

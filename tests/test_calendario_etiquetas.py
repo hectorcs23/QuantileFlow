@@ -84,3 +84,15 @@ def test_fechas_invalidas_se_rechazan():
         et.etiquetas_retorno(_precios(["2025-11-27"], [1.0]))
     with pytest.raises(ValueError):
         et.etiquetas_retorno(_precios(["2025-11-26", "2025-11-26"], [1.0, 2.0]))
+
+
+def test_etiqueta_madura_cuando_el_precio_final_esta_disponible():
+    # H3: si el precio final se publica tarde, la etiqueta madura con él, no con el reloj.
+    fechas = cal.sesiones("2025-11-03", "2025-11-07")
+    precios = _precios(fechas, np.linspace(100.0, 104.0, len(fechas)))
+    disponibles = pd.Series({f: cal.instante(f) for f in fechas})
+    disponibles[fechas[1]] = cal.instante(fechas[1]) + pd.Timedelta(hours=3)
+    e = et.etiquetas_retorno(precios, horizontes=(1,), retraso_publicacion_s=60, disponibles=disponibles)
+    uno = e.set_index("sesion")
+    assert uno.loc[fechas[0], "label_available_at"] == cal.instante(fechas[1]) + pd.Timedelta(hours=3)
+    assert uno.loc[fechas[1], "label_available_at"] == cal.instante(fechas[2]) + pd.Timedelta(seconds=60)

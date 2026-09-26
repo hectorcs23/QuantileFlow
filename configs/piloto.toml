@@ -3,7 +3,7 @@
 # piloto y se congelan, con una versión nueva, antes del periodo de evaluación.
 
 [piloto]
-version = "piloto-0.1"
+version = "piloto-0.2"
 descripcion = "SPXW PM a las 09:45 de Nueva York, plazo constante de 30 días"
 
 [instrumento]
@@ -16,6 +16,11 @@ calendario = "XNYS"
 [horario]
 principal = "09:45"
 secundaria = "10:00"     # solo para diagnosticar la estabilidad de la medición
+
+[fuente]
+# Feeds cuyas cotizaciones modifica el proveedor: sirven para probar ingestión y medición, no para evaluar
+# con precios de mercado. Las fuentes se identifican como proveedor/feed y no se mezclan.
+feeds_indicativos = ["indicative"]
 
 [plazo]
 objetivo_dias = 30.0     # días naturales desde el corte hasta el instante de liquidación
@@ -33,6 +38,7 @@ hueco_max_delta_k = 0.02
 horizontes = [1, 5]      # sesiones del calendario, de 09:45 a 09:45
 latencia_s = 0.0         # corte -> decision_at
 retraso_publicacion_s = 0.0
+edad_maxima_precio_s = 60.0   # precio objetivo más viejo al corte: la etiqueta queda ausente con su motivo
 
 [referencia]
 # Solo para la discrepancia del forward implícito frente a una referencia externa.

@@ -55,27 +55,42 @@ def griegas_bs(S, K, T, r, q, sigma, es_call=True):
     return delta, gamma, vega
 
 
-def vol_implicita_black(precio, F, K, T, D, es_call=True, vol_min=1e-4, vol_max=5.0):
+def vol_implicita_black(precio, F, K, T, D, es_call=True, vol_min=1e-4, vol_max=5.0, con_motivo=False):
     """Invierte Black por bisección robusta (Brent). Devuelve NaN si no hay solución.
 
-    Un precio fuera de los límites de no arbitraje (por ejemplo, un bid de cero)
-    no tiene volatilidad implícita: se marca como NaN en vez de forzar un valor.
+    Sin solución no se fuerza un valor: un precio fuera de los límites de no
+    arbitraje (por ejemplo, un bid de cero), una raíz fuera de
+    ``[vol_min, vol_max]`` o parámetros no finitos o no positivos dan NaN, y el
+    resto del lote se calcula igual. Con ``con_motivo`` devuelve además el
+    motivo de cada elemento (cadena vacía si se identificó).
     """
     precio, F, K, es_call = np.broadcast_arrays(
         np.asarray(precio, float), np.asarray(F, float), np.asarray(K, float), np.asarray(es_call)
     )
     salida = np.full(precio.shape, np.nan)
+    motivos = np.full(precio.shape, "", dtype=object)
+    plazo_valido = bool(np.isfinite(T) and T > 0.0 and np.isfinite(D) and D > 0.0)
     for i in np.ndindex(precio.shape):
         p, f, k, c = precio[i], F[i], K[i], bool(es_call[i])
+        if not (plazo_valido and np.isfinite(p) and np.isfinite(f) and np.isfinite(k) and f > 0.0 and k > 0.0):
+            motivos[i] = "parámetros no finitos o no positivos"
+            continue
         intrinseco = D * max(f - k, 0.0) if c else D * max(k - f, 0.0)
         cota = D * f if c else D * k
         if not (intrinseco < p < cota):
+            motivos[i] = "precio fuera de las cotas de no arbitraje"
             continue
 
         def objetivo(s):
             return float(precio_black(f, k, s * s * T, D, c)) - p
 
+        # El precio crece con la volatilidad: hay raíz en el intervalo solo si cambia de signo.
+        if not objetivo(vol_min) <= 0.0 <= objetivo(vol_max):
+            motivos[i] = f"sin raíz en el intervalo de volatilidad [{vol_min:g}, {vol_max:g}]"
+            continue
         salida[i] = brentq(objetivo, vol_min, vol_max, xtol=1e-10)
+    if con_motivo:
+        return (salida, motivos) if salida.ndim else (salida, motivos.item())
     return salida
 
 

@@ -131,3 +131,62 @@ def test_fila_sin_ningun_sello_se_excluye():
     motivos = ca.controlar(rota).motivos
     assert motivos[0] == ("sin_sello",)
     assert all("sin_sello" not in m for m in motivos[1:])
+
+
+# --- Regresiones de la revisión del commit e2b92f0 ------------------------------------
+
+def _subyacente(filas):
+    tabla = pd.DataFrame([{"subyacente": "SPX", "bid": np.nan, "ask": np.nan, "proveedor": "x", "feed": "indice",
+                           "tipo_precio": "observado", **f} for f in filas])
+    for columna in ("sello_evento_utc", "sello_snapshot_utc", "disponible_utc", "recibido_utc"):
+        tabla[columna] = pd.to_datetime(tabla[columna], utc=True).dt.as_unit("us")
+    return tabla
+
+
+def test_subyacente_disponible_despues_del_corte_no_se_usa():
+    # H3: evento y snapshot antes del corte, pero publicado una hora después.
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    tarde = {"precio": 99999.0, "sello_evento_utc": corte - pd.Timedelta(seconds=1), "sello_snapshot_utc": corte,
+             "disponible_utc": corte + pd.Timedelta(hours=1), "recibido_utc": corte + pd.Timedelta(hours=1)}
+    with pytest.raises(ct.SinDatos, match="después del corte"):
+        ct.spot_al_corte(_subyacente([tarde]), "SPX", fecha, corte)
+    antes = corte - pd.Timedelta(seconds=2)
+    a_tiempo = {"precio": 5800.0, "sello_evento_utc": corte - pd.Timedelta(seconds=3), "sello_snapshot_utc": antes,
+                "disponible_utc": antes, "recibido_utc": antes}
+    assert ct.spot_al_corte(_subyacente([a_tiempo, tarde]), "SPX", fecha, corte)[0] == 5800.0
+    sin_doc = dict(a_tiempo, disponible_utc=pd.NaT)  # disponibilidad no documentada: se acepta y se informa
+    info = ct.precio_al_corte(_subyacente([sin_doc]), "SPX", fecha, corte)
+    assert info["precio"] == 5800.0 and info["disponibilidad_documentada"] is False
+    assert info["fuente"] == "x/indice" and info["tipo_precio"] == "observado"
+
+
+def test_subyacente_de_varias_fuentes_exige_elegir_y_tipo_valido():
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    base = {"sello_evento_utc": corte - pd.Timedelta(seconds=1), "sello_snapshot_utc": corte,
+            "disponible_utc": corte, "recibido_utc": corte}
+    dos = _subyacente([dict(base, precio=5800.0), dict(base, precio=5801.0, feed="implicito_paridad_SPXW",
+                                                       tipo_precio="implicito")])
+    with pytest.raises(ValueError, match="fuentes"):
+        ct.precio_al_corte(dos, "SPX", fecha, corte)
+    elegido = ct.precio_al_corte(dos, "SPX", fecha, corte, fuente_elegida="x/implicito_paridad_SPXW")
+    assert elegido["precio"] == 5801.0 and elegido["tipo_precio"] == "implicito"
+    malo = dos.copy()
+    malo.loc[0, "tipo_precio"] = "estimado"
+    assert any("tipo_precio" in p for p in ct.validar(malo, ct.SUBYACENTE))
+
+
+def test_mezcla_de_feeds_en_una_captura_se_rechaza(mercado):
+    # H2: calls de un feed y puts de otro en la misma captura.
+    cot, sub, _ = mercado
+    fecha = FECHAS[0]
+    venc = ct.vencimientos(cot, "SPXW", fecha)[0]
+    mezcla = cot.copy()
+    mezcla.loc[mezcla["tipo"] == "P", "feed"] = "opra"
+    with pytest.raises(ValueError, match="feed"):
+        ct.captura_desde_tabla(mezcla, sub, "SPXW", venc, fecha)
+    otro = cot.copy()
+    otro.loc[otro["tipo"] == "P", "proveedor"] = "otro"
+    with pytest.raises(ValueError, match="proveedor"):
+        ct.captura_desde_tabla(otro, sub, "SPXW", venc, fecha)

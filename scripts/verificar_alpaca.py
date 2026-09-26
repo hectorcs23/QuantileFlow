@@ -1,96 +1,40 @@
-"""Diagnóstico de las capturas de Alpaca de una fecha: cobertura, calidad del feed y medidas.
+"""Diagnóstico de las capturas de Alpaca de una fecha: elegibilidad, calidad del feed y medidas.
 
 Uso, desde la raíz del repositorio::
 
     python scripts/verificar_alpaca.py --fecha 2026-09-28
+    python scripts/verificar_alpaca.py --fecha 2026-09-25 --cierre-descriptivo
 
-Lee el crudo y los manifiestos de ``data/raw/alpaca`` (comprobando hashes),
-procesa cada vencimiento con los controles y medidas del piloto y escribe en
+Lee el crudo y los manifiestos (comprobando hashes), procesa cada vencimiento con
+los controles y medidas del piloto y escribe en
 ``reports/verificacion_alpaca/<fecha>/`` un resumen en JSON, un informe
 Markdown y dos gráficas. Solo publica **agregados y medidas derivadas**
 (conteos, anchos, volatilidades implícitas, residuos relativos): nunca
 cotizaciones individuales, que no se pueden redistribuir.
 
-Una captura inmediata hecha con el mercado cerrado usa las últimas cotizaciones
-de la sesión con el corte en su cierre. Como se recibió después del corte, la
-verificación omite para ella las horas de snapshot y de disponibilidad (con
-ellas, todas las filas quedarían «no disponibles al corte») y lo declara.
+La elegibilidad al corte usa siempre los controles estrictos. Con
+``--cierre-descriptivo``, una captura inmediata recibida con la sesión cerrada se
+describe además sin horas de snapshot ni de disponibilidad, y el informe la marca
+como no elegible para el piloto (``quantileflow/diagnostico.py``).
 """
 from __future__ import annotations
 
 import argparse
 import sys
 import tomllib
-from collections import Counter
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 
-from quantileflow import alpaca, almacen, cadenas, contrato, implicito  # noqa: E402
+from quantileflow import almacen, diagnostico  # noqa: E402
 from quantileflow.calendario import _fecha  # noqa: E402
-from quantileflow.piloto import cargar_config, elegir_vencimientos, plazo_constante  # noqa: E402
+from quantileflow.piloto import cargar_config  # noqa: E402
 
-TICKS = {"SPXW": (0.05, 0.10, 3.0), "SPX": (0.05, 0.10, 3.0), "SPY": (0.01, 0.01, 3.0)}  # bajo, alto, umbral
-TICK_CENTAVO = (0.01, 0.01, 3.0)  # raíces sin tabla: grilla de un centavo (no discrimina)
 K_MIN_GRAFICA, K_MAX_GRAFICA = -0.25, 0.12  # región central de la sonrisa en la gráfica
-
-
-def en_grilla(precios, raiz):
-    """Fracción de precios positivos que caen en la grilla de ticks de la bolsa."""
-    bajo, alto, umbral = TICKS.get(raiz, TICK_CENTAVO)
-    p = np.asarray(precios, float)
-    p = p[p > 0]
-    tick = np.where(p < umbral, bajo, alto)
-    return float(np.mean(np.isclose(np.round(p / tick) * tick, p, atol=1e-6))) if len(p) else float("nan")
-
-
-def mediana(x):
-    x = np.asarray(x, float)
-    x = x[np.isfinite(x)]
-    return float(np.median(x)) if len(x) else float("nan")
-
-
-def cuantil(x, q):
-    x = np.asarray(x, float)
-    x = x[np.isfinite(x)]
-    return float(np.quantile(x, q)) if len(x) else float("nan")
-
-
-def diagnostico(res: cadenas.ResultadoObservado, filas: pd.DataFrame, raiz, corte_utc) -> dict:
-    """Calidad propia del feed: grilla de ticks, anchos cerca del dinero, edad, agrupación y paridad."""
-    c, ctl, p, v = res.captura, res.controles, res.paridad, res.volatilidades
-    F = v.forward
-    k = np.log(c.strike / F)
-    cerca = ctl.valida & (np.abs(k) <= 0.05)
-    ancho = c.ask - c.bid
-    evento = pd.to_datetime(filas["sello_evento_utc"], utc=True)
-    segundos = evento.dt.floor("s").value_counts()
-    edades = c.corte - c.sello
-    usados = p.en_estimacion & np.isfinite(p.multiplo_ancho)
-    return {
-        "bid_en_grilla": en_grilla(c.bid, raiz), "ask_en_grilla": en_grilla(c.ask, raiz),
-        "ancho_mediano_cerca": mediana(ancho[cerca]), "ancho_relativo_mediano_cerca": mediana((ancho / c.mid)[cerca]),
-        "ancho_ticks_mediano_cerca": mediana((ancho / ctl_tick(raiz, c.mid))[cerca]),
-        "edad_mediana_s": mediana(edades), "edad_p90_s": cuantil(edades, 0.9),
-        "segundos_distintos": int(len(segundos)),
-        "fraccion_en_3_segundos": float(segundos.iloc[:3].sum() / len(evento)) if len(evento) else float("nan"),
-        "paridad_pares": int(len(p.strike)),
-        "paridad_fuera_de_banda": float(np.mean(p.fuera_de_banda[usados])) if usados.any() else float("nan"),
-        "paridad_mediana_abs_multiplo": mediana(np.abs(p.multiplo_ancho[usados])),
-        "paridad_p90_abs_multiplo": cuantil(np.abs(p.multiplo_ancho[usados]), 0.9),
-        "forward": p.forward_global, "forward_error": p.forward_error,
-        "tasa_implicita": p.tasa_implicita, "tasa_error": p.tasa_error,
-    }
-
-
-def ctl_tick(raiz, precio):
-    bajo, alto, umbral = TICKS.get(raiz, TICK_CENTAVO)
-    return np.where(np.asarray(precio) < umbral, bajo, alto)
 
 
 def graficas(resultados, salida, titulo):
@@ -135,107 +79,26 @@ def main() -> int:
     a.add_argument("--config", default=str(RAIZ / "configs" / "captura_alpaca.toml"))
     a.add_argument("--config-piloto", default=str(RAIZ / "configs" / "piloto.toml"))
     a.add_argument("--salida", default=None)
+    a.add_argument("--cierre-descriptivo", action="store_true",
+                   help="describe capturas inmediatas recibidas con la sesión cerrada (no elegibles para el piloto)")
     args = a.parse_args()
     fecha = _fecha(args.fecha)
     with open(args.config, "rb") as f:
         cfg_imp = tomllib.load(f)["implicito"]
-    piloto = cargar_config(args.config_piloto)
-    reglas, tasa, q = piloto.reglas, piloto.tasa, piloto.rendimiento_dividendo
-    datos = Path(args.datos)
     salida = Path(args.salida) if args.salida else RAIZ / "reports" / "verificacion_alpaca" / str(fecha)
-    salida.mkdir(parents=True, exist_ok=True)
-
-    cot, sub, resumenes, manifiestos = alpaca.normalizar(datos, fecha, fecha)
-    if not manifiestos:
-        print(f"no hay capturas de {fecha} en {datos}", file=sys.stderr)
+    informe, figura = diagnostico.diagnosticar(Path(args.datos), fecha, cfg_imp, cargar_config(args.config_piloto),
+                                               args.cierre_descriptivo)
+    if not informe["capturas"]:
+        print(f"no hay capturas de {fecha} en {args.datos}", file=sys.stderr)
         return 1
-    informe = {"fecha": str(fecha), "capturas": []}
-    figura = None
-    for m, resumen in zip(manifiestos, resumenes):
-        corte = pd.Timestamp(m["corte_utc"])
-        filas_m = cot[cot["captura"] == m["etiqueta"]].copy()
-        fuera = bool(len(filas_m)) and filas_m["recibido_utc"].max() > corte
-        if fuera:  # cotizaciones de una sesión ya cerrada: sin horas de snapshot ni disponibilidad
-            filas_m = filas_m.drop(columns=["sello_snapshot_utc", "disponible_utc"])
-        pags = [p for e in m["solicitudes"].values() if e["tipo"] in ("cadena", "acciones") for p in e["paginas"]]
-        entrada = {
-            "etiqueta": m["etiqueta"], "modo": m.get("modo"), "hora": m["hora"], "corte_utc": m["corte_utc"],
-            "feed_opciones": m.get("feed_opciones"), "cuenta": m.get("cuenta"),
-            "desfase_reloj_s": m.get("reloj", {}).get("desfase_s"),
-            "duracion_s": (pd.Timestamp(m["fin_utc"]) - pd.Timestamp(m["inicio_utc"])).total_seconds(),
-            "respuestas": len(pags), "bytes": int(sum(p.get("bytes_contenido", p["bytes"]) for p in pags)),
-            "errores": len(m["errores"]),
-            "respuestas_despues_del_corte": len(m["respuestas_despues_del_corte"]),
-            "recibida_despues_del_cierre": fuera, "cobertura": resumen, "raices": {},
-        }
-        # Nivel implícito de SPX con el vencimiento SPXW más cercano.
-        spx = filas_m[filas_m["raiz"] == cfg_imp["raiz"]]
-        spot_spx = {"estado": "sin filas"}
-        for venc in sorted({_fecha(x) for x in spx["vencimiento"]}):
-            try:
-                spot_spx = implicito.spot_implicito(spx[spx["vencimiento"].map(_fecha) == venc], m["fecha"], corte,
-                                                    cfg_imp["tasa"], cfg_imp["rendimiento_dividendo"], reglas,
-                                                    cfg_imp["minimo_pares"])
-            except contrato.SinDatos:
-                continue
-            if spot_spx["estado"] == "identificado" or spot_spx["T"] * 365 > cfg_imp["dias_max"]:
-                break
-        spy = sub[(sub["captura"] == m["etiqueta"]) & (sub["subyacente"] == "SPY")]
-        spot_spy = float(spy["precio"].iloc[-1]) if len(spy) else float("nan")
-        entrada["spot_spx_implicito"] = {k: (str(v) if k in ("vencimiento", "sello_evento_utc") else v)
-                                         for k, v in spot_spx.items()}
-        entrada["spot_spy_iex"] = spot_spy
-        if spot_spx.get("estado") == "identificado" and np.isfinite(spot_spy):
-            entrada["razon_spx_spy"] = spot_spx["spot"] / spot_spy
-        spots = {"SPXW": spot_spx.get("spot", float("nan")), "SPY": spot_spy}
-        sellos_spot = {"SPXW": pd.Timestamp(spot_spx["sello_evento_utc"]) if "sello_evento_utc" in spot_spx else None,
-                       "SPY": spy["sello_evento_utc"].iloc[-1] if len(spy) else None}
-
-        for raiz in sorted(filas_m["raiz"].unique()):
-            filas_r = filas_m[filas_m["raiz"] == raiz]
-            por_venc, medidas, plazos = {}, {}, {}
-            for venc in sorted({_fecha(x) for x in filas_r["vencimiento"]}):
-                filas = filas_r[filas_r["vencimiento"].map(_fecha) == venc]
-                try:
-                    cap, info = contrato.captura_de_filas(filas, m["fecha"], corte, spots.get(raiz, np.nan),
-                                                          sellos_spot.get(raiz),
-                                                          tasa, q)
-                except contrato.SinDatos as error:
-                    por_venc[str(venc)] = {"estado": str(error)}
-                    continue
-                res = cadenas.procesar_captura(cap, reglas, distancia=piloto.factor_strike - 1.0, delta=piloto.delta,
-                                               hueco_max=piloto.hueco_max_k, hueco_max_delta=piloto.hueco_max_delta)
-                calidad = cadenas.metricas_calidad(res, reglas)
-                fila = cadenas.fila_informe(res)
-                por_venc[str(venc)] = {
-                    "dias": info["dias"], "filas": calidad["filas"], "filas_validas": calidad["filas_validas"],
-                    "exclusiones": calidad["exclusiones"], "alertas": list(res.alertas),
-                    "diagnostico": diagnostico(res, filas, raiz, corte),
-                    "rr25": {k: fila[k] for k in ("obs_rr25_estado", "obs_rr25", "obs_rr25_inferior",
-                                                  "obs_rr25_superior")},
-                    "asim_log": {k: fila[k] for k in ("obs_asim_log_estado", "obs_asim_log", "obs_asim_log_inferior",
-                                                      "obs_asim_log_superior")},
-                    "pendiente": res.pendiente}
-                medidas[venc], plazos[venc] = res, info["dias"]
-            elegidos, motivo = elegir_vencimientos(plazos, piloto)
-            constante = {"motivo": motivo}
-            if elegidos:
-                T = piloto.objetivo_dias / piloto.base_dias
-                for nombre, clave in (("rr25", "asimetria_delta"), ("asim_log", "asimetria")):
-                    constante[nombre] = plazo_constante([getattr(medidas[v], clave) for v in elegidos],
-                                                        [plazos[v] / piloto.base_dias for v in elegidos], T)
-                constante["vencimientos"] = [str(v) for v in elegidos]
-                if figura is None and raiz == "SPXW":
-                    cercano = min(elegidos, key=lambda v: abs(plazos[v] - piloto.objetivo_dias))
-                    figura = (cercano, plazos[cercano], medidas[cercano])
-            entrada["raices"][raiz] = {"vencimientos": por_venc, "plazo_constante_30d": constante,
-                                       "exclusiones_totales": dict(sum((Counter(x.get("exclusiones", {}))
-                                                                        for x in por_venc.values()), Counter()))}
-        informe["capturas"].append(entrada)
-
+    salida.mkdir(parents=True, exist_ok=True)
     rutas = graficas(figura, salida, f"SPXW {fecha}") if figura else {}
     almacen.escribir_json(informe, salida / "resumen.json")
     escribir_markdown(informe, salida, rutas)
+    for c in informe["capturas"]:
+        e = c["elegibilidad"]
+        print(f"{c['etiqueta']}: {c['estado']}; filas válidas al corte {e['filas_validas_al_corte']} de {e['filas']}"
+              + ("; descriptivo del cierre" if c["descriptivo_cierre"] else ""))
     print(f"{salida.relative_to(RAIZ) if salida.is_relative_to(RAIZ) else salida}: "
           f"{len(informe['capturas'])} capturas")
     return 0
@@ -252,18 +115,24 @@ def escribir_markdown(informe, salida, rutas):
     lineas = [f"# Verificación de capturas de Alpaca: {informe['fecha']}", "",
               "Generado por `scripts/verificar_alpaca.py` desde el crudo. Solo agregados y medidas derivadas.", ""]
     for c in informe["capturas"]:
-        lineas += [f"## Captura `{c['etiqueta']}`", "",
-                   f"- Modo {c['modo']}, corte {c['corte_utc']}, feed de opciones `{c['feed_opciones']}`, "
-                   f"cuenta {c['cuenta']}; desfase del reloj local {_n(c['desfase_reloj_s'], 1, 3)} s.",
+        e = c["elegibilidad"]
+        lineas += [f"## Captura `{c['etiqueta']}`", ""]
+        if c["descriptivo_cierre"]:
+            motivo = c["motivo_modo"][:1].upper() + c["motivo_modo"][1:]
+            lineas += [f"> **Descriptivo del cierre, no elegible para el piloto.** {motivo}. Las tablas "
+                       "siguientes omiten las horas de snapshot y de disponibilidad para describir el feed; con los "
+                       f"controles estrictos quedan {e['filas_validas_al_corte']} filas válidas al corte.", ""]
+        lineas += [f"- Estado {c['estado']}; modo {c['modo']}, corte {c['corte_utc']}, feed de opciones "
+                   f"`{c['feed_opciones']}`, cuenta {c['cuenta']}; desfase del reloj local "
+                   f"{_n(c['desfase_reloj_s'], 1, 3)} s.",
+                   f"- Elegibilidad al corte (controles estrictos): {e['filas_validas_al_corte']} filas válidas de "
+                   f"{e['filas']}; nivel implícito {e['nivel_implicito']}. Modo: {c['motivo_modo']}.",
                    f"- {c['respuestas']} respuestas ({c['bytes'] / 1e6:.1f} MB sin comprimir) "
                    f"en {c['duracion_s']:.2f} s; "
                    f"errores {c['errores']}; respuestas después del corte {c['respuestas_despues_del_corte']}.",
                    f"- Cobertura: {c['cobertura'].get('con_cotizacion', 0)} contratos con cotización de "
                    f"{c['cobertura'].get('snapshots', 0)}; sin cotización {c['cobertura'].get('sin_cotizacion', 0)}; "
                    f"sin metadatos {c['cobertura'].get('sin_metadatos', 0)}."]
-        if c["recibida_despues_del_cierre"]:
-            lineas.append("- **Recibida con el mercado cerrado**: cotizaciones del cierre; se omitieron las horas de "
-                          "snapshot y de disponibilidad. No es una sesión del piloto.")
         s = c["spot_spx_implicito"]
         lineas.append(f"- SPX implícito: {s.get('estado')}"
                       + (f", {_n(s.get('spot'))} con {s.get('pares')} pares del {s.get('vencimiento')} "

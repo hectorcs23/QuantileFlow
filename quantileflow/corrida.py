@@ -31,15 +31,20 @@ def leer_entrada(ruta, esquema) -> pd.DataFrame:
     return contrato.leer_csv_normalizado(ruta, esquema)
 
 
-def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso="", crudos=()):
-    """Ejecuta el piloto entre dos fechas y escribe informe y manifiesto en ``salida``."""
+def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso="", crudos=(),
+           fuentes_opciones=None, fuente_subyacente=None):
+    """Ejecuta el piloto entre dos fechas y escribe informe y manifiesto en ``salida``.
+
+    ``fuentes_opciones`` y ``fuente_subyacente`` (``proveedor/feed``) se exigen
+    cuando los datos traen más de una fuente para la serie.
+    """
     # Estado del código al empezar, antes de escribir salidas que Git vería como archivos nuevos.
     entorno = almacen.huella_entorno(Path(__file__).resolve().parents[1])
     cfg = cargar_config(config)
     cot = leer_entrada(cotizaciones, contrato.COTIZACIONES)
     sub = leer_entrada(subyacente, contrato.SUBYACENTE)
     fechas = sesiones(desde, hasta, cfg.calendario)
-    resultado = ejecutar(cot, sub, fechas, cfg)
+    resultado = ejecutar(cot, sub, fechas, cfg, fuentes_opciones, fuente_subyacente)
     salida = Path(salida)
     rutas = escribir_informe(resultado, salida, titulo, aviso)
     exclusiones = Counter()
@@ -55,6 +60,7 @@ def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso
         "recibido_utc": [str(cot["recibido_utc"].min()), str(cot["recibido_utc"].max())],
         "sesiones": {"desde": str(fechas[0]), "hasta": str(fechas[-1]), "n": len(fechas)},
         "cortes": list(cfg.horas), "dictamen": resultado.dictamen["veredicto"],
+        "alcance": resultado.dictamen["alcance"],
         "exclusiones_hora_principal": dict(sorted(exclusiones.items())),
         "entorno": entorno,
         "salidas": almacen.hashes(rutas.values()),

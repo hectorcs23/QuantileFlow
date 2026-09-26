@@ -18,7 +18,9 @@ el calendario y la presentación. Se distinguen cuatro instantes:
 El adaptador toma, para una raíz, un vencimiento y una hora de corte, los
 snapshots de esa sesión anteriores o iguales al corte; los controles de
 ``cadenas`` deciden después qué filas valen y por qué se excluyen las demás.
-No mezcla estilos de ejercicio ni de liquidación dentro de una captura.
+No mezcla estilos de ejercicio, liquidaciones, proveedores ni feeds dentro de una
+captura. La fuente de una fila es ``proveedor/feed``; el precio del subyacente
+solo se usa si ya estaba disponible al corte, y de una sola fuente.
 """
 from __future__ import annotations
 
@@ -65,7 +67,9 @@ SUBYACENTE = {
     "recibido_utc": ("instante", True, "descarga o recepción local"),
     "proveedor": ("texto", True, "proveedor de los datos"),
     "feed": ("texto", True, "feed o producto concreto"),
+    "tipo_precio": ("texto", True, "observado (publicado por la fuente) o implicito (inferido de las opciones)"),
 }
+TIPOS_PRECIO = ("observado", "implicito")
 
 _OCC = re.compile(r"^([A-Z0-9]{1,6})\s*(\d{6})([CP])(\d{8})$")
 
@@ -107,6 +111,8 @@ def validar(tabla: pd.DataFrame, esquema=COTIZACIONES) -> list[str]:
             problemas.append(f"{columna}: debe ser un instante con zona UTC explícita")
         if tipo == "real" and not pd.api.types.is_numeric_dtype(serie):
             problemas.append(f"{columna}: debe ser numérica")
+    if esquema is SUBYACENTE and not problemas and not tabla["tipo_precio"].isin(TIPOS_PRECIO).all():
+        problemas.append("tipo_precio: solo se admite observado o implicito")
     if esquema is COTIZACIONES and not problemas:
         if not tabla["tipo"].isin(["C", "P"]).all():
             problemas.append("tipo: solo se admite C o P")
@@ -140,16 +146,43 @@ def _del_dia_hasta(tabla, fecha, corte_utc):
     return tabla[(local == _fecha(fecha)) & (snapshot <= corte_utc)]
 
 
-def spot_al_corte(subyacente: pd.DataFrame, simbolo, fecha, corte_utc):
-    """Último precio del subyacente conocido al corte y su hora (evento o, si falta, snapshot)."""
+def fuente(tabla: pd.DataFrame) -> pd.Series:
+    """Fuente de cada fila: ``proveedor/feed``."""
+    return tabla["proveedor"].astype(str) + "/" + tabla["feed"].astype(str)
+
+
+def precio_al_corte(subyacente: pd.DataFrame, simbolo, fecha, corte_utc, fuente_elegida=None) -> dict:
+    """Último precio de ``simbolo`` que ya se conocía al corte, con su procedencia.
+
+    Descarta las filas con snapshot o evento posterior al corte y las que, según
+    su ``disponible_utc`` documentada, se publicaron después (una disponibilidad
+    no documentada se acepta y queda indicada). Si el símbolo tiene varias
+    fuentes hay que elegir una: los precios de fuentes distintas no se mezclan.
+    """
     filas = _del_dia_hasta(subyacente[subyacente["subyacente"] == simbolo], fecha, corte_utc)
-    if "sello_evento_utc" in filas:
-        filas = filas[filas["sello_evento_utc"].isna() | (filas["sello_evento_utc"] <= corte_utc)]
+    filas = filas[filas["sello_evento_utc"].isna() | (filas["sello_evento_utc"] <= corte_utc)]
+    if fuente_elegida is not None:
+        filas = filas[fuente(filas) == fuente_elegida]
+    elif len(filas) and fuente(filas).nunique() > 1:
+        raise ValueError(f"{simbolo}: varias fuentes de precio ({', '.join(sorted(set(fuente(filas))))}); "
+                         "elija una")
     if filas.empty:
         raise SinDatos(f"sin precio de {simbolo} al corte de {fecha}")
-    referencia = filas["sello_evento_utc"].fillna(filas["sello_snapshot_utc"])
-    fila = filas.loc[referencia.idxmax()]
-    return float(fila["precio"]), referencia.max(), pd.isna(fila["sello_evento_utc"])
+    a_tiempo = filas[filas["disponible_utc"].isna() | (filas["disponible_utc"] <= corte_utc)]
+    if a_tiempo.empty:
+        raise SinDatos(f"precio de {simbolo} disponible solo después del corte de {fecha}")
+    referencia = a_tiempo["sello_evento_utc"].fillna(a_tiempo["sello_snapshot_utc"])
+    fila = a_tiempo.loc[referencia.idxmax()]
+    return {"precio": float(fila["precio"]), "sello_utc": referencia.max(),
+            "sin_evento": bool(pd.isna(fila["sello_evento_utc"])), "disponible_utc": fila["disponible_utc"],
+            "disponibilidad_documentada": not pd.isna(fila["disponible_utc"]),
+            "fuente": f"{fila['proveedor']}/{fila['feed']}", "tipo_precio": fila["tipo_precio"]}
+
+
+def spot_al_corte(subyacente: pd.DataFrame, simbolo, fecha, corte_utc, fuente_elegida=None):
+    """Último precio del subyacente conocido al corte y su hora (evento o, si falta, snapshot)."""
+    info = precio_al_corte(subyacente, simbolo, fecha, corte_utc, fuente_elegida)
+    return info["precio"], info["sello_utc"], info["sin_evento"]
 
 
 def vencimientos(cotizaciones: pd.DataFrame, raiz, fecha, hora="09:45") -> list:
@@ -161,7 +194,7 @@ def vencimientos(cotizaciones: pd.DataFrame, raiz, fecha, hora="09:45") -> list:
 
 def _plazo_de_filas(filas, corte_utc, base_dias, codigo):
     """Ejercicio, liquidación, instante de liquidación y plazo de filas de una sola raíz y vencimiento."""
-    for columna in ("raiz", "vencimiento", "ejercicio", "liquidacion", "subyacente"):
+    for columna in ("raiz", "vencimiento", "ejercicio", "liquidacion", "subyacente", "proveedor", "feed"):
         if filas[columna].map(str).nunique() != 1:
             raise ValueError(f"{columna} mezclado dentro de una captura: {sorted(filas[columna].map(str).unique())}")
     raiz, vencimiento = filas["raiz"].iloc[0], _fecha(filas["vencimiento"].iloc[0])
@@ -213,11 +246,12 @@ def captura_de_filas(filas: pd.DataFrame, fecha, corte_utc, spot=float("nan"), s
 
 def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, raiz, vencimiento,
                         fecha, hora="09:45", tasa=0.0, rendimiento_dividendo=0.0, dividendos=(),
-                        base_dias=365.0, codigo=CALENDARIO):
+                        base_dias=365.0, codigo=CALENDARIO, fuente_subyacente=None):
     """``Captura`` de una raíz y un vencimiento a la hora de corte de una sesión.
 
     ``dividendos`` son pares ``(instante_utc, monto)``. Devuelve la captura y un
-    diccionario con el corte, la liquidación, el plazo y la procedencia.
+    diccionario con el corte, la liquidación, el plazo y la procedencia de las
+    cotizaciones y del subyacente.
     """
     corte_utc = instante(fecha, hora, codigo)
     vencimiento = _fecha(vencimiento)
@@ -227,11 +261,12 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
     if filas.empty:
         raise SinDatos(f"sin cotizaciones de {raiz} {vencimiento} al corte {hora} de {fecha}")
     _plazo_de_filas(filas, corte_utc, base_dias, codigo)  # mezclas y vencimientos liquidados, antes del spot
-    spot, sello_spot_utc, spot_sin_evento = spot_al_corte(subyacente, filas["subyacente"].iloc[0], fecha,
-                                                          corte_utc)
-    captura, info = captura_de_filas(filas, fecha, corte_utc, spot, sello_spot_utc, tasa, rendimiento_dividendo,
-                                     dividendos, base_dias, codigo)
-    info.update(hora=hora, spot_sin_hora_de_evento=bool(spot_sin_evento))
+    spot = precio_al_corte(subyacente, filas["subyacente"].iloc[0], fecha, corte_utc, fuente_subyacente)
+    captura, info = captura_de_filas(filas, fecha, corte_utc, spot["precio"], spot["sello_utc"], tasa,
+                                     rendimiento_dividendo, dividendos, base_dias, codigo)
+    info.update(hora=hora, spot_sin_hora_de_evento=spot["sin_evento"], fuente=fuente(filas).iloc[0],
+                fuente_subyacente=spot["fuente"], tipo_precio_subyacente=spot["tipo_precio"],
+                disponibilidad_subyacente_documentada=spot["disponibilidad_documentada"])
     return captura, info
 
 

@@ -21,6 +21,7 @@ from quantileflow import alpaca as al
 from quantileflow import almacen
 from quantileflow import calendario as cal
 from quantileflow import contrato as ct
+from quantileflow import diagnostico as dg
 from quantileflow import implicito as im
 from quantileflow import piloto as pl
 from quantileflow import sintetico as sn
@@ -335,3 +336,113 @@ def test_piloto_de_punta_a_punta_con_respuestas_de_alpaca(mercado, tmp_path):
     assert (p["estado_sesion"] == "procesada").all() and (p["rr25_estado"] == "identificada").all()
     assert p["cambio_rr25"].notna().iloc[1:].all()
     assert (p["spot"] / [verdad["spot"][(f, "09:45")] for f in p["fecha"]] - 1).abs().max() < 5e-5
+    assert (p["tipo_precio_subyacente"] == "implicito").all()
+    assert set(p["fuente_opciones"]) == {"alpaca/indicative"}
+    assert resultado.dictamen["alcance"]["evaluacion_con_precios_de_mercado"].startswith("no permitida")
+
+
+# --- Regresiones de la revisión del commit e2b92f0 ------------------------------------
+
+def test_pagina_recibida_se_guarda_aunque_falle_la_siguiente(tmp_path):
+    # H5: página 1 con 200 y token; página 2 con 503 sin reintentos.
+    corte = pd.Timestamp("2025-11-17T14:45:00Z")
+    paginas = {None: {"snapshots": {}, "next_page_token": "p2"}}
+
+    class APIFalla(API):
+        def __call__(self, url, cabeceras, tiempo_max):
+            if "page_token=p2" in url:
+                return 503, {}, b'{"message":"no disponible"}'
+            return super().__call__(url, cabeceras, tiempo_max)
+
+    api = APIFalla({"/v1beta1/options/snapshots/SPXW": lambda p: paginas[p.get("page_token")]})
+    c = cliente(api, Reloj(corte - pd.Timedelta(seconds=5)), reintentos=0)
+    meta = {"fecha": "2025-11-17", "hora": "09:45", "corte_utc": al.iso(corte), "etiqueta": "x", "modo": "programada"}
+    m, _ = al.capturar(c, [al.pedir_cadena("SPXW", "2025-12-19", "indicative")], tmp_path, meta)
+    e = m["solicitudes"]["cadena_SPXW_2025-12-19"]
+    assert e["estado"] == "parcial" and len(e["paginas"]) == 1 and "503" in e["error"]
+    assert (tmp_path / e["paginas"][0]["archivo"]).exists()
+    assert m["estado"] == "parcial" and "cadena_SPXW_2025-12-19" in m["errores"]
+
+
+def test_estados_de_cada_hora_y_codigo_de_salida(mercado, tmp_path):
+    # H8: un manifiesto con error no cuenta como captura hecha.
+    fecha = FECHAS[0]
+    for hora in ("09:45", "10:00"):
+        corte = cal.instante(fecha, hora)
+        api = API({}, fallos={"/v1beta1/options/snapshots/SPXW": [503] * 5})
+        c = cliente(api, Reloj(corte - pd.Timedelta(seconds=5)), reintentos=0)
+        m, _ = al.capturar(c, [al.pedir_cadena("SPXW", "2025-12-19", "indicative")], tmp_path,
+                           {"fecha": str(fecha), "hora": hora, "corte_utc": al.iso(corte),
+                            "etiqueta": f"{fecha}T{hora.replace(':', '')}", "modo": "programada"})
+        assert m["estado"] == "fallida" and m["solicitudes"]["cadena_SPXW_2025-12-19"]["paginas"] == []
+    despues = cal.instante(fecha, "10:30")
+    plan = al.planificar(tmp_path, fecha, ["09:45", "10:00"], despues, 5.0)
+    assert [(h["hora"], h["estado"], h["accion"]) for h in plan] == [("09:45", "fallida", "omitir"),
+                                                                      ("10:00", "fallida", "omitir")]
+    assert al.codigo_salida(plan) == 1
+    # Sin manifiesto y con el corte pasado: perdida. Antes del corte: pendiente.
+    otra = tmp_path / "otra"
+    plan = al.planificar(otra, fecha, ["09:45", "10:00"], cal.instante(fecha, "09:50"), 5.0)
+    assert [(h["estado"], h["accion"]) for h in plan] == [("perdida", "omitir"), ("pendiente", "capturar")]
+    # Una hora completa se omite y cuenta como hecha.
+    capturar_sesiones(mercado, otra)
+    plan = al.planificar(otra, fecha, ["09:45", "10:00"], despues, 5.0)
+    assert [h["estado"] for h in plan] == ["completa", "completa"] and al.codigo_salida(plan) == 0
+
+
+def _captura_unica(cot, directorio, fecha, corte, recibido, modo):
+    """Una captura de las cadenas de ``cot`` cuyo snapshot es ``corte``, recibida en ``recibido``."""
+    reloj = Reloj(recibido)
+    api = API({"/v2/options/contracts": lambda p: contratos_json(cot),
+               "/v1beta1/options/snapshots/SPXW": lambda p: cadena_json(cot, p["expiration_date"], corte),
+               "/v2/stocks/snapshots": lambda p: acciones_json(580.0, corte)})
+    c = cliente(api, reloj)
+    pedidos = [al.pedir_contratos("SPX", fecha, fecha + dt.timedelta(days=60), "SPXW")]
+    resultados, _ = al.ejecutar(c, pedidos)
+    previas = al.guardar_respuestas(resultados, {p.nombre: p.tipo for p in pedidos}, directorio)
+    elegidos, _ = al.elegir_vencimientos(sorted({str(v) for v in cot["vencimiento"]}), "PM", corte, 30.0, 2, True)
+    solicitudes = [al.pedir_cadena("SPXW", v, "indicative") for v in elegidos] + [al.pedir_acciones(["SPY"], "iex")]
+    meta = {"fecha": str(fecha), "hora": "09:45" if modo == "programada" else "inmediata", "corte_utc": al.iso(corte),
+            "etiqueta": f"{fecha}T{modo}", "modo": modo, "feed_opciones": "indicative"}
+    return al.capturar(c, solicitudes, directorio, meta, previas)[0]
+
+
+def test_diagnostico_no_relaja_sellos_de_una_captura_programada_tardia(mercado, tmp_path):
+    # H1: captura programada de las 09:45 recibida a las 09:45:01, con eventos anteriores al corte.
+    cot, _, _ = mercado
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    cfg = pl.cargar_config(RAIZ / "configs" / "piloto.toml")
+    with open(RAIZ / "configs" / "captura_alpaca.toml", "rb") as f:
+        imp = tomllib.load(f)["implicito"]
+    m = _captura_unica(cot, tmp_path / "tarde", fecha, corte, corte + pd.Timedelta(seconds=1), "programada")
+    assert m["estado"] == "fallida"  # todo llegó después del corte
+    for pedido in (False, True):  # ni pidiéndolo se relaja una captura programada
+        c0 = dg.diagnosticar(tmp_path / "tarde", fecha, imp, cfg, cierre_descriptivo=pedido)[0]["capturas"][0]
+        assert not c0["descriptivo_cierre"]
+        assert "programada" in c0["motivo_modo"] if pedido else "no pedido" in c0["motivo_modo"]
+        assert c0["elegibilidad"]["filas"] > 0 and c0["elegibilidad"]["filas_validas_al_corte"] == 0
+        assert sum(r["filas_validas"] for r in c0["raices"].values()) == 0
+    # Control: la misma captura recibida un segundo antes del corte sí aporta filas.
+    _captura_unica(cot, tmp_path / "a_tiempo", fecha, corte, corte - pd.Timedelta(seconds=1), "programada")
+    c0 = dg.diagnosticar(tmp_path / "a_tiempo", fecha, imp, cfg)[0]["capturas"][0]
+    assert c0["estado"] == "completa" and c0["elegibilidad"]["filas_validas_al_corte"] > 0
+    assert c0["elegibilidad"]["nivel_implicito"] == "identificado"
+
+
+def test_modo_descriptivo_del_cierre_solo_si_se_pide_y_corresponde(mercado, tmp_path):
+    cot, _, _ = mercado
+    fecha = FECHAS[0]
+    fin = cal.cierre(fecha)
+    desplazamiento = fin - cal.instante(fecha, "09:45")
+    al_cierre = cot.assign(sello_evento_utc=cot["sello_evento_utc"] + desplazamiento,
+                           sello_snapshot_utc=cot["sello_snapshot_utc"] + desplazamiento)
+    _captura_unica(al_cierre, tmp_path, fecha, fin, fin + pd.Timedelta(hours=3), "inmediata")
+    cfg = pl.cargar_config(RAIZ / "configs" / "piloto.toml")
+    with open(RAIZ / "configs" / "captura_alpaca.toml", "rb") as f:
+        imp = tomllib.load(f)["implicito"]
+    estricto = dg.diagnosticar(tmp_path, fecha, imp, cfg)[0]["capturas"][0]
+    assert not estricto["descriptivo_cierre"] and estricto["elegibilidad"]["filas_validas_al_corte"] == 0
+    descriptivo = dg.diagnosticar(tmp_path, fecha, imp, cfg, cierre_descriptivo=True)[0]["capturas"][0]
+    assert descriptivo["descriptivo_cierre"] and descriptivo["elegibilidad"]["filas_validas_al_corte"] == 0
+    assert sum(r["filas_validas"] for r in descriptivo["raices"].values()) > 0

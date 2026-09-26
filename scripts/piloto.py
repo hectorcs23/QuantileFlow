@@ -6,7 +6,9 @@ Uso, desde la raíz del repositorio::
         --subyacente data/normalized/subyacente.parquet --desde 2025-10-20 --hasta 2025-12-01
 
 Las tablas deben seguir los esquemas de ``quantileflow/contrato.py``; un
-problema de validación detiene la corrida.
+problema de validación detiene la corrida. Si una serie trae varias fuentes
+(``proveedor/feed``), hay que elegirlas: ``--fuente-opciones alpaca/opra`` y
+``--fuente-subyacente alpaca/implicito_paridad_SPXW_opra``.
 """
 from __future__ import annotations
 
@@ -29,10 +31,14 @@ def main() -> int:
     a.add_argument("--hasta", required=True)
     a.add_argument("--salida", default=str(RAIZ / "reports" / "piloto"))
     a.add_argument("--titulo", default="Informe piloto de sesiones de apertura")
+    a.add_argument("--fuente-opciones", nargs="+", default=None, help="una o varias fuentes proveedor/feed")
+    a.add_argument("--fuente-subyacente", default=None, help="una fuente proveedor/feed del precio objetivo")
     args = a.parse_args()
     resultado, manifiesto = correr(args.config, args.cotizaciones, args.subyacente, args.desde, args.hasta,
-                                   args.salida, args.titulo)
-    print(f"{args.salida}: {manifiesto['sesiones']['n']} sesiones; dictamen: {manifiesto['dictamen']}")
+                                   args.salida, args.titulo, fuentes_opciones=args.fuente_opciones,
+                                   fuente_subyacente=args.fuente_subyacente)
+    print(f"{args.salida}: {manifiesto['sesiones']['n']} sesiones; dictamen: {manifiesto['dictamen']}; "
+          f"evaluación con precios de mercado: {manifiesto['alcance']['evaluacion_con_precios_de_mercado']}")
     return 0
 
 
