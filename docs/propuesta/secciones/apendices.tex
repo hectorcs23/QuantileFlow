@@ -103,7 +103,7 @@ gráfica y con textos en inglés; los pies, en español, explican cada una. Desd
 \begin{lstlisting}[style=registro]
 pip install -r requirements.txt
 python -m pytest                              # pruebas de propiedades del núcleo
-python docs/propuesta/figuras_src/generar.py  # regenera las 62 figuras PNG
+python docs/propuesta/figuras_src/generar.py  # regenera las 64 figuras PNG
 make pdf                                      # compila este documento
 \end{lstlisting}
 
@@ -115,7 +115,7 @@ make pdf                                      # compila este documento
 \toprule
 \encab{Figuras} & \encab{Script} & \encab{Mundo sintético}\\
 \midrule
-\texttt{s1\_*}, \texttt{s2\_*} & \texttt{fig\_s1\_s2.py} & Calendario de 30 días; cadena SSVI con spreads y bid nulo\\
+\texttt{s1\_*}, \texttt{s2\_*} & \texttt{fig\_s1\_s2.py} & Calendario de 30 días; cadena SSVI con spreads y bid nulo; captura call/put con cotizaciones desfasadas\\
 \texttt{s3\_*} & \texttt{fig\_s3.py} & Panel de 260 sesiones: mercado y acción A, choque común y evento idiosincrático\\
 \texttt{s4\_*}, \texttt{s5\_*} & \texttt{fig\_s4\_s5.py} & Supuesto $\Q$/$\P$; regresión cuantílica; cambio de varianza; desplazamiento de volatilidad\\
 \texttt{s6\_*}, \texttt{s7\_*}, \texttt{s9\_*} & \texttt{fig\_s6\_s7.py} & Cópulas; cartera de cuatro activos; remuestreo de óptimos; nulas de Sharpe\\
@@ -127,5 +127,9 @@ Las pruebas verifican, entre otras propiedades, que la superficie de referencia 
 suficientes de SSVI, que el contraejemplo SVI tiene $g<0$, que la densidad por Breeden--Litzenberger
 coincide con la analítica e integra a uno con media igual al forward, que $W_2$ de una traslación es la
 traslación, que el CVaR del programa lineal coincide con el empírico, que costos altos producen no
-operación, que el conformal adaptativo cumple su cota de largo plazo y que el máximo Sharpe esperado
-coincide con la simulación.
+operación y que el máximo Sharpe esperado coincide con la simulación. Tras las correcciones del plan de
+trabajo verifican además que los cuantiles no normalizan masa faltante ni recortan densidades negativas
+y marcan las colas no identificadas; que el conformal adaptativo cumple la cota~\eqref{eq:aci} en cada
+prefijo con secuencias límite, adversarias y con huecos; y que las cadenas bid/ask con cotizaciones
+desfasadas, dividendos discretos, opciones americanas, strikes ausentes y ventanas de apertura se
+procesan sin fabricar señales, con los residuos observados separados de la superficie ajustada.

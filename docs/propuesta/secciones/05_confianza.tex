@@ -86,12 +86,24 @@ $\mathrm{err}_t=\mathbb 1\{y_t\notin\widehat C_t(\alpha_t)\}$, el nivel efectivo
 \begin{equation}
 \alpha_{t+1}=\alpha_t+\gamma\,(\alpha-\mathrm{err}_t),
 \qquad
-\Bigl|\tfrac1T\textstyle\sum_{t=1}^{T}\mathrm{err}_t-\alpha\Bigr|\le\frac{\max\{\alpha_1,1-\alpha_1\}+\gamma}{\gamma\,T}.
+\Bigl|\tfrac1N{\textstyle\sum_{t}}\mathrm{err}_t-\alpha\Bigr|\le\frac{\max\{\alpha_1,1-\alpha_1\}+h\,\gamma}{\gamma\,N},
 \label{eq:aci}
 \end{equation}
-La cota garantiza que la tasa de error \emph{promedio a largo plazo} converge a $\alpha$ sin supuestos
-sobre la distribución. Con horizonte $h$, el error de la etiqueta que vence en $t$ solo se conoce en $t$:
-la actualización usa exclusivamente errores madurados (\figref{fig:alineacion}).
+donde $N$ es el número de intervalos evaluados y $h$ el horizonte. Con horizonte $h$, el error de la
+etiqueta que vence en $t$ solo se conoce en $t$: la actualización usa exclusivamente errores madurados
+(\figref{fig:alineacion}), y los $h-1$ intervalos ya emitidos con un nivel anterior explican el término
+$h\gamma$; con $h=1$ es la cota de \citet{gibbs2021}. El umbral de cada intervalo es el
+$\lceil(n+1)(1-\alpha_t)\rceil$-ésimo puntaje de calibración.
+
+La cota vale para \emph{cualquier} secuencia, sin supuestos sobre la distribución, pero exige dos
+convenciones: con $\alpha_t\ge1$ el conjunto es vacío (error seguro) y con $\alpha_t\le0$ es la recta
+completa. Así $\alpha_t$ queda en $[-h\gamma(1-\alpha),\,1+h\gamma\alpha]$. Sin la primera convención la
+cota falla: si los puntajes empatan en cero, por ejemplo con retornos nulos, un intervalo de ancho cero
+siempre cubre, $\alpha_t$ crece sin límite y la tasa de error se queda en cero. La primera versión del
+núcleo tenía ese defecto. Ahora las pruebas comprueban la cota en cada prefijo con secuencias límite
+(empates, puntajes siempre crecientes, alternancias, un adversario que ve el intervalo y huecos en los
+datos), además de datos aleatorios, que por sí solos no lo detectaban. Parte de la cobertura puede venir
+de intervalos vacíos o infinitos, que no informan: la tasa agregada no basta para juzgar los intervalos.
 
 \grafica[0.62]{s5_conformal_intervalos}{Intervalos del 90\% ante un cambio de volatilidad en la sesión 500
 y otro en la 750 (datos sintéticos). El método de nivel fijo tarda en ajustar su ventana; el adaptativo

@@ -95,17 +95,126 @@ Cadenas reconstruibles en el instante de decisión, con cobertura y costo conoci
 muestra antes de comprar historia extensa.
 \end{criterio}
 
+\subsection{Cadena cruda: controles, paridad y asimetría observada}\label{sec:cadena_cruda}
+
+Las primeras preguntas del plan de trabajo (\texttt{docs/plan\_de\_trabajo.md}) se responden con la cadena
+\emph{cruda}: si el encarecimiento relativo de calls frente a puts, o el residuo de paridad del mismo
+strike, anticipa algo. Estas medidas se calculan antes de cualquier ajuste y se guardan como una serie
+propia: una superficie sin arbitraje impone la paridad y borraría justamente el residuo que se quiere
+estudiar. El módulo \texttt{quantileflow/cadenas.py} implementa esta sección. Su clase \texttt{Captura} es
+la versión mínima del contrato de datos: una fila por actualización de cada contrato, con bid, ask,
+tamaños y sello de tiempo, más el subyacente sincronizado, la tasa, los dividendos, el estilo de
+ejercicio, la hora de corte y la fecha. Sus arreglos son de solo lectura.
+
+\paragraph{Controles por fila} De cada contrato cuenta solo la última actualización anterior o igual al
+corte; si esa actualización falla un control, el contrato queda fuera y no se recurre a una cotización más
+vieja. Cada fila excluida conserva \emph{todos} sus motivos (\tabref{tab:motivos}), de modo que el informe
+diario dice qué se excluyó y por qué. Los umbrales son provisionales hasta auditar una muestra real en la
+fase~0. La captura recibe además alertas si el sello del subyacente se aleja del corte o cae en la
+ventana de apertura, cuando el valor de un índice puede incluir componentes que aún no han abierto.
+
+\begin{table}[H]
+\centering\small
+\caption{Motivos de exclusión de una fila de la cadena cruda.}
+\label{tab:motivos}
+\begin{tabularx}{\linewidth}{@{}l Y@{}}
+\toprule
+\encab{Motivo} & \encab{Condición y razón}\\
+\midrule
+\texttt{posterior\_al\_corte} & Sello posterior al corte: no se conocía al decidir.\\
+\texttt{reemplazada} & Hay una actualización posterior del mismo contrato antes del corte.\\
+\texttt{antes\_de\_apertura} & Cotización de preapertura o de la sesión anterior.\\
+\texttt{ventana\_de\_apertura} & Primeros minutos de la sesión (cinco por omisión): cotizaciones inestables.\\
+\texttt{desfasada} & Más antigua que la edad máxima al corte (60~s): no refleja el subyacente actual.\\
+\texttt{sin\_bid} & Bid nulo: el precio solo queda acotado por arriba.\\
+\texttt{cruzada}, \texttt{bloqueada} & Bid mayor que ask, o igual: dato inconsistente o de fuentes
+desincronizadas.\\
+\texttt{sin\_tamano} & Tamaño menor que el mínimo en bid o en ask.\\
+\texttt{spread\_ancho} & Spread mayor que el 50\% del mid.\\
+\texttt{fuera\_de\_cotas} & Viola cotas sin modelo: call por encima del subyacente, put por encima del
+strike o, si es americana, ask menor que el ejercicio inmediato.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Residuo de paridad fuera de muestra} Para cada par $j$ de call y put válidos del mismo strike,
+\begin{equation}
+r_j=(C_j-P_j)-D_{-j}\,(F_{-j}-K_j),\qquad
+\bigl[\underline r_j,\ \overline r_j\bigr]=\bigl[C^{b}_j-P^{a}_j,\ C^{a}_j-P^{b}_j\bigr]-D_{-j}\,(F_{-j}-K_j),
+\label{eq:residuo_paridad}
+\end{equation}
+donde $C_j$ y $P_j$ son mids, los superíndices $b$ y $a$ indican bid y ask, y $(F_{-j},D_{-j})$ se estiman
+por mínimos cuadrados ponderados de $C-P$ sobre $K$ con los \emph{demás} pares, con pesos $1/\ell^2$ y
+$\ell_j=(C^a_j-C^b_j)+(P^a_j-P^b_j)$ el ancho de la banda. Ninguna cotización evalúa su propia paridad, de
+modo que la medida no es circular. Un par sale de la estimación del forward de los demás si su residuo
+supera tres medios anchos y cinco desviaciones robustas del resto, pero conserva su residuo. El residuo se
+reporta en unidades de precio y en múltiplos del ancho: si $|r_j|\le\ell_j/2$, la banda contiene el cero y
+la diferencia no supera el costo de negociar, así que no se etiqueta como señal. La
+\figref{fig:paridad_desfasadas} muestra por qué el control de edad es imprescindible: tres puts de hace
+cinco minutos, con el subyacente un 1\% más bajo, dan residuos de $-0.6$, $-1.9$ y $-3.2$ anchos que,
+sin ese control, pasarían por señales; los demás pares no se contaminan.
+
+
+\paragraph{Dividendos y ejercicio anticipado} El forward implícito incorpora los dividendos sin necesidad
+de declararlos. Un forward contractual que omite un dividendo en efectivo fabrica, en todos los strikes, un
+residuo igual a su valor presente ($-1.2$ en las pruebas, con un dividendo de 1.2). Con opciones americanas
+la paridad deja de ser una igualdad: cada cotización se desamericaniza con el árbol binomial y el modelo de
+dividendo \emph{escrowed} (\secref{sec:americanas}), valorando la americana y la europea en el mismo
+árbol, y el residuo solo se interpreta si supera la banda \emph{más} las primas de ejercicio estimadas y
+el subyacente está sincronizado. Tratar como europeas unas americanas con dividendo sesga el forward
+implícito (0.2 sobre 98.8 en las pruebas) aunque ningún residuo salga de su banda.
+
+\grafica[0.62]{s2_paridad_desfasadas}{Residuo de paridad del mismo strike, en múltiplos del ancho bid--ask,
+con el forward estimado sin el propio par. Los círculos son los pares que superan los controles; los
+triángulos, tres puts desfasados que solo aparecerían si no se comprobara la edad de la cotización. Entre
+las líneas discontinuas, la diferencia cabe en el spread.}{fig:paridad_desfasadas}
+
+\paragraph{Asimetría call/put} Un call a $+3$\% y un put a $-3$\% no forman un par de paridad: su
+comparación mide asimetría de precios de cola. Se usan strikes simétricos en logaritmo, $Fe^{\pm d}$ con
+$d=\ln 1.03$, y se compara primero en volatilidad implícita, $\sigma_P(-d)-\sigma_C(d)$, con una banda que
+sale de las volatilidades de bid y ask. Las primas brutas no deben compararse con la unidad: con una
+sonrisa simétrica en $k$,
+\begin{equation}
+P\bigl(Fe^{-d}\bigr)=e^{-d}\,C\bigl(Fe^{d}\bigr),\qquad
+\varrho_d=\frac{P(Fe^{-d})}{e^{-d}\,C(Fe^{d})}-1,
+\label{eq:simetria_pc}
+\end{equation}
+de modo que $\varrho_d=0$ indica ausencia de asimetría. Como una distancia fija cambia de significado con
+el nivel de volatilidad y el plazo, la comparación se repite con deltas comparables,
+$\sigma_P(\Delta=-0.25)-\sigma_C(\Delta=0.25)$, usando la delta forward de cada opción. La pendiente local
+$\partial\sigma/\partial k$ en $k=0$ se estima por mínimos cuadrados ponderados con $|k|\le5$\%
+(\figref{fig:asimetria_sonrisa}). Solo se interpola entre strikes válidos separados a lo sumo 2\% en
+$k$; si el tramo necesario tiene un hueco mayor, la medida queda «no identificada».
+
+\grafica[0.62]{s2_asimetria_sonrisa}{Volatilidades implícitas de bid y ask de las cotizaciones OTM válidas y
+las tres medidas de asimetría: strikes log-simétricos en $\pm\ln 1.03$, deltas de 25 y pendiente local. En
+este mundo sintético, la diferencia en $\pm3$\% es de 5.8 puntos, frente a 5.76 en la sonrisa
+verdadera.}{fig:asimetria_sonrisa}
+
+\paragraph{Series separadas y cambios diarios} La fila diaria del informe lleva las medidas observadas
+(\texttt{obs\_*}) y, si se ajusta una superficie, las que se leen de ella (\texttt{aj\_*}), nunca
+mezcladas: en el ajuste, el residuo de paridad es cero por construcción. Los cambios respecto de la
+captura anterior registran días naturales, sesiones transcurridas y tipo de comparación
+(apertura--apertura o cierre--apertura); un fin de semana cuenta como tres días y una sesión, no como una
+sesión ordinaria.
+
+\begin{noconcluir}
+Las pruebas de esta sección usan cadenas sintéticas con cotizaciones desfasadas, dividendos, strikes
+ausentes y ventanas de apertura. Verifican que el procesamiento separa efectos de los datos de una posible
+señal; no demuestran que el residuo o la asimetría anticipen rendimientos, ni la calidad de datos reales.
+\end{noconcluir}
+
 \subsection{De cotizaciones a precios ajustados}\label{sec:ajuste_precios}
 
 \paragraph{Forward y descuento} Para opciones europeas, la paridad put--call
-$C(K)-P(K)=D\,(F-K)$ permite estimar $D$ y $F$ por regresión de $C-P$ sobre $K$ cerca del dinero. Con
-opciones americanas con dividendos la paridad es solo una desigualdad; entonces $D$ proviene de la curva
-de tasas y $F$ del subyacente, las tasas y los dividendos esperados, y la paridad se usa como control de
-calidad.
+$C(K)-P(K)=D\,(F-K)$ permite estimar $D$ y $F$ por regresión ponderada de $C-P$ sobre $K$
+(\secref{sec:cadena_cruda}). Con opciones americanas con dividendos la paridad es solo una desigualdad: se
+aplica a los precios desamericanizados, con la prima de ejercicio estimada como parte de la
+incertidumbre, y se contrasta con el forward que dan la curva de tasas y los dividendos esperados.
 
 \paragraph{Selección y filtros} Se trabaja con opciones fuera del dinero (puts bajo el forward, calls por
 encima), más líquidas y con menor valor intrínseco. Se excluyen, registrando el motivo, las cotizaciones
-cruzadas, rancias o con spread anómalo. Una cotización con bid nulo no se descarta sin más: su ask sigue
+cruzadas, rancias o con spread anómalo (\tabref{tab:motivos}). Una cotización con bid nulo no se descarta sin más: su ask sigue
 siendo una cota superior útil, aunque no identifica la cola (\figref{fig:cotizaciones}).
 
 \grafica{s2_cotizaciones_precio}{Cotizaciones OTM a 30 días en el mundo sintético. Cada segmento vertical
@@ -252,6 +361,15 @@ redistribuye en silencio.
 
 También se documentan el error numérico (paso de la malla, diferencias finitas) y la sensibilidad a la
 extrapolación de strikes extremos.
+
+\paragraph{Cuantiles sin masa inventada} Los cuantiles se obtienen invirtiendo una CDF \emph{anclada}: la
+masa a la izquierda de la malla sale de la pendiente del precio (segunda identidad de~\eqref{eq:bl}), no
+de integrar la densidad desde un extremo desconocido. No se normaliza la masa ni se recortan valores
+negativos. Cada nivel $u$ se devuelve con su estado: «identificada» si cae entre $\Q(X\le x_{\min})$ y
+$\Q(X\le x_{\max})$, con $[x_{\min},x_{\max}]$ el tramo respaldado por strikes fiables, y «no
+identificada», sin valor, en otro caso. Una densidad negativa invalida todos los niveles. Normalizar
+habría sido engañoso: a una normal a la que le falta el 2.3\% de la masa izquierda, la normalización le
+desplaza la mediana 0.029 desviaciones típicas y le atribuye una cola que nadie observó.
 
 \begin{noconcluir}
 La media de $\Q$ está fijada por el forward. No es una expectativa de rentabilidad real y no contiene, por

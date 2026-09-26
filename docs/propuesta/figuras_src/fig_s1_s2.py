@@ -1,10 +1,13 @@
 """Figuras de las secciones 1 y 2: horizontes, datos y reconstrucción de Q."""
 from __future__ import annotations
 
+import dataclasses
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from comun import guardar, segmentos
+from quantileflow import cadenas as ca
 from quantileflow import distribuciones as ds
 from quantileflow import opciones as op
 from quantileflow import sintetico as sn
@@ -260,6 +263,68 @@ def fig_americanas(es_call):
 
 
 # ---------------------------------------------------------------------------
+# Cadena cruda: paridad del mismo strike y asimetría call/put observada
+# ---------------------------------------------------------------------------
+
+DESFASADOS = (95.0, 100.0, 104.0)
+
+
+def datos_cadena_cruda():
+    """Captura limpia y la misma con tres puts de hace 5 minutos (subyacente 1 % más bajo)."""
+    cap, verdad = sn.captura_sintetica(q=0.013)
+    vieja, _ = sn.captura_sintetica(S=99.0, q=0.013)
+    filas = [i for i in range(len(cap.strike)) if not cap.es_call[i] and cap.strike[i] in DESFASADOS]
+    bid, ask, sello = cap.bid.copy(), cap.ask.copy(), cap.sello.copy()
+    bid[filas], ask[filas], sello[filas] = vieja.bid[filas], vieja.ask[filas], cap.corte - 300.0
+    desfasada = dataclasses.replace(cap, bid=bid, ask=ask, sello=sello)
+    return {
+        "forward": verdad["forward"],
+        "limpia": ca.procesar_captura(cap),
+        "con_control": ca.procesar_captura(desfasada).paridad,
+        "sin_control": ca.procesar_captura(desfasada, ca.ReglasCalidad(edad_maxima=np.inf)).paridad,
+    }
+
+
+def fig_paridad_desfasadas(c):
+    con, sin, F = c["con_control"], c["sin_control"], c["forward"]
+    viejas = np.isin(sin.strike, DESFASADOS)
+    x0, x1 = con.strike.min() / F - 0.01, con.strike.max() / F + 0.01
+    plt.figure()
+    plt.plot(con.strike / F, con.multiplo_ancho, "o", label="Pairs that pass the checks (stale puts excluded)")
+    plt.plot(sin.strike[viejas] / F, sin.multiplo_ancho[viejas], "rv",
+             label="Stale puts (5 minutes old) if quote age is not checked")
+    plt.plot([x0, x1], [0.5, 0.5], "k--", label="Edge of the bid-ask band: |residual| = width / 2")
+    plt.plot([x0, x1], [-0.5, -0.5], "k--")
+    plt.xlabel("Strike / forward")
+    plt.ylabel("Parity residual / bid-ask width")
+    plt.title("Same-strike parity with a leave-one-out forward (synthetic)")
+    plt.legend()
+    return guardar("s2_paridad_desfasadas")
+
+
+def fig_asimetria_sonrisa(c):
+    res = c["limpia"]
+    v, a, ad, pl = res.volatilidades, res.asimetria, res.asimetria_delta, res.pendiente
+    ok = np.isfinite(v.iv_bid) & np.isfinite(v.iv_ask)
+    d = a["k"]
+    k_linea = np.linspace(-0.05, 0.05, 50)
+    plt.figure()
+    plt.plot(*segmentos(v.k[ok] * 100, v.iv_bid[ok] * 100, v.iv_ask[ok] * 100),
+             label="Bid-ask IV of valid OTM quotes")
+    plt.plot(k_linea * 100, (pl["nivel_atm"] + pl["pendiente"] * k_linea) * 100, "--",
+             label=f"Local slope at k = 0: {pl['pendiente']:.2f} vol per unit of k")
+    plt.plot([-d * 100, d * 100], [a["iv_put"] * 100, a["iv_call"] * 100], "s",
+             label=f"k = -/+ ln(1.03): put - call = {100 * a['diferencia_iv']:.1f} vol pts")
+    plt.plot([ad["k_put"] * 100, ad["k_call"] * 100], [ad["iv_put"] * 100, ad["iv_call"] * 100], "^",
+             label=f"25-delta: put - call = {100 * ad['diferencia_iv']:.1f} vol pts")
+    plt.xlabel("Log-moneyness k = ln(K / F) (%)")
+    plt.ylabel("Implied volatility (%)")
+    plt.title("Call/put asymmetry measured on raw quotes (synthetic)")
+    plt.legend()
+    return guardar("s2_asimetria_sonrisa")
+
+
+# ---------------------------------------------------------------------------
 # Conjunto de superficies plausibles y colas no identificadas
 # ---------------------------------------------------------------------------
 
@@ -284,14 +349,19 @@ def datos_bandas(rebanadas, extras):
         aj, _ = sf.ajustar_rebanada(r_i, peso_mid=0.5, z0=z)
         p = aj.densidad(k)
         dens_s.append(p / K)
-        cuant_s.append(ds.cuantiles_desde_densidad(k, p, u))
+        # CDF anclada con la pendiente del precio (masa a la izquierda de la malla);
+        # sin normalizar. Aquí la malla cubre todo u, así que no debe faltar ninguno.
+        c = ds.cuantiles_desde_densidad(k, p, u, masa_izquierda=float(aj.cdf(k[0])))
+        if not c.completo:
+            raise ValueError(c.motivo)
+        cuant_s.append(c.valores)
         if i < 60:
             q, _, _ = sf.ajuste_convexo(r_i, soporte, peso_mid=0.5, peso_suave=1e-4)
             dens_c.append(q / h)
             cdf = np.cumsum(q) - 0.5 * q
             cuant_c.append(np.interp(u, np.maximum.accumulate(cdf), x_cv))
     fiables = reb.K[ext["fiable"]]
-    u_min, u_max = ds.soporte_identificado(fiables, reb.F, k, ds.cdf_desde_densidad(k, base.densidad(k)))
+    u_min, u_max = ds.soporte_identificado(fiables, reb.F, k, base.cdf(k))
     verdad = sn.superficie_referencia().densidad(k, reb.T) / K
     return dict(u=u, k=K / reb.F, soporte=soporte / reb.F, dens_s=np.array(dens_s), cuant_s=np.array(cuant_s),
                 dens_c=np.array(dens_c), cuant_c=np.array(cuant_c), verdad=verdad,
@@ -343,6 +413,8 @@ def main():
               fig_americanas(False), fig_americanas(True)]
     b = datos_bandas(rebanadas, extras)
     rutas += [fig_bandas_densidad(b), fig_bandas_cuantiles(b)]
+    c = datos_cadena_cruda()
+    rutas += [fig_paridad_desfasadas(c), fig_asimetria_sonrisa(c)]
     return rutas
 
 

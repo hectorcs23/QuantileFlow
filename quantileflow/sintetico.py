@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from .opciones import precio_black
-from .superficies import (Rebanada, SuperficieSSVI, densidad_logmoneyness, derivadas_ssvi,
-                          phi_potencia)
-from .distribuciones import cdf_desde_densidad
+from .cadenas import HORA_CORTE, Captura
+from .opciones import binomial_crr, precio_black
+from .superficies import Rebanada, SuperficieSSVI, cdf_logmoneyness, derivadas_ssvi, phi_potencia
+from .distribuciones import cuantiles_desde_cdf
 
 DIAS_ANIO = 365.0
 
@@ -64,16 +64,59 @@ def cadena_sintetica(rng, superficie=None, S0=100.0, r=0.04, q=0.013, ruido_rel=
     return rebanadas, extras
 
 
+def captura_sintetica(S=100.0, T=30 / DIAS_ANIO, r=0.04, q=0.0, dividendos=(), ejercicio="europeo",
+                      strikes=None, superficie=None, corte=HORA_CORTE, edad=5.0, rng=None,
+                      ruido_rel=0.0, n_arbol=200, fecha="2026-09-25"):
+    """Captura sintética con call y put en cada strike, bid/ask al tick y sellos frescos.
+
+    El precio verdadero sale de la rebanada SSVI de referencia en ``T`` con el
+    forward ``(S - VP(dividendos)) e^{(r - q) T}``; si ``ejercicio`` es
+    ``"americano"`` se valora con el árbol binomial (dividendos en efectivo con
+    el modelo *escrowed*) a la volatilidad de la sonrisa en cada strike. Sin
+    ``rng`` no hay ruido: el precio verdadero siempre queda dentro de
+    ``[bid, ask]``. Devuelve la captura y un diccionario con la verdad.
+    """
+    sup = superficie or superficie_referencia()
+    vp = sum(m * np.exp(-r * t) for t, m in dividendos if 0.0 < t <= T)
+    F = (S - vp) * np.exp((r - q) * T)
+    D = np.exp(-r * T)
+    K = np.arange(80.0, 120.0 + 1e-9, 1.0) if strikes is None else np.asarray(strikes, dtype=float)
+    K2 = np.concatenate([K, K])
+    es_call = np.concatenate([np.ones(len(K), bool), np.zeros(len(K), bool)])
+    w = sup.w(np.log(K2 / F), T)
+    sigma = np.sqrt(w / T)
+    if ejercicio == "americano":
+        verdadero = np.array([binomial_crr(S, k_, T, r, s_, c_, q, dividendos, n_arbol, americana=True)
+                              for k_, s_, c_ in zip(K2, sigma, es_call)])
+    else:
+        verdadero = precio_black(F, K2, w, D, es_call)
+    spread = np.clip(_redondear(0.02 + 0.03 * verdadero, modo="arriba"), 0.01, 0.60)
+    mid = verdadero if rng is None else verdadero + rng.normal(0.0, ruido_rel * spread / 2.0)
+    bid = np.maximum(_redondear(mid - spread / 2.0, modo="abajo"), 0.0)
+    ask = np.maximum(_redondear(mid + spread / 2.0, modo="arriba"), bid + 0.01)
+    n = len(K2)
+    captura = Captura(strike=K2, es_call=es_call, bid=bid, ask=ask, tam_bid=np.full(n, 10.0),
+                      tam_ask=np.full(n, 10.0), sello=np.full(n, corte - edad), T=T, spot=S,
+                      sello_spot=corte, tasa=r, dividendos=tuple(dividendos),
+                      rendimiento_dividendo=q, ejercicio=ejercicio, corte=corte, fecha=fecha)
+    return captura, {"forward": F, "descuento": D, "sigma": sigma, "precio": verdadero}
+
+
 def cuantiles_ssvi(theta, rho, phi, u, n=3000):
-    """Cuantiles de ``x = ln(S_T/F)`` para una rebanada SSVI."""
+    """Cuantiles de ``x = ln(S_T/F)`` para una rebanada SSVI del mundo sintético.
+
+    Usa la CDF analítica (anclada en ambas colas), sin normalizar ni recortar.
+    Devuelve también la probabilidad cubierta por la malla. Si algún nivel no
+    queda identificado se lanza un error: aquí sería un fallo del generador.
+    """
     sd = np.sqrt(theta)
     k = np.linspace(-14.0 * sd - 0.05, 8.0 * sd + 0.05, n)
-    p = densidad_logmoneyness(k, *derivadas_ssvi(k, theta, rho, phi))
-    cdf = cdf_desde_densidad(k, np.maximum(p, 0.0))
-    masa = cdf[-1]
-    cdf = np.maximum.accumulate(cdf / masa)
-    unicos, idx = np.unique(cdf, return_index=True)
-    return np.interp(u, unicos, k[idx]), masa
+    w, w1, _ = derivadas_ssvi(k, theta, rho, phi)
+    cdf = cdf_logmoneyness(k, w, w1)
+    resultado = cuantiles_desde_cdf(k, cdf, u)
+    if not resultado.completo:
+        raise ValueError(f"cuantiles SSVI no identificados: {resultado.motivo}")
+    return resultado.valores, float(cdf[-1] - cdf[0])
 
 
 def malla_u(n=199, borde=0.005):

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.optimize import brentq
+from scipy.special import ndtr
 from scipy.stats import norm
 
 
@@ -29,8 +30,9 @@ def precio_black(F, K, w, D, es_call=True):
     K = np.asarray(K, dtype=float)
     w = np.asarray(w, dtype=float)
     d1, d2 = _d1_d2(F, K, w)
-    call = D * (F * norm.cdf(d1) - K * norm.cdf(d2))
-    put = D * (K * norm.cdf(-d2) - F * norm.cdf(-d1))
+    # ndtr es la CDF normal sin la sobrecarga de scipy.stats (importa en las inversiones).
+    call = D * (F * ndtr(d1) - K * ndtr(d2))
+    put = D * (K * ndtr(-d2) - F * ndtr(-d1))
     return np.where(es_call, call, put)
 
 

@@ -6,10 +6,19 @@
 
 El conformal adaptativo (Gibbs y Candès, 2021) actualiza el nivel efectivo
 
-    alfa_{t+1} = alfa_t + gamma * (alfa - err_t),
+    alfa_{t+1} = alfa_t + gamma * (alfa - err_t).
 
-y garantiza que la tasa de error promedio a largo plazo converja a ``alfa``.
-No garantiza la cobertura de una sesión particular ni la de cada régimen.
+Con ``gamma > 0`` y retroalimentación con retraso ``h`` (horizonte), para
+**cualquier** secuencia se cumple, tras ``N`` intervalos evaluados,
+
+    |media(err) - alfa| <= (max(alfa, 1 - alfa) + h * gamma) / (gamma * N),
+
+siempre que ``alfa_t >= 1`` produzca el conjunto vacío (error seguro) y
+``alfa_t <= 0`` el conjunto completo. Así ``alfa_t`` queda en
+``[-h*gamma*(1 - alfa), 1 + h*gamma*alfa]``. Con ``h = 1`` es la cota de Gibbs y
+Candès. Es una cota sobre el promedio: no garantiza la cobertura de una sesión
+particular ni la de cada régimen, y parte de ella puede venir de intervalos
+vacíos o infinitos, que no informan. Con ``gamma = 0`` no hay cota.
 """
 from __future__ import annotations
 
@@ -57,16 +66,31 @@ def curva_fiabilidad(p, o, n_bins=10):
 
 
 def cuantil_conformal(puntajes, alfa):
-    """Cuantil con corrección de muestra finita; infinito si el nivel supera 1."""
-    n = len(puntajes)
-    if alfa <= 0.0:
-        return np.inf
+    """Umbral ``q`` del conjunto ``{y : |y - prediccion| <= q}`` de nivel ``1 - alfa``.
+
+    Es el ``ceil((n + 1)(1 - alfa))``-ésimo puntaje ordenado (corrección de
+    muestra finita). Convenciones de los extremos, necesarias para la cota del
+    conformal adaptativo:
+
+    * ``alfa >= 1`` -> ``-inf``: conjunto **vacío**, que siempre cuenta como error;
+    * ``alfa <= 0``, sin puntajes o con rango mayor que ``n`` -> ``+inf``: conjunto
+      completo.
+    """
+    puntajes = np.asarray(puntajes, dtype=float)
     if alfa >= 1.0:
-        return 0.0
-    nivel = np.ceil((n + 1) * (1.0 - alfa)) / n
-    if nivel > 1.0:
+        return -np.inf
+    n = len(puntajes)
+    if alfa <= 0.0 or n == 0:
         return np.inf
-    return float(np.quantile(puntajes, nivel, method="higher"))
+    rango = int(np.ceil((n + 1) * (1.0 - alfa)))
+    if rango > n:
+        return np.inf
+    return float(np.partition(puntajes, rango - 1)[rango - 1])
+
+
+def cota_conformal_adaptativo(alfa, gamma, n, horizonte=1):
+    """Cota determinista de ``|media(err) - alfa|`` tras ``n`` intervalos evaluados."""
+    return (max(alfa, 1.0 - alfa) + horizonte * gamma) / (gamma * n)
 
 
 def conformal_adaptativo(y, prediccion, alfa=0.1, gamma=0.005, ventana=250, horizonte=1,
@@ -77,8 +101,16 @@ def conformal_adaptativo(y, prediccion, alfa=0.1, gamma=0.005, ventana=250, hori
     En la sesión de decisión ``d`` solo se conocen los objetivos ``y[s]`` con
     ``s <= d``; por eso el nivel se actualiza con el error de ``y[d]`` y el
     intervalo nuevo es para ``y[d + horizonte]``. Con ``gamma = 0`` se obtiene
-    conformal por ventana con nivel fijo.
+    conformal por ventana con nivel fijo (sin cota de largo plazo).
+
+    Un intervalo vacío se representa con ``inferior = +inf`` y ``superior = -inf``;
+    uno completo, con ``-inf`` y ``+inf``. Un objetivo o pronóstico ausente (NaN)
+    no emite intervalo, no cuenta como error y no entra en la calibración. La
+    cota del módulo vale con ``N`` = número de errores evaluados
+    (``cota_conformal_adaptativo``).
     """
+    if horizonte < 1:
+        raise ValueError("horizonte debe ser al menos 1")
     y = np.asarray(y, dtype=float)
     prediccion = np.asarray(prediccion, dtype=float)
     T = len(y)
@@ -87,18 +119,21 @@ def conformal_adaptativo(y, prediccion, alfa=0.1, gamma=0.005, ventana=250, hori
     superior = np.full(T, np.nan)
     alfas = np.full(T, np.nan)
     errores = np.full(T, np.nan)
+    emitido = np.zeros(T, dtype=bool)
     a = alfa
     for d in range(T):
-        if np.isfinite(inferior[d]) or np.isinf(superior[d]):
+        if emitido[d] and np.isfinite(y[d]):
             errores[d] = float(not (inferior[d] <= y[d] <= superior[d]))
             a = a + gamma * (alfa - errores[d])
         t = d + horizonte
-        if t >= T:
+        if t >= T or not np.isfinite(prediccion[t]):
             continue
         disponibles = puntajes[max(0, d + 1 - ventana): d + 1]
+        disponibles = disponibles[np.isfinite(disponibles)]
         if len(disponibles) < minimo_calibracion:
             continue
         q = cuantil_conformal(disponibles, a)
         inferior[t], superior[t] = prediccion[t] - q, prediccion[t] + q
         alfas[t] = a
+        emitido[t] = True
     return inferior, superior, errores, alfas

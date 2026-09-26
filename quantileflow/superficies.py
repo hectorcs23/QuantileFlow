@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from scipy.optimize import least_squares, lsq_linear
+from scipy.stats import norm
 
 from .opciones import precio_black
 
@@ -70,6 +71,19 @@ def densidad_logmoneyness(k, w, w1, w2):
     raiz_w = np.sqrt(w)
     d_menos = -np.asarray(k) / raiz_w - 0.5 * raiz_w
     return g / np.sqrt(2.0 * np.pi * w) * np.exp(-0.5 * d_menos**2)
+
+
+def cdf_logmoneyness(k, w, w1):
+    """CDF Q de ``x = ln(S_T / F)`` en ``x = k``, a partir de la pendiente del precio.
+
+    ``Q(x <= k) = N(-d_menos) + n(d_menos) * w'(k) / (2 sqrt(w))``: es la
+    segunda identidad de Breeden–Litzenberger, ``1 + C'(K)/D``, en log-moneyness.
+    Da la masa de cada cola sin integrar la densidad desde un extremo
+    desconocido; con ella se ancla la CDF de una malla finita.
+    """
+    raiz_w = np.sqrt(w)
+    d_menos = -np.asarray(k) / raiz_w - 0.5 * raiz_w
+    return norm.cdf(-d_menos) + norm.pdf(d_menos) * np.asarray(w1) / (2.0 * raiz_w)
 
 
 def varianza_total_svi_cruda(k, a, b, rho, m, sigma):
@@ -127,6 +141,10 @@ class SuperficieSSVI:
     def densidad(self, k, T):
         w, w1, w2 = self.derivadas(k, T)
         return densidad_logmoneyness(k, w, w1, w2)
+
+    def cdf(self, k, T):
+        w, w1, _ = self.derivadas(k, T)
+        return cdf_logmoneyness(k, w, w1)
 
     def condiciones(self):
         """Verifica las condiciones suficientes de ausencia de arbitraje estático."""
@@ -270,6 +288,10 @@ class RebanadaSSVI:
 
     def densidad(self, k):
         return densidad_logmoneyness(k, *self.derivadas(k))
+
+    def cdf(self, k):
+        w, w1, _ = self.derivadas(k)
+        return cdf_logmoneyness(k, w, w1)
 
 
 def _phi_max(theta, rho):
