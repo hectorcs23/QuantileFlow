@@ -8,20 +8,34 @@
         "contratos_en_metadatos": 17480,
         "corte_utc": "2026-09-25T20:00:00.000000Z",
         "errores": 0,
+        "estado": "completa",
         "fecha": "2026-09-25",
         "hora": "inmediata",
         "respuestas_despues_del_corte": 10,
-        "snapshots": 3250
+        "snapshots": 3250,
+        "solicitudes_no_completas": []
       },
       "corte_utc": "2026-09-25T20:00:00.000000Z",
       "cuenta": "paper",
+      "descriptivo_cierre": true,
       "desfase_reloj_s": 0.240865,
       "duracion_s": 0.711612,
+      "elegibilidad": {
+        "filas": 3250,
+        "filas_validas_al_corte": 0,
+        "nivel_implicito": "no identificado",
+        "por_raiz": {
+          "SPXW": 0,
+          "SPY": 0
+        }
+      },
       "errores": 0,
+      "estado": "completa",
       "etiqueta": "2026-09-25Tinmediata-185224",
       "feed_opciones": "indicative",
       "hora": "inmediata",
       "modo": "inmediata",
+      "motivo_modo": "captura inmediata recibida con la sesión del 2026-09-25 cerrada; corte en su cierre",
       "raices": {
         "SPXW": {
           "exclusiones_totales": {
@@ -30,6 +44,7 @@
             "sin_tamano": 77,
             "spread_ancho": 33
           },
+          "filas_validas": 1508,
           "plazo_constante_30d": {
             "asim_log": {
               "estado": "identificada",
@@ -317,6 +332,7 @@
             "sin_bid": 58,
             "sin_tamano": 58
           },
+          "filas_validas": 1557,
           "plazo_constante_30d": {
             "asim_log": {
               "estado": "identificada",
@@ -553,7 +569,6 @@
         }
       },
       "razon_spx_spy": 10.036487213828657,
-      "recibida_despues_del_cierre": true,
       "respuestas": 10,
       "respuestas_despues_del_corte": 10,
       "spot_spx_implicito": {

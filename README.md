@@ -20,6 +20,9 @@ usan datos **sintéticos** con semillas fijas.
   el problema de acceso a datos y lo que falta.
 - [`docs/resumen_sesion_alpaca.md`](docs/resumen_sesion_alpaca.md): resumen de la sesión con Alpaca y
   mapa de dónde está cada archivo.
+- [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
+  revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
+  metodológicas pendientes.
 - [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): qué ofrece Alpaca (verificado el 26 de septiembre
   de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
   pendientes (dónde corre la captura y qué feed usar).
@@ -54,6 +57,7 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   alpaca.py            adaptador de Alpaca: cliente, crudo inmutable por respuesta, manifiesto por captura,
                        elección de vencimientos y normalización al contrato
   implicito.py         nivel implícito del subyacente por paridad (Alpaca no da el nivel de SPX)
+  diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
   opciones.py          Black, griegas, árbol binomial con dividendos
   superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
   distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
@@ -93,7 +97,7 @@ Captura en Alpaca (requiere `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el ento
 ```bash
 make captura-prueba                                   # captura inmediata de prueba
 make captura                                          # día hábil: espera y captura a las 09:45 y 10:00 ET
-make verificar-alpaca FECHA=2026-09-28                # diagnóstico agregado en reports/verificacion_alpaca/
+make verificar-alpaca FECHA=2026-09-28                # elegibilidad y calidad en reports/verificacion_alpaca/
 make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-06   # tablas para el piloto desde el crudo
 ```
 

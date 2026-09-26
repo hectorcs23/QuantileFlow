@@ -2,9 +2,10 @@
 
 > **DATOS SINTÉTICOS.** Datos generados por el código, no de mercado: este documento es la plantilla del informe piloto. Sus cifras no dicen nada sobre SPX ni sobre ninguna señal.
 
-- Configuración: `piloto-0.1` (huella `50cb863c3ae2`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
+- Configuración: `piloto-0.2` (huella `ae34b82cae16`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
 - Corte principal 09:45 y secundario 10:00 (America/New_York); plazo constante de 30 días naturales; etiquetas a 1, 5 sesiones.
 - Sesiones: 30, del 2025-10-20 al 2025-12-01.
+- Fuentes: opciones sintetico/nbbo_intervalos_sintetico; precio objetivo sintetico/indice_sintetico (observado).
 - Entradas y hashes: `manifiesto.json`.
 
 ## Dictamen de datos
@@ -21,6 +22,12 @@
 | Etiqueta a 1 sesión disponible | 0.933 | >= 0.9 | sí |  |
 
 Un criterio crítico incumplido hace el dictamen «insuficiente»; uno no crítico, «apto con limitaciones». Los umbrales están en la configuración y son provisionales.
+
+**Alcance**, aparte de la aptitud de los datos:
+
+- Medición: sintética.
+- Precio objetivo: observado.
+- Evaluación con precios de mercado: no permitida: datos sintéticos.
 
 ## Calidad de los datos
 

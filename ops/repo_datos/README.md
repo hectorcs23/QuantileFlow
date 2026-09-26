@@ -20,23 +20,39 @@ agregados están en el repositorio público
 
 - Arranca cada día hábil hacia las 09:17 de Nueva York; si ese disparo falla, hay un respaldo a las
   09:32. Una compuerta horaria resuelve el cambio entre EDT y EST.
-- Descarga el código de captura del repositorio público: rama o commit en `REF_CODIGO`. Cada
-  manifiesto registra el commit usado.
+- Descarga el código de captura del repositorio público en el commit fijado en `REF_CODIGO`
+  (`79c1554`, revisado y verificado). Cambiarlo es cambiar la versión de medición. Cada manifiesto
+  registra el commit usado.
 - Espera hasta 5 s antes de las 09:45 y de las 10:00 y captura en una ráfaga paralela:
   - SPXW: dos vencimientos a cada lado de 30 días y el más cercano (nivel implícito de SPX);
   - SPY: dos vencimientos a cada lado de 30 días;
   - la cotización IEX de SPY.
-- Hace commit de `raw/` aunque la captura haya sido parcial. Si falla, la corrida queda en rojo en
-  **Actions**.
+- Hace commit de `raw/` aunque la captura haya sido parcial.
 
-Los feriados no capturan: el script consulta el calendario XNYS. Una hora ya capturada no se repite.
+Cada hora termina en uno de estos estados:
+
+- `completa`;
+- `parcial`: alguna solicitud falló o llegó después del corte;
+- `fallida`: ninguna cadena llegó a tiempo;
+- `perdida`: sin captura y con el corte ya pasado.
+
+La corrida queda en rojo en **Actions** si alguna hora no quedó completa. Los feriados no capturan:
+el script consulta el calendario XNYS. Una hora con una captura completa no se repite, y un fallo
+después del corte no se reemplaza con datos posteriores.
+
+Cada paso de preparación tiene un límite de 5 a 8 minutos. Así, un primer disparo atascado libera al
+respaldo antes del corte.
 
 ## Estructura
 
 ```
 raw/alpaca/<hash[:2]>/<sha256>_<nombre>.json.gz   cuerpos de respuesta, inmutables (gzip)
-raw/alpaca/capturas/<fecha>/<fecha>T<HHMM>.json   manifiesto de cada captura
+raw/alpaca/capturas/<fecha>/<fecha>T<HHMM>.json   manifiesto de cada captura (con su estado)
+raw/alpaca/ejecuciones/<fecha>/<inicio>.json      registro de cada ejecución: disparo, margen y estados
 ```
+
+Los registros de `ejecuciones/` son los que miden la puntualidad real: con qué retraso arrancó cada
+disparo y cuánto margen quedó hasta cada corte. Una corrida en verde no la demuestra.
 
 Cada manifiesto registra, por solicitud, la ruta, los parámetros, el estado, las cabeceras, las horas
 de envío y recepción y los hashes del archivo y del contenido. También guarda el desfase del reloj, los

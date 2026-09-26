@@ -121,6 +121,9 @@ cierre anticipado, y seis días degradados a propósito:
       `QuantileFlow-datos` (plantilla en `ops/repo_datos/`).
 - [ ] Crear ese repositorio, subir la plantilla y agregar las dos claves como secretos.
 - [x] Decidir el feed: `indicative` por ahora; OPRA se decide tras 3–5 sesiones reales.
+- [x] Corregir los ocho hallazgos de la revisión de `e2b92f0` (commit `79c1554`;
+      [respuesta](respuesta_revision_e2b92f0.md)).
+- [ ] Decidir el precio objetivo independiente: el SPX inferido por paridad no sirve para evaluar.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.

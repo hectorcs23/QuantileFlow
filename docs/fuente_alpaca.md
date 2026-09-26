@@ -6,6 +6,11 @@
 > El acceso a Alpaca ya funciona desde el entorno. La primera verificación con datos reales usa las
 > últimas cotizaciones del viernes 25 al cierre: **no es una sesión de apertura** y no dice nada
 > todavía sobre la señal. La primera captura a las 09:45 posible es la del lunes 28 de septiembre.
+>
+> **Actualización tras la revisión de `e2b92f0`:** ocho correcciones en `79c1554`; detalle en
+> [respuesta a la revisión](respuesta_revision_e2b92f0.md). Cambian el diagnóstico (elegibilidad
+> estricta siempre; modo descriptivo solo si se pide), los estados de captura y la separación de
+> fuentes en el piloto.
 
 ---
 
@@ -51,22 +56,24 @@ Consecuencias para el plan:
 | Normalización | Del crudo al contrato `COTIZACIONES`/`SUBYACENTE`. Verifica los hashes, cruza cada símbolo OCC con los metadatos del contrato y cuenta las filas sin cotización o sin metadatos. La liquidación sale de una tabla por raíz con fuente; una raíz desconocida detiene el proceso. | `alpaca.normalizar` |
 | Sellos | `sello_evento_utc`: hora de la cotización según Alpaca (nanosegundos truncados a microsegundos). `sello_snapshot_utc`, `disponible_utc` y `recibido_utc`: hora local de recepción, cota superior del snapshot. | `alpaca.filas_cadena` |
 | Nivel implícito | Una fila de subyacente `SPX` por captura, con el vencimiento, los pares, el error jackknife del forward y la hora mediana de las cotizaciones usadas. | `quantileflow/implicito.py` |
-| Captura diaria | Consulta el reloj de Alpaca y los contratos del día. Elige, por raíz, dos vencimientos a cada lado de 30 días (y el más cercano en SPXW). Espera hasta 5 s antes de cada corte (09:45 y 10:00) y lanza todas las solicitudes en paralelo; la ráfaga completa tardó 0.7 s. Después escribe las tablas del día. | `scripts/capturar_alpaca.py`, `configs/captura_alpaca.toml` |
+| Captura diaria | Consulta el reloj de Alpaca y los contratos del día. Elige, por raíz, dos vencimientos a cada lado de 30 días (y el más cercano en SPXW). Espera hasta 5 s antes de cada corte (09:45 y 10:00) y lanza todas las solicitudes en paralelo; la ráfaga completa tardó 0.7 s. Cada página se guarda al llegar. Cada captura queda `completa`, `parcial` o `fallida`, y una hora sin captura, `perdida`. El código de salida es 0 solo si todas las horas están completas, y cada ejecución deja un registro en `raw/alpaca/ejecuciones/`. | `scripts/capturar_alpaca.py`, `configs/captura_alpaca.toml` |
 | Tablas para el piloto | Reconstruye desde el crudo las tablas de un rango de sesiones, con manifiesto. Reprocesar da los mismos bytes (comprobado). | `scripts/normalizar_alpaca.py` |
-| Diagnóstico | Cobertura, grilla de ticks, anchos, edades, agrupación de sellos, paridad y medidas por vencimiento y a 30 días. Solo publica agregados. | `scripts/verificar_alpaca.py` |
+| Diagnóstico | Elegibilidad al corte con controles estrictos, siempre. Además, cobertura, grilla de ticks, anchos, edades, agrupación de sellos, paridad y medidas por vencimiento y a 30 días. El modo descriptivo del cierre solo se aplica con `--cierre-descriptivo` y a capturas inmediatas recibidas con la sesión cerrada, y se declara no elegible. Solo publica agregados. | `quantileflow/diagnostico.py`, `scripts/verificar_alpaca.py` |
 | Pruebas | 11 pruebas sin red con respuestas de la forma real y precios sintéticos. Cubren reintentos, paginación, crudo sin secretos, normalización, replay, crudo alterado y nivel implícito. Una de ellas va de punta a punta: capturas → piloto con RR25 identificado. | `tests/test_alpaca.py` |
 
 `contrato.captura_de_filas` separa, de `captura_desde_tabla`, la construcción de la captura a partir de
 filas ya elegidas y un corte explícito. Lo usan el nivel implícito y el diagnóstico; el piloto no
-cambia. La batería pasa de 142 a 153 pruebas.
+cambia. La batería pasó de 142 a 153 pruebas y, con las regresiones de la revisión, a 167.
 
 ---
 
 ## 3. Primera verificación con datos reales (cierre del viernes 25)
 
 Informe completo, solo con agregados: [`reports/verificacion_alpaca/2026-09-25/`](../reports/verificacion_alpaca/2026-09-25/informe.md).
-Son las últimas cotizaciones antes de las 16:00, capturadas el sábado; como llegaron después del corte,
-el diagnóstico omite las horas de snapshot y de disponibilidad (declarado en el informe).
+Son las últimas cotizaciones antes de las 16:00, capturadas el sábado. Con los controles estrictos
+dan **0 filas válidas al corte**: llegaron después. Las cifras de esta sección salen del modo
+**descriptivo del cierre** (`--cierre-descriptivo`), que omite las horas de snapshot y de
+disponibilidad para describir el feed. El informe lo declara no elegible para el piloto.
 
 | Medida | SPXW (4 vencimientos, 27–32 días) | SPY (4 vencimientos, 21–42 días) |
 |---|---|---|
@@ -125,11 +132,16 @@ junto con `edad_maxima_s`, sin tocar ninguno antes de ver datos.
 ```bash
 python scripts/capturar_alpaca.py --ahora          # prueba inmediata (fuera de sesión: cierre anterior)
 python scripts/capturar_alpaca.py                  # día hábil: espera y captura a las 09:45 y 10:00 ET
-python scripts/verificar_alpaca.py --fecha 2026-09-28
+python scripts/verificar_alpaca.py --fecha 2026-09-28            # elegibilidad y calidad del feed
+python scripts/verificar_alpaca.py --fecha 2026-09-25 --cierre-descriptivo
 python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-06
 python scripts/piloto.py --cotizaciones data/normalized/alpaca/cotizaciones.parquet \
     --subyacente data/normalized/alpaca/subyacente.parquet --desde 2026-09-28 --hasta 2026-11-06
 ```
+
+Si las tablas traen varias fuentes, por ejemplo `indicative` y `opra`, el piloto exige elegir una:
+`--fuente-opciones alpaca/opra --fuente-subyacente alpaca/implicito_paridad_SPXW_opra`. Nunca las
+mezcla, y el informe dice de qué fuente sale cada serie.
 
 `data/` sigue fuera de Git. Con el repositorio de datos, se pasa `--datos ../QuantileFlow-datos` a los
 scripts. Una captura ocupa unos 0.3 MB comprimida (1.6 MB sin comprimir), y los contratos del día,

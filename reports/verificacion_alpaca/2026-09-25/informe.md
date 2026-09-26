@@ -4,10 +4,12 @@ Generado por `scripts/verificar_alpaca.py` desde el crudo. Solo agregados y medi
 
 ## Captura `2026-09-25Tinmediata-185224`
 
-- Modo inmediata, corte 2026-09-25T20:00:00.000000Z, feed de opciones `indicative`, cuenta paper; desfase del reloj local 0.241 s.
+> **Descriptivo del cierre, no elegible para el piloto.** Captura inmediata recibida con la sesión del 2026-09-25 cerrada; corte en su cierre. Las tablas siguientes omiten las horas de snapshot y de disponibilidad para describir el feed; con los controles estrictos quedan 0 filas válidas al corte.
+
+- Estado completa; modo inmediata, corte 2026-09-25T20:00:00.000000Z, feed de opciones `indicative`, cuenta paper; desfase del reloj local 0.241 s.
+- Elegibilidad al corte (controles estrictos): 0 filas válidas de 3250; nivel implícito no identificado. Modo: captura inmediata recibida con la sesión del 2026-09-25 cerrada; corte en su cierre.
 - 10 respuestas (1.6 MB sin comprimir) en 0.71 s; errores 0; respuestas después del corte 10.
 - Cobertura: 3250 contratos con cotización de 3250; sin cotización 0; sin metadatos 0.
-- **Recibida con el mercado cerrado**: cotizaciones del cierre; se omitieron las horas de snapshot y de disponibilidad. No es una sesión del piloto.
 - SPX implícito: identificado, 7741.49 con 182 pares del 2026-09-28 (error del forward 0.142); SPY (IEX) 771.34; razón SPX/SPY 10.0365.
 
 ### SPXW

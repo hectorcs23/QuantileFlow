@@ -1,8 +1,18 @@
 {
+  "alcance": {
+    "evaluacion_con_precios_de_mercado": "no permitida: datos sintéticos",
+    "fuente_subyacente": "sintetico/indice_sintetico",
+    "fuentes_opciones": [
+      "sintetico/nbbo_intervalos_sintetico"
+    ],
+    "medicion": "sintética",
+    "precio_objetivo": "observado",
+    "tipo_precio_subyacente": "observado"
+  },
   "config": {
-    "huella": "50cb863c3ae24915627cb7b527bce4c7ab5c49e6a603c246c35ad839b8d6fa82",
+    "huella": "ae34b82cae16e9b46495f7c44175491a7708a2dac4171d82e7c138382f056f17",
     "ruta": "/home/user/QuantileFlow/configs/piloto.toml",
-    "version": "piloto-0.1"
+    "version": "piloto-0.2"
   },
   "cortes": [
     "09:45",
@@ -15,16 +25,16 @@
       "sha256": "ffa5ef67da36e6139e3d44819d226b0b497c04c18af4eea61aec9459b1bbaadb"
     },
     {
-      "bytes": 11285,
+      "bytes": 11987,
       "nombre": "subyacente_sintetico.csv",
-      "sha256": "7c13f018c7ed92f84f7311633491692a46b0a5d7d53e6b6717b86902d9f5d3a6"
+      "sha256": "dedfa76cf752197cb5ff1668a090618ed77896f1b968740db23cd34f85ba034f"
     }
   ],
   "dictamen": "apto con limitaciones",
   "entorno": {
     "git": {
       "cambios_sin_registrar": false,
-      "commit": "186e3fecb5c097345898cafb4b6de503774acb4a"
+      "commit": "79c15549bacd71cec2bd60f1ac0888e9162019b3"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -45,7 +55,7 @@
     },
     "subyacente": {
       "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/subyacente.parquet",
-      "sha256": "106de3ea0172d538a32d567768c531373112dc5924ab635568bfe3d34b9c1921"
+      "sha256": "91d3927e62e4d8a892ed4515d2092999d71f31a470b07a3726a4212c2a62ae2c"
     }
   },
   "exclusiones_hora_principal": {
@@ -53,7 +63,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-26T18:08:46+00:00",
+  "fecha_corrida_utc": "2026-09-26T23:50:36+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
@@ -65,14 +75,14 @@
     "2026-09-26 12:00:00+00:00"
   ],
   "salidas": {
-    "cambio_rr25_vs_movimiento.png": "e4c412a0fe314cfcff43bb95e63e15491c1e4907d6e8300839d439739f7256b7",
+    "cambio_rr25_vs_movimiento.png": "31a2c63dddc00fb6c068ca3c67720a6797ed5014405ea801dd54974cb6512374",
     "disponibilidad_exclusiones.png": "7600837d32577a5e40c4069bf89c1a5f7dacab52a7a5f9c1fbfaa6e75da0379d",
     "estabilidad_0945_1000.png": "f89f7cf82caa32b48df0b8e082b3dc8262375e4f5c5e718e42b2fc12832ee2ea",
-    "etiquetas.csv": "d370c56bac38e12df3849181d6883afc16815068a3d1aeaf8f9d04a5e40aab73",
-    "informe.md": "b31304c7a8011837ec49dfa15bd8ceedda022c12438907a06702a37541467715",
+    "etiquetas.csv": "fec4424c35dbf62b221acd5cdce88dea58f72d10805bfcdcff61516f2adeadf2",
+    "informe.md": "a0ff0a2c7c0ac416bb8e3f93af6873ecb414cec3c94ecf9f62173bd33b15260d",
     "rr25_30d.png": "cba399b90bd6cf6818d97a68872e3608298d0d3c0eec16394d3c678ea1012533",
-    "tabla_diaria.csv": "c95f80898aa8d2b11c479d0e2b2880d11841b7c6c44d5478053d34936c8b654b",
-    "tabla_todas_las_horas.csv": "42464706d5db65b5324ead886062e056c6d4657f5c0c95a1fe29f9e1946cee3c"
+    "tabla_diaria.csv": "feb5b5448b1dbed7b07a7be8f84a024fb1a548e9dddf3b0febf5e4136c53d065",
+    "tabla_todas_las_horas.csv": "616327aec4717770a4b62f7566cbaee6ab49bf1cba62ca378266b2c7d1aed34f"
   },
   "sesiones": {
     "desde": "2025-10-20",

@@ -4,12 +4,18 @@
 **Rama:** [`claude/lucid-hamilton-hz8l80`](https://github.com/hectorcs23/QuantileFlow/tree/claude/lucid-hamilton-hz8l80),
 sobre `853047b`.
 **Commits de la sesión:** `f6ee438` (adaptador y captura), `f447f9b` (verificación y documentos),
-`40c80ab` (plantilla del repositorio de datos) y el de este resumen.
+`40c80ab` (plantilla del repositorio de datos), `e2b92f0` (este resumen), `79c1554` (correcciones de la
+revisión externa) y el de la documentación de esas correcciones.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
 > la captura diaria hacia adelante, que empieza el lunes 28 a las 09:45. Falta que crees el repositorio
 > privado de datos y le pongas las claves.
+>
+> **Después hubo una revisión externa del commit `e2b92f0`** con ocho hallazgos. Los ocho se
+> reprodujeron, se convirtieron en pruebas de regresión y se corrigieron en `79c1554` (153 → 167
+> pruebas). Detalle en [respuesta a la revisión](respuesta_revision_e2b92f0.md). La decisión que queda
+> abierta es qué precio independiente se va a predecir.
 
 ---
 
@@ -28,7 +34,8 @@ sobre `853047b`.
    - normalización al contrato de datos del piloto;
    - nivel implícito de SPX por paridad;
    - captura a hora fija, reconstrucción de tablas y diagnóstico.
-5. **Escribimos 11 pruebas sin red.** La batería pasa de 142 a 153 pruebas, todas en verde. Una de
+5. **Escribimos 11 pruebas sin red.** La batería pasó de 142 a 153 pruebas, todas en verde (167 tras
+   la revisión). Una de
    ellas va de punta a punta: respuestas con forma de Alpaca → crudo → normalización → nivel implícito →
    piloto con RR25 identificado.
 6. **Capturamos datos reales y los diagnosticamos.** Como el mercado estaba cerrado, fueron las
@@ -112,13 +119,18 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 |---|---|---|
 | [`quantileflow/alpaca.py`](../quantileflow/alpaca.py) | Adaptador: cliente, solicitudes, crudo, manifiestos, elección de vencimientos y normalización | nuevo |
 | [`quantileflow/implicito.py`](../quantileflow/implicito.py) | Nivel implícito del subyacente por paridad | nuevo |
-| [`quantileflow/contrato.py`](../quantileflow/contrato.py) | `captura_de_filas` (captura con corte explícito) | modificado |
+| [`quantileflow/diagnostico.py`](../quantileflow/diagnostico.py) | Diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed; modo descriptivo del cierre solo si se pide | nuevo (revisión) |
+| [`quantileflow/contrato.py`](../quantileflow/contrato.py) | `captura_de_filas`, `precio_al_corte` (disponibilidad y fuente del subyacente), `tipo_precio`, rechazo de mezclas de fuentes | modificado |
+| [`quantileflow/piloto.py`](../quantileflow/piloto.py) | Fuentes explícitas, procedencia por fila, segmentos de medición, precio objetivo fresco y disponible, alcance del dictamen | modificado (revisión) |
+| [`quantileflow/etiquetas.py`](../quantileflow/etiquetas.py) | Etiquetas que maduran con la disponibilidad del precio y guardan el motivo de las ausencias | modificado (revisión) |
+| [`quantileflow/filtrado.py`](../quantileflow/filtrado.py), [`distribuciones.py`](../quantileflow/distribuciones.py), [`opciones.py`](../quantileflow/opciones.py) | Filtros causales, inversa generalizada con mesetas, volatilidad implícita sin abortar el lote | modificados (revisión) |
 | [`quantileflow/almacen.py`](../quantileflow/almacen.py) | `guardar_crudo_bytes` | modificado |
 | [`scripts/capturar_alpaca.py`](../scripts/capturar_alpaca.py) | Captura diaria a las 09:45 y 10:00 ET, o inmediata con `--ahora` | nuevo |
 | [`scripts/normalizar_alpaca.py`](../scripts/normalizar_alpaca.py) | Tablas para el piloto de un rango de sesiones, desde el crudo | nuevo |
 | [`scripts/verificar_alpaca.py`](../scripts/verificar_alpaca.py) | Diagnóstico agregado de las capturas de una fecha | nuevo |
 | [`configs/captura_alpaca.toml`](../configs/captura_alpaca.toml) | Qué, cuándo y con qué feed se captura (versión `captura-alpaca-0.1`) | nuevo |
-| [`tests/test_alpaca.py`](../tests/test_alpaca.py) | 11 pruebas sin red del adaptador | nuevo |
+| [`tests/test_alpaca.py`](../tests/test_alpaca.py) | Pruebas sin red del adaptador, la captura y el diagnóstico | nuevo |
+| [`tests/conftest.py`](../tests/conftest.py) | Gráficas sin interfaz en las pruebas (backend `Agg`) | nuevo (revisión) |
 | [`Makefile`](../Makefile) | `captura`, `captura-prueba`, `normalizar-alpaca`, `verificar-alpaca` | modificado |
 
 ### Documentos e informes
@@ -126,6 +138,8 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | Archivo | Qué es |
 |---|---|
 | [`docs/resumen_sesion_alpaca.md`](resumen_sesion_alpaca.md) | Este resumen |
+| [`docs/respuesta_revision_e2b92f0.md`](respuesta_revision_e2b92f0.md) | Los ocho hallazgos de la revisión externa, sus correcciones, pruebas y decisiones pendientes |
+| [`reports/verificacion/79c15549bacd.json`](../reports/verificacion/79c15549bacd.json) | Registro del commit revisado: árbol limpio, 167 pruebas pasadas |
 | [`docs/fuente_alpaca.md`](fuente_alpaca.md) | Documento de referencia: qué se comprobó, qué se construyó, verificación, decisiones, puesta en marcha y limitaciones |
 | [`docs/estado_continuacion.md`](estado_continuacion.md) | Estado de la etapa anterior, con nota de actualización y lista de pendientes al día |
 | [`README.md`](../README.md) | Estructura, documentos y comandos de captura actualizados |
@@ -138,7 +152,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 
 | Archivo | Qué es |
 |---|---|
-| [`ops/repo_datos/.github/workflows/captura.yml`](../ops/repo_datos/.github/workflows/captura.yml) | Workflow diario de captura. Toma el código de la rama indicada en `REF_CODIGO`. |
+| [`ops/repo_datos/.github/workflows/captura.yml`](../ops/repo_datos/.github/workflows/captura.yml) | Workflow diario de captura. Toma el código del commit revisado `79c1554` (`REF_CODIGO`) y tiene límites de tiempo por paso. |
 | [`ops/repo_datos/README.md`](../ops/repo_datos/README.md) | Configuración de secretos, qué hace el workflow, estructura y uso de los datos |
 | [`ops/repo_datos/.gitignore`](../ops/repo_datos/.gitignore) | Solo el crudo va a Git; las tablas se reconstruyen |
 
@@ -187,7 +201,10 @@ caben en menos de 100 MB.
 - [ ] Dividendos discretos de SPY en la captura antes de mediados de noviembre (ex-dividendo de
       diciembre).
 - [ ] B4: pérdida robusta en el ajuste de superficie.
-- [ ] Si la rama se fusiona o se borra, actualizar `REF_CODIGO` en el workflow.
+- [ ] Decidir el precio objetivo independiente: SPY observado, SPX observado de un proveedor o cierres
+      oficiales ([respuesta a la revisión](respuesta_revision_e2b92f0.md), sección 3).
+- [ ] El workflow está fijado al commit revisado `79c1554` (`REF_CODIGO`): actualizarlo es cambiar la
+      versión de medición.
 
 ---
 
@@ -195,7 +212,7 @@ caben en menos de 100 MB.
 
 ```bash
 pip install -r requirements-bloqueo.txt
-make test                                                   # 153 pruebas
+make test                                                   # 167 pruebas
 python scripts/capturar_alpaca.py --ahora                   # captura de prueba inmediata
 python scripts/capturar_alpaca.py                           # día hábil: espera y captura 09:45 y 10:00 ET
 python scripts/verificar_alpaca.py --fecha 2026-09-28       # diagnóstico agregado

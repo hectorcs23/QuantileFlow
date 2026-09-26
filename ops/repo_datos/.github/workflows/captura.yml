@@ -25,15 +25,19 @@ permissions:
 concurrency:  # un respaldo espera a que termine la corrida en curso y después no repite horas ya capturadas
   group: captura-alpaca
   cancel-in-progress: false
+# Cada paso de preparación tiene su propio límite: si el primer disparo se atasca, termina pronto y el
+# respaldo de las 09:32 todavía llega al corte de las 09:45. La captura en sí acaba poco después de las 10:00.
 
 env:
   REPO_CODIGO: hectorcs23/QuantileFlow
-  REF_CODIGO: claude/lucid-hamilton-hz8l80  # rama o commit del código; cada manifiesto registra el commit usado
+  # Commit revisado del código de captura, fijo durante el piloto (verificado en reports/verificacion/79c15549bacd.json).
+  # Cambiarlo es cambiar la versión de medición; cada manifiesto registra el commit usado.
+  REF_CODIGO: 79c15549bacd71cec2bd60f1ac0888e9162019b3
 
 jobs:
   capturar:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 75
     steps:
       - name: Compuerta horaria (Nueva York)
         id: compuerta
@@ -48,6 +52,7 @@ jobs:
 
       - name: Código de captura
         if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
         uses: actions/checkout@v4
         with:
           repository: ${{ env.REPO_CODIGO }}
@@ -56,12 +61,14 @@ jobs:
 
       - name: Datos
         if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
         uses: actions/checkout@v4
         with:
           path: datos
 
       - name: Python
         if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -70,15 +77,18 @@ jobs:
 
       - name: Dependencias
         if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 8
         run: pip install -r codigo/requirements-bloqueo.txt
 
       - name: Capturar
         if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 55
         env:
           APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
           APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
           ALPACA_PAPER: "true"
           AHORA: ${{ inputs.ahora }}
+          DISPARO: ${{ github.event.schedule }}  # cron que disparó la corrida: mide el retraso del arranque
         run: |
           if [ "$AHORA" = "true" ]; then
             python codigo/scripts/capturar_alpaca.py --datos datos --ahora
@@ -89,6 +99,7 @@ jobs:
       - name: Guardar el crudo
         # También tras una captura parcial: lo que llegó se conserva y el fallo queda en el paso anterior.
         if: always() && steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
         working-directory: datos
         run: |
           git config user.name "github-actions[bot]"
