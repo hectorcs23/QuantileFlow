@@ -98,15 +98,27 @@ Lectura:
 
 ---
 
-## 4. Decisiones pendientes
+## 4. Decisiones
 
-| Decisión | Opciones | Recomendación |
+Tomadas el 26 de septiembre:
+
+| Decisión | Elección | Consecuencia |
 |---|---|---|
-| Dónde corre la captura y dónde quedan los datos | El repositorio es **público** y los datos de Alpaca/OPRA no se pueden redistribuir: el crudo no puede ir aquí. **(a)** Repositorio privado de datos y un workflow programado de GitHub Actions; tú agregas las dos claves como secretos. **(b)** Repositorio privado y una rutina de Claude que abre una sesión cada día hábil. **(c)** Tu computadora, con cron. | (a): no depende de sesiones interactivas. El workflow arranca antes de las 09:45 y espera al corte; así tolera los retrasos habituales del cron de GitHub. |
-| Feed de opciones | Seguir con `indicative` (gratis, cotizaciones modificadas), o contratar OPRA (99 USD al mes y el acuerdo OPRA). | Capturar `indicative` desde el lunes para probar la operación. Si se quiere un piloto defendible sobre bid/ask y paridad, contratar OPRA cuanto antes. Las series de feeds distintos no se mezclan: el piloto cuenta sus sesiones desde que empieza OPRA. |
-| Umbrales | `desfase_spot_max_s = 2` avisará en casi todas las capturas: la ráfaga empieza 5 s antes del corte y el feed actualiza por lotes. | Revisarlo con las primeras sesiones reales, junto con `edad_maxima_s`, sin tocarlo antes de ver datos. |
+| Dónde corre la captura y dónde quedan los datos | Repositorio **privado** `QuantileFlow-datos` con un workflow programado de GitHub Actions. Este repositorio es público y los datos de Alpaca/OPRA no se pueden redistribuir: el crudo no puede ir aquí. | La plantilla está en [`ops/repo_datos/`](../ops/repo_datos/): workflow, `.gitignore` y README. El workflow arranca hacia las 09:17 de Nueva York, con un respaldo a las 09:32, y espera al corte: así tolera los retrasos habituales del cron de GitHub. Solo guarda el crudo. Consume unos 1 000 minutos de Actions al mes. |
+| Feed de opciones | `indicative` por ahora. OPRA se decide después de ver 3–5 sesiones reales a las 09:45. | Si se contrata OPRA, se cambia `feed_opciones` en una versión nueva de `configs/captura_alpaca.toml`. Las dos series no se mezclan: el piloto cuenta sus sesiones desde que empieza OPRA. |
 
----
+Pendiente de revisar con las primeras sesiones: `desfase_spot_max_s = 2` avisará en casi todas las
+capturas, porque la ráfaga empieza 5 s antes del corte y el feed actualiza por lotes. Conviene revisarlo
+junto con `edad_maxima_s`, sin tocar ninguno antes de ver datos.
+
+### Puesta en marcha del repositorio de datos
+
+1. Crear en GitHub el repositorio privado `hectorcs23/QuantileFlow-datos`, vacío. La integración de
+   Claude no tiene permiso para crear repositorios.
+2. Copiar ahí el contenido de `ops/repo_datos/` (o pedir a Claude que lo suba; la aplicación de GitHub
+   de Claude necesita acceso a ese repositorio).
+3. En **Settings → Secrets and variables → Actions**, crear `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`.
+4. Probar con **Actions → captura-alpaca → Run workflow** y la opción «ahora».
 
 ## 5. Cómo operar
 
@@ -119,8 +131,9 @@ python scripts/piloto.py --cotizaciones data/normalized/alpaca/cotizaciones.parq
     --subyacente data/normalized/alpaca/subyacente.parquet --desde 2026-09-28 --hasta 2026-11-06
 ```
 
-`data/` sigue fuera de Git. Una captura ocupa unos 0.3 MB comprimida (1.6 MB sin comprimir), y los
-contratos del día, unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
+`data/` sigue fuera de Git. Con el repositorio de datos, se pasa `--datos ../QuantileFlow-datos` a los
+scripts. Una captura ocupa unos 0.3 MB comprimida (1.6 MB sin comprimir), y los contratos del día,
+unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
 
 ## 6. Limitaciones conocidas
 

@@ -1,0 +1,105 @@
+# Captura diaria de cadenas de opciones en Alpaca para QuantileFlow.
+# Corre en el repositorio PRIVADO de datos: el crudo de mercado no se redistribuye.
+# Plantilla versionada en hectorcs23/QuantileFlow: ops/repo_datos/.github/workflows/captura.yml
+name: captura-alpaca
+
+on:
+  schedule:
+    # El cron de GitHub va en UTC y suele retrasarse unos minutos. Hay un disparo y un respaldo para
+    # cada horario (EDT y EST); la compuerta deja pasar solo los que caen entre 09:00 y 09:59 de
+    # Nueva York. El script espera hasta 5 s antes de cada corte (09:45 y 10:00).
+    - cron: "17 13 * * 1-5"   # 09:17 EDT / 08:17 EST
+    - cron: "32 13 * * 1-5"   # 09:32 EDT / 08:32 EST (respaldo)
+    - cron: "17 14 * * 1-5"   # 10:17 EDT / 09:17 EST
+    - cron: "32 14 * * 1-5"   # 10:32 EDT / 09:32 EST (respaldo)
+  workflow_dispatch:
+    inputs:
+      ahora:
+        description: "Captura inmediata de prueba (fuera de sesión usa el cierre anterior)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:  # un respaldo espera a que termine la corrida en curso y después no repite horas ya capturadas
+  group: captura-alpaca
+  cancel-in-progress: false
+
+env:
+  REPO_CODIGO: hectorcs23/QuantileFlow
+  REF_CODIGO: claude/lucid-hamilton-hz8l80  # rama o commit del código; cada manifiesto registra el commit usado
+
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Compuerta horaria (Nueva York)
+        id: compuerta
+        run: |
+          hora=$((10#$(TZ=America/New_York date +%H%M)))
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || { [ "$hora" -ge 900 ] && [ "$hora" -le 959 ]; }; then
+            echo "seguir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "seguir=false" >> "$GITHUB_OUTPUT"
+            echo "Hora de Nueva York $(TZ=America/New_York date +%H:%M): este disparo es del otro horario; no se captura."
+          fi
+
+      - name: Código de captura
+        if: steps.compuerta.outputs.seguir == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REPO_CODIGO }}
+          ref: ${{ env.REF_CODIGO }}
+          path: codigo
+
+      - name: Datos
+        if: steps.compuerta.outputs.seguir == 'true'
+        uses: actions/checkout@v4
+        with:
+          path: datos
+
+      - name: Python
+        if: steps.compuerta.outputs.seguir == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: codigo/requirements-bloqueo.txt
+
+      - name: Dependencias
+        if: steps.compuerta.outputs.seguir == 'true'
+        run: pip install -r codigo/requirements-bloqueo.txt
+
+      - name: Capturar
+        if: steps.compuerta.outputs.seguir == 'true'
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          ALPACA_PAPER: "true"
+          AHORA: ${{ inputs.ahora }}
+        run: |
+          if [ "$AHORA" = "true" ]; then
+            python codigo/scripts/capturar_alpaca.py --datos datos --ahora
+          else
+            python codigo/scripts/capturar_alpaca.py --datos datos
+          fi
+
+      - name: Guardar el crudo
+        # También tras una captura parcial: lo que llegó se conserva y el fallo queda en el paso anterior.
+        if: always() && steps.compuerta.outputs.seguir == 'true'
+        working-directory: datos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -d raw ]; then echo "Sin crudo."; exit 0; fi
+          git add raw
+          if git diff --cached --quiet; then echo "Sin crudo nuevo."; exit 0; fi
+          git commit -q -m "Captura del $(TZ=America/New_York date +%F) ($GITHUB_EVENT_NAME)"
+          for intento in 1 2 3; do
+            git push && exit 0
+            sleep $((intento * 5))
+            git pull --rebase
+          done
+          exit 1

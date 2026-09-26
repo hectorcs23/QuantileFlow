@@ -117,8 +117,10 @@ cierre anticipado, y seis días degradados a propósito:
       adelante ([fuente_alpaca.md](fuente_alpaca.md)).
 - [x] Adaptador del proveedor, verificado con respuestas reales (`quantileflow/alpaca.py`).
       Instrumento, sellos, cobertura y costo confirmados.
-- [ ] Decidir dónde corre la captura diaria y dónde se guardan los datos (el repositorio es público).
-- [ ] Decidir el feed: `indicative` (modificado) u OPRA (suscripción).
+- [x] Decidir dónde corre la captura diaria: GitHub Actions en el repositorio privado
+      `QuantileFlow-datos` (plantilla en `ops/repo_datos/`).
+- [ ] Crear ese repositorio, subir la plantilla y agregar las dos claves como secretos.
+- [x] Decidir el feed: `indicative` por ahora; OPRA se decide tras 3–5 sesiones reales.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.

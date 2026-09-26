@@ -67,6 +67,7 @@ tests/                 pruebas de propiedades del núcleo, cuantiles, conformal,
                        calendario, etiquetas, almacenamiento, piloto y adaptador de Alpaca (sin red)
 configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
 configs/captura_alpaca.toml  qué, cuándo y con qué feed se captura en Alpaca
+ops/repo_datos/        plantilla del repositorio privado de datos: workflow diario de captura y README
 scripts/               piloto con datos normalizados, plantilla sintética, registro del entorno, captura,
                        normalización y verificación de Alpaca
 reports/               informes generados (no se editan a mano) y registros de verificación

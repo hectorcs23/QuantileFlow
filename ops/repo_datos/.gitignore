@@ -1,0 +1,4 @@
+# Solo el crudo va a Git. Las tablas normalizadas se reconstruyen desde él
+# (scripts/normalizar_alpaca.py en hectorcs23/QuantileFlow).
+normalized/
+__pycache__/
