@@ -1,0 +1,337 @@
+"""Adaptador de Alpaca sin red: cliente, crudo, manifiestos, normalización, replay y subyacente implícito.
+
+Las respuestas tienen la forma de las reales (verificada el 26 de septiembre de
+2026), pero sus precios salen del mercado **sintético**.
+"""
+import datetime as dt
+import gzip
+import http.client
+import json
+import os
+import stat
+import tomllib
+import urllib.parse
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from quantileflow import alpaca as al
+from quantileflow import almacen
+from quantileflow import calendario as cal
+from quantileflow import contrato as ct
+from quantileflow import implicito as im
+from quantileflow import piloto as pl
+from quantileflow import sintetico as sn
+
+RAIZ = Path(__file__).resolve().parents[1]
+CLAVE, SECRETO = "PKPRUEBA0123456789", "secreto-que-no-debe-aparecer"
+FECHAS = cal.sesiones("2025-11-17", "2025-11-18")
+
+
+class Reloj:
+    """Reloj falso: devuelve ``actual`` y avanza al dormir."""
+
+    def __init__(self, inicio):
+        self.actual = pd.Timestamp(inicio)
+        self.siestas = []
+
+    def __call__(self):
+        return self.actual
+
+    def dormir(self, segundos):
+        self.siestas.append(segundos)
+        self.actual += pd.Timedelta(seconds=segundos)
+
+
+class API:
+    """Transporte falso: responde según la ruta; ``fallos`` inyecta estados antes de responder bien."""
+
+    def __init__(self, rutas, fallos=None):
+        self.rutas = rutas  # ruta -> función(params) -> dict
+        self.fallos = dict(fallos or {})
+        self.vistas = []
+
+    def __call__(self, url, cabeceras, tiempo_max):
+        partes = urllib.parse.urlsplit(url)
+        params = dict(urllib.parse.parse_qsl(partes.query))
+        self.vistas.append((partes.path, params, dict(cabeceras)))
+        pendientes = self.fallos.get(partes.path, [])
+        if pendientes:
+            estado = pendientes.pop(0)
+            if estado == "red":
+                raise OSError("conexión reiniciada")
+            if estado == "cortada":
+                raise http.client.IncompleteRead(b'{"par')
+            return estado, {"x-ratelimit-reset": "0"}, b'{"message":"falla inyectada"}'
+        cuerpo = json.dumps(self.rutas[partes.path](params)).encode()
+        return 200, {"date": "Mon, 17 Nov 2025 14:44:55 GMT", "content-type": "application/json",
+                     "x-ratelimit-limit": "200", "x-ratelimit-remaining": "199"}, cuerpo
+
+
+def cliente(transporte, reloj=None, **kw):
+    reloj = reloj or Reloj("2025-11-17T14:44:55Z")
+    return al.ClienteAlpaca(al.Credenciales(CLAVE, SECRETO), transporte, reloj, reloj.dormir, **kw)
+
+
+# --- Respuestas con la forma de Alpaca a partir del mercado sintético ------------------------------
+
+def _t(instante):
+    """Hora con nanosegundos, como la da Alpaca."""
+    return pd.Timestamp(instante).strftime("%Y-%m-%dT%H:%M:%S.%f") + "123Z"
+
+
+def contratos_json(cot):
+    unicos = cot.drop_duplicates("id_contrato")
+    return {"option_contracts": [
+        {"symbol": f.id_contrato, "root_symbol": f.raiz, "underlying_symbol": f.subyacente,
+         "expiration_date": str(f.vencimiento), "type": "call" if f.tipo == "C" else "put",
+         "style": "european", "strike_price": f"{f.strike:g}", "multiplier": "100", "status": "active"}
+        for f in unicos.itertuples()], "next_page_token": None}
+
+
+def cadena_json(cot, vencimiento, corte, sin_cotizacion=()):
+    filas = cot[(cot["vencimiento"].map(str) == vencimiento) & (cot["sello_snapshot_utc"] == corte)]
+    snaps = {}
+    for f in filas.itertuples():
+        if f.id_contrato in sin_cotizacion:
+            snaps[f.id_contrato] = {"dailyBar": {"c": 1.0}}
+            continue
+        snaps[f.id_contrato] = {"latestQuote": {
+            "bp": f.bid, "ap": f.ask, "bs": int(f.tam_bid), "as": int(f.tam_ask), "bx": "C", "ax": "C", "c": "A",
+            "t": _t(f.sello_evento_utc)}}
+    return {"snapshots": snaps, "next_page_token": None}
+
+
+def acciones_json(precio, instante):
+    return {"SPY": {"latestQuote": {"bp": precio - 0.01, "ap": precio + 0.01, "bs": 100, "as": 200, "bx": "V",
+                                    "ax": "V", "c": ["R"], "t": _t(instante)},
+                    "latestTrade": {"p": precio, "s": 100, "t": _t(instante), "x": "V"}}}
+
+
+@pytest.fixture(scope="module")
+def mercado():
+    # Viernes a 0-48 días: incluye un vencimiento cercano para el nivel implícito y los que encierran 30 días.
+    return sn.mercado_sintetico(FECHAS, semilla=5, rango_k=(-0.08, 0.04), dias_vencimiento=(0, 48),
+                                sesiones_extra=0)
+
+
+def api_sintetica(mercado, reloj):
+    """API falsa cuyas cadenas son las del mercado sintético a la hora que marca el reloj."""
+    cot, _, _ = mercado
+
+    def cadena(params, raiz):
+        corte = reloj()
+        return cadena_json(cot[cot["raiz"] == raiz], params["expiration_date"], corte)
+
+    return API({
+        "/v2/options/contracts": lambda p: contratos_json(cot),
+        "/v1beta1/options/snapshots/SPXW": lambda p: cadena(p, "SPXW"),
+        "/v2/stocks/snapshots": lambda p: acciones_json(580.0, reloj()),
+        "/v2/clock": lambda p: {"timestamp": "2025-11-17T09:44:55.250000000-05:00", "is_open": True,
+                                "next_open": "2025-11-18T09:30:00-05:00", "next_close": "2025-11-17T16:00:00-05:00"},
+    })
+
+
+def capturar_sesiones(mercado, directorio):
+    """Captura cada sesión y hora del mercado sintético como lo haría el script, con reloj falso."""
+    cot, _, _ = mercado
+    reloj = Reloj("2025-11-17T14:40:00Z")
+    c = cliente(api_sintetica(mercado, reloj), reloj)
+    for fecha in FECHAS:
+        pedidos = [al.pedir_contratos("SPX", fecha, fecha + dt.timedelta(days=60), "SPXW")]
+        resultados, errores = al.ejecutar(c, pedidos)
+        assert not errores
+        previas = al.guardar_respuestas(resultados, {p.nombre: p.tipo for p in pedidos}, directorio)
+        vencimientos = sorted({str(v) for v in cot["vencimiento"]})
+        for hora in ("09:45", "10:00"):
+            corte = cal.instante(fecha, hora)
+            reloj.actual = corte  # la respuesta llega al corte: aún se conocía
+            elegidos, _ = al.elegir_vencimientos(vencimientos, "PM", corte, 30.0, 2, True)
+            solicitudes = [al.pedir_cadena("SPXW", v, "indicative") for v in elegidos]
+            solicitudes.append(al.pedir_acciones(["SPY"], "iex"))
+            meta = {"fecha": str(fecha), "hora": hora, "corte_utc": al.iso(corte),
+                    "etiqueta": f"{fecha}T{hora.replace(':', '')}", "feed_opciones": "indicative"}
+            al.capturar(c, solicitudes, directorio, meta, previas)
+    return c
+
+
+# --- Cliente -----------------------------------------------------------------------------------
+
+def test_credenciales_no_se_muestran():
+    cred = al.Credenciales.del_entorno({"APCA_API_KEY_ID": CLAVE, "APCA_API_SECRET_KEY": SECRETO,
+                                        "ALPACA_PAPER": "true"})
+    assert cred.paper and SECRETO not in repr(cred) and CLAVE not in repr(cred)
+    assert not al.Credenciales.del_entorno({"APCA_API_KEY_ID": CLAVE, "APCA_API_SECRET_KEY": SECRETO,
+                                            "ALPACA_PAPER": "false"}).paper
+    with pytest.raises(RuntimeError):
+        al.Credenciales.del_entorno({"APCA_API_KEY_ID": CLAVE})
+
+
+def test_reintentos_ante_429_5xx_y_red_pero_no_ante_403():
+    api = API({"/v2/clock": lambda p: {"ok": True}}, fallos={"/v2/clock": [429, 503, "red", "cortada"]})
+    reloj = Reloj("2025-11-17T14:00:00Z")
+    r = cliente(api, reloj, reintentos=4).get("trading", "/v2/clock")
+    assert r.estado == 200 and r.intentos == 5 and len(reloj.siestas) == 4
+    assert api.vistas[0][2]["APCA-API-SECRET-KEY"] == SECRETO  # las credenciales van solo en cabeceras
+    assert r.json() == {"ok": True} and "date" in r.cabeceras and SECRETO not in str(r.params)
+    api = API({"/v2/clock": lambda p: {}}, fallos={"/v2/clock": [403]})
+    with pytest.raises(al.ErrorAlpaca) as error:
+        cliente(api).get("trading", "/v2/clock")
+    assert error.value.estado == 403 and len(api.vistas) == 1
+    api = API({"/v2/clock": lambda p: {}}, fallos={"/v2/clock": ["red"] * 3})
+    with pytest.raises(al.ErrorAlpaca):
+        cliente(api, reintentos=2).get("trading", "/v2/clock")
+
+
+def test_paginacion_por_token():
+    paginas = {None: {"option_contracts": [{"symbol": "A"}], "next_page_token": "p2"},
+               "p2": {"option_contracts": [{"symbol": "B"}], "next_page_token": None}}
+    api = API({"/v2/options/contracts": lambda p: paginas[p.get("page_token")]})
+    respuestas = cliente(api).paginas("trading", "/v2/options/contracts", {"underlying_symbols": "SPX"})
+    assert [r.json()["option_contracts"][0]["symbol"] for r in respuestas] == ["A", "B"]
+    assert ("page_token", "p2") in respuestas[1].params
+    assert api.vistas[0][0] == "/v2/options/contracts"
+
+
+def test_reloj_del_servidor_y_espera():
+    api = API({"/v2/clock": lambda p: {"timestamp": "2025-11-17T09:44:56.000000000-05:00", "is_open": True}})
+    reloj = Reloj("2025-11-17T14:44:55Z")
+    estado = al.reloj_servidor(cliente(api, reloj).get("trading", "/v2/clock"))
+    assert estado["desfase_s"] == pytest.approx(1.0) and estado["mercado_abierto"]
+    objetivo = pd.Timestamp("2025-11-17T14:46:10Z")
+    al.esperar_hasta(objetivo, reloj, reloj.dormir, paso_max=30.0)
+    assert reloj.actual == objetivo and max(reloj.siestas) <= 30.0
+
+
+def test_eleccion_de_vencimientos():
+    corte = cal.instante("2025-11-17", "09:45")
+    fechas = ["2025-11-17", "2025-11-21", "2025-12-12", "2025-12-15", "2025-12-19", "2025-12-26",
+              "2025-11-27", "2025-11-10"]  # Acción de Gracias no es sesión; el 10 ya liquidó
+    elegidos, plazos = al.elegir_vencimientos(fechas, "PM", corte, 30.0, 2, True)
+    assert [str(v) for v in elegidos] == ["2025-11-17", "2025-12-12", "2025-12-15", "2025-12-19", "2025-12-26"]
+    assert "2025-11-27" not in map(str, plazos) and "2025-11-10" not in map(str, plazos)
+    assert plazos[pd.Timestamp("2025-12-15").date()] > 28.0
+    solo, _ = al.elegir_vencimientos(fechas, "PM", corte, 30.0, 1, False)
+    assert [str(v) for v in solo] == ["2025-12-15", "2025-12-19"]
+
+
+# --- Crudo, manifiesto y normalización ------------------------------------------------------------
+
+def test_captura_crudo_inmutable_y_sin_secretos(mercado, tmp_path):
+    capturar_sesiones(mercado, tmp_path)
+    manifiestos = al.leer_manifiestos(tmp_path)
+    assert len(manifiestos) == 4
+    for m in manifiestos:
+        texto = json.dumps(m)
+        assert SECRETO not in texto and CLAVE not in texto
+        assert m["respuestas_despues_del_corte"] == [] and m["errores"] == {}
+        for e in m["solicitudes"].values():
+            for p in e["paginas"]:
+                ruta = tmp_path / p["archivo"]
+                assert almacen.sha256_archivo(ruta) == p["sha256"]
+                assert not os.stat(ruta).st_mode & stat.S_IWUSR
+    primero = manifiestos[0]
+    meta = {k: primero[k] for k in ("fecha", "hora", "corte_utc", "etiqueta")}
+    with pytest.raises(FileExistsError):  # una captura no se sobrescribe
+        al.escribir_manifiesto(meta, tmp_path)
+
+
+def test_normalizacion_al_contrato(mercado, tmp_path):
+    cot_sint, _, _ = mercado
+    capturar_sesiones(mercado, tmp_path)
+    cot, sub, resumenes, _ = al.normalizar(tmp_path)
+    assert ct.validar(cot) == [] and ct.validar(sub, ct.SUBYACENTE) == []
+    assert set(cot["raiz"]) == {"SPXW"} and set(cot["subyacente"]) == {"SPX"}
+    assert set(cot["ejercicio"]) == {"europeo"} and set(cot["liquidacion"]) == {"PM"}
+    assert set(cot["feed"]) == {"indicative"} and set(cot["proveedor"]) == {"alpaca"}
+    assert all(r.get("sin_cotizacion", 0) == 0 and r.get("sin_metadatos", 0) == 0 for r in resumenes)
+    # Mismo precio y misma hora de evento que el mercado de origen (nanosegundos truncados a microsegundos).
+    fila = cot.iloc[0]
+    origen = cot_sint[(cot_sint["id_contrato"] == fila["id_contrato"])
+                      & (cot_sint["sello_snapshot_utc"] == fila["sello_snapshot_utc"])].iloc[0]
+    assert (fila["bid"], fila["ask"], fila["tam_bid"]) == (origen["bid"], origen["ask"], origen["tam_bid"])
+    assert fila["sello_evento_utc"] == origen["sello_evento_utc"]
+    assert fila["sello_snapshot_utc"] == fila["recibido_utc"] == fila["disponible_utc"]
+    assert str(cot["sello_evento_utc"].dtype) == "datetime64[us, UTC]"
+    assert set(sub["subyacente"]) == {"SPY"} and np.allclose(sub["precio"], 580.0)
+
+
+def test_cotizacion_ausente_metadatos_ausentes_y_raiz_desconocida(tmp_path):
+    corte = pd.Timestamp("2025-11-17T14:45:00Z")
+    snaps = {"SPXW251219C05800000": {"latestQuote": {"bp": 90.1, "ap": 90.9, "bs": 3, "as": 4, "t": _t(corte)}},
+             "SPXW251219P05800000": {"dailyBar": {"c": 70.0}},  # sin cotización
+             "SPXW251219P05700000": {"latestQuote": {"bp": 50.0, "ap": 51.0, "bs": 1, "as": 1, "t": _t(corte)}}}
+    meta = {"SPXW251219C05800000": {"symbol": "SPXW251219C05800000", "root_symbol": "SPXW",
+                                    "underlying_symbol": "SPX", "expiration_date": "2025-12-19", "type": "call",
+                                    "style": "european", "strike_price": "5800", "multiplier": "100"}}
+    cuentas = al.Counter()
+    filas = al.filas_cadena(snaps, meta, al.iso(corte), "indicative", "x", cuentas)
+    assert len(filas) == 1 and cuentas == {"con_cotizacion": 1, "sin_cotizacion": 1, "sin_metadatos": 1}
+    mal = {"SPXW251219C05800000": dict(meta["SPXW251219C05800000"], strike_price="5900")}
+    with pytest.raises(ValueError):
+        al.filas_cadena(snaps, mal, al.iso(corte), "indicative", "x", al.Counter())
+    otra = {"QQQ251219C00500000": {"latestQuote": {"bp": 1.0, "ap": 1.1, "bs": 1, "as": 1, "t": _t(corte)}}}
+    meta_q = {"QQQ251219C00500000": {"symbol": "QQQ251219C00500000", "root_symbol": "QQQ", "underlying_symbol": "QQQ",
+                                     "expiration_date": "2025-12-19", "type": "call", "style": "american",
+                                     "strike_price": "500", "multiplier": "100"}}
+    with pytest.raises(ValueError, match="liquidación desconocida"):
+        al.filas_cadena(otra, meta_q, al.iso(corte), "indicative", "x", al.Counter())
+
+
+def test_replay_da_los_mismos_bytes_y_detecta_crudo_alterado(mercado, tmp_path):
+    capturar_sesiones(mercado, tmp_path)
+    hashes = []
+    for i in range(2):
+        cot, sub, _, _ = al.normalizar(tmp_path)
+        hashes.append((almacen.escribir_tabla(cot, tmp_path / f"c{i}.parquet"),
+                       almacen.escribir_tabla(sub, tmp_path / f"s{i}.parquet")))
+    assert hashes[0] == hashes[1]
+    pagina = next(p for e in al.leer_manifiestos(tmp_path)[0]["solicitudes"].values() if e["tipo"] == "cadena"
+                  for p in e["paginas"])
+    ruta = tmp_path / pagina["archivo"]
+    original = gzip.decompress(ruta.read_bytes())
+    assert almacen.sha256_bytes(original) == pagina["sha256_contenido"]
+    os.chmod(ruta, stat.S_IRUSR | stat.S_IWUSR)
+    ruta.write_bytes(gzip.compress(original.replace(b'"bp": ', b'"bp": 1', 1)))
+    with pytest.raises(RuntimeError, match="hash"):
+        al.normalizar(tmp_path)
+
+
+# --- Subyacente implícito y piloto de punta a punta ------------------------------------------------
+
+def test_spot_implicito_recupera_el_nivel(mercado):
+    cot, _, verdad = mercado
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    filas = cot[(cot["sello_snapshot_utc"] == corte)]
+    cercano = min(filas["vencimiento"])
+    r = im.spot_implicito(filas[filas["vencimiento"] == cercano], fecha, corte, tasa=0.04,
+                          rendimiento_dividendo=0.013)
+    assert r["estado"] == "identificado" and r["pares"] >= 5
+    assert abs(r["spot"] / verdad["spot"][(fecha, "09:45")] - 1) < 5e-5
+    assert corte - pd.Timedelta(seconds=20) <= r["sello_evento_utc"] <= corte
+    pocas = filas[filas["vencimiento"] == cercano].iloc[:6]
+    assert im.spot_implicito(pocas, fecha, corte, 0.04, 0.013)["estado"] == "no identificado"
+
+
+def test_piloto_de_punta_a_punta_con_respuestas_de_alpaca(mercado, tmp_path):
+    _, _, verdad = mercado
+    capturar_sesiones(mercado, tmp_path)
+    cfg = pl.cargar_config(RAIZ / "configs" / "piloto.toml")
+    with open(RAIZ / "configs" / "captura_alpaca.toml", "rb") as f:
+        implicito = tomllib.load(f)["implicito"]
+    cot, sub, _, fallos, _ = al.tablas_para_piloto(tmp_path, cfg_implicito=implicito, reglas=cfg.reglas)
+    assert fallos == [] and ct.validar(sub, ct.SUBYACENTE) == []
+    spx = sub[sub["subyacente"] == "SPX"]
+    assert len(spx) == 4 and set(spx["feed"]) == {"implicito_paridad_SPXW_indicative"}
+    for fila in spx.itertuples():
+        hora = fila.captura[-4:-2] + ":" + fila.captura[-2:]
+        fecha = pd.Timestamp(fila.captura[:10]).date()
+        assert abs(fila.precio / verdad["spot"][(fecha, hora)] - 1) < 5e-5
+    resultado = pl.ejecutar(cot, sub, FECHAS, cfg)
+    p = resultado.principal
+    assert (p["estado_sesion"] == "procesada").all() and (p["rr25_estado"] == "identificada").all()
+    assert p["cambio_rr25"].notna().iloc[1:].all()
+    assert (p["spot"] / [verdad["spot"][(f, "09:45")] for f in p["fecha"]] - 1).abs().max() < 5e-5

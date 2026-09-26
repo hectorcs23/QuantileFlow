@@ -159,6 +159,58 @@ def vencimientos(cotizaciones: pd.DataFrame, raiz, fecha, hora="09:45") -> list:
     return sorted({_fecha(v) for v in filas["vencimiento"]})
 
 
+def _plazo_de_filas(filas, corte_utc, base_dias, codigo):
+    """Ejercicio, liquidación, instante de liquidación y plazo de filas de una sola raíz y vencimiento."""
+    for columna in ("raiz", "vencimiento", "ejercicio", "liquidacion", "subyacente"):
+        if filas[columna].map(str).nunique() != 1:
+            raise ValueError(f"{columna} mezclado dentro de una captura: {sorted(filas[columna].map(str).unique())}")
+    raiz, vencimiento = filas["raiz"].iloc[0], _fecha(filas["vencimiento"].iloc[0])
+    liquida_utc = instante_liquidacion(vencimiento, filas["liquidacion"].iloc[0], codigo)
+    T = plazo_anios(corte_utc, liquida_utc, base_dias)
+    if T <= 0:
+        raise SinDatos(f"{raiz} {vencimiento} ya liquidó antes del corte")
+    return filas["ejercicio"].iloc[0], filas["liquidacion"].iloc[0], liquida_utc, T
+
+
+def captura_de_filas(filas: pd.DataFrame, fecha, corte_utc, spot=float("nan"), sello_spot_utc=None, tasa=0.0,
+                     rendimiento_dividendo=0.0, dividendos=(), base_dias=365.0, codigo=CALENDARIO):
+    """``Captura`` de filas ya elegidas (una raíz y un vencimiento) con un corte explícito.
+
+    No filtra por sesión ni por corte: eso lo hace quien elige las filas
+    (``captura_desde_tabla`` a una hora de sesión). Sin subyacente (``spot``
+    NaN), los controles y referencias que lo usan no se aplican; así se estima,
+    por ejemplo, un subyacente implícito por paridad. ``dividendos`` son pares
+    ``(instante_utc, monto)``. Devuelve la captura y un diccionario con el corte,
+    la liquidación, el plazo y la procedencia.
+    """
+    if filas.empty:
+        raise SinDatos("sin filas para la captura")
+    ejercicio, liquidacion, liquida_utc, T = _plazo_de_filas(filas, corte_utc, base_dias, codigo)
+
+    def locales(columna):
+        if columna not in filas:
+            return None
+        return np.array([segundos_locales(x, fecha) for x in filas[columna]], dtype=float)
+
+    divs = tuple((plazo_anios(corte_utc, t, base_dias), float(m)) for t, m in dividendos)
+    captura = Captura(
+        strike=filas["strike"].to_numpy(float), es_call=(filas["tipo"] == "C").to_numpy(),
+        bid=filas["bid"].to_numpy(float), ask=filas["ask"].to_numpy(float),
+        tam_bid=filas["tam_bid"].to_numpy(float), tam_ask=filas["tam_ask"].to_numpy(float),
+        sello=locales("sello_evento_utc"), T=T, spot=float(spot),
+        sello_spot=segundos_locales(sello_spot_utc, fecha), tasa=tasa, dividendos=divs,
+        rendimiento_dividendo=rendimiento_dividendo, ejercicio=ejercicio,
+        corte=segundos_locales(corte_utc, fecha), fecha=str(_fecha(fecha)),
+        sello_snapshot=locales("sello_snapshot_utc"), disponible=locales("disponible_utc"))
+    info = {
+        "raiz": filas["raiz"].iloc[0], "vencimiento": _fecha(filas["vencimiento"].iloc[0]), "corte_utc": corte_utc,
+        "liquidacion": liquidacion, "liquidacion_utc": liquida_utc, "T": T, "dias": T * base_dias,
+        "filas": len(filas), "proveedores": sorted(filas["proveedor"].unique()),
+        "feeds": sorted(filas["feed"].unique()),
+    }
+    return captura, info
+
+
 def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, raiz, vencimiento,
                         fecha, hora="09:45", tasa=0.0, rendimiento_dividendo=0.0, dividendos=(),
                         base_dias=365.0, codigo=CALENDARIO):
@@ -174,38 +226,12 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
     filas = _del_dia_hasta(filas, fecha, corte_utc)
     if filas.empty:
         raise SinDatos(f"sin cotizaciones de {raiz} {vencimiento} al corte {hora} de {fecha}")
-    for columna in ("ejercicio", "liquidacion", "subyacente"):
-        if filas[columna].nunique() != 1:
-            raise ValueError(f"{columna} mezclado dentro de una captura: {sorted(filas[columna].unique())}")
-    ejercicio, liquidacion = filas["ejercicio"].iloc[0], filas["liquidacion"].iloc[0]
-    liquida_utc = instante_liquidacion(vencimiento, liquidacion, codigo)
-    T = plazo_anios(corte_utc, liquida_utc, base_dias)
-    if T <= 0:
-        raise SinDatos(f"{raiz} {vencimiento} ya liquidó antes del corte")
+    _plazo_de_filas(filas, corte_utc, base_dias, codigo)  # mezclas y vencimientos liquidados, antes del spot
     spot, sello_spot_utc, spot_sin_evento = spot_al_corte(subyacente, filas["subyacente"].iloc[0], fecha,
                                                           corte_utc)
-
-    def locales(columna):
-        if columna not in filas:
-            return None
-        return np.array([segundos_locales(x, fecha) for x in filas[columna]], dtype=float)
-
-    divs = tuple((plazo_anios(corte_utc, t, base_dias), float(m)) for t, m in dividendos)
-    captura = Captura(
-        strike=filas["strike"].to_numpy(float), es_call=(filas["tipo"] == "C").to_numpy(),
-        bid=filas["bid"].to_numpy(float), ask=filas["ask"].to_numpy(float),
-        tam_bid=filas["tam_bid"].to_numpy(float), tam_ask=filas["tam_ask"].to_numpy(float),
-        sello=locales("sello_evento_utc"), T=T, spot=spot,
-        sello_spot=segundos_locales(sello_spot_utc, fecha), tasa=tasa, dividendos=divs,
-        rendimiento_dividendo=rendimiento_dividendo, ejercicio=ejercicio,
-        corte=segundos_locales(corte_utc, fecha), fecha=str(_fecha(fecha)),
-        sello_snapshot=locales("sello_snapshot_utc"), disponible=locales("disponible_utc"))
-    info = {
-        "raiz": raiz, "vencimiento": vencimiento, "hora": hora, "corte_utc": corte_utc,
-        "liquidacion": liquidacion, "liquidacion_utc": liquida_utc, "T": T, "dias": T * base_dias,
-        "filas": len(filas), "proveedores": sorted(filas["proveedor"].unique()),
-        "feeds": sorted(filas["feed"].unique()), "spot_sin_hora_de_evento": bool(spot_sin_evento),
-    }
+    captura, info = captura_de_filas(filas, fecha, corte_utc, spot, sello_spot_utc, tasa, rendimiento_dividendo,
+                                     dividendos, base_dias, codigo)
+    info.update(hora=hora, spot_sin_hora_de_evento=bool(spot_sin_evento))
     return captura, info
 
 

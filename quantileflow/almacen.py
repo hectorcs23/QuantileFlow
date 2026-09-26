@@ -62,6 +62,26 @@ def guardar_crudo(origen, directorio) -> dict:
     return {"ruta": str(destino), "sha256": h, "bytes": destino.stat().st_size, "nombre": origen.name}
 
 
+def guardar_crudo_bytes(datos: bytes, nombre, directorio) -> dict:
+    """Como ``guardar_crudo``, para contenido recibido en memoria (p. ej., el cuerpo de una respuesta HTTP).
+
+    Escribe primero a un temporal y lo renombra: un archivo a medio escribir
+    nunca queda con el nombre de su hash.
+    """
+    h = sha256_bytes(datos)
+    destino = Path(directorio) / h[:2] / f"{h}_{nombre}"
+    if destino.exists():
+        if sha256_archivo(destino) != h:
+            raise RuntimeError(f"{destino} existe con otro contenido: el crudo no se sobrescribe")
+    else:
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        temporal = destino.with_name(destino.name + f".{os.getpid()}.tmp")
+        temporal.write_bytes(datos)
+        os.chmod(temporal, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+        os.replace(temporal, destino)
+    return {"ruta": str(destino), "sha256": h, "bytes": len(datos), "nombre": nombre}
+
+
 def escribir_tabla(tabla: pd.DataFrame, ruta) -> str:
     """Escribe una tabla en Parquet (sin índice) y devuelve su SHA-256."""
     ruta = Path(ruta)
