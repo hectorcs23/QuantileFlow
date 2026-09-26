@@ -11,6 +11,7 @@ resultados empíricos: todas las figuras usan datos **sintéticos** con semillas
 
 - [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): plan de investigación vigente (26 de septiembre
   de 2026). Pregunta inicial, fases con criterios de salida y correcciones previas del núcleo.
+- [`docs/avance_y_pendientes.md`](docs/avance_y_pendientes.md): qué se hizo, hallazgos y qué falta.
 - `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
   y 19 diagramas. El PDF y las figuras PNG son artefactos generados: `make figuras && make pdf` los
   regenera.
