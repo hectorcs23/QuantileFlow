@@ -3,10 +3,11 @@
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
 **Versión de investigación (26 de septiembre de 2026).**
 
-Este repositorio contiene, por ahora, la propuesta técnica del sistema, un núcleo matemático de
-referencia con el que se generan sus figuras y el pipeline del piloto de medición (ingesta, controles,
-etiquetas, informe y manifiesto). No hay datos de mercado, modelos entrenados ni resultados empíricos:
-todas las figuras y la plantilla del informe usan datos **sintéticos** con semillas fijas.
+Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
+que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
+y manifiesto) y la captura diaria de cadenas de opciones en Alpaca. Los datos de mercado no están en
+Git. Todavía no hay modelos entrenados ni resultados empíricos: las figuras y la plantilla del informe
+usan datos **sintéticos** con semillas fijas.
 
 ## Documentos
 
@@ -17,6 +18,9 @@ todas las figuras y la plantilla del informe usan datos **sintéticos** con semi
   informe reproducible de sesiones reales de apertura (SPXW PM, 09:45, plazo constante de 30 días).
 - [`docs/estado_continuacion.md`](docs/estado_continuacion.md): qué se construyó de ese plan sin datos,
   el problema de acceso a datos y lo que falta.
+- [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): qué ofrece Alpaca (verificado el 26 de septiembre
+  de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
+  pendientes (dónde corre la captura y qué feed usar).
 - `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
   y 19 diagramas. El PDF y las figuras PNG son artefactos generados: `make figuras && make pdf` los
   regenera.
@@ -45,6 +49,9 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   informe.py           tabla exportable, gráficas e informe Markdown del piloto
   corrida.py           corrida reproducible con manifiesto de hashes
   almacen.py           crudo inmutable, Parquet, manifiestos y huella del entorno
+  alpaca.py            adaptador de Alpaca: cliente, crudo inmutable por respuesta, manifiesto por captura,
+                       elección de vencimientos y normalización al contrato
+  implicito.py         nivel implícito del subyacente por paridad (Alpaca no da el nivel de SPX)
   opciones.py          Black, griegas, árbol binomial con dividendos
   superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
   distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
@@ -57,9 +64,11 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   evidencia.py         Sharpe deflactado, bootstrap por bloques, walk-forward con purga
   sintetico.py         generadores del mundo sintético de las figuras
 tests/                 pruebas de propiedades del núcleo, cuantiles, conformal, cadenas, contrato,
-                       calendario, etiquetas, almacenamiento y piloto
+                       calendario, etiquetas, almacenamiento, piloto y adaptador de Alpaca (sin red)
 configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
-scripts/               piloto con datos normalizados, plantilla sintética y registro del entorno
+configs/captura_alpaca.toml  qué, cuándo y con qué feed se captura en Alpaca
+scripts/               piloto con datos normalizados, plantilla sintética, registro del entorno, captura,
+                       normalización y verificación de Alpaca
 reports/               informes generados (no se editan a mano) y registros de verificación
 docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
 ```
@@ -75,6 +84,16 @@ make verificar          # registra commit, entorno y resultado de las pruebas en
 make piloto-sintetico   # plantilla del informe piloto con datos sintéticos en reports/piloto_sintetico/
 ```
 
+Captura en Alpaca (requiere `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el entorno; ver
+[`docs/fuente_alpaca.md`](docs/fuente_alpaca.md)):
+
+```bash
+make captura-prueba                                   # captura inmediata de prueba
+make captura                                          # día hábil: espera y captura a las 09:45 y 10:00 ET
+make verificar-alpaca FECHA=2026-09-28                # diagnóstico agregado en reports/verificacion_alpaca/
+make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-06   # tablas para el piloto desde el crudo
+```
+
 Con datos reales normalizados (esquemas de `quantileflow/contrato.py`):
 
 ```bash
@@ -82,8 +101,8 @@ python scripts/piloto.py --cotizaciones data/normalized/cotizaciones.parquet \
     --subyacente data/normalized/subyacente.parquet --desde AAAA-MM-DD --hasta AAAA-MM-DD
 ```
 
-`data/` queda fuera de Git: `data/raw/` guarda los archivos originales, inmutables y direccionados por
-su SHA-256; `data/normalized/`, las tablas Parquet. Cada corrida escribe un `manifiesto.json` con los
+`data/` queda fuera de Git (licencias y tamaño; este repositorio es público): `data/raw/` guarda los
+archivos originales, inmutables y direccionados por su SHA-256; `data/normalized/`, las tablas Parquet. Cada corrida escribe un `manifiesto.json` con los
 hashes de entradas y salidas, la configuración, el commit y las exclusiones.
 
 `make pdf` requiere una distribución de TeX con `latexmk`, `tikz`, `tcolorbox`, `mathpazo` y

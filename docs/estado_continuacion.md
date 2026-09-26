@@ -8,6 +8,13 @@
 > **sintéticos**: las pruebas demuestran que el código mide, ingiere y reproduce como se pretende, no
 > que exista una señal.
 
+> **Actualización del 26 de septiembre (tarde).** El acceso a Alpaca quedó resuelto: hay claves
+> *paper* en el entorno y la red lo permite. SPXW sí está disponible, pero no hay historia de
+> cotizaciones ni nivel de SPX, y el feed gratuito modifica las cotizaciones. Se construyó la captura
+> diaria hacia adelante. Detalle y primera verificación con datos reales en
+> [Alpaca como fuente de datos](fuente_alpaca.md). La sección 1 queda como registro de lo que se sabía
+> antes de tener acceso.
+
 ---
 
 ## 1. Acceso a datos: problema bloqueante
@@ -106,10 +113,12 @@ cierre anticipado, y seis días degradados a propósito:
 
 ## 5. Qué falta
 
-- [ ] Resolver el acceso a datos (sección 1) y elegir la fuente: Alpaca (SPY, captura hacia adelante)
-      o una muestra histórica de SPXW.
-- [ ] Adaptador del proveedor elegido, verificado con respuestas reales. Confirmar instrumento, sellos
-      de tiempo, cobertura y costo.
+- [x] Resolver el acceso a datos (sección 1): Alpaca funciona y ofrece SPXW, con captura hacia
+      adelante ([fuente_alpaca.md](fuente_alpaca.md)).
+- [x] Adaptador del proveedor, verificado con respuestas reales (`quantileflow/alpaca.py`).
+      Instrumento, sellos, cobertura y costo confirmados.
+- [ ] Decidir dónde corre la captura diaria y dónde se guardan los datos (el repositorio es público).
+- [ ] Decidir el feed: `indicative` (modificado) u OPRA (suscripción).
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.

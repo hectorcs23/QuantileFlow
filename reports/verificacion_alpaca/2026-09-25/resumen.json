@@ -1,0 +1,574 @@
+{
+  "capturas": [
+    {
+      "bytes": 1568179,
+      "cobertura": {
+        "captura": "2026-09-25Tinmediata-185224",
+        "con_cotizacion": 3250,
+        "contratos_en_metadatos": 17480,
+        "corte_utc": "2026-09-25T20:00:00.000000Z",
+        "errores": 0,
+        "fecha": "2026-09-25",
+        "hora": "inmediata",
+        "respuestas_despues_del_corte": 10,
+        "snapshots": 3250
+      },
+      "corte_utc": "2026-09-25T20:00:00.000000Z",
+      "cuenta": "paper",
+      "desfase_reloj_s": 0.240865,
+      "duracion_s": 0.711612,
+      "errores": 0,
+      "etiqueta": "2026-09-25Tinmediata-185224",
+      "feed_opciones": "indicative",
+      "hora": "inmediata",
+      "modo": "inmediata",
+      "raices": {
+        "SPXW": {
+          "exclusiones_totales": {
+            "desfasada": 2,
+            "sin_bid": 77,
+            "sin_tamano": 77,
+            "spread_ancho": 33
+          },
+          "plazo_constante_30d": {
+            "asim_log": {
+              "estado": "identificada",
+              "inferior": -0.03716272487605771,
+              "iv_call": 0.1041532237290709,
+              "iv_put": 0.13998448130239158,
+              "motivo": "",
+              "superior": -0.03449536157228711,
+              "valor": -0.035831257573320674
+            },
+            "motivo": "",
+            "rr25": {
+              "estado": "identificada",
+              "inferior": -0.03236169116289153,
+              "iv_call": 0.10628903589627883,
+              "iv_put": 0.13710575629464147,
+              "motivo": "",
+              "superior": -0.029274975974139528,
+              "valor": -0.03081672039836264
+            },
+            "vencimientos": [
+              "2026-10-23",
+              "2026-10-26"
+            ]
+          },
+          "vencimientos": {
+            "2026-09-28": {
+              "alertas": [],
+              "asim_log": {
+                "obs_asim_log": -0.00010166325073551752,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.005048986949780898,
+                "obs_asim_log_superior": 0.00511832799882439
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 0.3999999999999986,
+                "ancho_relativo_mediano_cerca": 0.05714285714285704,
+                "ancho_ticks_mediano_cerca": 3.999999999999986,
+                "ask_en_grilla": 0.07818930041152264,
+                "bid_en_grilla": 0.091324200913242,
+                "edad_mediana_s": 1.431476499998098,
+                "edad_p90_s": 10.361833999999362,
+                "forward": 7743.17218245554,
+                "forward_error": 0.1693458667995171,
+                "fraccion_en_3_segundos": 0.6954732510288066,
+                "paridad_fuera_de_banda": 0.2802197802197802,
+                "paridad_mediana_abs_multiplo": 0.2390468342129018,
+                "paridad_p90_abs_multiplo": 1.1572022495566994,
+                "paridad_pares": 182,
+                "segundos_distintos": 18,
+                "tasa_error": 0.2653213372447659,
+                "tasa_implicita": -0.7568540372994037
+              },
+              "dias": 2.9999999999999996,
+              "exclusiones": {
+                "desfasada": 1,
+                "sin_bid": 48,
+                "sin_tamano": 48,
+                "spread_ancho": 13
+              },
+              "filas": 486,
+              "filas_validas": 425,
+              "pendiente": {
+                "error": 0.002324212475810378,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 128,
+                "nivel_atm": 0.08749639381749184,
+                "pendiente": -0.5654915446037564
+              },
+              "rr25": {
+                "obs_rr25": -0.007609788097656708,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.008392558342624548,
+                "obs_rr25_superior": -0.006827984558392702
+              }
+            },
+            "2026-10-22": {
+              "alertas": [],
+              "asim_log": {
+                "obs_asim_log": -0.036894213004774995,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03824752535126179,
+                "obs_asim_log_superior": -0.03553645151449808
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 1.2199999999999989,
+                "ancho_relativo_mediano_cerca": 0.021952733545539973,
+                "ancho_ticks_mediano_cerca": 12.199999999999989,
+                "ask_en_grilla": 0.12043795620437957,
+                "bid_en_grilla": 0.11320754716981132,
+                "edad_mediana_s": 0.7544784999990952,
+                "edad_p90_s": 15.744480200001272,
+                "forward": 7760.118003362949,
+                "forward_error": 0.4731120235824062,
+                "fraccion_en_3_segundos": 0.8065693430656934,
+                "paridad_fuera_de_banda": 0.26229508196721313,
+                "paridad_mediana_abs_multiplo": 0.20567489903132394,
+                "paridad_p90_abs_multiplo": 1.0721910190566262,
+                "paridad_pares": 124,
+                "segundos_distintos": 13,
+                "tasa_error": 0.029050776369829903,
+                "tasa_implicita": 0.07261977601149808
+              },
+              "dias": 27.0,
+              "exclusiones": {
+                "sin_bid": 9,
+                "sin_tamano": 9,
+                "spread_ancho": 4
+              },
+              "filas": 274,
+              "filas_validas": 261,
+              "pendiente": {
+                "error": 0.0013202387984003838,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 68,
+                "nivel_atm": 0.1185556924883276,
+                "pendiente": -0.746872866005986
+              },
+              "rr25": {
+                "obs_rr25": -0.03130555035347256,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.032541758394762615,
+                "obs_rr25_superior": -0.03007031144825273
+              }
+            },
+            "2026-10-23": {
+              "alertas": [],
+              "asim_log": {
+                "obs_asim_log": -0.03668723708378056,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03779091949881576,
+                "obs_asim_log_superior": -0.03558200540240966
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 1.2505000000000024,
+                "ancho_relativo_mediano_cerca": 0.021108022320443273,
+                "ancho_ticks_mediano_cerca": 12.505000000000024,
+                "ask_en_grilla": 0.1586021505376344,
+                "bid_en_grilla": 0.12947658402203857,
+                "edad_mediana_s": 0.7555159999974421,
+                "edad_p90_s": 36.028690999999526,
+                "forward": 7762.668327977235,
+                "forward_error": 0.4468437250515,
+                "fraccion_en_3_segundos": 0.8064516129032258,
+                "paridad_fuera_de_banda": 0.1952662721893491,
+                "paridad_mediana_abs_multiplo": 0.20262265349833208,
+                "paridad_p90_abs_multiplo": 0.8678231805914735,
+                "paridad_pares": 171,
+                "segundos_distintos": 14,
+                "tasa_error": 0.03512346904115673,
+                "tasa_implicita": 0.024767723942462568
+              },
+              "dias": 28.0,
+              "exclusiones": {
+                "sin_bid": 9,
+                "sin_tamano": 9,
+                "spread_ancho": 6
+              },
+              "filas": 372,
+              "filas_validas": 357,
+              "pendiente": {
+                "error": 0.00027489810633927667,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 80,
+                "nivel_atm": 0.11710732943210986,
+                "pendiente": -0.8547076257307824
+              },
+              "rr25": {
+                "obs_rr25": -0.03208700464801417,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.0333027074411639,
+                "obs_rr25_superior": -0.030872741580095633
+              }
+            },
+            "2026-10-26": {
+              "alertas": [],
+              "asim_log": {
+                "obs_asim_log": -0.035439234601697886,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03687578118886094,
+                "obs_asim_log_superior": -0.03399658869916965
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 1.4050000000000011,
+                "ancho_relativo_mediano_cerca": 0.019380149739020212,
+                "ancho_ticks_mediano_cerca": 14.050000000000011,
+                "ask_en_grilla": 0.11475409836065574,
+                "bid_en_grilla": 0.1297071129707113,
+                "edad_mediana_s": 0.7536995000009483,
+                "edad_p90_s": 15.740795500001695,
+                "forward": 7762.924111902628,
+                "forward_error": 0.44386011077586535,
+                "fraccion_en_3_segundos": 0.8032786885245902,
+                "paridad_fuera_de_banda": 0.27927927927927926,
+                "paridad_mediana_abs_multiplo": 0.21916523028223966,
+                "paridad_p90_abs_multiplo": 1.1053883306332513,
+                "paridad_pares": 113,
+                "segundos_distintos": 14,
+                "tasa_error": 0.02446305864212267,
+                "tasa_implicita": 0.04820427622254581
+              },
+              "dias": 31.0,
+              "exclusiones": {
+                "desfasada": 1,
+                "sin_bid": 5,
+                "sin_tamano": 5,
+                "spread_ancho": 4
+              },
+              "filas": 244,
+              "filas_validas": 235,
+              "pendiente": {
+                "error": 0.00114869145703542,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 55,
+                "nivel_atm": 0.12003934639570063,
+                "pendiente": -0.429115783905233
+              },
+              "rr25": {
+                "obs_rr25": -0.030234834986521686,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.03193048554733732,
+                "obs_rr25_superior": -0.028543953205332914
+              }
+            },
+            "2026-10-27": {
+              "alertas": [],
+              "asim_log": {
+                "obs_asim_log": -0.035448123052189265,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03635145906406877,
+                "obs_asim_log_superior": -0.03454303872247652
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 1.3150000000000048,
+                "ancho_relativo_mediano_cerca": 0.021664536322095827,
+                "ancho_ticks_mediano_cerca": 13.150000000000048,
+                "ask_en_grilla": 0.17355371900826447,
+                "bid_en_grilla": 0.15254237288135594,
+                "edad_mediana_s": 0.7523514999993495,
+                "edad_p90_s": 36.02371699999785,
+                "forward": 7764.2862432059965,
+                "forward_error": 0.7175184543047416,
+                "fraccion_en_3_segundos": 0.8512396694214877,
+                "paridad_fuera_de_banda": 0.24770642201834864,
+                "paridad_mediana_abs_multiplo": 0.21331249326155635,
+                "paridad_p90_abs_multiplo": 0.9776562438078222,
+                "paridad_pares": 109,
+                "segundos_distintos": 14,
+                "tasa_error": 0.012538101328002033,
+                "tasa_implicita": -0.006227504677119771
+              },
+              "dias": 32.0,
+              "exclusiones": {
+                "sin_bid": 6,
+                "sin_tamano": 6,
+                "spread_ancho": 6
+              },
+              "filas": 242,
+              "filas_validas": 230,
+              "pendiente": {
+                "error": 0.0017562045458616535,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 55,
+                "nivel_atm": 0.11535375432671803,
+                "pendiente": -0.5522839965892055
+              },
+              "rr25": {
+                "obs_rr25": -0.03247731289181245,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.03366968307868845,
+                "obs_rr25_superior": -0.03128659539684843
+              }
+            }
+          }
+        },
+        "SPY": {
+          "exclusiones_totales": {
+            "desfasada": 2,
+            "fuera_de_cotas": 17,
+            "sin_bid": 58,
+            "sin_tamano": 58
+          },
+          "plazo_constante_30d": {
+            "asim_log": {
+              "estado": "identificada",
+              "inferior": -0.03709191295285694,
+              "iv_call": 0.10826241987220186,
+              "iv_put": 0.1442670104629538,
+              "motivo": "",
+              "superior": -0.03491610720201985,
+              "valor": -0.03600459059075192
+            },
+            "motivo": "",
+            "rr25": {
+              "estado": "identificada",
+              "inferior": -0.033118799477460395,
+              "iv_call": 0.10929848879410069,
+              "iv_put": 0.14134535809759363,
+              "motivo": "",
+              "superior": -0.030972555760506615,
+              "valor": -0.032046869303492945
+            },
+            "vencimientos": [
+              "2026-10-23",
+              "2026-10-30"
+            ]
+          },
+          "vencimientos": {
+            "2026-10-16": {
+              "alertas": [
+                "subyacente desfasado -28 s respecto del corte"
+              ],
+              "asim_log": {
+                "obs_asim_log": -0.03784694662661239,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03823220201844976,
+                "obs_asim_log_superior": -0.03746298289183628
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 0.12549999999999972,
+                "ancho_relativo_mediano_cerca": 0.028185829150865413,
+                "ancho_ticks_mediano_cerca": 12.549999999999972,
+                "ask_en_grilla": 1.0,
+                "bid_en_grilla": 0.9926470588235294,
+                "edad_mediana_s": 0.40201900000101887,
+                "edad_p90_s": 0.7004959999991117,
+                "forward": 772.9908095866641,
+                "forward_error": 0.044802559040428895,
+                "fraccion_en_3_segundos": 1.0,
+                "paridad_fuera_de_banda": 0.2097902097902098,
+                "paridad_mediana_abs_multiplo": 0.1835587249878975,
+                "paridad_p90_abs_multiplo": 0.8119847523288207,
+                "paridad_pares": 173,
+                "segundos_distintos": 3,
+                "tasa_error": 0.027449928133939615,
+                "tasa_implicita": -0.10772076924485759
+              },
+              "dias": 21.0,
+              "exclusiones": {
+                "desfasada": 1,
+                "fuera_de_cotas": 12,
+                "sin_bid": 50,
+                "sin_tamano": 50
+              },
+              "filas": 458,
+              "filas_validas": 396,
+              "pendiente": {
+                "error": 0.0007938131255322883,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 75,
+                "nivel_atm": 0.12225875988441275,
+                "pendiente": -0.7294428768143243
+              },
+              "rr25": {
+                "obs_rr25": -0.02825005464001018,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.029529866317233894,
+                "obs_rr25_superior": -0.026968845785455497
+              }
+            },
+            "2026-10-23": {
+              "alertas": [
+                "subyacente desfasado -28 s respecto del corte"
+              ],
+              "asim_log": {
+                "obs_asim_log": -0.036517665197109805,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03749768351786756,
+                "obs_asim_log_superior": -0.0355355302352358
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 0.16999999999999993,
+                "ancho_relativo_mediano_cerca": 0.02973977131533488,
+                "ancho_ticks_mediano_cerca": 16.999999999999993,
+                "ask_en_grilla": 0.9970760233918129,
+                "bid_en_grilla": 0.9940652818991098,
+                "edad_mediana_s": 0.394639999998617,
+                "edad_p90_s": 0.7249785000007251,
+                "forward": 773.5686009016042,
+                "forward_error": 0.04770350611680544,
+                "fraccion_en_3_segundos": 1.0,
+                "paridad_fuera_de_banda": 0.08208955223880597,
+                "paridad_mediana_abs_multiplo": 0.12499396188956557,
+                "paridad_p90_abs_multiplo": 0.47538290408522055,
+                "paridad_pares": 164,
+                "segundos_distintos": 2,
+                "tasa_error": 0.008074115126997624,
+                "tasa_implicita": -0.0723205119410084
+              },
+              "dias": 28.0,
+              "exclusiones": {
+                "fuera_de_cotas": 3,
+                "sin_bid": 5,
+                "sin_tamano": 5
+              },
+              "filas": 342,
+              "filas_validas": 334,
+              "pendiente": {
+                "error": 0.0007495430941664923,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 78,
+                "nivel_atm": 0.12282340002050196,
+                "pendiente": -0.6007367662911055
+              },
+              "rr25": {
+                "obs_rr25": -0.03070430061147912,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.03179210802234883,
+                "obs_rr25_superior": -0.029614157206787256
+              }
+            },
+            "2026-10-30": {
+              "alertas": [
+                "subyacente desfasado -28 s respecto del corte"
+              ],
+              "asim_log": {
+                "obs_asim_log": -0.0350542575431526,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03634071686071075,
+                "obs_asim_log_superior": -0.033769762056770264
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 0.190500000000001,
+                "ancho_relativo_mediano_cerca": 0.026862599469495967,
+                "ancho_ticks_mediano_cerca": 19.0500000000001,
+                "ask_en_grilla": 0.9959839357429718,
+                "bid_en_grilla": 0.9919191919191919,
+                "edad_mediana_s": 0.4332329999997455,
+                "edad_p90_s": 0.7499941000016407,
+                "forward": 774.260222288413,
+                "forward_error": 0.08300766424221093,
+                "fraccion_en_3_segundos": 1.0,
+                "paridad_fuera_de_banda": 0.2191780821917808,
+                "paridad_mediana_abs_multiplo": 0.22784304834062777,
+                "paridad_p90_abs_multiplo": 0.7893473386587685,
+                "paridad_pares": 245,
+                "segundos_distintos": 3,
+                "tasa_error": 0.03143520668685669,
+                "tasa_implicita": 0.024850547738185073
+              },
+              "dias": 35.0,
+              "exclusiones": {
+                "desfasada": 1,
+                "fuera_de_cotas": 2,
+                "sin_bid": 3,
+                "sin_tamano": 3
+              },
+              "filas": 498,
+              "filas_validas": 493,
+              "pendiente": {
+                "error": 0.0007963348976066486,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 77,
+                "nivel_atm": 0.12931335717508383,
+                "pendiente": -0.5296581773061265
+              },
+              "rr25": {
+                "obs_rr25": -0.034608748210772006,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.03565266243936101,
+                "obs_rr25_superior": -0.03356231124300199
+              }
+            },
+            "2026-11-06": {
+              "alertas": [
+                "subyacente desfasado -28 s respecto del corte"
+              ],
+              "asim_log": {
+                "obs_asim_log": -0.03305248974939874,
+                "obs_asim_log_estado": "identificada",
+                "obs_asim_log_inferior": -0.03506386822647871,
+                "obs_asim_log_superior": -0.031036182445237204
+              },
+              "diagnostico": {
+                "ancho_mediano_cerca": 0.3049999999999997,
+                "ancho_relativo_mediano_cerca": 0.040075679394564884,
+                "ancho_ticks_mediano_cerca": 30.49999999999997,
+                "ask_en_grilla": 0.9940119760479041,
+                "bid_en_grilla": 0.9940119760479041,
+                "edad_mediana_s": 0.43192049999925075,
+                "edad_p90_s": 0.7494842000014614,
+                "forward": 775.0739080396334,
+                "forward_error": 0.09992778765908247,
+                "fraccion_en_3_segundos": 0.9910179640718563,
+                "paridad_fuera_de_banda": 0.13194444444444445,
+                "paridad_mediana_abs_multiplo": 0.1286488707546733,
+                "paridad_p90_abs_multiplo": 0.678014078020006,
+                "paridad_pares": 167,
+                "segundos_distintos": 6,
+                "tasa_error": 0.021080578705552223,
+                "tasa_implicita": -0.040441385081008974
+              },
+              "dias": 42.04166666666667,
+              "exclusiones": {},
+              "filas": 334,
+              "filas_validas": 334,
+              "pendiente": {
+                "error": 0.0008420071479269747,
+                "estado": "identificada",
+                "motivo": "",
+                "n": 77,
+                "nivel_atm": 0.13248984579387957,
+                "pendiente": -0.5625331399055685
+              },
+              "rr25": {
+                "obs_rr25": -0.037820310707421353,
+                "obs_rr25_estado": "identificada",
+                "obs_rr25_inferior": -0.039103903493909895,
+                "obs_rr25_superior": -0.03653369242835569
+              }
+            }
+          }
+        }
+      },
+      "razon_spx_spy": 10.036487213828657,
+      "recibida_despues_del_cierre": true,
+      "respuestas": 10,
+      "respuestas_despues_del_corte": 10,
+      "spot_spx_implicito": {
+        "T": 0.00821917808219178,
+        "estado": "identificado",
+        "forward": 7743.212031068171,
+        "forward_error": 0.1418861866083415,
+        "motivo": "",
+        "pares": 182,
+        "sello_evento_utc": "2026-09-25 19:59:59.161335501+00:00",
+        "spot": 7741.493865078527,
+        "vencimiento": "2026-09-28"
+      },
+      "spot_spy_iex": 771.335
+    }
+  ],
+  "fecha": "2026-09-25"
+}
