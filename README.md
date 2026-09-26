@@ -18,6 +18,8 @@ usan datos **sintéticos** con semillas fijas.
   informe reproducible de sesiones reales de apertura (SPXW PM, 09:45, plazo constante de 30 días).
 - [`docs/estado_continuacion.md`](docs/estado_continuacion.md): qué se construyó de ese plan sin datos,
   el problema de acceso a datos y lo que falta.
+- [`docs/resumen_sesion_alpaca.md`](docs/resumen_sesion_alpaca.md): resumen de la sesión con Alpaca y
+  mapa de dónde está cada archivo.
 - [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): qué ofrece Alpaca (verificado el 26 de septiembre
   de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
   pendientes (dónde corre la captura y qué feed usar).
