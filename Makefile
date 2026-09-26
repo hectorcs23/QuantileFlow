@@ -1,7 +1,7 @@
 PYTHON ?= python3
 DOC := docs/propuesta
 
-.PHONY: todo test figuras pdf limpiar
+.PHONY: todo test figuras pdf limpiar verificar piloto-sintetico
 
 todo: test figuras pdf
 
@@ -14,6 +14,12 @@ figuras:
 pdf:
 	cd $(DOC) && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 	cp $(DOC)/main.pdf docs/QuantileFlow_propuesta_tecnica.pdf
+
+verificar:
+	$(PYTHON) scripts/verificar_entorno.py
+
+piloto-sintetico:
+	$(PYTHON) scripts/piloto_sintetico.py
 
 limpiar:
 	cd $(DOC) && latexmk -C main.tex

@@ -10,7 +10,8 @@ import numpy as np
 
 from .cadenas import HORA_CORTE, Captura
 from .opciones import binomial_crr, precio_black
-from .superficies import Rebanada, SuperficieSSVI, cdf_logmoneyness, derivadas_ssvi, phi_potencia
+from .superficies import (Rebanada, SuperficieSSVI, cdf_logmoneyness, derivadas_ssvi, phi_potencia,
+                          varianza_total_ssvi)
 from .distribuciones import cuantiles_desde_cdf
 
 DIAS_ANIO = 365.0
@@ -216,3 +217,152 @@ def panel_distribuciones(rng, n_dias=260, tau=30 / DIAS_ANIO, dia_choque=170, di
                    "parametros": par_a, "parametros_obs": par_oa},
         "calidad": calidad, "faltante": faltante,
     }
+
+
+# ---------------------------------------------------------------------------
+# Mercado sintético tipo SPXW en el esquema normalizado del contrato de datos
+# ---------------------------------------------------------------------------
+
+ESCENARIOS = ("desfasadas", "sin_hora_evento", "hueco_calls", "spreads_anchos", "spot_desfasado",
+              "sin_subyacente")
+
+
+def _tick_indice(precio):
+    """Ticks tipo SPX: 0.05 por debajo de 3.00 y 0.10 desde 3.00 (a confirmar con Cboe)."""
+    return np.where(np.asarray(precio) < 3.0, 0.05, 0.10)
+
+
+def _redondear_tick(x, modo):
+    tick = _tick_indice(np.maximum(x, 0.0))
+    return _redondear(x / tick, 1.0, modo) * tick
+
+
+def iv_en_delta_ssvi(theta, rho, phi, T, delta, es_call):
+    """Volatilidad y log-moneyness de la opción con delta forward ``delta`` en una rebanada SSVI."""
+    from scipy.optimize import brentq
+    from scipy.stats import norm as _norm
+
+    def exceso(k):
+        w = float(varianza_total_ssvi(k, theta, rho, phi))
+        d1 = (-k + 0.5 * w) / np.sqrt(w)
+        return (_norm.cdf(d1) if es_call else _norm.cdf(-d1)) - delta
+
+    k = brentq(exceso, 0.0, 2.0) if es_call else brentq(exceso, -3.0, 0.0)
+    return float(np.sqrt(varianza_total_ssvi(k, theta, rho, phi) / T)), float(k)
+
+
+def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:45", "10:00"),
+                      raiz="SPXW", subyacente="SPX", paso_strike=10.0, rango_k=(-0.10, 0.05),
+                      dias_vencimiento=(18, 48), escenarios=None, sesiones_extra=5,
+                      recibido="2026-09-26T12:00:00Z"):
+    """Cotizaciones y subyacente sintéticos con el esquema de ``contrato`` (SINTÉTICO).
+
+    Opciones europeas con liquidación PM que vencen los viernes hábiles entre
+    ``dias_vencimiento`` días naturales; sonrisa SSVI con nivel y asimetría que
+    cambian cada sesión, y ruido dentro del spread. ``escenarios`` asigna a
+    cada fecha nombres de ``ESCENARIOS`` que degradan la hora principal:
+    cotizaciones desfasadas, snapshot sin hora de evento, hueco de strikes call
+    cerca de delta 25, spreads anchos, subyacente desfasado o ausente. El
+    subyacente se extiende ``sesiones_extra`` sesiones para madurar etiquetas.
+    Devuelve ``(cotizaciones, subyacente, verdad)``.
+    """
+    import pandas as pd
+
+    from .calendario import instante, instante_liquidacion, plazo_anios, sesion_desplazada, sesiones
+    from .contrato import simbolo_occ
+
+    rng = np.random.default_rng(semilla)
+    escenarios = {pd.Timestamp(f).date(): set(v) for f, v in (escenarios or {}).items()}
+    fechas = sorted(pd.Timestamp(f).date() for f in fechas)
+    todas = fechas + [sesion_desplazada(fechas[-1], i) for i in range(1, sesiones_extra + 1)]
+    n = len(todas)
+    nivel = np.empty(n)
+    rho = np.empty(n)
+    nivel[0], rho[0] = 0.16, -0.70
+    for t in range(1, n):
+        nivel[t] = np.clip(0.16 + 0.85 * (nivel[t - 1] - 0.16) + rng.normal(0.0, 0.012), 0.09, 0.40)
+        rho[t] = np.clip(-0.70 + 0.80 * (rho[t - 1] + 0.70) + rng.normal(0.0, 0.05), -0.95, -0.30)
+    principal = horas[0]
+    spot = {}
+    for t, fecha in enumerate(todas):
+        base = S0 if t == 0 else spot[(todas[t - 1], principal)]
+        sd = nivel[t - 1 if t else 0] / np.sqrt(252.0)
+        spot[(fecha, principal)] = base * np.exp(sd * rng.standard_normal() - 0.5 * sd**2)
+        for hora in horas[1:]:
+            minutos = (instante(fecha, hora) - instante(fecha, principal)).total_seconds() / 60.0
+            sd_i = nivel[t] * np.sqrt(minutos / (390.0 * 252.0))
+            spot[(fecha, hora)] = spot[(fecha, principal)] * np.exp(sd_i * rng.standard_normal())
+    recibido_utc = pd.Timestamp(recibido)
+    eta, gamma = 1.1, 0.45
+    filas, filas_sub, verdad = [], [], {}
+    for t, fecha in enumerate(todas):
+        esc = escenarios.get(fecha, set())
+        for hora in horas:
+            corte = instante(fecha, hora)
+            degradar = hora == principal
+            if not (degradar and "sin_subyacente" in esc):
+                atraso = 30.0 if degradar and "spot_desfasado" in esc else rng.uniform(0.0, 1.0)
+                filas_sub.append({"subyacente": subyacente, "precio": spot[(fecha, hora)], "bid": np.nan,
+                                  "ask": np.nan, "sello_evento_utc": corte - pd.Timedelta(seconds=atraso),
+                                  "sello_snapshot_utc": corte, "disponible_utc": corte,
+                                  "recibido_utc": recibido_utc, "proveedor": "sintetico",
+                                  "feed": "indice_sintetico"})
+            if fecha not in fechas:
+                continue
+            S = spot[(fecha, hora)]
+            venc = [d for d in sesiones(pd.Timestamp(fecha) + pd.Timedelta(days=dias_vencimiento[0]),
+                                        pd.Timestamp(fecha) + pd.Timedelta(days=dias_vencimiento[1]))
+                    if d.weekday() == 4]
+            for v in venc:
+                T = plazo_anios(corte, instante_liquidacion(v, "PM"))
+                theta = nivel[t] ** 2 * T
+                phi = float(phi_potencia(theta, eta, gamma))
+                F, D = S * np.exp((r - q) * T), np.exp(-r * T)
+                verdad[(fecha, hora, v)] = {"theta": theta, "rho": rho[t], "phi": phi, "T": T, "F": F, "D": D}
+                K = np.arange(np.ceil(F * np.exp(rango_k[0]) / paso_strike) * paso_strike,
+                              F * np.exp(rango_k[1]), paso_strike)
+                for tipo in ("C", "P"):
+                    Kt = K
+                    if degradar and "hueco_calls" in esc and tipo == "C":
+                        Kt = K[(np.log(K / F) < 0.005) | (np.log(K / F) > 0.06)]
+                    k = np.log(Kt / F)
+                    precio = precio_black(F, Kt, varianza_total_ssvi(k, theta, rho[t], phi), D, tipo == "C")
+                    evento = corte - pd.to_timedelta(rng.uniform(0.0, 20.0, len(Kt)), unit="s")
+                    if degradar and "desfasadas" in esc and tipo == "P":
+                        # Puts cercanos a delta 25 con precios de hace 5 minutos (subyacente 0.5 % más bajo).
+                        viejas = (k > -0.06) & (k < -0.02)
+                        F_viejo = F * 0.995
+                        k_viejo = np.log(Kt / F_viejo)
+                        precio_viejo = precio_black(F_viejo, Kt,
+                                                    varianza_total_ssvi(k_viejo, theta, rho[t], phi), D, False)
+                        precio = np.where(viejas, precio_viejo, precio)
+                        evento = evento.where(~viejas, corte - pd.Timedelta(seconds=300))
+                    if degradar and "sin_hora_evento" in esc:
+                        evento = pd.Series(pd.NaT, index=range(len(Kt)), dtype="datetime64[ns, UTC]")
+                    ancho = np.clip(_redondear_tick(0.10 + 0.015 * precio, "arriba"), 0.05, 3.0)
+                    if degradar and "spreads_anchos" in esc:
+                        ancho = ancho * 5.0
+                    mid = precio + rng.normal(0.0, 0.1 * ancho)
+                    bid = np.round(np.maximum(_redondear_tick(mid - ancho / 2.0, "abajo"), 0.0), 4)
+                    ask = np.round(np.maximum(_redondear_tick(mid + ancho / 2.0, "arriba"),
+                                              bid + _tick_indice(bid)), 4)
+                    for i in range(len(Kt)):
+                        filas.append({
+                            "id_contrato": simbolo_occ(raiz, v, tipo, Kt[i]), "raiz": raiz,
+                            "subyacente": subyacente, "strike": float(Kt[i]), "tipo": tipo,
+                            "ejercicio": "europeo", "liquidacion": "PM", "vencimiento": v,
+                            "multiplicador": 100.0, "bid": float(bid[i]), "ask": float(ask[i]),
+                            "tam_bid": float(rng.integers(1, 60)), "tam_ask": float(rng.integers(1, 60)),
+                            "sello_evento_utc": evento[i] if not isinstance(evento, pd.Series) else evento.iloc[i],
+                            "sello_snapshot_utc": corte, "disponible_utc": corte,
+                            "recibido_utc": recibido_utc, "proveedor": "sintetico",
+                            "feed": "nbbo_intervalos_sintetico"})
+    cotizaciones = pd.DataFrame(filas)
+    sub = pd.DataFrame(filas_sub)
+    for tabla in (cotizaciones, sub):
+        for columna in ("sello_evento_utc", "sello_snapshot_utc", "disponible_utc", "recibido_utc"):
+            tabla[columna] = pd.to_datetime(tabla[columna], utc=True).dt.as_unit("us")
+    verdad["spot"] = spot
+    verdad["nivel"] = dict(zip(todas, nivel))
+    verdad["rho"] = dict(zip(todas, rho))
+    return cotizaciones, sub, verdad

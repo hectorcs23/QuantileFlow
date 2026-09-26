@@ -152,7 +152,11 @@ reporta en unidades de precio y en múltiplos del ancho: si $|r_j|\le\ell_j/2$, 
 la diferencia no supera el costo de negociar, así que no se etiqueta como señal. La
 \figref{fig:paridad_desfasadas} muestra por qué el control de edad es imprescindible: tres puts de hace
 cinco minutos, con el subyacente un 1\% más bajo, dan residuos de $-0.6$, $-1.9$ y $-3.2$ anchos que,
-sin ese control, pasarían por señales; los demás pares no se contaminan.
+sin ese control, pasarían por señales; los demás pares no se contaminan. El residuo local, en cambio, no
+ve un desplazamiento común a todos los pares: si todos los puts se encarecen por igual, el forward
+estimado lo absorbe. Por eso se guardan aparte el nivel y el cambio del forward implícito, su error
+\emph{jackknife}, la tasa implícita y su discrepancia frente al forward contractual o a otra referencia
+externa.
 
 
 \paragraph{Dividendos y ejercicio anticipado} El forward implícito incorpora los dividendos sin necesidad
@@ -170,26 +174,33 @@ triángulos, tres puts desfasados que solo aparecerían si no se comprobara la e
 las líneas discontinuas, la diferencia cabe en el spread.}{fig:paridad_desfasadas}
 
 \paragraph{Asimetría call/put} Un call a $+3$\% y un put a $-3$\% no forman un par de paridad: su
-comparación mide asimetría de precios de cola. Se usan strikes simétricos en logaritmo, $Fe^{\pm d}$ con
-$d=\ln 1.03$, y se compara primero en volatilidad implícita, $\sigma_P(-d)-\sigma_C(d)$, con una banda que
-sale de las volatilidades de bid y ask. Las primas brutas no deben compararse con la unidad: con una
-sonrisa simétrica en $k$,
+comparación mide asimetría de precios de cola. Se usa la \emph{distancia logarítmica simétrica}: strikes
+$K_+=1.03\,F$ y $K_-=F/1.03$, es decir, $Fe^{\pm d}$ con $d=\ln 1.03$; el inferior queda a $-2.91$\% del
+forward, no a $-3$\%. Todas las medidas usan una sola convención de signo, call menos put: primero en
+volatilidad implícita, $\sigma_C(d)-\sigma_P(-d)$, con una banda que sale de las volatilidades de bid y
+ask; un valor positivo significa mayor volatilidad en el call comparable. Para las primas brutas, la
+referencia es una hipótesis y no una identidad de la paridad: \emph{si la sonrisa es simétrica en $k$}
+(misma varianza total en $k$ y en $-k$),
 \begin{equation}
 P\bigl(Fe^{-d}\bigr)=e^{-d}\,C\bigl(Fe^{d}\bigr),\qquad
-\varrho_d=\frac{P(Fe^{-d})}{e^{-d}\,C(Fe^{d})}-1,
+\varrho_d=\frac{e^{-d}\,C(Fe^{d})}{P(Fe^{-d})}-1,
 \label{eq:simetria_pc}
 \end{equation}
-de modo que $\varrho_d=0$ indica ausencia de asimetría. Como una distancia fija cambia de significado con
-el nivel de volatilidad y el plazo, la comparación se repite con deltas comparables,
-$\sigma_P(\Delta=-0.25)-\sigma_C(\Delta=0.25)$, usando la delta forward de cada opción. La pendiente local
+de modo que $\varrho_d$ mide la desviación respecto de esa referencia con el mismo signo que las demás
+medidas. Las pruebas lo comprueban con una sonrisa simétrica pero curva, donde se cumple, y con una
+asimétrica, donde no. Como una distancia fija cambia de significado con el nivel de volatilidad y el
+plazo, la comparación se repite con deltas comparables:
+$\mathrm{RR}_{25}=\sigma_C(\Delta=0.25)-\sigma_P(\Delta=-0.25)$, con la delta forward sin descuento de
+cada opción, $N(d_1)$ en calls y $N(d_1)-1$ en puts. En un índice suele ser negativa y no equivale a una
+probabilidad de subida. La pendiente local
 $\partial\sigma/\partial k$ en $k=0$ se estima por mínimos cuadrados ponderados con $|k|\le5$\%
 (\figref{fig:asimetria_sonrisa}). Solo se interpola entre strikes válidos separados a lo sumo 2\% en
 $k$; si el tramo necesario tiene un hueco mayor, la medida queda «no identificada».
 
 \grafica[0.62]{s2_asimetria_sonrisa}{Volatilidades implícitas de bid y ask de las cotizaciones OTM válidas y
-las tres medidas de asimetría: strikes log-simétricos en $\pm\ln 1.03$, deltas de 25 y pendiente local. En
-este mundo sintético, la diferencia en $\pm3$\% es de 5.8 puntos, frente a 5.76 en la sonrisa
-verdadera.}{fig:asimetria_sonrisa}
+las tres medidas de asimetría: strikes $F/1.03$ y $1.03\,F$, deltas de 25 y pendiente local. En este
+mundo sintético, la diferencia call menos put a distancia logarítmica simétrica es de $-5.8$ puntos,
+frente a $-5.76$ en la sonrisa verdadera.}{fig:asimetria_sonrisa}
 
 \paragraph{Series separadas y cambios diarios} La fila diaria del informe lleva las medidas observadas
 (\texttt{obs\_*}) y, si se ajusta una superficie, las que se leen de ella (\texttt{aj\_*}), nunca

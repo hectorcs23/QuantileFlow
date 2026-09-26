@@ -1,0 +1,133 @@
+"""Contrato de datos normalizado: símbolos OCC, validación, adaptador y sellos de tiempo."""
+import datetime as dt
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from quantileflow import cadenas as ca
+from quantileflow import calendario as cal
+from quantileflow import contrato as ct
+from quantileflow import sintetico as sn
+
+FECHAS = cal.sesiones("2025-11-17", "2025-11-21")
+
+
+@pytest.fixture(scope="module")
+def mercado():
+    escenarios = {FECHAS[1]: ["desfasadas"], FECHAS[2]: ["sin_hora_evento", "spot_desfasado"]}
+    return sn.mercado_sintetico(FECHAS, semilla=4, escenarios=escenarios, rango_k=(-0.08, 0.04))
+
+
+def test_simbolos_occ():
+    assert ct.parsear_occ("SPXW  251219C05800000") == {
+        "raiz": "SPXW", "vencimiento": dt.date(2025, 12, 19), "tipo": "C", "strike": 5800.0}
+    assert ct.parsear_occ("SPY251219P00512500")["strike"] == 512.5
+    assert ct.simbolo_occ("SPXW", "2025-12-19", "P", 5812.5) == "SPXW251219P05812500"
+    with pytest.raises(ValueError):
+        ct.parsear_occ("SPXW 2512C5800")
+
+
+def test_validador_detecta_problemas(mercado):
+    cot, sub, _ = mercado
+    assert ct.validar(cot) == [] and ct.validar(sub, ct.SUBYACENTE) == []
+    assert "faltan columnas" in ct.validar(cot.drop(columns=["feed"]))[0]
+    ingenua = cot.copy()
+    ingenua["sello_snapshot_utc"] = ingenua["sello_snapshot_utc"].dt.tz_localize(None)
+    assert any("UTC" in p for p in ct.validar(ingenua))
+    mala = cot.copy()
+    mala.loc[mala.index[0], "tipo"] = "X"
+    assert any("tipo" in p for p in ct.validar(mala))
+    repetida = pd.concat([cot, cot.iloc[:3]])
+    assert any("repetidas" in p for p in ct.validar(repetida))
+    cambiada = cot.copy()
+    cambiada.loc[cambiada.index[0], "strike"] += 5.0
+    assert any("no coincide" in p for p in ct.validar(cambiada))
+
+
+def test_captura_desde_tabla(mercado):
+    cot, sub, verdad = mercado
+    fecha = FECHAS[0]
+    venc = ct.vencimientos(cot, "SPXW", fecha)
+    cap, info = ct.captura_desde_tabla(cot, sub, "SPXW", venc[1], fecha, "09:45", tasa=0.04,
+                                       rendimiento_dividendo=0.013)
+    t = verdad[(fecha, "09:45", venc[1])]
+    assert info["T"] == pytest.approx(t["T"])
+    assert info["liquidacion_utc"] == cal.cierre(venc[1])
+    assert cap.spot == pytest.approx(verdad["spot"][(fecha, "09:45")])
+    assert cap.corte == 9.75 * 3600
+    assert np.all((cap.sello <= cap.corte) & (cap.sello >= cap.corte - 20))
+    # Solo entran los snapshots de esa sesión hasta el corte: nada de las 10:00.
+    a_las_945 = cot[(cot["vencimiento"] == venc[1])
+                    & (cot["sello_snapshot_utc"] == cal.instante(fecha, "09:45"))]
+    assert info["filas"] == len(a_las_945)
+    res = ca.procesar_captura(cap)
+    assert abs(res.paridad.forward_global - t["F"]) / t["F"] < 2e-5
+    with pytest.raises(ct.SinDatos):
+        ct.captura_desde_tabla(cot, sub, "SPXW", dt.date(2026, 1, 16), fecha)
+    mezclada = cot.copy()
+    mezclada.loc[mezclada.index[0], "liquidacion"] = "AM"
+    with pytest.raises(ValueError):
+        ct.captura_desde_tabla(mezclada, sub, "SPXW", mezclada["vencimiento"].iloc[0], fecha)
+
+
+def test_desfasadas_solo_en_la_hora_principal(mercado):
+    cot, sub, _ = mercado
+    fecha = FECHAS[1]
+    venc = ct.vencimientos(cot, "SPXW", fecha)[0]
+    principal = ca.controlar(ct.captura_desde_tabla(cot, sub, "SPXW", venc, fecha, "09:45")[0])
+    assert principal.resumen().get("desfasada", 0) > 0
+    # A las 10:00 también entran las filas de las 09:45: quedan reemplazadas y, además, viejas.
+    cap10, _ = ct.captura_desde_tabla(cot, sub, "SPXW", venc, fecha, "10:00")
+    secundaria = ca.controlar(cap10)
+    nuevas = np.flatnonzero(cap10.sello_snapshot == 10 * 3600)
+    viejas = np.flatnonzero(cap10.sello_snapshot < 10 * 3600)
+    assert len(nuevas) and len(viejas)
+    assert not any("desfasada" in secundaria.motivos[i] for i in nuevas)
+    contratos_10 = {(cap10.strike[i], bool(cap10.es_call[i])) for i in nuevas}
+    for i in viejas:
+        assert "desfasada" in secundaria.motivos[i]
+        if (cap10.strike[i], bool(cap10.es_call[i])) in contratos_10:
+            assert "reemplazada" in secundaria.motivos[i]
+
+
+def test_sin_hora_de_evento_no_se_inventa_la_edad(mercado):
+    cot, sub, _ = mercado
+    fecha = FECHAS[2]
+    venc = ct.vencimientos(cot, "SPXW", fecha)[0]
+    cap, info = ct.captura_desde_tabla(cot, sub, "SPXW", venc, fecha, "09:45")
+    assert np.all(np.isnan(cap.sello)) and np.all(np.isfinite(cap.sello_snapshot))
+    controles = ca.controlar(cap)
+    assert "desfasada" not in controles.resumen()
+    assert any("edad de cotización desconocida" in a for a in controles.alertas)
+    assert any("subyacente desfasado 30 s" in a for a in controles.alertas)
+    assert controles.valida.sum() > 0
+
+
+def test_disponibilidad_posterior_al_corte_excluye(mercado):
+    cot, sub, _ = mercado
+    fecha = FECHAS[0]
+    tardia = cot.copy()
+    tardia["disponible_utc"] = tardia["sello_snapshot_utc"] + pd.Timedelta(minutes=15)
+    venc = ct.vencimientos(tardia, "SPXW", fecha)[0]
+    cap, _ = ct.captura_desde_tabla(tardia, sub, "SPXW", venc, fecha)
+    controles = ca.controlar(cap)
+    assert controles.resumen()["no_disponible_al_corte"] == len(cap.strike)
+    assert not controles.valida.any()
+    sin_doc = cot.copy()
+    sin_doc["disponible_utc"] = pd.NaT
+    cap2, _ = ct.captura_desde_tabla(sin_doc, sub, "SPXW", venc, fecha)
+    assert "disponibilidad histórica no documentada" in ca.controlar(cap2).alertas
+
+
+def test_fila_sin_ningun_sello_se_excluye():
+    cap, _ = sn.captura_sintetica(strikes=np.arange(95.0, 106.0))
+    sello = cap.sello.copy()
+    sello[0] = np.nan
+    snapshot = np.full(len(sello), cap.corte)
+    snapshot[0] = np.nan
+    import dataclasses
+    rota = dataclasses.replace(cap, sello=sello, sello_snapshot=snapshot)
+    motivos = ca.controlar(rota).motivos
+    assert motivos[0] == ("sin_sello",)
+    assert all("sin_sello" not in m for m in motivos[1:])

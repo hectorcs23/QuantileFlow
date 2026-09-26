@@ -314,9 +314,9 @@ def fig_asimetria_sonrisa(c):
     plt.plot(k_linea * 100, (pl["nivel_atm"] + pl["pendiente"] * k_linea) * 100, "--",
              label=f"Local slope at k = 0: {pl['pendiente']:.2f} vol per unit of k")
     plt.plot([-d * 100, d * 100], [a["iv_put"] * 100, a["iv_call"] * 100], "s",
-             label=f"k = -/+ ln(1.03): put - call = {100 * a['diferencia_iv']:.1f} vol pts")
+             label=f"K = F/1.03 and F*1.03: call - put = {100 * a['iv_call_menos_put']:.1f} vol pts")
     plt.plot([ad["k_put"] * 100, ad["k_call"] * 100], [ad["iv_put"] * 100, ad["iv_call"] * 100], "^",
-             label=f"25-delta: put - call = {100 * ad['diferencia_iv']:.1f} vol pts")
+             label=f"25-delta: call - put = {100 * ad['iv_call_menos_put']:.1f} vol pts")
     plt.xlabel("Log-moneyness k = ln(K / F) (%)")
     plt.ylabel("Implied volatility (%)")
     plt.title("Call/put asymmetry measured on raw quotes (synthetic)")

@@ -18,3 +18,6 @@ docs/propuesta/*.blg
 docs/propuesta/*.lof
 docs/propuesta/*.lot
 docs/propuesta/main.pdf
+
+# Datos de mercado: fuera de Git (licencias y tamaño). Solo muestras permitidas en tests/fixtures.
+data/

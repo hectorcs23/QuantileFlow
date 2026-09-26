@@ -8,13 +8,18 @@ paridad y puede borrar justamente el residuo que se quiere estudiar.
 
 Contrato mínimo de una captura (un vencimiento, una hora de corte)
 -------------------------------------------------------------------
-Por fila (una por actualización de cada contrato): ``strike``, ``es_call``,
-``bid``, ``ask``, ``tam_bid``, ``tam_ask`` y ``sello``. Por captura: ``T`` en
-años, ``spot`` y ``sello_spot`` (subyacente sincronizado), ``tasa`` continua,
-dividendos en efectivo ``((t_i, monto), ...)`` o rendimiento continuo, tipo de
-ejercicio, hora de ``corte`` y ``fecha``. Los sellos se expresan en segundos
-desde la medianoche de la sesión en hora de Nueva York; la conversión de zona
-horaria (con horario de verano) se hace al ingerir, no aquí.
+Por fila (una por actualización o snapshot de cada contrato): ``strike``,
+``es_call``, ``bid``, ``ask``, ``tam_bid``, ``tam_ask`` y tres sellos:
+``sello`` (hora del evento, es decir, de la última actualización de la
+cotización), ``sello_snapshot`` (hora del snapshot del proveedor) y
+``disponible`` (hora documentada de disponibilidad histórica). Los dos últimos
+son opcionales, y cualquier sello desconocido es NaN: la edad de una cotización
+nunca se inventa. Por captura: ``T`` en años, ``spot`` y ``sello_spot``
+(subyacente sincronizado), ``tasa`` continua, dividendos en efectivo
+``((t_i, monto), ...)`` o rendimiento continuo, tipo de ejercicio, hora de
+``corte`` y ``fecha``. Los sellos se expresan en segundos desde la medianoche de
+la sesión en hora de Nueva York; ``contrato.captura_desde_tabla`` los obtiene de
+instantes UTC.
 
 Cada fila excluida conserva todos sus motivos (``MOTIVOS``). Los umbrales de
 ``ReglasCalidad`` son provisionales: se fijan en la fase 0 con una muestra real.
@@ -36,6 +41,8 @@ HORA_CORTE = 9.75 * 3600.0  # 09:45
 
 MOTIVOS = {
     "posterior_al_corte": "sello posterior a la hora de corte: no se conocía al decidir",
+    "sin_sello": "sin hora de evento ni de snapshot: no se puede situar respecto del corte",
+    "no_disponible_al_corte": "la disponibilidad documentada es posterior al corte",
     "reemplazada": "hay una actualización posterior del mismo contrato antes del corte",
     "antes_de_apertura": "cotización de preapertura o de la sesión anterior",
     "ventana_de_apertura": "primeros minutos de la sesión: cotizaciones inestables",
@@ -44,7 +51,7 @@ MOTIVOS = {
     "cruzada": "bid mayor que ask",
     "bloqueada": "bid igual a ask: ancho nulo, habitual en datos consolidados desincronizados",
     "sin_tamano": "tamaño menor que el mínimo en bid o en ask",
-    "spread_ancho": "spread relativo mayor que el máximo",
+    "spread_ancho": "spread relativo mayor que el máximo y más ticks que los tolerados",
     "fuera_de_cotas": "viola cotas sin modelo (call > spot, put > strike o, si es americana, "
                       "ask menor que el ejercicio inmediato)",
 }
@@ -75,11 +82,16 @@ class Captura:
     ejercicio: str = "europeo"
     corte: float = HORA_CORTE
     fecha: str = ""
+    sello_snapshot: np.ndarray | None = None  # hora del snapshot del proveedor
+    disponible: np.ndarray | None = None  # hora documentada de disponibilidad histórica
 
     def __post_init__(self):
         n = np.size(self.strike)
         for nombre, tipo in (("strike", float), ("es_call", bool), ("bid", float), ("ask", float),
-                             ("tam_bid", float), ("tam_ask", float), ("sello", float)):
+                             ("tam_bid", float), ("tam_ask", float), ("sello", float),
+                             ("sello_snapshot", float), ("disponible", float)):
+            if getattr(self, nombre) is None:
+                continue
             arreglo = np.array(getattr(self, nombre), dtype=tipo).reshape(-1)  # copia propia
             if arreglo.shape != (n,):
                 raise ValueError(f"{nombre} debe tener {n} elementos")
@@ -93,6 +105,13 @@ class Captura:
     @property
     def mid(self):
         return 0.5 * (self.bid + self.ask)
+
+    @property
+    def sello_referencia(self):
+        """Hora que sitúa cada fila respecto del corte: la del evento o, si falta, la del snapshot."""
+        if self.sello_snapshot is None:
+            return self.sello
+        return np.where(np.isfinite(self.sello), self.sello, self.sello_snapshot)
 
     @property
     def americana(self):
@@ -122,7 +141,14 @@ class ReglasCalidad:
     edad_maxima: float = 60.0  # s antes del corte
     desfase_spot_max: float = 2.0  # s entre el sello del subyacente y el corte
     spread_relativo_max: float = 0.5  # (ask - bid) / mid
+    spread_ticks_tolerados: float = 0.0  # un spread de pocos ticks no se excluye por ser relativo
     tamano_minimo: float = 1.0
+    tick_bajo: float = 0.01  # tick de precios menores que umbral_tick
+    tick_alto: float = 0.01
+    umbral_tick: float = 3.0
+
+    def tick(self, precio):
+        return np.where(np.asarray(precio) < self.umbral_tick, self.tick_bajo, self.tick_alto)
 
 
 @dataclass(frozen=True)
@@ -135,6 +161,11 @@ class Controles:
     @property
     def valida(self):
         return np.array([len(m) == 0 for m in self.motivos], dtype=bool)
+
+    @property
+    def solo_cota(self):
+        """Filas excluidas solo por bid nulo: no sirven para la paridad, pero su ask acota el precio."""
+        return np.array([m == ("sin_bid",) for m in self.motivos], dtype=bool)
 
     def resumen(self):
         """Número de filas afectadas por cada motivo (una fila puede tener varios)."""
@@ -162,27 +193,35 @@ def controlar(captura: Captura, reglas: ReglasCalidad = ReglasCalidad()) -> Cont
         for i in np.flatnonzero(mascara):
             motivos[i].append(codigo)
 
-    posterior = c.sello > c.corte
+    referencia = c.sello_referencia
+    sin_sello = ~np.isfinite(referencia)
+    marcar(sin_sello, "sin_sello")
+    posterior = referencia > c.corte
     marcar(posterior, "posterior_al_corte")
+    if c.disponible is not None:
+        marcar(np.isfinite(c.disponible) & (c.disponible > c.corte), "no_disponible_al_corte")
     ultima = {}
     for i in range(n):
-        if posterior[i]:
+        if posterior[i] or sin_sello[i]:
             continue
         clave = (float(c.strike[i]), bool(c.es_call[i]))
-        if clave not in ultima or c.sello[i] >= c.sello[ultima[clave]]:
+        if clave not in ultima or referencia[i] >= referencia[ultima[clave]]:
             ultima[clave] = i
     elegidas = set(ultima.values())
-    marcar([i not in elegidas and not posterior[i] for i in range(n)], "reemplazada")
-    marcar(c.sello < r.apertura, "antes_de_apertura")
-    marcar((c.sello >= r.apertura) & (c.sello < r.apertura + r.margen_apertura), "ventana_de_apertura")
-    marcar(~posterior & (c.corte - c.sello > r.edad_maxima), "desfasada")
+    marcar([i not in elegidas and not posterior[i] and not sin_sello[i] for i in range(n)], "reemplazada")
+    marcar(referencia < r.apertura, "antes_de_apertura")
+    marcar((referencia >= r.apertura) & (referencia < r.apertura + r.margen_apertura), "ventana_de_apertura")
+    # La edad solo se mide con la hora del evento; con solo la del snapshot sería inventada.
+    marcar(np.isfinite(c.sello) & ~posterior & (c.corte - c.sello > r.edad_maxima), "desfasada")
     marcar(c.bid <= 0.0, "sin_bid")
     marcar(c.bid > c.ask, "cruzada")
     marcar((c.bid > 0.0) & (c.bid == c.ask), "bloqueada")
     marcar((c.tam_bid < r.tamano_minimo) | (c.tam_ask < r.tamano_minimo), "sin_tamano")
     with np.errstate(divide="ignore", invalid="ignore"):
         relativo = (c.ask - c.bid) / c.mid
-    marcar((c.bid > 0.0) & (relativo > r.spread_relativo_max), "spread_ancho")
+    ticks = (c.ask - c.bid) / r.tick(c.mid)
+    marcar((c.bid > 0.0) & (relativo > r.spread_relativo_max) & (ticks > r.spread_ticks_tolerados + 1e-9),
+           "spread_ancho")
     cotas = np.where(c.es_call, c.bid > c.spot, c.bid > c.strike)
     if c.americana:
         inmediato = np.where(c.es_call, c.spot - c.strike, c.strike - c.spot)
@@ -190,10 +229,18 @@ def controlar(captura: Captura, reglas: ReglasCalidad = ReglasCalidad()) -> Cont
     marcar(cotas, "fuera_de_cotas")
 
     alertas = []
-    if abs(c.corte - c.sello_spot) > r.desfase_spot_max:
+    if not np.isfinite(c.sello_spot):
+        alertas.append("subyacente sin hora conocida")
+    elif abs(c.corte - c.sello_spot) > r.desfase_spot_max:
         alertas.append(f"subyacente desfasado {c.corte - c.sello_spot:.0f} s respecto del corte")
-    if c.sello_spot < r.apertura + r.margen_apertura:
+    if np.isfinite(c.sello_spot) and c.sello_spot < r.apertura + r.margen_apertura:
         alertas.append("subyacente dentro de la ventana de apertura")
+    sin_edad = int(np.sum(~np.isfinite(c.sello) & np.isfinite(referencia)))
+    if sin_edad:
+        alertas.append(f"edad de cotización desconocida en {sin_edad} de {n} filas: "
+                       "el control de desfase no se aplicó")
+    if c.disponible is not None and n and not np.any(np.isfinite(c.disponible)):
+        alertas.append("disponibilidad histórica no documentada")
     return Controles(tuple(tuple(m) for m in motivos), tuple(alertas))
 
 
@@ -310,6 +357,9 @@ class ResiduosParidad:
     descuento_global: float
     sin_pareja: tuple = ()
     alertas: tuple = ()
+    forward_error: float = float("nan")  # error jackknife: dispersión de los forwards sin cada par
+    tasa_implicita: float = float("nan")  # -ln(D) / T de la paridad
+    tasa_error: float = float("nan")
 
 
 def residuos_paridad(captura: Captura, controles: Controles | None = None, primas=None,
@@ -391,9 +441,18 @@ def residuos_paridad(captura: Captura, controles: Controles | None = None, prima
         else:
             motivos.append("")
     interpretable = np.array([m == "" for m in motivos], dtype=bool)
+    forward_error = tasa_error = np.nan
+    usados = en_estimacion & np.isfinite(F_par)
+    m = int(usados.sum())
+    if forward is None and m >= 2:
+        # Jackknife sobre los pares de la estimación: cada F_par[j] ya omite el par j.
+        forward_error = float(np.sqrt((m - 1) / m * np.sum((F_par[usados] - F_par[usados].mean()) ** 2)))
+        tasas = -np.log(D_par[usados]) / captura.T
+        tasa_error = float(np.sqrt((m - 1) / m * np.sum((tasas - tasas.mean()) ** 2)))
     return ResiduosParidad(K, residuo, banda_inferior, banda_superior, ancho, residuo / ancho, F_par,
                            D_par, e_c - e_p, fuera, interpretable, tuple(motivos), en_estimacion,
-                           F_global, D_global, tuple(sin_pareja), tuple(alertas))
+                           F_global, D_global, tuple(sin_pareja), tuple(alertas), forward_error,
+                           float(-np.log(D_global) / captura.T), tasa_error)
 
 
 # ---------------------------------------------------------------------------
@@ -474,14 +533,20 @@ def _lado(vols, es_call):
 
 
 def asimetria_simetrica(vols: VolatilidadesObservadas, distancia=0.03, hueco_max=0.02):
-    """Call OTM en ``k = +d`` frente a put OTM en ``k = -d``, con ``d = ln(1 + distancia)``.
+    """Asimetría a distancia logarítmica simétrica: call en ``F e^{d}`` y put en ``F e^{-d}``.
 
-    Los strikes son simétricos en logaritmo alrededor del forward (``F e^{±d}``),
-    no ``F (1 ± distancia)``. No es un par de paridad: mide asimetría de precios
-    de cola. Con sonrisa simétrica ``P(F e^{-d}) = e^{-d} C(F e^{d})``, así que la
-    comparación de primas brutas usa ``razon_simetrica = P / (e^{-d} C) - 1``, que
-    vale 0 sin asimetría. Solo se interpola entre strikes válidos separados a lo
-    sumo ``hueco_max`` en ``k``; si no, la medida queda «no identificada».
+    Con ``d = ln(1 + distancia)`` los strikes son ``F * 1.03`` y ``F / 1.03`` (el
+    inferior queda a -2.91 %, no a -3 %). No es un par de paridad: mide asimetría
+    de precios de cola. Convención de signo única: ``iv_call_menos_put`` positiva
+    significa mayor volatilidad implícita en el call comparable.
+
+    Referencia para primas brutas: **si la sonrisa es simétrica en k** (misma
+    varianza total en ``k`` y ``-k``), Black da ``P(F e^{-d}) = e^{-d} C(F e^{d})``.
+    No es una identidad de la paridad ni vale con sonrisa asimétrica; por eso
+    ``razon_primas = e^{-d} C / P - 1`` mide la desviación respecto de esa
+    referencia, con el mismo signo (positiva si el call es relativamente caro).
+    Solo se interpola entre strikes válidos separados a lo sumo ``hueco_max`` en
+    ``k``; si no, la medida queda «no identificada».
     """
     d = float(np.log1p(distancia))
     salida = {"estado": "no identificada", "motivo": "", "k": d}
@@ -508,21 +573,25 @@ def asimetria_simetrica(vols: VolatilidadesObservadas, distancia=0.03, hueco_max
     delta_p, vega_p = griegas(-d, sp, False)
     salida.update({
         "estado": "identificada",
+        "strike_call": F * np.exp(d), "strike_put": F * np.exp(-d),
         "iv_call": sc, "iv_call_banda": (sc_b, sc_a),
         "iv_put": sp, "iv_put_banda": (sp_b, sp_a),
-        "diferencia_iv": sp - sc, "diferencia_iv_banda": (sp_b - sc_a, sp_a - sc_b),
+        "iv_call_menos_put": sc - sp, "iv_call_menos_put_banda": (sc_b - sp_a, sc_a - sp_b),
         "prima_call": prima_c, "prima_put": prima_p,
-        "razon_simetrica": prima_p / (np.exp(-d) * prima_c) - 1.0,
+        "razon_primas": np.exp(-d) * prima_c / prima_p - 1.0,
         "delta_call": delta_c, "delta_put": delta_p, "vega_call": vega_c, "vega_put": vega_p,
     })
     return salida
 
 
-def asimetria_delta(vols: VolatilidadesObservadas, delta=0.25, hueco_max=0.05):
-    """Diferencia de IV entre el put con delta ``-delta`` y el call con delta ``+delta``.
+def asimetria_delta(vols: VolatilidadesObservadas, delta=0.25, hueco_max=0.02):
+    """``RR = IV(call, delta +0.25) - IV(put, delta -0.25)`` (risk reversal de 25 delta).
 
-    La delta es forward y usa la IV de cada opción. Positiva: los puts OTM son
-    más caros en volatilidad (la asimetría habitual de un índice).
+    Convención del piloto: delta forward sin descuento con la IV de cada opción,
+    ``N(d1)`` en calls y ``N(d1) - 1`` en puts. Un valor positivo significa mayor
+    volatilidad implícita en el call comparable; en un índice suele ser negativo.
+    No equivale a una probabilidad de subida. Solo se interpola entre strikes
+    válidos separados a lo sumo ``hueco_max`` en ``k``.
     """
     salida = {"estado": "no identificada", "motivo": "", "delta": delta}
     resultado = {}
@@ -536,8 +605,9 @@ def asimetria_delta(vols: VolatilidadesObservadas, delta=0.25, hueco_max=0.05):
         resultado[nombre] = _interpolar(x, delta, tramo, iv, iv_b, iv_a, k)
     (sc, sc_b, sc_a, kc), (sp, sp_b, sp_a, kp) = resultado["call"], resultado["put"]
     salida.update({
-        "estado": "identificada", "iv_call": sc, "iv_put": sp, "k_call": kc, "k_put": kp,
-        "diferencia_iv": sp - sc, "diferencia_iv_banda": (sp_b - sc_a, sp_a - sc_b),
+        "estado": "identificada", "k_call": kc, "k_put": kp,
+        "iv_call": sc, "iv_call_banda": (sc_b, sc_a), "iv_put": sp, "iv_put_banda": (sp_b, sp_a),
+        "iv_call_menos_put": sc - sp, "iv_call_menos_put_banda": (sc_b - sp_a, sc_a - sp_b),
     })
     return salida
 
@@ -584,7 +654,7 @@ class ResultadoObservado:
 
 
 def procesar_captura(captura: Captura, reglas: ReglasCalidad = ReglasCalidad(), distancia=0.03,
-                     delta=0.25, hueco_max=0.02, n_arbol=200) -> ResultadoObservado:
+                     delta=0.25, hueco_max=0.02, hueco_max_delta=0.02, n_arbol=200) -> ResultadoObservado:
     """Controles, paridad, volatilidades y asimetrías de una captura (serie observada)."""
     controles = controlar(captura, reglas)
     primas = primas_ejercicio(captura, np.flatnonzero(controles.valida), n_arbol)
@@ -597,7 +667,7 @@ def procesar_captura(captura: Captura, reglas: ReglasCalidad = ReglasCalidad(), 
     vols = volatilidades_observadas(captura, controles, F, D, primas, n_arbol)
     return ResultadoObservado(captura, controles, paridad, vols,
                               asimetria_simetrica(vols, distancia, hueco_max),
-                              asimetria_delta(vols, delta), pendiente_local(vols), primas,
+                              asimetria_delta(vols, delta, hueco_max_delta), pendiente_local(vols), primas,
                               tuple(alertas))
 
 
@@ -613,7 +683,7 @@ class AjusteCaptura:
     rho: float
     phi: float
     cotizaciones_fuera: int
-    diferencia_iv: float  # sigma(-d) - sigma(+d)
+    iv_call_menos_put: float  # sigma(+d) - sigma(-d), misma convención que la serie observada
     pendiente: float  # d sigma / d k en k = 0
     residuo_paridad: np.ndarray
 
@@ -635,7 +705,7 @@ def ajustar_captura(resultado: ResultadoObservado, distancia=0.03, peso_mid=0.02
     w_par = rebanada.w(np.log(K_par / reb.F))
     residuo = (precio_black(reb.F, K_par, w_par, reb.D, True)
                - precio_black(reb.F, K_par, w_par, reb.D, False) - reb.D * (reb.F - K_par))
-    return AjusteCaptura(rebanada.theta, rebanada.rho, rebanada.phi, fuera, float(s_menos - s_mas),
+    return AjusteCaptura(rebanada.theta, rebanada.rho, rebanada.phi, fuera, float(s_mas - s_menos),
                          float(w1[0] / (2.0 * np.sqrt(w0[0] * v.T))), residuo)
 
 
@@ -651,25 +721,32 @@ def fila_informe(resultado: ResultadoObservado, ajuste: AjusteCaptura | None = N
         "filas_validas": int(resultado.controles.valida.sum()),
         "exclusiones": resultado.controles.resumen(),
         "strikes_sin_pareja": len(p.sin_pareja), "alertas": resultado.alertas,
-        "obs_forward": p.forward_global, "obs_descuento": p.descuento_global,
+        "obs_forward": p.forward_global, "obs_forward_error": p.forward_error,
+        "obs_descuento": p.descuento_global, "obs_tasa_implicita": p.tasa_implicita,
+        "obs_tasa_error": p.tasa_error,
+        "obs_log_forward_spot": float(np.log(p.forward_global / c.spot)) if np.isfinite(p.forward_global) else nan,
+        "obs_forward_menos_contractual": p.forward_global - c.forward_contractual,
         "obs_paridad_pares": len(p.strike),
         "obs_paridad_mediana_multiplo": float(np.nanmedian(np.abs(p.multiplo_ancho)))
         if np.any(np.isfinite(p.multiplo_ancho)) else nan,
         "obs_paridad_fuera_de_banda": int(p.fuera_de_banda.sum()),
         "obs_paridad_interpretables": int(p.interpretable.sum()),
-        "obs_asimetria_estado": a["estado"],
-        "obs_dif_iv_k": a.get("diferencia_iv", nan),
-        "obs_dif_iv_k_inferior": a.get("diferencia_iv_banda", (nan, nan))[0],
-        "obs_dif_iv_k_superior": a.get("diferencia_iv_banda", (nan, nan))[1],
+        "obs_asim_log_estado": a["estado"],
+        "obs_asim_log": a.get("iv_call_menos_put", nan),
+        "obs_asim_log_inferior": a.get("iv_call_menos_put_banda", (nan, nan))[0],
+        "obs_asim_log_superior": a.get("iv_call_menos_put_banda", (nan, nan))[1],
         "obs_prima_call_k": a.get("prima_call", nan), "obs_prima_put_k": a.get("prima_put", nan),
-        "obs_razon_simetrica": a.get("razon_simetrica", nan),
-        "obs_dif_iv_delta": ad.get("diferencia_iv", nan),
+        "obs_razon_primas": a.get("razon_primas", nan),
+        "obs_rr25_estado": ad["estado"],
+        "obs_rr25": ad.get("iv_call_menos_put", nan),
+        "obs_rr25_inferior": ad.get("iv_call_menos_put_banda", (nan, nan))[0],
+        "obs_rr25_superior": ad.get("iv_call_menos_put_banda", (nan, nan))[1],
         "obs_pendiente": pl.get("pendiente", nan), "obs_pendiente_error": pl.get("error", nan),
     }
     if ajuste is not None:
         fila.update({
             "aj_theta": ajuste.theta, "aj_rho": ajuste.rho, "aj_phi": ajuste.phi,
-            "aj_cotizaciones_fuera": ajuste.cotizaciones_fuera, "aj_dif_iv_k": ajuste.diferencia_iv,
+            "aj_cotizaciones_fuera": ajuste.cotizaciones_fuera, "aj_asim_log": ajuste.iv_call_menos_put,
             "aj_pendiente": ajuste.pendiente,
             "aj_paridad_max_abs": float(np.max(np.abs(ajuste.residuo_paridad)))
             if len(ajuste.residuo_paridad) else nan,
@@ -677,18 +754,58 @@ def fila_informe(resultado: ResultadoObservado, ajuste: AjusteCaptura | None = N
     return fila
 
 
-def diferencia_diaria(actual: dict, anterior: dict, feriados=()) -> dict:
+def metricas_calidad(resultado: ResultadoObservado, reglas: ReglasCalidad = ReglasCalidad()) -> dict:
+    """Calidad de una captura: filas, exclusiones, pares, cobertura, anchos, edad y señales.
+
+    El ancho se da en precio, relativo al mid y en ticks: un spread relativo
+    enorme puede ser de un solo tick en una opción casi sin valor. Las filas
+    «solo cota» (bid nulo) no entran en la paridad pero acotan el precio.
+    """
+    c, ctl, v = resultado.captura, resultado.controles, resultado.volatilidades
+    valida = ctl.valida
+    ancho = c.ask - c.bid
+    with np.errstate(divide="ignore", invalid="ignore"):
+        relativo = ancho / c.mid
+    ticks = ancho / reglas.tick(c.mid)
+    edades = c.corte - c.sello[valida & np.isfinite(c.sello)]
+    nan = float("nan")
+
+    def mediana(x):
+        return float(np.median(x)) if len(x) else nan
+
+    return {
+        "filas": int(len(c.strike)), "filas_validas": int(valida.sum()),
+        "filas_solo_cota": int(ctl.solo_cota.sum()), "exclusiones": ctl.resumen(),
+        "pares_completos": int(len(resultado.paridad.strike)),
+        "strikes_validos": int(len(np.unique(c.strike[valida]))),
+        "k_min": float(v.k.min()) if len(v.k) else nan, "k_max": float(v.k.max()) if len(v.k) else nan,
+        "ancho_mediano": mediana(ancho[valida]), "ancho_relativo_mediano": mediana(relativo[valida]),
+        "ancho_ticks_mediano": mediana(ticks[valida]),
+        "edad_mediana_s": mediana(edades), "filas_validas_sin_edad": int(np.sum(valida & ~np.isfinite(c.sello))),
+        "desfase_spot_s": float(c.corte - c.sello_spot), "alertas": len(resultado.alertas),
+        "senal_asim_log": resultado.asimetria["estado"], "senal_rr25": resultado.asimetria_delta["estado"],
+        "senal_pendiente": resultado.pendiente["estado"],
+    }
+
+
+def diferencia_diaria(actual: dict, anterior: dict, feriados=None) -> dict:
     """Cambio de cada medida numérica entre dos filas, con el calendario explícito.
 
-    Registra días naturales y sesiones transcurridas (``np.busday_count`` con
-    ``feriados``) y el tipo de comparación (apertura–apertura, cierre–apertura):
-    un fin de semana no se trata como una sesión ordinaria.
+    Registra días naturales, sesiones transcurridas según el calendario bursátil
+    real (o, si se dan ``feriados``, días hábiles sin esos feriados) y el tipo de
+    comparación (apertura–apertura, cierre–apertura): un fin de semana no se
+    trata como una sesión ordinaria.
     """
     fecha, previa = np.datetime64(actual["fecha"]), np.datetime64(anterior["fecha"])
     if fecha <= previa:
         raise ValueError("la fila anterior debe ser de una fecha previa")
     dias = int((fecha - previa).astype(int))
-    sesiones = int(np.busday_count(previa, fecha, holidays=list(feriados)))
+    if feriados is None:
+        from .calendario import sesiones_entre
+
+        sesiones = sesiones_entre(str(previa), str(fecha))
+    else:
+        sesiones = int(np.busday_count(previa, fecha, holidays=list(feriados)))
     salida = {
         "fecha": actual["fecha"], "fecha_anterior": anterior["fecha"],
         "tipo": f"{anterior['tipo_captura']}–{actual['tipo_captura']}",

@@ -1,0 +1,61 @@
+# Configuración del piloto de medición (propuesta de trabajo).
+# Los umbrales de [calidad] y [dictamen] son provisionales: se revisan con el
+# piloto y se congelan, con una versión nueva, antes del periodo de evaluación.
+
+[piloto]
+version = "piloto-0.1"
+descripcion = "SPXW PM a las 09:45 de Nueva York, plazo constante de 30 días"
+
+[instrumento]
+raiz = "SPXW"            # no se mezcla con SPX de liquidación AM ni con SPY
+subyacente = "SPX"
+ejercicio = "europeo"
+liquidacion = "PM"
+calendario = "XNYS"
+
+[horario]
+principal = "09:45"
+secundaria = "10:00"     # solo para diagnosticar la estabilidad de la medición
+
+[plazo]
+objetivo_dias = 30.0     # días naturales desde el corte hasta el instante de liquidación
+minimo_dias = 7.0
+separacion_maxima_dias = 14.0
+base_dias_anio = 365.0   # ACT/365
+
+[senales]
+delta = 0.25             # RR25 = IV(call, delta +0.25) - IV(put, delta -0.25); delta forward sin descuento
+factor_strike = 1.03     # distancia logarítmica simétrica: K+ = F * 1.03, K- = F / 1.03
+hueco_max_k = 0.02       # máximo tramo de log-moneyness entre strikes para interpolar
+hueco_max_delta_k = 0.02
+
+[etiquetas]
+horizontes = [1, 5]      # sesiones del calendario, de 09:45 a 09:45
+latencia_s = 0.0         # corte -> decision_at
+retraso_publicacion_s = 0.0
+
+[referencia]
+# Solo para la discrepancia del forward implícito frente a una referencia externa.
+# Pendiente: sustituir por una curva de tasas y una estimación de dividendos con fuente.
+tasa = 0.04
+rendimiento_dividendo = 0.013
+
+[calidad]
+margen_apertura_s = 300
+edad_maxima_s = 60
+desfase_spot_max_s = 2
+spread_relativo_max = 0.5
+spread_ticks_tolerados = 2
+tamano_minimo = 1
+tick_bajo = 0.05         # ticks de SPX/SPXW por debajo de 3.00 y desde 3.00: confirmar con Cboe
+tick_alto = 0.10
+umbral_tick = 3.0
+
+[dictamen]
+min_sesiones = 20
+rr25_apto = 0.9          # fracción de sesiones con RR25 a 30 días identificada
+rr25_minimo = 0.7        # por debajo: insuficiente
+cambio_rr25_minimo = 0.8
+estabilidad_max = 1.0    # mediana |RR25 10:00 - 09:45| / mediana del ancho de banda
+alertas_max = 0.2        # fracción de sesiones con alertas de sincronía o edad
+etiquetas_min = 0.9      # fracción de sesiones con etiqueta a 1 sesión

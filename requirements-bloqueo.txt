@@ -1,0 +1,9 @@
+# Versiones exactas con las que se verificó la versión de referencia (Python 3.11.15).
+# Instalar con: pip install -r requirements-bloqueo.txt
+numpy==2.4.6
+scipy==1.17.1
+matplotlib==3.11.2
+pandas==3.0.6
+pyarrow==25.0.1
+exchange_calendars==4.13.2
+pytest==9.1.1

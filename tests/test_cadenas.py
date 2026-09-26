@@ -65,11 +65,15 @@ def test_asimetria_simetrica_y_por_delta_coinciden_con_la_sonrisa(limpia):
     a = res.asimetria
     assert a["estado"] == "identificada"
     assert abs(a["iv_call"] - s_mas) < 2e-3 and abs(a["iv_put"] - s_menos) < 2e-3
-    lo, hi = a["diferencia_iv_banda"]
-    assert lo <= a["diferencia_iv"] <= hi
-    # Con sonrisa simétrica la razón de primas valdría 0; aquí la asimetría la hace positiva.
-    assert a["razon_simetrica"] > 0.3
-    assert res.asimetria_delta["estado"] == "identificada" and res.asimetria_delta["diferencia_iv"] > 0
+    lo, hi = a["iv_call_menos_put_banda"]
+    assert lo <= a["iv_call_menos_put"] <= hi
+    assert a["iv_call_menos_put"] == pytest.approx(s_mas - s_menos, abs=3e-3)
+    assert a["strike_put"] == pytest.approx(a["strike_call"] / 1.03**2)  # F * 1.03 y F / 1.03
+    # Con sonrisa simétrica la razón de primas valdría 0; la asimetría del índice la hace negativa.
+    assert a["razon_primas"] < -0.2
+    rr = res.asimetria_delta
+    assert rr["estado"] == "identificada" and rr["iv_call_menos_put"] < 0
+    assert rr["iv_call_menos_put_banda"][0] <= rr["iv_call_menos_put"] <= rr["iv_call_menos_put_banda"][1]
     assert res.pendiente["estado"] == "identificada" and res.pendiente["pendiente"] < 0
 
 
@@ -80,25 +84,25 @@ def test_sin_asimetria_la_razon_de_primas_es_nula():
     cap, _ = sintetico.captura_sintetica(superficie=plana)
     a = ca.procesar_captura(cap).asimetria
     assert a["estado"] == "identificada"
-    assert abs(a["diferencia_iv"]) < 2e-3
-    assert abs(a["razon_simetrica"]) < 0.03
+    assert abs(a["iv_call_menos_put"]) < 2e-3
+    assert abs(a["razon_primas"]) < 0.03
 
 
 def test_medidas_estables_dentro_de_bid_ask(limpia):
     """Cualquier precio dentro de [bid, ask] da una asimetría dentro de la banda reportada."""
     cap, _, res = limpia
-    lo, hi = res.asimetria["diferencia_iv_banda"]
+    lo, hi = res.asimetria["iv_call_menos_put_banda"]
     rng = np.random.default_rng(0)
     for _ in range(25):
         u = rng.uniform(cap.bid, cap.ask)
         movida = dataclasses.replace(cap, bid=u - 5e-5, ask=u + 5e-5)
         v = ca.volatilidades_observadas(movida, res.controles, res.volatilidades.forward,
                                         res.volatilidades.descuento)
-        assert lo - 1e-12 <= ca.asimetria_simetrica(v)["diferencia_iv"] <= hi + 1e-12
+        assert lo - 1e-12 <= ca.asimetria_simetrica(v)["iv_call_menos_put"] <= hi + 1e-12
         # Con el forward reestimado a partir de los precios movidos, el cambio es mínimo.
         completa = ca.procesar_captura(dataclasses.replace(cap, bid=np.maximum(u - 5e-5, 0.0),
                                                            ask=u + 5e-5))
-        assert lo - 2e-3 <= completa.asimetria["diferencia_iv"] <= hi + 2e-3
+        assert lo - 2e-3 <= completa.asimetria["iv_call_menos_put"] <= hi + 2e-3
 
 
 # --- Cotizaciones desfasadas -----------------------------------------------------
@@ -214,7 +218,7 @@ def test_hueco_en_la_cola_deja_la_asimetria_no_identificada(limpia):
     assert res.asimetria["estado"] == "no identificada"
     assert "call" in res.asimetria["motivo"]
     fila = ca.fila_informe(res)
-    assert np.isnan(fila["obs_dif_iv_k"]) and fila["obs_asimetria_estado"] == "no identificada"
+    assert np.isnan(fila["obs_asim_log"]) and fila["obs_asim_log_estado"] == "no identificada"
     # El objetivo put de -3 % cae en K = 97.3: sin los puts de 96 y 97 el tramo 95-98 es muy ancho.
     sin_puts = ca.procesar_captura(_sin_filas(cap, _filas(cap, (96.0, 97.0), es_call=False)))
     assert sin_puts.asimetria["estado"] == "no identificada" and "put" in sin_puts.asimetria["motivo"]
@@ -243,7 +247,7 @@ def test_solo_cuenta_la_ultima_cotizacion_valida_antes_del_corte(limpia):
     assert all("posterior_al_corte" in m for m in motivos[3 * n:])
     # Ni la historia ni el futuro cambian nada de lo calculado con la captura limpia.
     assert np.allclose(res.paridad.residuo, base.paridad.residuo)
-    assert res.asimetria["diferencia_iv"] == pytest.approx(base.asimetria["diferencia_iv"])
+    assert res.asimetria["iv_call_menos_put"] == pytest.approx(base.asimetria["iv_call_menos_put"])
 
 
 def test_ultima_cotizacion_en_la_ventana_de_apertura_excluye_el_contrato(limpia):
@@ -297,10 +301,63 @@ def test_diferencias_con_calendario_explicito(limpia):
     cambio = ca.diferencia_diaria(lunes, viernes)
     assert cambio["dias_naturales"] == 3 and cambio["sesiones"] == 1 and cambio["cruza_dias_no_habiles"]
     assert cambio["tipo"] == "apertura–apertura"
-    assert cambio["cambio_obs_dif_iv_k"] == pytest.approx(lunes["obs_dif_iv_k"] - viernes["obs_dif_iv_k"])
+    assert cambio["cambio_obs_asim_log"] == pytest.approx(lunes["obs_asim_log"] - viernes["obs_asim_log"])
     martes = dict(lunes, fecha="2026-09-29")
     feriado = ca.diferencia_diaria(martes, viernes, feriados=["2026-09-28"])
     assert feriado["dias_naturales"] == 4 and feriado["sesiones"] == 1
     assert not ca.diferencia_diaria(martes, lunes)["cruza_dias_no_habiles"]
     with pytest.raises(ValueError):
         ca.diferencia_diaria(viernes, lunes)
+
+
+# --- Convenciones, estabilidad del forward y calidad ------------------------------
+
+def test_referencia_de_primas_solo_con_sonrisa_simetrica():
+    """P(F e^-d) = e^-d C(F e^d) vale con sonrisa simétrica en k, no por la paridad."""
+    d, F, D, T = np.log(1.03), 100.0, 0.99, 30 / 365
+    for rho, simetrica in ((0.0, True), (-0.7, False)):
+        sup = sintetico.SuperficieSSVI(np.array([0.05, 0.5]), 0.04 * np.array([0.05, 0.5]), rho=rho,
+                                       eta=1.2, gamma=0.45)
+        w_mas, w_menos = sup.w(np.array([d, -d]), T)
+        C = opciones.precio_black(F, F * np.exp(d), w_mas, D, True)
+        P = opciones.precio_black(F, F * np.exp(-d), w_menos, D, False)
+        desvio = float(np.exp(-d) * C / P - 1.0)
+        assert (abs(desvio) < 1e-12) == simetrica
+        cap, _ = sintetico.captura_sintetica(superficie=sup)
+        a = ca.procesar_captura(cap).asimetria
+        if simetrica:  # sonrisa curva pero simétrica: la referencia se cumple dentro del redondeo
+            assert abs(a["razon_primas"]) < 0.03 and abs(a["iv_call_menos_put"]) < 2e-3
+        else:
+            assert a["razon_primas"] < -0.2
+
+
+def test_forward_estable_tasa_implicita_y_desplazamiento_comun(limpia):
+    cap, verdad, res = limpia
+    p = res.paridad
+    assert p.forward_error < 0.01
+    assert p.tasa_implicita == pytest.approx(0.04, abs=0.01)
+    fila = ca.fila_informe(res)
+    assert abs(fila["obs_forward_menos_contractual"]) < 0.01
+    assert fila["obs_log_forward_spot"] == pytest.approx((0.04 - 0.013) * cap.T, abs=1e-4)
+    # Encarecer todos los puts por igual no deja residuos locales: lo absorbe el forward.
+    puts = ~cap.es_call
+    movida = dataclasses.replace(cap, bid=np.where(puts & (cap.bid > 0), cap.bid + 0.10, cap.bid),
+                                 ask=np.where(puts, cap.ask + 0.10, cap.ask))
+    r2 = ca.procesar_captura(movida)
+    assert np.nanmax(np.abs(r2.paridad.multiplo_ancho)) < 0.5
+    f2 = ca.fila_informe(r2)
+    assert f2["obs_forward_menos_contractual"] == pytest.approx(-0.10 / verdad["descuento"], abs=0.02)
+
+
+def test_metricas_de_calidad_y_ticks(limpia):
+    cap, _, res = limpia
+    m = ca.metricas_calidad(res)
+    assert m["filas"] == len(cap.strike) and m["filas_validas"] == int(res.controles.valida.sum())
+    assert m["filas_solo_cota"] == res.controles.resumen()["sin_bid"]
+    assert m["k_min"] < 0 < m["k_max"] and m["ancho_ticks_mediano"] >= 1
+    assert m["edad_mediana_s"] == pytest.approx(5.0) and m["filas_validas_sin_edad"] == 0
+    assert m["senal_rr25"] == m["senal_asim_log"] == "identificada"
+    # Las opciones baratas excluidas por spread relativo tienen 4 ticks: tolerar 4 las recupera, 3 no.
+    assert res.controles.resumen()["spread_ancho"] == 4
+    assert ca.controlar(cap, ca.ReglasCalidad(spread_ticks_tolerados=3)).resumen()["spread_ancho"] == 4
+    assert "spread_ancho" not in ca.controlar(cap, ca.ReglasCalidad(spread_ticks_tolerados=4)).resumen()
