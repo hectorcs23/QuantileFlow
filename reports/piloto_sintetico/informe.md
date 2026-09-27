@@ -29,8 +29,8 @@ Un criterio crítico incumplido hace el dictamen «insuficiente»; uno no críti
 - Referencia de las opciones: observado.
 - Precio objetivo: observado; instrumento: SPY, distinto de SPX: otro instrumento, con sus dividendos, gastos y diferencias de seguimiento.
 - Rendimiento del objetivo: total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte.
-- Dividendos del objetivo: 36 consultas completas, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera consulta completa posterior a su fin que cubre el periodo (provisional) y se reconcilia con una recibida 60 días después del fin.
-- Rendimiento total a 1 sesión, por estado de sus dividendos: 0 provisionales, 28 reconciliadas, 0 revisadas.
+- Dividendos del objetivo: 36 consultas completas que pueden confirmar dividendos, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera posterior a su fin que cubre el periodo (provisional). Queda aceptada bajo la política de 60 días (una regla, no una garantía de completitud) con una recibida después de ese margen, del último cambio de valor y de la última discrepancia resuelta, sin discrepancias abiertas. Con una discrepancia sin resolver (un dividendo ausente en una consulta comparable, o uno cancelado por una resolución que el proveedor vuelve a traer con otros valores) queda pendiente: solo la resuelve evidencia fechada.
+- Rendimiento total a 1 sesión, por estado de sus dividendos: 0 provisionales, 28 aceptadas, 0 pendientes; con el valor revisado después de madurar: 0, y después de aceptarse: 0.
 - Evaluación con precios de mercado: no permitida: datos sintéticos.
 
 ## Calidad de los datos

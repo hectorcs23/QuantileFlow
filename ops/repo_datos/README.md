@@ -37,8 +37,14 @@ su propia máquina y su propio proceso. Un fallo o un cuelgue en las 09:45 no to
   en disco. El manifiesto final se escribe de forma atómica: está completo o no existe.
 - **Plazo de preparación**: si los contratos y los vencimientos no están listos 6 minutos antes del
   corte, el proceso termina con código 4 y deja su registro. Así el respaldo, en cola en el mismo
-  grupo, arranca antes de la compuerta y todavía llega al corte. Un respaldo que arranca tarde tiene
-  al menos 2 minutos.
+  grupo, puede arrancar antes de la compuerta y llegar al corte. Un respaldo que arranca tarde tiene
+  al menos 2 minutos. Es un escenario favorable, no una garantía. Depende de:
+  - el retraso de los cron de GitHub, que pueden llegar muchos minutos tarde o no dispararse;
+  - la cola;
+  - la recuperación y el commit del titular;
+  - el checkout y la instalación.
+
+  Los registros de `ejecuciones/` miden si llegó.
 - **Plazo absoluto**: 60 s después del corte, el proceso termina solo, con código 3, aunque una
   solicitud siga colgada. Un cuelgue durante la ráfaga no se rescata: se conserva lo que llegó, pero
   ese instante de mercado se pierde y queda registrado.
@@ -72,9 +78,12 @@ captura interrumpida, con otra etiqueta (`-2`), y conserva la primera.
   cambia.
 - Anota el estado de cada hora de captura de esos días: un corte perdido queda registrado aunque no
   haya corrido ninguna captura.
-- Guarda la cobertura de cada consulta de eventos, aunque venga vacía o falle. Las etiquetas del
-  objetivo maduran con la primera consulta completa posterior a su fin (provisionales) y se
-  reconcilian con una recibida 60 días después: Alpaca no garantiza cuándo publica un evento.
+- Guarda la cobertura de cada consulta de eventos, aunque venga vacía o falle. Alpaca no garantiza
+  cuándo publica un evento, así que las etiquetas del objetivo pasan por tres estados:
+  - **provisionales**: maduran con la primera consulta completa posterior a su fin;
+  - **aceptadas**: bajo la política de 60 días, con una consulta recibida después de ese margen y sin
+    discrepancias abiertas. Es una regla, no una garantía;
+  - **pendientes**: mientras un dividendo que dejó de aparecer no se resuelva con evidencia fechada.
 
 ## Estructura
 
@@ -85,7 +94,25 @@ raw/alpaca/capturas/<fecha>/<fecha>T<HHMM>.diario.jsonl diario de la captura: un
 raw/alpaca/historico/<fecha>/<fecha>T<HHMM>.json        manifiesto del SIP de cada corte
 raw/alpaca/eventos/<fecha>/eventos-<instante>.json      manifiesto de cada consulta de eventos
 raw/alpaca/ejecuciones/<fecha>/<inicio>[_sufijo].json   registro de cada ejecución: disparo, plazo y estados
+resoluciones_dividendos.csv                             evidencia registrada a mano sobre dividendos (opcional)
 ```
+
+**Resoluciones de dividendos.** Si un dividendo deja de aparecer en una consulta comparable, sus
+etiquetas quedan pendientes. Solo lo resuelve que reaparezca, que se corrija o una resolución
+registrada con evidencia, por ejemplo el aviso de distribución del emisor. Se registra en
+`resoluciones_dividendos.csv` con las columnas:
+
+| Columna | Qué lleva |
+|---|---|
+| `id_evento` | El `id` del evento en Alpaca |
+| `simbolo` | El símbolo |
+| `resolucion` | `vigente` o `cancelado` |
+| `conocido_utc` | Cuándo se conoció la evidencia, con zona (`2026-11-20T15:00:00Z`); nunca antes de su publicación |
+| `fuente` | De dónde sale la evidencia |
+| `nota` | Opcional |
+
+La normalización lo lee, lo valida y registra su hash. Cada línea es un cambio de medición: se
+registra con commit, como el crudo.
 
 Los registros de `ejecuciones/` son los que miden la puntualidad real: con qué retraso arrancó cada
 disparo y cuánto margen quedó hasta cada corte. Una corrida en verde no la demuestra.
@@ -122,4 +149,7 @@ Los papeles, sin mezclarlos:
 - el **objetivo** es SPY del SIP (`--fuente-objetivo alpaca/sip`), con rendimiento total (dividendos
   en su fecha ex) y de precio por separado.
 
-La normalización lee solo el crudo y comprueba sus hashes: reprocesar da los mismos bytes.
+La normalización lee solo el crudo, comprueba sus hashes y aplica `resoluciones_dividendos.csv` si
+existe: reprocesar da los mismos bytes. Su manifiesto resume las versiones de los dividendos, los
+retiros, las discrepancias abiertas y las contradicciones con las resoluciones, para medir cuánto
+revisa Alpaca lo que ya había publicado.

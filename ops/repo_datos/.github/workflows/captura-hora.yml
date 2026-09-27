@@ -27,7 +27,7 @@ env:
   REPO_CODIGO: hectorcs23/QuantileFlow
   # Commit revisado del código de captura, fijo durante el piloto (verificado en reports/verificacion/<commit>.json).
   # Cambiarlo es cambiar la versión de medición; cada manifiesto registra el commit usado.
-  REF_CODIGO: f2a566353d8d6ac9979b5af2a241b15ac64b906e
+  REF_CODIGO: 8316540a70dd4c9024a1df90bff3c10d2ff0ac88
 
 jobs:
   capturar:

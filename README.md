@@ -23,9 +23,13 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_revalidacion_a5e2748.md`](docs/respuesta_revalidacion_a5e2748.md): la revalidación
+  de `a5e2748`: discrepancias de dividendos que solo resuelve evidencia fechada, cobertura con los
+  filtros de cada consulta, tramos de etiqueta con el estado de cada instante (provisional, aceptada
+  bajo la política de 60 días, pendiente) y el respaldo como escenario favorable.
 - [`docs/respuesta_revision_8c97b2b.md`](docs/respuesta_revision_8c97b2b.md): la revisión de `8c97b2b`:
-  cobertura de dividendos aparte, eventos y etiquetas versionados (provisional, reconciliada,
-  revisada), plazo de preparación del respaldo y correcciones a la entrega anterior.
+  cobertura de dividendos aparte, eventos y etiquetas versionados, plazo de preparación del respaldo y
+  correcciones a la entrega anterior.
 - [`docs/respuesta_revalidacion_d815bdd.md`](docs/respuesta_revalidacion_d815bdd.md): la entrega que
   pidió la revalidación de `d815bdd`: señal, referencia y objetivo separados; SPY del SIP histórico
   con dividendos; recuperación de capturas interrumpidas y workflows por hora.

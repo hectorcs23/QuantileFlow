@@ -14,6 +14,17 @@
 **Registro de verificación:** [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json).
 Árbol limpio, 191 pruebas pasadas (186 en `8c97b2b`).
 
+> **Nota posterior (revalidación de `a5e2748`):** la política de esta entrega tenía tres fallos, ya
+> corregidos:
+> - el filtro «reconciliada» admitía una ausencia sin resolver como dividendo cero;
+> - contaba como cobertura consultas que no pedían dividendos;
+> - el replay de un instante exponía un estado futuro.
+>
+> Los estados son ahora provisional, aceptada (bajo la política de 60 días, una regla y no una
+> garantía) y pendiente, y una ausencia abre una discrepancia en vez de retirar. Donde este documento
+> dice «reconciliada», léase la política anterior. Ver
+> [respuesta a la revalidación de `a5e2748`](respuesta_revalidacion_a5e2748.md).
+
 > Coincido con el dictamen. Los tres hallazgos se reprodujeron con las cifras de la revisión, se
 > convirtieron en pruebas y se corrigieron. La premisa sobre Alpaca era falsa y se retira: la propia
 > documentación que había descargado lo advierte. El respaldo de la misma hora ahora llega al corte

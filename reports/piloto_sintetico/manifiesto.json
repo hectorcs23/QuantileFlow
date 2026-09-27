@@ -1,10 +1,10 @@
 {
   "alcance": {
-    "dividendos_objetivo": "36 consultas completas, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera consulta completa posterior a su fin que cubre el periodo (provisional) y se reconcilia con una recibida 60 días después del fin",
+    "dividendos_objetivo": "36 consultas completas que pueden confirmar dividendos, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera posterior a su fin que cubre el periodo (provisional). Queda aceptada bajo la política de 60 días (una regla, no una garantía de completitud) con una recibida después de ese margen, del último cambio de valor y de la última discrepancia resuelta, sin discrepancias abiertas. Con una discrepancia sin resolver (un dividendo ausente en una consulta comparable, o uno cancelado por una resolución que el proveedor vuelve a traer con otros valores) queda pendiente: solo la resuelve evidencia fechada",
     "estados_rendimiento_objetivo": {
-      "provisional": 0,
-      "reconciliada": 28,
-      "revisada": 0
+      "aceptada": 28,
+      "pendiente": 0,
+      "provisional": 0
     },
     "evaluacion_con_precios_de_mercado": "no permitida: datos sintéticos",
     "fuente_objetivo": "sintetico/sip_sintetico",
@@ -17,13 +17,15 @@
     "precio_objetivo": "observado",
     "referencia_opciones": "observado",
     "rendimiento_objetivo": "total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte",
+    "revisadas_objetivo": 0,
+    "revisadas_tras_aceptar_objetivo": 0,
     "simbolo_objetivo": "SPY",
     "tipo_precio_objetivo": "observado",
     "tipo_precio_referencia": "observado"
   },
   "config": {
     "huella": "8d6dc48abb9fb1ccd512a89f4ef77f297dbdf5d2781006c27afd4b2d5ed6efc2",
-    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/configs/piloto.toml",
+    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_8316540/configs/piloto.toml",
     "version": "piloto-0.3"
   },
   "cortes": [
@@ -42,9 +44,9 @@
       "sha256": "52a82b6c93a32ec9332d77409226ee2fcd301716ec87e29672d79912f3d0b423"
     },
     {
-      "bytes": 236,
+      "bytes": 274,
       "nombre": "dividendos_sinteticos.csv",
-      "sha256": "1a84a7216e733db9e70f55e9229b1f3a6bd71af7fee7a68e623cfe0a7f09470a"
+      "sha256": "11b46e70e4fb6b703350e9fcec2ec76bf68d716b3b81f7706552ba8ea4df25c4"
     },
     {
       "bytes": 5678,
@@ -56,7 +58,7 @@
   "entorno": {
     "git": {
       "cambios_sin_registrar": false,
-      "commit": "f2a566353d8d6ac9979b5af2a241b15ac64b906e"
+      "commit": "8316540a70dd4c9024a1df90bff3c10d2ff0ac88"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -72,19 +74,19 @@
   },
   "entradas": {
     "cobertura_dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/cobertura_dividendos.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_8316540/data/normalized/sintetico/cobertura_dividendos.parquet",
       "sha256": "d85348525881c2783392ec672beff899c42f178414ff669bdd78a0a7f1dead8c"
     },
     "cotizaciones": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/cotizaciones.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_8316540/data/normalized/sintetico/cotizaciones.parquet",
       "sha256": "b7527536bf16f0520ea91a807354fce9029cf338b2a28093177313036cc5f411"
     },
     "dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/dividendos.parquet",
-      "sha256": "4803356269f7fceb42295a84a1baf7316d374b8a716cb56e4630ebf55e37dc33"
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_8316540/data/normalized/sintetico/dividendos.parquet",
+      "sha256": "0617fcac1c8550aeedca6f85b9e0005da9f559f84006f384efa8edda1e5cd6a7"
     },
     "subyacente": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/subyacente.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_8316540/data/normalized/sintetico/subyacente.parquet",
       "sha256": "303ffdf08fc97ded46f649332334262c1b7a06b264fca314dcb3ffda01a615af"
     }
   },
@@ -93,7 +95,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-27T12:23:29+00:00",
+  "fecha_corrida_utc": "2026-09-27T17:25:27+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
@@ -108,10 +110,10 @@
     "cambio_rr25_vs_movimiento.png": "31a2c63dddc00fb6c068ca3c67720a6797ed5014405ea801dd54974cb6512374",
     "disponibilidad_exclusiones.png": "7600837d32577a5e40c4069bf89c1a5f7dacab52a7a5f9c1fbfaa6e75da0379d",
     "estabilidad_0945_1000.png": "f89f7cf82caa32b48df0b8e082b3dc8262375e4f5c5e718e42b2fc12832ee2ea",
-    "etiquetas.csv": "1260e8bc29a6d06c4007518c06f0425e6d526deb8283ba646a61b1512a74e8b3",
-    "informe.md": "30e00694abeb6a62948823636ef73add3e2fcd6d88d0da5f750434c5c40dc02e",
+    "etiquetas.csv": "4f2425c62cf34d535d5a812017c6f61d11b854617a25575cea75a397617953aa",
+    "informe.md": "0ea414d366d0036f412883973e9ad6c6b1f8973d99eecf79b9dd3c9e34945dff",
     "rr25_30d.png": "cba399b90bd6cf6818d97a68872e3608298d0d3c0eec16394d3c678ea1012533",
-    "tabla_diaria.csv": "bd3ab9c2640ad3a6c2c25352fac6e13a77756ddc0315ff364d708e56930b9aef",
+    "tabla_diaria.csv": "97b5cc45c73a6a28a3cca78467e88b53b578faf8d4a69d123955f0194403d54d",
     "tabla_todas_las_horas.csv": "af33a8a6b3a6b2cbdeb9aa57b634988fb7d095f97b2c6262fe766796c606967a"
   },
   "sesiones": {

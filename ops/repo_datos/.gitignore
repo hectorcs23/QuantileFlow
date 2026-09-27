@@ -1,5 +1,5 @@
-# Solo el crudo va a Git. Las tablas normalizadas se reconstruyen desde él
-# (scripts/normalizar_alpaca.py en hectorcs23/QuantileFlow).
+# Solo el crudo y las resoluciones de dividendos (resoluciones_dividendos.csv, a mano) van a Git. Las
+# tablas normalizadas se reconstruyen desde ellos (scripts/normalizar_alpaca.py en hectorcs23/QuantileFlow).
 normalized/
 __pycache__/
 # Temporales de una escritura atómica que un corte brusco dejó a medias: nunca son datos.

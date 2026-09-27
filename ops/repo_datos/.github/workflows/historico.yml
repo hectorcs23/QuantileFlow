@@ -20,7 +20,7 @@ concurrency:
 
 env:
   REPO_CODIGO: hectorcs23/QuantileFlow
-  REF_CODIGO: f2a566353d8d6ac9979b5af2a241b15ac64b906e  # el mismo commit revisado que la captura
+  REF_CODIGO: 8316540a70dd4c9024a1df90bff3c10d2ff0ac88  # el mismo commit revisado que la captura
 
 jobs:
   descargar:
