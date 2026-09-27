@@ -32,12 +32,13 @@ def leer_entrada(ruta, esquema) -> pd.DataFrame:
 
 
 def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso="", crudos=(),
-           fuentes_opciones=None, fuente_referencia=None, fuente_objetivo=None, dividendos=None):
+           fuentes_opciones=None, fuente_referencia=None, fuente_objetivo=None, dividendos=None, cobertura=None):
     """Ejecuta el piloto entre dos fechas y escribe informe y manifiesto en ``salida``.
 
     ``fuentes_opciones``, ``fuente_referencia`` y ``fuente_objetivo``
     (``proveedor/feed``) se exigen cuando los datos traen más de una fuente para
-    la serie. ``dividendos`` es una tabla ``contrato.DIVIDENDOS`` (opcional).
+    la serie. ``dividendos`` (versiones, ``contrato.DIVIDENDOS``) y ``cobertura``
+    (consultas, ``contrato.COBERTURA_DIVIDENDOS``) son opcionales.
     """
     # Estado del código al empezar, antes de escribir salidas que Git vería como archivos nuevos.
     entorno = almacen.huella_entorno(Path(__file__).resolve().parents[1])
@@ -45,8 +46,9 @@ def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso
     cot = leer_entrada(cotizaciones, contrato.COTIZACIONES)
     sub = leer_entrada(subyacente, contrato.SUBYACENTE)
     divs = leer_entrada(dividendos, contrato.DIVIDENDOS) if dividendos is not None else None
+    cob = leer_entrada(cobertura, contrato.COBERTURA_DIVIDENDOS) if cobertura is not None else None
     fechas = sesiones(desde, hasta, cfg.calendario)
-    resultado = ejecutar(cot, sub, fechas, cfg, fuentes_opciones, fuente_referencia, fuente_objetivo, divs)
+    resultado = ejecutar(cot, sub, fechas, cfg, fuentes_opciones, fuente_referencia, fuente_objetivo, divs, cob)
     salida = Path(salida)
     rutas = escribir_informe(resultado, salida, titulo, aviso)
     exclusiones = Counter()
@@ -57,7 +59,8 @@ def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso
         "config": {"ruta": str(config), "version": cfg.version, "huella": cfg.huella},
         "entradas": {nombre: {"ruta": str(ruta), "sha256": almacen.sha256_archivo(ruta)}
                      for nombre, ruta in (("cotizaciones", cotizaciones), ("subyacente", subyacente),
-                                          ("dividendos", dividendos)) if ruta is not None},
+                                          ("dividendos", dividendos), ("cobertura_dividendos", cobertura))
+                     if ruta is not None},
         "crudos": list(crudos),
         "proveedores": sorted(cot["proveedor"].unique()), "feeds": sorted(cot["feed"].unique()),
         "recibido_utc": [str(cot["recibido_utc"].min()), str(cot["recibido_utc"].max())],

@@ -82,7 +82,7 @@ ESTILO = {"european": "europeo", "american": "americano"}
 TIPO = {"call": "C", "put": "P"}
 EXTRAS_COTIZACIONES = ["bolsa_bid", "bolsa_ask", "condicion", "captura"]
 EXTRAS_SUBYACENTE = ["fuente_precio", "captura"]
-EXTRAS_DIVIDENDOS = ["id_evento", "fecha_registro", "fecha_proceso", "subtipo"]
+EXTRAS_DIVIDENDOS = ["id_evento", "version", "fecha_registro", "fecha_proceso", "subtipo"]
 FEED_EVENTOS = "corporate_actions"
 SUFIJO_DIARIO = ".diario.jsonl"
 CODIGO_PLAZO_VENCIDO = 3
@@ -453,9 +453,11 @@ class Registro:
 
     def iniciar(self, solicitud):
         with self._candado:
-            self.entradas[solicitud.nombre] = {"tipo": solicitud.tipo, "estado": "en curso", "paginas": [],
-                                               "error": None}
-            self._anotar({"evento": "solicitud", "nombre": solicitud.nombre, "tipo": solicitud.tipo})
+            self.entradas[solicitud.nombre] = {"tipo": solicitud.tipo, "ruta": solicitud.ruta,
+                                               "params": dict(solicitud.params), "estado": "en curso",
+                                               "paginas": [], "error": None}
+            self._anotar({"evento": "solicitud", "nombre": solicitud.nombre, "tipo": solicitud.tipo,
+                          "ruta": solicitud.ruta, "params": dict(solicitud.params)})
 
     def pagina(self, solicitud, respuesta, numero):
         entrada = guardar_pagina(respuesta, solicitud.nombre, numero, self.raiz_datos)
@@ -618,7 +620,8 @@ def recuperar(raiz_datos, ahora_utc=None, fecha=None) -> list[dict]:
         entradas, motivo = {}, None
         for ev in eventos[1:]:
             if ev["evento"] == "solicitud":
-                entradas[ev["nombre"]] = {"tipo": ev["tipo"], "estado": "en curso", "paginas": [], "error": None}
+                entradas[ev["nombre"]] = {"tipo": ev["tipo"], "ruta": ev.get("ruta"), "params": ev.get("params", {}),
+                                          "estado": "en curso", "paginas": [], "error": None}
             elif ev["evento"] == "pagina":
                 entradas[ev["nombre"]]["paginas"].append(ev["entrada"])
             elif ev["evento"] == "fin":
@@ -1052,56 +1055,119 @@ def normalizar_historico(raiz_datos, desde=None, hasta=None):
 
 
 def _valores_dividendo(x):
-    return (x["symbol"], x["ex_date"], float(x["rate"]), bool(x.get("special")), x.get("payable_date"))
+    return (x["symbol"], x["ex_date"], float(x["rate"]), bool(x.get("special")), x.get("payable_date"),
+            x.get("process_date"))
+
+
+def _consultas_eventos(raiz_datos):
+    """Cada consulta de eventos guardada: parámetros, estado, recepción y eventos devueltos."""
+    consultas = []
+    for m in leer_manifiestos(raiz_datos, None, None, "eventos"):
+        for nombre in sorted(m["solicitudes"]):
+            e = m["solicitudes"][nombre]
+            params = e["paginas"][0]["params"] if e["paginas"] else dict(e.get("params") or {})
+            if not params.get("symbols"):
+                raise ValueError(f"{m['_ruta']}: consulta de eventos sin parámetros registrados")
+            eventos = [(tipo, x) for p in e["paginas"]
+                       for tipo, lista in sorted((leer_crudo(raiz_datos, p).get("corporate_actions") or {}).items())
+                       for x in lista or []]
+            recibido = (max(p["recibido_utc"] for p in e["paginas"]) if e["paginas"]
+                        else m.get("fin_utc") or m["inicio_utc"])
+            consultas.append({"consulta": m["etiqueta"], "estado": e.get("estado", "completa"),
+                              "recibido": pd.Timestamp(recibido), "simbolos": params["symbols"].split(","),
+                              "desde": _fecha(params["start"]), "hasta": _fecha(params["end"]),
+                              "calidad": params.get("data_quality", "complete"), "tipos": params.get("types", "todos"),
+                              "eventos": eventos, "manifiesto": m})
+    return sorted(consultas, key=lambda q: (q["recibido"], q["consulta"]))
+
+
+def _comparable(consulta, version) -> bool:
+    """Si la ausencia de ``version`` en ``consulta`` dice algo: completa, mismos filtros y su proceso dentro."""
+    x = version["datos"]
+    fecha = _fecha(x.get("process_date") or x.get("payable_date") or x["ex_date"])
+    tipos = consulta["tipos"]
+    return (consulta["estado"] == "completa" and consulta["calidad"] == version["calidad"]
+            and (tipos == "todos" or "cash_dividend" in tipos.split(",")) and x["symbol"] in consulta["simbolos"]
+            and consulta["desde"] <= fecha <= consulta["hasta"])
 
 
 def normalizar_eventos(raiz_datos):
-    """Dividendos en efectivo (``contrato.DIVIDENDOS``) de las consultas completas de eventos, y los demás eventos.
+    """Versiones de dividendos, cobertura de cada consulta y demás eventos corporativos.
 
-    Por dividendo (id de Alpaca) vale la versión más reciente; ``recibido_utc``
-    es la primera consulta que la trajo. ``consultado_utc`` es la consulta
-    completa más reciente del símbolo: como un dividendo aparece desde que se
-    anuncia, la lista está completa hasta ella. ``disponible_utc`` queda nulo:
-    Alpaca no da la hora del anuncio. Los demás tipos (splits, fusiones,
-    cambios de nombre, etc.) se devuelven aparte: el piloto no los trata.
-    Devuelve ``(dividendos, otros_eventos, manifiestos_usados)``.
+    **Cobertura** (``contrato.COBERTURA_DIVIDENDOS``): una fila por consulta y
+    símbolo pedido, con su intervalo (por ``process_date``), filtros, estado y
+    recepción, aunque haya venido vacía o haya fallado.
+
+    **Versiones** (``contrato.DIVIDENDOS``): se recorren las consultas completas
+    en orden de recepción. Un id nuevo, o con otros valores, abre una versión
+    conocida desde esa consulta, y la anterior queda retirada («corregido»). Un
+    id vigente que falta en una consulta **comparable** (completa, con el mismo
+    filtro de calidad, tipos que incluyen dividendos y un intervalo que contiene
+    su fecha de proceso) queda retirado («ausente»). La ausencia no se da por
+    cancelación segura, pero deja de sumarse, y la etiqueta que lo incluía queda
+    revisada. Si reaparece, abre otra versión. Nada se borra.
+    ``disponible_utc`` queda nulo: Alpaca no da la hora del anuncio.
+
+    Los demás tipos (splits, fusiones, cambios de nombre, etc.) se devuelven
+    aparte: el piloto no los trata. Devuelve
+    ``(dividendos, cobertura, otros_eventos, manifiestos)``.
     """
-    manifiestos = [m for m in leer_manifiestos(raiz_datos, None, None, "eventos") if m["estado"] == "completa"]
-    dividendos, otros, consultado = {}, {}, {}
-    listados = []
-    for m in manifiestos:
-        for nombre in sorted(m["solicitudes"]):
-            for p in m["solicitudes"][nombre]["paginas"]:
-                recibido = pd.Timestamp(p["recibido_utc"])
-                for simbolo in p["params"].get("symbols", "").split(","):
-                    consultado[simbolo] = max(consultado.get(simbolo, recibido), recibido)
-                for tipo, lista in sorted((leer_crudo(raiz_datos, p).get("corporate_actions") or {}).items()):
-                    listados += [(recibido, tipo, x) for x in lista or []]
-    for recibido, tipo, x in sorted(listados, key=lambda t: (t[0], t[1], t[2].get("id", ""))):
-        if tipo != "cash_dividends":
-            fecha = x.get("ex_date") or x.get("effective_date") or x.get("process_date")
-            otros[x.get("id")] = {"tipo": tipo, "simbolo": x.get("symbol") or x.get("old_symbol") or
-                                  x.get("target_symbol"), "fecha": fecha, "id": x.get("id")}
+    consultas = _consultas_eventos(raiz_datos)
+    cobertura, versiones, vigentes, otros = [], [], {}, {}
+    for q in consultas:
+        for simbolo in q["simbolos"]:
+            cobertura.append({
+                "simbolo": simbolo, "desde": q["desde"], "hasta": q["hasta"], "campo_fecha": "process_date",
+                "recibido_utc": iso(q["recibido"]), "estado": q["estado"],
+                "eventos": float(sum(t == "cash_dividends" and x.get("symbol") == simbolo for t, x in q["eventos"])),
+                "calidad": q["calidad"], "tipos": q["tipos"], "consulta": q["consulta"], "proveedor": PROVEEDOR,
+                "feed": FEED_EVENTOS})
+        if q["estado"] != "completa":
             continue
-        previo = dividendos.get(x["id"])
-        if previo is None or _valores_dividendo(previo["datos"]) != _valores_dividendo(x):
-            dividendos[x["id"]] = {"datos": x, "recibido": recibido}
-    filas = []
-    for id_evento in sorted(dividendos, key=lambda k: (dividendos[k]["datos"]["symbol"],
-                                                       dividendos[k]["datos"]["ex_date"], k)):
-        x, recibido = dividendos[id_evento]["datos"], dividendos[id_evento]["recibido"]
+        presentes = {}
+        for tipo, x in q["eventos"]:
+            if tipo == "cash_dividends":
+                presentes[x["id"]] = x
+            else:
+                otros[x.get("id")] = {"tipo": tipo, "simbolo": x.get("symbol") or x.get("old_symbol")
+                                      or x.get("target_symbol"),
+                                      "fecha": x.get("ex_date") or x.get("effective_date") or x.get("process_date"),
+                                      "id": x.get("id")}
+        for id_evento in sorted(presentes):
+            x, i = presentes[id_evento], vigentes.get(id_evento)
+            if i is not None and _valores_dividendo(versiones[i]["datos"]) == _valores_dividendo(x):
+                continue
+            if i is not None:
+                versiones[i].update(retirado=q["recibido"], motivo="corregido")
+            vigentes[id_evento] = len(versiones)
+            versiones.append({"id": id_evento, "datos": x, "recibido": q["recibido"], "retirado": None, "motivo": "",
+                              "calidad": q["calidad"]})
+        for id_evento, i in sorted(vigentes.items()):
+            if id_evento not in presentes and _comparable(q, versiones[i]):
+                versiones[i].update(retirado=q["recibido"], motivo="ausente")
+                del vigentes[id_evento]
+    numero, filas = {}, []
+    for v in versiones:
+        x = v["datos"]
+        numero[v["id"]] = numero.get(v["id"], 0) + 1
         filas.append({"simbolo": x["symbol"], "fecha_ex": _fecha(x["ex_date"]), "monto": float(x["rate"]),
                       "fecha_pago": _fecha(x["payable_date"]) if x.get("payable_date") else None,
                       "clase": "especial" if x.get("special") else "ordinario", "disponible_utc": None,
-                      "recibido_utc": iso(recibido), "consultado_utc": iso(consultado[x["symbol"]]),
-                      "proveedor": PROVEEDOR, "feed": FEED_EVENTOS, "id_evento": id_evento,
-                      "fecha_registro": x.get("record_date"), "fecha_proceso": x.get("process_date"),
-                      "subtipo": x.get("sub_type")})
+                      "recibido_utc": iso(v["recibido"]),
+                      "retirado_utc": iso(v["retirado"]) if v["retirado"] is not None else None,
+                      "motivo_retiro": v["motivo"], "proveedor": PROVEEDOR, "feed": FEED_EVENTOS,
+                      "id_evento": v["id"], "version": numero[v["id"]], "fecha_registro": x.get("record_date"),
+                      "fecha_proceso": x.get("process_date"), "subtipo": x.get("sub_type")})
+    filas.sort(key=lambda f: (f["simbolo"], f["fecha_ex"], f["id_evento"], f["version"]))
     tabla = _tabla(filas, contrato.DIVIDENDOS, EXTRAS_DIVIDENDOS)
-    problemas = contrato.validar(tabla, contrato.DIVIDENDOS) if len(tabla) else []
-    if problemas:
-        raise ValueError("dividendos de Alpaca: " + "; ".join(problemas))
-    return tabla, sorted(otros.values(), key=lambda e: (str(e["fecha"]), str(e["id"]))), manifiestos
+    cob = _tabla(cobertura, contrato.COBERTURA_DIVIDENDOS, [])
+    for t, esquema, nombre in ((tabla, contrato.DIVIDENDOS, "dividendos"),
+                               (cob, contrato.COBERTURA_DIVIDENDOS, "cobertura")):
+        problemas = contrato.validar(t, esquema) if len(t) else []
+        if problemas:
+            raise ValueError(f"{nombre} de Alpaca: " + "; ".join(problemas))
+    return (tabla, cob, sorted(otros.values(), key=lambda e: (str(e["fecha"]), str(e["id"]))),
+            [q["manifiesto"] for q in consultas])
 
 
 @dataclass(frozen=True, eq=False)
@@ -1110,7 +1176,8 @@ class TablasAlpaca:
 
     cotizaciones: pd.DataFrame
     subyacente: pd.DataFrame  # IEX, nivel implícito y SIP histórico
-    dividendos: pd.DataFrame
+    dividendos: pd.DataFrame  # versiones
+    cobertura_dividendos: pd.DataFrame  # una fila por consulta y símbolo
     resumenes: list  # capturas en vivo
     resumenes_historico: list
     fallos_implicito: list
@@ -1147,14 +1214,14 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
     elif partes:
         sub = partes[0]
     sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
-    dividendos, otros, manifiestos_ev = normalizar_eventos(raiz_datos)
+    dividendos, cobertura, otros, manifiestos_ev = normalizar_eventos(raiz_datos)
     en_rango = [e for e in otros if e["fecha"] and (desde is None or _fecha(e["fecha"]) >= _fecha(desde))
                 and (hasta is None or _fecha(e["fecha"]) <= _fecha(hasta))]
     if en_rango:
         raise ValueError("eventos corporativos no tratados en el rango: "
                          + "; ".join(f"{e['tipo']} de {e['simbolo']} el {e['fecha']}" for e in en_rango))
-    return TablasAlpaca(cot, sub, dividendos, resumenes, resumenes_hist, fallos, manifiestos, manifiestos_hist,
-                        manifiestos_ev, otros)
+    return TablasAlpaca(cot, sub, dividendos, cobertura, resumenes, resumenes_hist, fallos, manifiestos,
+                        manifiestos_hist, manifiestos_ev, otros)
 
 
 def esperar_hasta(objetivo_utc, reloj=None, dormir=time.sleep, paso_max=30.0):

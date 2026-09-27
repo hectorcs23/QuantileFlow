@@ -42,14 +42,16 @@ def main() -> int:
     cot, sub, verdad = mercado_sintetico(sesiones(DESDE, HASTA), semilla=7, escenarios=ESCENARIOS)
     crudos = []
     for nombre, tabla in (("cotizaciones_sinteticas.csv", cot), ("subyacente_sintetico.csv", sub),
-                          ("dividendos_sinteticos.csv", verdad["dividendos"])):
+                          ("dividendos_sinteticos.csv", verdad["dividendos"]),
+                          ("cobertura_dividendos_sintetica.csv", verdad["cobertura"])):
         tabla.to_csv(trabajo / nombre, index=False, lineterminator="\n")
         crudos.append(almacen.guardar_crudo(trabajo / nombre, datos / "raw"))
     normal = datos / "normalized" / "sintetico"
     rutas = {}
     for info, esquema, nombre in ((crudos[0], contrato.COTIZACIONES, "cotizaciones.parquet"),
                                   (crudos[1], contrato.SUBYACENTE, "subyacente.parquet"),
-                                  (crudos[2], contrato.DIVIDENDOS, "dividendos.parquet")):
+                                  (crudos[2], contrato.DIVIDENDOS, "dividendos.parquet"),
+                                  (crudos[3], contrato.COBERTURA_DIVIDENDOS, "cobertura_dividendos.parquet")):
         rutas[nombre] = normal / nombre
         almacen.escribir_tabla(contrato.leer_csv_normalizado(info["ruta"], esquema), rutas[nombre])
     salida = RAIZ / "reports" / "piloto_sintetico"
@@ -57,7 +59,7 @@ def main() -> int:
                            rutas["subyacente.parquet"], DESDE, HASTA, salida,
                            "Informe piloto: plantilla con datos sintéticos", aviso="datos sintéticos",
                            crudos=[{k: v for k, v in c.items() if k != "ruta"} for c in crudos],
-                           dividendos=rutas["dividendos.parquet"])
+                           dividendos=rutas["dividendos.parquet"], cobertura=rutas["cobertura_dividendos.parquet"])
     print(f"{salida.relative_to(RAIZ)}: {manifiesto['sesiones']['n']} sesiones; dictamen: {manifiesto['dictamen']}")
     return 0
 

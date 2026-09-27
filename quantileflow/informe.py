@@ -30,6 +30,9 @@ COLUMNAS_TABLA = [
 ]
 
 
+PLURALES = {"provisional": "provisionales", "reconciliada": "reconciliadas", "revisada": "revisadas"}
+
+
 def _exclusiones(texto) -> dict:
     if not isinstance(texto, str) or not texto:
         return {}
@@ -183,7 +186,7 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
     salida = Path(salida)
     salida.mkdir(parents=True, exist_ok=True)
     p, cfg = r.principal, r.config
-    columnas = COLUMNAS_TABLA + [c for c in p.columns if c.startswith(("ret_", "estado_ret_", "div_"))]
+    columnas = COLUMNAS_TABLA + [c for c in p.columns if c.startswith(("ret_", "estado_ret_", "div_", "estado_div_"))]
     rutas = {
         "tabla_diaria": escribir_csv(p[columnas], salida / "tabla_diaria.csv"),
         "tabla_completa": escribir_csv(r.completa, salida / "tabla_todas_las_horas.csv"),
@@ -226,7 +229,11 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         f"- Medición: {al['medicion']}.",
         f"- Referencia de las opciones: {al['referencia_opciones']}.",
         f"- Precio objetivo: {al['precio_objetivo']}; instrumento: {al['instrumento_objetivo']}.",
-        f"- Rendimiento del objetivo: {al['rendimiento_objetivo']}; dividendos: {al['dividendos_objetivo']}.",
+        f"- Rendimiento del objetivo: {al['rendimiento_objetivo']}.",
+        f"- Dividendos del objetivo: {al['dividendos_objetivo']}.",
+        *([f"- Rendimiento total a {cfg.horizontes[0]} sesión, por estado de sus dividendos: "
+           + ", ".join(f"{n} {PLURALES[k] if n != 1 else k}" for k, n in al["estados_rendimiento_objetivo"].items())
+           + "."] if "estados_rendimiento_objetivo" in al else []),
         f"- Evaluación con precios de mercado: {al['evaluacion_con_precios_de_mercado']}.", "",
         "## Calidad de los datos", "",
         f"- Sesiones procesadas: {int((p['estado_sesion'] == 'procesada').sum())} de {len(p)}.",

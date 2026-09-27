@@ -6,6 +6,7 @@ Uso, desde la raíz del repositorio::
     python scripts/piloto.py --cotizaciones data/normalized/alpaca/cotizaciones.parquet \
         --subyacente data/normalized/alpaca/subyacente.parquet \
         --dividendos data/normalized/alpaca/dividendos.parquet \
+        --cobertura-dividendos data/normalized/alpaca/cobertura_dividendos.parquet \
         --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 
 El rango de la normalización debe cubrir también las sesiones finales de las
@@ -13,7 +14,8 @@ etiquetas (cinco sesiones después de la última del piloto).
 
 Lee solo el crudo y sus manifiestos (comprobando hashes): capturas en vivo,
 histórico SIP del objetivo y eventos corporativos. Añade el nivel implícito de
-SPX y escribe cotizaciones, subyacente y dividendos, con un manifiesto de los
+SPX y escribe cotizaciones, subyacente, versiones de dividendos y cobertura de
+cada consulta de eventos, con un manifiesto de los
 manifiestos usados, la configuración, los fallos del nivel implícito, el
 entorno y los hashes de salida. Reprocesar el mismo crudo da los mismos bytes.
 Un evento corporativo distinto de un dividendo en efectivo dentro del rango
@@ -52,7 +54,8 @@ def main() -> int:
     if not t.manifiestos:
         print(f"no hay capturas entre {args.desde} y {args.hasta} en {datos}", file=sys.stderr)
         return 1
-    tablas = {"cotizaciones": t.cotizaciones, "subyacente": t.subyacente, "dividendos": t.dividendos}
+    tablas = {"cotizaciones": t.cotizaciones, "subyacente": t.subyacente, "dividendos": t.dividendos,
+              "cobertura_dividendos": t.cobertura_dividendos}
     salidas = {nombre: almacen.escribir_tabla(tabla, salida / f"{nombre}.parquet") for nombre, tabla in tablas.items()}
 
     def usados(manifiestos, *campos):
@@ -72,7 +75,8 @@ def main() -> int:
     }, salida / "manifiesto_normalizacion.json")
     print(f"{len(t.manifiestos)} capturas, {len(t.manifiestos_historico)} cortes del histórico SIP y "
           f"{len(t.manifiestos_eventos)} consultas de eventos -> {len(t.cotizaciones)} cotizaciones, "
-          f"{len(t.subyacente)} filas de subyacente y {len(t.dividendos)} dividendos en {salida}")
+          f"{len(t.subyacente)} filas de subyacente, {len(t.dividendos)} versiones de dividendos y "
+          f"{len(t.cobertura_dividendos)} consultas de eventos en {salida}")
     for f in t.fallos_implicito:
         print(f"  nivel implícito no identificado en {f['captura']}: {f['motivo']}")
     cortes = {(r["fecha"], r["hora"]) for r in t.resumenes_historico}

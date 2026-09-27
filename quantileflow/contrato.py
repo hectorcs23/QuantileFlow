@@ -31,10 +31,18 @@ Dos reglas para elegir un precio, según su uso:
   15 minutos de retraso). Su publicación fija la madurez de la etiqueta; nunca
   entra como dato conocido en el corte.
 
-``DIVIDENDOS``: dividendos en efectivo por fecha ex, para el rendimiento total.
-Como un dividendo se anuncia antes de su fecha ex, una consulta completa hecha
-en ``consultado_utc`` incluye todos los que tienen la fecha ex hasta ese
-instante: una etiqueta que termina después no puede confirmar sus dividendos.
+Dividendos, para el rendimiento total:
+
+* ``DIVIDENDOS``: **versiones** de cada dividendo en efectivo, con desde cuándo
+  se conoce cada una (``recibido_utc``) y cuándo una consulta comparable la
+  corrigió o ya no la trajo (``retirado_utc``). Nada se borra: con ellas se
+  reconstruye lo que se sabía en cualquier instante.
+* ``COBERTURA_DIVIDENDOS``: una fila por consulta al proveedor y símbolo, con
+  su intervalo, sus filtros y su estado, también si vino vacía o falló. Una
+  consulta completa acredita que la descarga terminó, no que el proveedor ya
+  tuviera todos los anuncios (Alpaca no garantiza cuándo los publica): por eso
+  las etiquetas distinguen provisional, reconciliada y revisada
+  (``etiquetas.py``).
 """
 from __future__ import annotations
 
@@ -92,13 +100,30 @@ DIVIDENDOS = {
     "fecha_pago": ("fecha", False, "fecha de pago"),
     "clase": ("texto", True, "ordinario o especial"),
     "disponible_utc": ("instante", False, "anuncio documentado (nulo si el proveedor no lo da)"),
-    "recibido_utc": ("instante", True, "primera descarga que lo incluye"),
-    "consultado_utc": ("instante", True, "consulta completa más reciente que lo incluye; la mayor de la tabla "
-                                         "marca hasta cuándo la lista del símbolo está completa"),
+    "recibido_utc": ("instante", True, "primera consulta que trajo esta versión: desde cuándo se conoce"),
+    "retirado_utc": ("instante", False, "consulta comparable que la corrigió o ya no la trajo (nulo: vigente)"),
+    "motivo_retiro": ("texto", False, "corregido o ausente (en una consulta comparable)"),
     "proveedor": ("texto", True, "proveedor de los datos"),
     "feed": ("texto", True, "producto concreto"),
 }
 CLASES_DIVIDENDO = ("ordinario", "especial")
+MOTIVOS_RETIRO = ("corregido", "ausente")
+
+COBERTURA_DIVIDENDOS = {
+    "simbolo": ("texto", True, "símbolo consultado"),
+    "desde": ("fecha", True, "inicio del intervalo consultado"),
+    "hasta": ("fecha", True, "fin del intervalo consultado"),
+    "campo_fecha": ("texto", True, "fecha del evento que filtra el intervalo (p. ej., process_date)"),
+    "recibido_utc": ("instante", True, "recepción de la última página: desde cuándo se conoce la respuesta"),
+    "estado": ("texto", True, "completa, parcial o fallida"),
+    "eventos": ("real", True, "dividendos en efectivo del símbolo en la respuesta (0 si vino vacía)"),
+    "calidad": ("texto", True, "filtro de calidad del proveedor (p. ej., data_quality)"),
+    "tipos": ("texto", True, "tipos de evento pedidos"),
+    "consulta": ("texto", True, "identificador de la consulta (manifiesto)"),
+    "proveedor": ("texto", True, "proveedor de los datos"),
+    "feed": ("texto", True, "producto concreto"),
+}
+ESTADOS_CONSULTA = ("completa", "parcial", "fallida")
 
 _OCC = re.compile(r"^([A-Z0-9]{1,6})\s*(\d{6})([CP])(\d{8})$")
 
@@ -147,9 +172,21 @@ def validar(tabla: pd.DataFrame, esquema=COTIZACIONES) -> list[str]:
             problemas.append("clase: solo se admite ordinario o especial")
         if (tabla["monto"] <= 0).any():
             problemas.append("monto: debe ser positivo")
-        claves = tabla[["simbolo", "fecha_ex", "clase", "monto"]].astype(str)
+        claves = tabla[["simbolo", "fecha_ex", "clase", "monto", "recibido_utc"]].astype(str)
         if claves.duplicated().any():
-            problemas.append(f"{int(claves.duplicated().sum())} dividendos repetidos")
+            problemas.append(f"{int(claves.duplicated().sum())} versiones de dividendo repetidas")
+        retiradas = tabla["retirado_utc"].notna()
+        if (tabla.loc[retiradas, "retirado_utc"] < tabla.loc[retiradas, "recibido_utc"]).any():
+            problemas.append("retirado_utc: una versión no se retira antes de conocerse")
+        if not tabla.loc[retiradas, "motivo_retiro"].isin(MOTIVOS_RETIRO).all():
+            problemas.append("motivo_retiro: solo se admite corregido o ausente")
+    if esquema is COBERTURA_DIVIDENDOS and not problemas:
+        if not tabla["estado"].isin(ESTADOS_CONSULTA).all():
+            problemas.append("estado: solo se admite completa, parcial o fallida")
+        if (pd.to_datetime(tabla["desde"]) > pd.to_datetime(tabla["hasta"])).any():
+            problemas.append("desde posterior a hasta")
+        if (tabla["eventos"] < 0).any():
+            problemas.append("eventos: no puede ser negativo")
     if esquema is COTIZACIONES and not problemas:
         if not tabla["tipo"].isin(["C", "P"]).all():
             problemas.append("tipo: solo se admite C o P")

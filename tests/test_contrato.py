@@ -239,15 +239,34 @@ def test_precio_para_etiqueta_usa_la_ultima_cotizacion_valida():
     assert ct.precio_para_etiqueta(dos, "SPY", fecha, corte, "alpaca/iex", **reglas)["fuente"] == "alpaca/iex"
 
 
-def test_validacion_de_dividendos():
+def test_validacion_de_dividendos_y_su_cobertura():
     base = {"simbolo": "SPY", "fecha_ex": dt.date(2025, 12, 19), "monto": 1.9, "fecha_pago": dt.date(2026, 1, 30),
-            "clase": "ordinario", "disponible_utc": pd.Timestamp("2025-12-17T21:00:00Z"),
-            "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
-            "consultado_utc": pd.Timestamp("2026-01-06T15:20:00Z"), "proveedor": "alpaca", "feed": "corporate_actions"}
-    assert ct.validar(pd.DataFrame([base]), ct.DIVIDENDOS) == []
-    problemas = ct.validar(pd.DataFrame([base, dict(base, clase="extra", monto=-1.0), base]), ct.DIVIDENDOS)
+            "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
+            "retirado_utc": pd.NaT, "motivo_retiro": "", "proveedor": "alpaca", "feed": "corporate_actions"}
+
+    def tabla(*filas):
+        t = pd.DataFrame(list(filas))
+        for c in ("disponible_utc", "recibido_utc", "retirado_utc"):
+            t[c] = pd.to_datetime(t[c], utc=True)
+        return t
+
+    corregida = dict(base, retirado_utc=pd.Timestamp("2026-01-06T15:20:00Z"), motivo_retiro="corregido")
+    nueva = dict(base, monto=1.95, recibido_utc=pd.Timestamp("2026-01-06T15:20:00Z"))
+    assert ct.validar(tabla(base), ct.DIVIDENDOS) == [] and ct.validar(tabla(corregida, nueva), ct.DIVIDENDOS) == []
+    problemas = ct.validar(tabla(base, dict(base, clase="extra", monto=-1.0), base), ct.DIVIDENDOS)
     assert any("clase" in p for p in problemas) and any("monto" in p for p in problemas)
-    assert any("repetidos" in p for p in problemas)
+    assert any("repetidas" in p for p in problemas)
+    al_reves = dict(base, retirado_utc=pd.Timestamp("2026-01-01T00:00:00Z"), motivo_retiro="otro")
+    problemas = ct.validar(tabla(al_reves), ct.DIVIDENDOS)
+    assert any("antes de conocerse" in p for p in problemas) and any("motivo_retiro" in p for p in problemas)
+    consulta = {"simbolo": "SPY", "desde": dt.date(2025, 1, 1), "hasta": dt.date(2026, 3, 1),
+                "campo_fecha": "process_date", "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
+                "estado": "completa", "eventos": 0.0, "calidad": "complete", "tipos": "todos", "consulta": "q1",
+                "proveedor": "alpaca", "feed": "corporate_actions"}
+    assert ct.validar(pd.DataFrame([consulta]), ct.COBERTURA_DIVIDENDOS) == []  # vacía, pero consultada
+    mala = dict(consulta, estado="rara", desde=dt.date(2026, 6, 1), eventos=-1.0)
+    problemas = ct.validar(pd.DataFrame([mala]), ct.COBERTURA_DIVIDENDOS)
+    assert len(problemas) == 3
 
 
 def test_dos_capturas_de_la_misma_hora_marcan_la_vieja_como_reemplazada(mercado):

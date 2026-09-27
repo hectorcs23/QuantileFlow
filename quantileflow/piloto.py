@@ -54,7 +54,7 @@ import pandas as pd
 from . import cadenas, contrato
 from .almacen import huella_datos
 from .calendario import _fecha, es_sesion, instante, instante_liquidacion, plazo_anios, sesion_desplazada
-from .etiquetas import etiquetas_retorno, movimiento_previo
+from .etiquetas import etiquetas_retorno, etiquetas_vigentes, movimiento_previo
 
 NAN = float("nan")
 PROVEEDORES_SINTETICOS = ("sintetico",)  # generador de quantileflow/sintetico.py
@@ -95,6 +95,7 @@ class ConfigPiloto:
     objetivo_spread_max: float
     objetivo_retraso_s: float
     objetivo_rendimiento: str
+    objetivo_margen_proceso_dias: float
     fuente: dict
     huella: str
 
@@ -130,7 +131,8 @@ def config_desde_dict(d: dict) -> ConfigPiloto:
         objetivo_edad_maxima_s=float(d["objetivo"]["edad_maxima_s"]),
         objetivo_spread_max=float(d["objetivo"]["spread_relativo_max"]),
         objetivo_retraso_s=float(d["objetivo"]["retraso_publicacion_s"]),
-        objetivo_rendimiento=_rendimiento(d["objetivo"]["rendimiento"]), fuente=d, huella=huella_datos(d))
+        objetivo_rendimiento=_rendimiento(d["objetivo"]["rendimiento"]),
+        objetivo_margen_proceso_dias=float(d["objetivo"]["margen_proceso_dias"]), fuente=d, huella=huella_datos(d))
 
 
 def _rendimiento(valor):
@@ -447,11 +449,10 @@ def _elegir_fuentes(tabla, nombre, elegidas):
 
 
 def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetivo, tipo_objetivo,
-            cfg: ConfigPiloto, cobertura_dividendos=None) -> dict:
+            cfg: ConfigPiloto, cobertura=None) -> dict:
     """Qué permite concluir la muestra según sus fuentes, aparte de la aptitud de los datos.
 
-    ``cobertura_dividendos``: hasta cuándo está completa la consulta de
-    dividendos del objetivo (NaT o ``None`` si no hay consulta).
+    ``cobertura``: consultas de dividendos del objetivo (``contrato.COBERTURA_DIVIDENDOS``).
     """
     indicativas = [f for f in fuentes_opciones if f.split("/", 1)[-1] in cfg.feeds_indicativos]
     sinteticas = [f for f in (*fuentes_opciones, fuente_referencia or "", fuente_objetivo or "")
@@ -467,12 +468,17 @@ def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetiv
         motivos.append("precio objetivo inferido de las mismas opciones: no es independiente de las señales")
     tipos = {"observado": "observado", "implicito": "inferido por paridad de las opciones"}
     otro = cfg.objetivo_simbolo != cfg.subyacente
+    completas = (cobertura[cobertura["estado"] == "completa"] if cobertura is not None and len(cobertura)
+                 else pd.DataFrame(columns=["recibido_utc"]))
     if cfg.objetivo_rendimiento == "precio":
         dividendos = "no se usan: rendimiento de precio"
-    elif cobertura_dividendos is None or pd.isna(cobertura_dividendos):
-        dividendos = "sin consulta: el rendimiento total queda ausente"
+    elif completas.empty:
+        dividendos = "sin consulta completa: el rendimiento total queda ausente"
     else:
-        dividendos = f"consultados hasta {pd.Timestamp(cobertura_dividendos).isoformat()}"
+        dividendos = (f"{len(completas)} consultas completas, la última recibida el "
+                      f"{pd.Timestamp(completas['recibido_utc'].max()).isoformat()}. Cada etiqueta madura con la "
+                      "primera consulta completa posterior a su fin que cubre el periodo (provisional) y se "
+                      f"reconcilia con una recibida {cfg.objetivo_margen_proceso_dias:g} días después del fin")
     return {
         "fuentes_opciones": list(fuentes_opciones), "fuente_referencia": fuente_referencia or "",
         "tipo_precio_referencia": tipo_referencia or "", "simbolo_objetivo": cfg.objetivo_simbolo,
@@ -492,17 +498,18 @@ def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetiv
 
 def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: ConfigPiloto,
              fuentes_opciones=None, fuente_referencia=None, fuente_objetivo=None,
-             dividendos: pd.DataFrame | None = None) -> ResultadoPiloto:
+             dividendos: pd.DataFrame | None = None, cobertura: pd.DataFrame | None = None) -> ResultadoPiloto:
     """Mide todas las sesiones y horas, añade cambios, estabilidad y etiquetas, y dictamina.
 
     ``subyacente`` trae la referencia de las opciones (``cfg.subyacente``) y el
     objetivo (``cfg.objetivo_simbolo``). ``fuentes_opciones`` (una o varias),
     ``fuente_referencia`` y ``fuente_objetivo`` (``proveedor/feed``) son
     obligatorias cuando los datos traen más de una fuente para esa serie.
-    ``dividendos`` sigue el esquema ``contrato.DIVIDENDOS``. Si el objetivo se
-    mide con rendimiento total y no hay dividendos (o su consulta es anterior
-    al fin de una etiqueta), el rendimiento total queda ausente con su motivo;
-    el de precio se calcula igual.
+    ``dividendos`` (versiones, ``contrato.DIVIDENDOS``) y ``cobertura``
+    (consultas, ``contrato.COBERTURA_DIVIDENDOS``) sirven al rendimiento total
+    del objetivo, con la política de ``etiquetas``: sin una consulta completa
+    posterior al fin que cubra el periodo, queda ausente con su motivo; el de
+    precio se calcula igual.
     """
     fechas = sorted({_fecha(f) for f in fechas})
     no_sesiones = [f for f in fechas if not es_sesion(f, cfg.calendario)]
@@ -536,28 +543,32 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
         secundaria = completa[completa["hora"] == cfg.hora_secundaria].set_index("fecha")["rr25"]
         principal["rr25_secundaria"] = principal["fecha"].map(secundaria)
         principal["dif_rr25_secundaria"] = principal["rr25_secundaria"] - principal["rr25"]
+    total = cfg.objetivo_rendimiento == "total"
     divs = dividendos if dividendos is not None else pd.DataFrame(columns=list(contrato.DIVIDENDOS))
-    divs_obj = divs[divs["simbolo"] == cfg.objetivo_simbolo] if cfg.objetivo_rendimiento == "total" else None
-    cobertura = (pd.to_datetime(divs_obj["consultado_utc"], utc=True).max()
-                 if divs_obj is not None and len(divs_obj) else pd.NaT)
+    cob = cobertura if cobertura is not None else pd.DataFrame(columns=list(contrato.COBERTURA_DIVIDENDOS))
+    divs_obj = divs[divs["simbolo"] == cfg.objetivo_simbolo] if total else None
+    cob_obj = cob[cob["simbolo"] == cfg.objetivo_simbolo] if total else None
     series = []
-    for serie, precios, simbolo, fuente, tipo, retraso, pagos in (
+    for serie, precios, simbolo, fuente, tipo, retraso, pagos, consultas in (
             ("objetivo", _precios_objetivo(objetivo, fechas, cfg, fuente_obj), cfg.objetivo_simbolo, fuente_obj,
-             tipo_obj, max(cfg.retraso_publicacion_s, cfg.objetivo_retraso_s), divs_obj),
+             tipo_obj, max(cfg.retraso_publicacion_s, cfg.objetivo_retraso_s), divs_obj, cob_obj),
             ("referencia", _precios_referencia(referencia, fechas, cfg, fuente_ref), cfg.subyacente, fuente_ref,
-             tipo_ref, cfg.retraso_publicacion_s, None)):
+             tipo_ref, cfg.retraso_publicacion_s, None, None)):
         # El retraso del objetivo es un piso: una etiqueta ausente tampoco se conoce antes de la publicación.
         # La referencia es un índice de precio: sin dividendos.
         e = etiquetas_retorno(precios["precio"], cfg.hora_principal, cfg.horizontes, cfg.latencia_s, retraso,
                               cfg.calendario, disponibles=precios["disponible_utc"], motivos=precios["motivo"],
-                              dividendos=pagos)
+                              dividendos=pagos, cobertura=consultas,
+                              margen_proceso_dias=cfg.objetivo_margen_proceso_dias)
         series.append(e.assign(serie=serie, simbolo=simbolo, fuente=fuente or "", tipo_precio=tipo))
+        vigentes = etiquetas_vigentes(e)
         for h in cfg.horizontes:
-            eh = e[e["horizonte"] == h].set_index("sesion")
+            eh = vigentes[vigentes["horizonte"] == h].set_index("sesion")
             principal[f"ret_{h}_{serie}"] = principal["fecha"].map(eh["retorno_log"])
             if serie == "objetivo":
                 principal[f"ret_precio_{h}_{serie}"] = principal["fecha"].map(eh["retorno_precio_log"])
                 principal[f"div_{h}_{serie}"] = principal["fecha"].map(eh["dividendos"])
+                principal[f"estado_div_{h}_{serie}"] = principal["fecha"].map(eh["estado_dividendos"])
             principal[f"estado_ret_{h}_{serie}"] = principal["fecha"].map(eh["estado"])
         if serie == "referencia":
             principal["retorno_previo_referencia"] = principal["fecha"].map(
@@ -565,5 +576,9 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
     etiquetas = pd.concat(series, ignore_index=True)
     principal["fuente_objetivo"], principal["tipo_precio_objetivo"] = fuente_obj or "", tipo_obj
     veredicto = dictamen(principal, cfg)
-    veredicto["alcance"] = alcance(fuentes_op, fuente_ref, tipo_ref, fuente_obj, tipo_obj, cfg, cobertura)
+    veredicto["alcance"] = alcance(fuentes_op, fuente_ref, tipo_ref, fuente_obj, tipo_obj, cfg, cob_obj)
+    h1 = cfg.horizontes[0]
+    estados = principal.loc[principal[f"estado_ret_{h1}_objetivo"] == "ok", f"estado_div_{h1}_objetivo"]
+    veredicto["alcance"]["estados_rendimiento_objetivo"] = {k: int((estados == k).sum())
+                                                          for k in ("provisional", "reconciliada", "revisada")}
     return ResultadoPiloto(principal, completa, etiquetas, detalles, veredicto, cfg)

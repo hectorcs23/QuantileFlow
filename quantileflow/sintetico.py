@@ -256,7 +256,8 @@ def iv_en_delta_ssvi(theta, rho, phi, T, delta, es_call):
 def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:45", "10:00"),
                       raiz="SPXW", subyacente="SPX", paso_strike=10.0, rango_k=(-0.10, 0.05),
                       dias_vencimiento=(18, 48), escenarios=None, sesiones_extra=5,
-                      recibido="2026-09-26T12:00:00Z", objetivo="SPY", ex_objetivo=None, dividendo=1.8):
+                      recibido="2026-09-26T12:00:00Z", objetivo="SPY", ex_objetivo=None, dividendo=1.8,
+                      hora_eventos="10:21"):
     """Cotizaciones y subyacente sintéticos con el esquema de ``contrato`` (SINTÉTICO).
 
     Opciones europeas con liquidación PM que vencen los viernes hábiles entre
@@ -274,8 +275,11 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
     Se publica 15 minutos después del corte, como el SIP de Alpaca sin
     suscripción. Usa su propio generador aleatorio: no cambia el resto.
 
-    Devuelve ``(cotizaciones, subyacente, verdad)``; ``verdad["dividendos"]``
-    sigue el esquema ``contrato.DIVIDENDOS``.
+    Devuelve ``(cotizaciones, subyacente, verdad)``. ``verdad["dividendos"]``
+    trae la versión del dividendo (esquema ``contrato.DIVIDENDOS``) y
+    ``verdad["cobertura"]``, una consulta completa de eventos por sesión a
+    ``hora_eventos`` (``contrato.COBERTURA_DIVIDENDOS``), como el workflow del
+    histórico.
     """
     import pandas as pd
 
@@ -389,11 +393,25 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                                   "sello_snapshot_utc": corte, "disponible_utc": corte + pd.Timedelta(minutes=15),
                                   "recibido_utc": recibido_utc, "proveedor": "sintetico", "feed": "sip_sintetico",
                                   "tipo_precio": "observado"})
+        pago = ex + dt.timedelta(days=42)
+        consultas = [{"simbolo": objetivo, "desde": f - dt.timedelta(days=400), "hasta": f + dt.timedelta(days=120),
+                      "campo_fecha": "process_date", "recibido_utc": instante(f, hora_eventos), "estado": "completa",
+                      "eventos": float(f - dt.timedelta(days=400) <= pago <= f + dt.timedelta(days=120)),
+                      "calidad": "complete", "tipos": "todos", "consulta": f"eventos-sinteticos-{f}",
+                      "proveedor": "sintetico", "feed": "dividendos_sinteticos"} for f in todas]
+        # La descarga de la «verdad», meses después, reconcilia las etiquetas de la muestra.
+        final = recibido_utc.tz_convert("America/New_York").date()
+        consultas.append(dict(consultas[-1], desde=final - dt.timedelta(days=400), hasta=final + dt.timedelta(days=120),
+                              recibido_utc=recibido_utc, consulta=f"eventos-sinteticos-{final}"))
+        verdad["cobertura"] = pd.DataFrame(consultas)
         verdad["dividendos"] = pd.DataFrame([{
-            "simbolo": objetivo, "fecha_ex": ex, "monto": dividendo, "fecha_pago": ex + dt.timedelta(days=42),
-            "clase": "ordinario", "disponible_utc": pd.Timestamp(ex - dt.timedelta(days=30), tz="UTC"),
-            "recibido_utc": recibido_utc, "consultado_utc": recibido_utc, "proveedor": "sintetico",
-            "feed": "dividendos_sinteticos"}])
+            "simbolo": objetivo, "fecha_ex": ex, "monto": dividendo, "fecha_pago": pago, "clase": "ordinario",
+            "disponible_utc": pd.Timestamp(ex - dt.timedelta(days=30), tz="UTC"), "recibido_utc": recibido_utc,
+            "retirado_utc": pd.NaT, "motivo_retiro": "", "proveedor": "sintetico", "feed": "dividendos_sinteticos"}])
+        for tabla, columnas in ((verdad["dividendos"], ("disponible_utc", "recibido_utc", "retirado_utc")),
+                                (verdad["cobertura"], ("recibido_utc",))):
+            for columna in columnas:
+                tabla[columna] = pd.to_datetime(tabla[columna], utc=True).dt.as_unit("us")
     cotizaciones = pd.DataFrame(filas)
     sub = pd.DataFrame(filas_sub)
     for tabla in (cotizaciones, sub):

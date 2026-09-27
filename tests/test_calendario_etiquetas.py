@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from quantileflow import calendario as cal
+from quantileflow import contrato as ct
 from quantileflow import etiquetas as et
 
 
@@ -98,41 +99,157 @@ def test_etiqueta_madura_cuando_el_precio_final_esta_disponible():
     assert uno.loc[fechas[1], "label_available_at"] == cal.instante(fechas[2]) + pd.Timedelta(seconds=60)
 
 
+NY = "America/New_York"
+
+
+def _ny(texto):
+    return pd.Timestamp(texto, tz=NY).tz_convert("UTC")
+
+
+def _dividendos(*versiones):
+    """Versiones ``(fecha_ex, monto, conocida_desde, retirada_en)`` con el esquema de ``contrato.DIVIDENDOS``."""
+    filas = [{"simbolo": "SPY", "fecha_ex": pd.Timestamp(ex).date(), "monto": monto, "fecha_pago": None,
+              "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": desde, "retirado_utc": hasta,
+              "motivo_retiro": "corregido" if hasta is not None else "", "proveedor": "prueba", "feed": "eventos"}
+             for ex, monto, desde, hasta in versiones]
+    tabla = pd.DataFrame(filas, columns=list(ct.DIVIDENDOS)).astype({"monto": float})
+    for columna in ("disponible_utc", "recibido_utc", "retirado_utc"):
+        tabla[columna] = pd.to_datetime(tabla[columna], utc=True)
+    assert ct.validar(tabla, ct.DIVIDENDOS) == []
+    return tabla
+
+
+def _consultas(*recepciones, estado="completa", desde="2025-01-01", hasta="2026-12-31"):
+    """Consultas de eventos de SPY con el esquema de ``contrato.COBERTURA_DIVIDENDOS``."""
+    filas = [{"simbolo": "SPY", "desde": pd.Timestamp(desde).date(), "hasta": pd.Timestamp(hasta).date(),
+              "campo_fecha": "process_date", "recibido_utc": r, "estado": estado, "eventos": 0.0,
+              "calidad": "complete", "tipos": "todos", "consulta": f"q{i}", "proveedor": "prueba", "feed": "eventos"}
+             for i, r in enumerate(recepciones)]
+    tabla = pd.DataFrame(filas, columns=list(ct.COBERTURA_DIVIDENDOS)).astype({"eventos": float})
+    tabla["recibido_utc"] = pd.to_datetime(tabla["recibido_utc"], utc=True)
+    assert ct.validar(tabla, ct.COBERTURA_DIVIDENDOS) == []
+    return tabla
+
+
 def test_dividendo_en_el_rendimiento_total_y_en_la_madurez():
     fechas = cal.sesiones("2025-11-17", "2025-11-21")
     precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
-    anuncio = cal.instante(fechas[3]) + pd.Timedelta(hours=1)  # anunciado después del fin de la etiqueta
-    dividendo = pd.DataFrame({"fecha_ex": [fechas[2]], "monto": [1.5], "disponible_utc": [anuncio],
-                              "recibido_utc": [pd.Timestamp("2026-01-05T15:00:00Z")],
-                              "consultado_utc": [pd.Timestamp("2026-01-05T15:00:00Z")]})
-    e = et.etiquetas_retorno(precios, horizontes=(1, 2), dividendos=dividendo).set_index(["sesion", "horizonte"])
+    dividendo = _dividendos((fechas[2], 1.5, _ny("2025-11-10 10:21"), None))  # ex el miércoles, conocido antes
+    diarias = _consultas(*[cal.instante(f, "10:21") for f in fechas])  # como el workflow del histórico
+    e = et.etiquetas_retorno(precios, horizontes=(1, 2), dividendos=dividendo, cobertura=diarias)
+    e = e.set_index(["sesion", "horizonte"])
     cruza = e.loc[(fechas[1], 1)]  # de 09:45 del día anterior a 09:45 del día ex: incluye la apertura ex
-    assert cruza["dividendos"] == 1.5
+    assert cruza["dividendos"] == 1.5 and cruza["estado_dividendos"] == "provisional"
     assert cruza["retorno_log"] == pytest.approx(np.log((99.5 + 1.5) / 101.0))
     assert cruza["retorno_precio_log"] == pytest.approx(np.log(99.5 / 101.0))
-    assert cruza["label_available_at"] == anuncio
+    # Madura con la consulta habilitante: la primera completa que cubre el periodo, recibida después del fin.
+    assert cruza["label_available_at"] == cruza["consulta_habilitante_utc"] == cal.instante(fechas[2], "10:21")
     assert e.loc[(fechas[2], 1), "dividendos"] == 0.0  # empieza a las 09:45 del día ex: ya no lo cobra
     assert e.loc[(fechas[0], 1), "dividendos"] == 0.0 and e.loc[(fechas[0], 2), "dividendos"] == 1.5
     assert e.loc[(fechas[2], 1), "retorno_log"] == e.loc[(fechas[2], 1), "retorno_precio_log"]
-    sin_anuncio = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=dividendo.assign(disponible_utc=pd.NaT))
-    assert sin_anuncio.set_index("sesion").loc[fechas[1], "label_available_at"] == pd.Timestamp(
-        "2026-01-05T15:00:00Z")  # sin anuncio documentado, madura con la recepción
-    with pytest.raises(ValueError, match="no es una sesión"):
-        et.etiquetas_retorno(precios, dividendos=dividendo.assign(fecha_ex=[dt.date(2025, 11, 22)]))
-
-
-def test_rendimiento_total_exige_una_consulta_de_dividendos_posterior_al_fin():
-    fechas = cal.sesiones("2025-11-17", "2025-11-21")
-    precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
-    consulta = cal.instante(fechas[2]) + pd.Timedelta(hours=6)  # la tarde del miércoles
-    tabla = pd.DataFrame({"fecha_ex": [fechas[0]], "monto": [0.5], "disponible_utc": [pd.NaT],
-                          "recibido_utc": [consulta], "consultado_utc": [consulta]})
-    e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla).set_index("sesion")
-    assert e.loc[fechas[1], "estado"] == "ok"  # termina el miércoles a las 09:45: la consulta lo cubre
-    tarde = e.loc[fechas[2]]  # termina el jueves: un dividendo anunciado después no estaría en la tabla
-    assert tarde["estado"] == "sin dividendos confirmados" and "antes del fin" in tarde["motivo"]
-    assert np.isnan(tarde["retorno_log"]) and tarde["retorno_precio_log"] == pytest.approx(np.log(100.0 / 99.5))
-    sin_consulta = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla.iloc[:0]).set_index("sesion")
-    assert (sin_consulta["motivo"].iloc[:-1] == "sin consulta de dividendos").all()
     sin_tabla = et.etiquetas_retorno(precios, horizontes=(1,)).set_index("sesion")  # índice de precio
-    assert sin_tabla.loc[fechas[2], "retorno_log"] == sin_tabla.loc[fechas[2], "retorno_precio_log"]
+    assert sin_tabla.loc[fechas[1], "retorno_log"] == sin_tabla.loc[fechas[1], "retorno_precio_log"]
+    assert sin_tabla.loc[fechas[1], "estado_dividendos"] == "no aplica"
+    with pytest.raises(ValueError, match="no es una sesión"):
+        et.etiquetas_retorno(precios, dividendos=_dividendos((dt.date(2025, 11, 22), 1.5, _ny("2025-11-10"), None)),
+                             cobertura=diarias)
+
+
+def test_una_consulta_futura_no_habilita_etiquetas_en_el_pasado():
+    # Revisión de 8c97b2b, P1: periodo del 17 al 18 de noviembre de 2025, de 09:45 a 09:45 de Nueva York.
+    fechas = cal.sesiones("2025-11-17", "2025-11-18")
+    precios = _precios(fechas, [100.0, 100.0])
+    disponibles = pd.Series({f: cal.instante(f) + pd.Timedelta(minutes=15) for f in fechas})
+    kw = dict(horizontes=(1,), retraso_publicacion_s=900, disponibles=disponibles, dividendos=_dividendos())
+    solo_antes = et.etiquetas_retorno(precios, cobertura=_consultas(_ny("2025-11-17 16:00")), **kw).iloc[0]
+    assert solo_antes["estado"] == "sin dividendos confirmados" and "anterior al fin" in solo_antes["motivo"]
+    ambas = et.etiquetas_retorno(precios, cobertura=_consultas(_ny("2025-11-17 16:00"), _ny("2025-11-20 16:00")),
+                                 **kw)
+    assert ambas.iloc[0]["estado"] == "ok" and ambas.iloc[0]["label_available_at"] == _ny("2025-11-20 16:00")
+    assert et.etiquetas_maduras(ambas, _ny("2025-11-18 10:00")).empty  # sigue ausente el 18 a las 10:00
+    assert len(et.etiquetas_maduras(ambas, _ny("2025-11-20 16:00"))) == 1
+    # Añadir consultas posteriores a un instante no cambia lo que era utilizable en él.
+    recepciones = [_ny("2025-11-17 16:00"), _ny("2025-11-18 09:50"), _ny("2025-11-18 16:00"), _ny("2025-11-20 16:00")]
+    todas = et.etiquetas_retorno(precios, cobertura=_consultas(*recepciones), **kw)
+    for k, recibida in enumerate(recepciones):
+        t = recibida + pd.Timedelta(minutes=1)
+        hasta_t = et.etiquetas_retorno(precios, cobertura=_consultas(*recepciones[:k + 1]), **kw)
+        reconstruida = et.etiquetas_retorno(precios, cobertura=_consultas(*recepciones), conocido_hasta=t, **kw)
+        columnas = ["sesion", "horizonte", "retorno_log", "label_available_at"]
+        for tabla in (hasta_t, reconstruida):
+            pd.testing.assert_frame_equal(et.etiquetas_maduras(tabla, t)[columnas].reset_index(drop=True),
+                                          et.etiquetas_maduras(todas, t)[columnas].reset_index(drop=True))
+
+
+def test_versiones_de_un_dividendo_revisan_la_etiqueta():
+    # Revisión de 8c97b2b, P2: retirada, corrección de importe y cambio de fecha ex, antes y después de conocerlas.
+    fechas = cal.sesiones("2025-11-17", "2025-11-21")
+    precios = _precios(fechas, [100.0] * len(fechas))
+    diarias = _consultas(*[cal.instante(f, "10:21") for f in cal.sesiones("2025-11-17", "2025-11-26")])
+    conocido, revision = _ny("2025-11-17 10:21"), _ny("2025-11-24 10:21")
+
+    def por_sesion(dividendos, t=None):
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=dividendos, cobertura=diarias)
+        vigentes = e if t is None else et.etiquetas_maduras(e, t)
+        return e, vigentes.set_index("sesion")["retorno_log"]
+
+    # Retirada: el dividendo del martes 18 deja de aparecer en la consulta comparable del 24.
+    retirado = _dividendos((fechas[1], 1.8, conocido, revision))
+    e, antes = por_sesion(retirado, revision - pd.Timedelta(minutes=1))
+    _, despues = por_sesion(retirado, revision)
+    lunes = e[e["sesion"] == fechas[0]]
+    assert list(lunes["version"]) == [1, 2] and list(lunes["estado_dividendos"]) == ["provisional", "revisada"]
+    assert lunes.iloc[0]["vigente_hasta_utc"] == lunes.iloc[1]["vigente_desde_utc"] == revision
+    assert antes[fechas[0]] == pytest.approx(np.log(101.8 / 100.0)) and despues[fechas[0]] == 0.0
+    reconstruida = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=retirado, cobertura=diarias,
+                                        conocido_hasta=revision - pd.Timedelta(minutes=1))
+    assert list(reconstruida.loc[reconstruida["sesion"] == fechas[0], "dividendos"]) == [1.8]  # aún no se sabía
+    # Corrección de importe: 1.80 -> 1.85 el 24.
+    corregido = _dividendos((fechas[1], 1.8, conocido, revision), (fechas[1], 1.85, revision, None))
+    _, antes = por_sesion(corregido, revision - pd.Timedelta(minutes=1))
+    _, despues = por_sesion(corregido, revision)
+    assert antes[fechas[0]] == pytest.approx(np.log(101.8 / 100.0))
+    assert despues[fechas[0]] == pytest.approx(np.log(101.85 / 100.0))
+    # Cambio de fecha ex: del martes 18 al jueves 20, el 24; el dividendo cambia de etiqueta.
+    movido = _dividendos((fechas[1], 1.8, conocido, revision), (fechas[3], 1.8, revision, None))
+    _, antes = por_sesion(movido, revision - pd.Timedelta(minutes=1))
+    _, despues = por_sesion(movido, revision)
+    assert antes[fechas[0]] == pytest.approx(np.log(1.018)) and antes[fechas[2]] == 0.0
+    assert despues[fechas[0]] == 0.0 and despues[fechas[2]] == pytest.approx(np.log(1.018))
+
+
+def test_consulta_vacia_distinta_de_fallida_o_inexistente():
+    # Revisión de 8c97b2b, P2: una respuesta vacía conserva su consulta.
+    fechas = cal.sesiones("2025-11-17", "2025-11-18")
+    precios = _precios(fechas, [100.0, 100.5])
+    despues = _ny("2025-11-18 16:00")
+
+    def unica(cobertura):
+        return et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=cobertura).iloc[0]
+
+    vacia = unica(_consultas(despues))
+    assert vacia["estado"] == "ok" and vacia["dividendos"] == 0.0 and vacia["label_available_at"] == despues
+    fallida = unica(_consultas(despues, estado="fallida"))
+    assert fallida["estado"] == "sin dividendos confirmados"
+    assert fallida["motivo"] == "sin consulta completa de dividendos; 1 consultas parciales o fallidas no cuentan"
+    assert unica(None)["motivo"] == "sin consulta completa de dividendos"
+    corta = unica(_consultas(despues, hasta="2025-12-01"))  # no llega a fin + 60 días de procesamiento
+    assert corta["motivo"] == "ninguna consulta completa de dividendos cubre el periodo"
+
+
+def test_reconciliacion_despues_del_margen_de_proceso():
+    fechas = cal.sesiones("2025-11-17", "2025-11-18")
+    precios = _precios(fechas, [100.0, 100.5])
+    consultas = _consultas(_ny("2025-11-18 16:00"), _ny("2026-01-20 16:00"))
+    e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=consultas,
+                             margen_proceso_dias=60)
+    fila = e.iloc[0]
+    assert fila["estado_dividendos"] == "reconciliada" and fila["reconciliada_utc"] == _ny("2026-01-20 16:00")
+    assert len(et.etiquetas_maduras(e, _ny("2025-12-01"))) == 1  # provisional ya utilizable
+    assert et.etiquetas_maduras(e, _ny("2025-12-01"), politica="reconciliada").empty
+    assert len(et.etiquetas_maduras(e, _ny("2026-01-21"), politica="reconciliada")) == 1
+    provisional = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=consultas,
+                                       conocido_hasta=_ny("2025-12-01"))
+    assert provisional.iloc[0]["estado_dividendos"] == "provisional"
+    with pytest.raises(ValueError, match="politica"):
+        et.etiquetas_maduras(e, _ny("2026-01-21"), politica="cualquiera")

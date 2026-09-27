@@ -30,7 +30,7 @@ def mercado():
 @pytest.fixture(scope="module")
 def resultado(cfg, mercado):
     cot, sub, verdad = mercado
-    return pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"])
+    return pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"], cobertura=verdad["cobertura"])
 
 
 # --- Plazo constante ----------------------------------------------------------------
@@ -202,7 +202,7 @@ def test_fuentes_explicitas_y_cambio_ausente_en_la_transicion(cfg, mercado):
 
 
 def _serie(resultado, serie, horizonte=1):
-    e = resultado.etiquetas
+    e = et.etiquetas_vigentes(resultado.etiquetas)
     return e[(e["serie"] == serie) & (e["horizonte"] == horizonte)].set_index("sesion")
 
 
@@ -261,16 +261,27 @@ def test_medidas_de_las_opciones_no_cambian_al_anadir_el_objetivo(cfg, mercado, 
     assert "sin precio objetivo" in sin_spy.dictamen["alcance"]["evaluacion_con_precios_de_mercado"]
 
 
-def test_etiqueta_del_objetivo_madura_con_su_publicacion(resultado):
-    # El SPY sintético se publica 15 minutos después del corte, como el SIP de Alpaca sin suscripción.
-    e = resultado.etiquetas[resultado.etiquetas["estado"] == "ok"]
+def test_etiqueta_del_objetivo_madura_con_su_publicacion_y_su_consulta(resultado, mercado, cfg):
+    # El SPY sintético se publica 15 minutos después del corte (SIP sin suscripción) y los dividendos se consultan a
+    # las 10:21, como el workflow del histórico: la etiqueta madura con lo último de las dos cosas.
+    e = et.etiquetas_vigentes(resultado.etiquetas)
+    e = e[e["estado"] == "ok"]
     objetivo, referencia = e[e["serie"] == "objetivo"], e[e["serie"] == "referencia"]
     assert len(objetivo) == len(referencia) > 0
-    assert (objetivo["label_available_at"] - objetivo["label_end_at"] == pd.Timedelta(minutes=15)).all()
+    esperado = [cal.instante(f, "10:21") for f in objetivo["sesion_fin"]]
+    assert list(objetivo["label_available_at"]) == esperado
+    assert (objetivo["consulta_habilitante_utc"] == objetivo["label_available_at"]).all()
     assert (referencia["label_available_at"] == referencia["label_end_at"]).all()
     fila = objetivo.iloc[[0]]
-    assert et.etiquetas_maduras(fila, fila["label_end_at"].iloc[0] + pd.Timedelta(minutes=14)).empty
-    assert len(et.etiquetas_maduras(fila, fila["label_end_at"].iloc[0] + pd.Timedelta(minutes=15))) == 1
+    assert et.etiquetas_maduras(fila, esperado[0] - pd.Timedelta(seconds=1)).empty
+    assert len(et.etiquetas_maduras(fila, esperado[0])) == 1
+    # Con la consulta a las 09:50, manda la publicación del SIP: 15 minutos después del corte.
+    cot, sub, verdad = mercado
+    temprana = verdad["cobertura"].assign(recibido_utc=verdad["cobertura"]["recibido_utc"] - pd.Timedelta(minutes=31))
+    r = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"], cobertura=temprana)
+    o = _serie(r, "objetivo")
+    o = o[o["estado"] == "ok"]
+    assert len(o) and (o["label_available_at"] - o["label_end_at"] == pd.Timedelta(minutes=15)).all()
 
 
 def test_objetivo_con_la_regla_historica(cfg, mercado):
@@ -281,7 +292,8 @@ def test_objetivo_con_la_regla_historica(cfg, mercado):
     # Publicado dos horas tarde: vale para la etiqueta, que madura con esa publicación.
     tarde = sub.copy()
     tarde.loc[fila, "disponible_utc"] = corte + pd.Timedelta(hours=2)
-    e = _serie(pl.ejecutar(cot, tarde, fechas, cfg, dividendos=verdad["dividendos"]), "objetivo")
+    e = _serie(pl.ejecutar(cot, tarde, fechas, cfg, dividendos=verdad["dividendos"], cobertura=verdad["cobertura"]),
+               "objetivo")
     spy = {f: verdad["objetivo"][(f, cfg.hora_principal)] for f in fechas}
     assert e.loc[fechas[0], "estado"] == "ok"
     assert e.loc[fechas[0], "retorno_log"] == pytest.approx(np.log(spy[fechas[1]] / spy[fechas[0]]))
@@ -327,7 +339,7 @@ def test_dividendo_ausencia_y_spread_anormal_del_objetivo(cfg):
     # Ejemplos de la convención: fecha ex dentro del periodo, sin cotización y spread anormal.
     escenarios = {FECHAS[1]: ["objetivo_sin_cotizacion"], FECHAS[5]: ["objetivo_spread_anormal"]}
     cot, sub, verdad = sn.mercado_sintetico(FECHAS, semilla=11, escenarios=escenarios, rango_k=(-0.08, 0.04))
-    r = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"])
+    r = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"], cobertura=verdad["cobertura"])
     p = r.principal.set_index("fecha")
     spy = {f: verdad["objetivo"][(f, cfg.hora_principal)] for f in FECHAS}
     ex, monto = verdad["dividendos"].loc[0, "fecha_ex"], verdad["dividendos"].loc[0, "monto"]
@@ -339,7 +351,10 @@ def test_dividendo_ausencia_y_spread_anormal_del_objetivo(cfg):
     assert p.loc[viernes, "ret_precio_1_objetivo"] == pytest.approx(np.log(spy[ex] / spy[viernes]))
     assert p.loc[viernes, "ret_precio_1_objetivo"] < p.loc[viernes, "ret_1_objetivo"] - 0.002
     # El que empieza a las 09:45 del día ex ya no lo cobra; el de 5 sesiones que lo cruza, sí.
-    assert p.loc[ex, "div_1_objetivo"] == 0.0 and p.loc[FECHAS[0], "div_5_objetivo"] == monto
+    assert p.loc[ex, "div_1_objetivo"] == 0.0 and p.loc[viernes, "div_5_objetivo"] == monto
+    # Una etiqueta ausente no atribuye dividendos: la de 5 sesiones del 19 termina el 26, sin precio válido.
+    assert p.loc[FECHAS[0], "estado_ret_5_objetivo"] == "sin precio final"
+    assert np.isnan(p.loc[FECHAS[0], "div_5_objetivo"])
     assert p.loc[ex, "ret_1_objetivo"] == p.loc[ex, "ret_precio_1_objetivo"]
     # La referencia es un índice de precio: sin dividendos.
     assert (r.etiquetas.loc[r.etiquetas["serie"] == "referencia", "dividendos"] == 0.0).all()

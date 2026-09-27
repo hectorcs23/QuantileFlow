@@ -25,6 +25,7 @@ from quantileflow import almacen
 from quantileflow import calendario as cal
 from quantileflow import contrato as ct
 from quantileflow import diagnostico as dg
+from quantileflow import etiquetas as et
 from quantileflow import implicito as im
 from quantileflow import piloto as pl
 from quantileflow import sintetico as sn
@@ -563,31 +564,48 @@ def test_historico_no_se_consulta_antes_y_un_fallo_se_reintenta(mercado, tmp_pat
     assert [u["etiqueta"] for u in usados] == [f"{fecha}T0945-2"]  # la fallida se conserva y no se usa
 
 
-def test_dividendos_de_los_eventos_corporativos(tmp_path):
-    d1 = dividendo_json("d1", "2025-11-18", 1.8)
-    cuerpos = [{"corporate_actions": {}, "next_page_token": None},  # aún no anunciado
-               {"corporate_actions": {"cash_dividends": [d1]}, "next_page_token": None},
-               {"corporate_actions": {"cash_dividends": [dict(d1, rate=1.85)]}, "next_page_token": None},  # corregido
-               {"corporate_actions": {"cash_dividends": [dict(d1, rate=1.85),
-                                                         dividendo_json("d2", "2025-12-19", 0.5, especial=True)],
-                                      "forward_splits": [{"id": "s1", "symbol": "SPY", "ex_date": "2025-06-02",
-                                                          "process_date": "2025-06-02", "old_rate": 1,
-                                                          "new_rate": 2}]},
-                "next_page_token": None}]
-    descargar_eventos(tmp_path, cuerpos)
-    tabla, otros, usados = al.normalizar_eventos(tmp_path)
-    assert ct.validar(tabla, ct.DIVIDENDOS) == [] and len(usados) == 4
-    d = tabla.set_index("id_evento")
-    assert d.loc["d1", "monto"] == 1.85 and d.loc["d1", "fecha_ex"] == dt.date(2025, 11, 18)
-    assert d.loc["d1", "recibido_utc"] == pd.Timestamp("2025-11-16T21:00:00Z")  # primera consulta con ese monto
-    assert (d["consultado_utc"] == pd.Timestamp("2025-11-17T21:00:00Z")).all()  # la consulta más reciente
+def test_versiones_y_cobertura_de_los_eventos_corporativos(tmp_path):
+    # Revisión de 8c97b2b, P2: versiones con fecha de conocimiento, retirada y consultas vacías o fallidas.
+    d1, d2 = dividendo_json("d1", "2025-11-18", 1.8), dividendo_json("d2", "2025-12-19", 0.5, especial=True)
+    split = {"id": "s1", "symbol": "SPY", "ex_date": "2025-06-02", "process_date": "2025-06-02", "old_rate": 1,
+             "new_rate": 2}
+    cuerpos = [{"corporate_actions": {}},                                      # 14: vacía, aún no publicado
+               {"corporate_actions": {"cash_dividends": [d1]}},                # 15: aparece
+               {"corporate_actions": {"cash_dividends": [dict(d1, rate=1.85)]}},  # 16: corregido
+               {"corporate_actions": {"cash_dividends": [dict(d1, rate=1.85), d2], "forward_splits": [split]}},  # 17
+               {"corporate_actions": {"cash_dividends": [d2]}}]                # 18: d1 ya no aparece
+    descargar_eventos(tmp_path, [dict(c, next_page_token=None) for c in cuerpos])
+    # 19: una consulta que falla; 20: una completa y vacía cuyo intervalo no llega a la fecha de proceso de d2.
+    reloj = Reloj("2025-11-19T21:00:00Z")
+    falla = API({"/v1/corporate-actions": lambda p: {}}, fallos={"/v1/corporate-actions": [403]})
+    al.descargar_eventos(cliente(falla, reloj), al.pedir_eventos(["SPY"], "2024-10-15", "2026-03-18"), tmp_path,
+                         {"fecha": "2025-11-19", "etiqueta": "eventos-falla", "simbolos": ["SPY"]})
+    reloj.actual = pd.Timestamp("2025-11-20T21:00:00Z")
+    corta = API({"/v1/corporate-actions": lambda p: {"corporate_actions": {}, "next_page_token": None}})
+    al.descargar_eventos(cliente(corta, reloj), al.pedir_eventos(["SPY"], "2024-10-15", "2026-01-15"), tmp_path,
+                         {"fecha": "2025-11-20", "etiqueta": "eventos-corta", "simbolos": ["SPY"]})
+    tabla, cobertura, otros, usados = al.normalizar_eventos(tmp_path)
+    assert ct.validar(tabla, ct.DIVIDENDOS) == [] and ct.validar(cobertura, ct.COBERTURA_DIVIDENDOS) == []
+    assert len(usados) == 7
+    d = tabla.set_index(["id_evento", "version"])
+    dia = {n: pd.Timestamp(f"2025-11-{n}T21:00:00Z") for n in range(14, 21)}
+    assert list(tabla[["id_evento", "version"]].itertuples(index=False, name=None)) == [
+        ("d1", 1), ("d1", 2), ("d2", 1)]
+    assert (d.loc[("d1", 1), "monto"], d.loc[("d1", 1), "recibido_utc"], d.loc[("d1", 1), "retirado_utc"],
+            d.loc[("d1", 1), "motivo_retiro"]) == (1.8, dia[15], dia[16], "corregido")
+    assert (d.loc[("d1", 2), "monto"], d.loc[("d1", 2), "recibido_utc"], d.loc[("d1", 2), "retirado_utc"],
+            d.loc[("d1", 2), "motivo_retiro"]) == (1.85, dia[16], dia[18], "ausente")
+    # La consulta del 20 no llega al 30 de enero (proceso de d2): su ausencia allí no dice nada.
+    assert pd.isna(d.loc[("d2", 1), "retirado_utc"]) and d.loc[("d2", 1), "clase"] == "especial"
     assert d["disponible_utc"].isna().all()  # Alpaca no da la hora del anuncio
-    assert (d.loc["d1", "clase"], d.loc["d2", "clase"]) == ("ordinario", "especial")
+    assert list(cobertura["estado"]) == ["completa"] * 5 + ["fallida", "completa"]
+    assert list(cobertura["eventos"]) == [0.0, 1.0, 1.0, 2.0, 1.0, 0.0, 0.0]
+    assert cobertura.iloc[5]["desde"] == dt.date(2024, 10, 15) and cobertura.iloc[5]["recibido_utc"] == dia[19]
     assert otros == [{"tipo": "forward_splits", "simbolo": "SPY", "fecha": "2025-06-02", "id": "s1"}]
     with pytest.raises(ValueError, match="forward_splits de SPY el 2025-06-02"):
         al.tablas_para_piloto(tmp_path, "2025-06-01", "2025-06-30")
     t = al.tablas_para_piloto(tmp_path, "2025-11-17", "2025-11-18")  # fuera del rango: se informa
-    assert t.eventos_no_tratados == otros and len(t.dividendos) == 2
+    assert t.eventos_no_tratados == otros and len(t.dividendos) == 3 and len(t.cobertura_dividendos) == 7
 
 
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
@@ -597,32 +615,39 @@ def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
     ex, monto = verdad["dividendos"].loc[0, "fecha_ex"], verdad["dividendos"].loc[0, "monto"]
     assert ex == FECHAS[1]
     anunciado = {"corporate_actions": {"cash_dividends": [dividendo_json("d1", ex, monto)]}, "next_page_token": None}
-    descargar_eventos(tmp_path, [anunciado], desde="2025-11-18T21:00:00Z")  # conocido después del fin
+    descargar_eventos(tmp_path, [anunciado], desde="2025-11-14T21:00:00Z")  # anunciado días antes, como SPY
     cfg = pl.cargar_config(RAIZ / "configs" / "piloto.toml")
     with open(RAIZ / "configs" / "captura_alpaca.toml", "rb") as f:
         implicito = tomllib.load(f)["implicito"]
-    t = al.tablas_para_piloto(tmp_path, cfg_implicito=implicito, reglas=cfg.reglas)
+
+    def piloto():
+        t = al.tablas_para_piloto(tmp_path, cfg_implicito=implicito, reglas=cfg.reglas)
+        r = pl.ejecutar(t.cotizaciones, t.subyacente, FECHAS, cfg, fuente_objetivo="alpaca/sip",
+                        dividendos=t.dividendos, cobertura=t.cobertura_dividendos)
+        e = et.etiquetas_vigentes(r.etiquetas)
+        return t, r, e[(e["serie"] == "objetivo") & (e["horizonte"] == 1)].set_index("sesion")
+
+    t, r, e = piloto()
     with pytest.raises(ValueError, match="objetivo SPY: hay varias fuentes"):  # SPY de IEX y del SIP
         pl.ejecutar(t.cotizaciones, t.subyacente, FECHAS, cfg)
-    r = pl.ejecutar(t.cotizaciones, t.subyacente, FECHAS, cfg, fuente_objetivo="alpaca/sip", dividendos=t.dividendos)
+    # Solo con la consulta anterior al fin, el rendimiento total no se confirma; el de precio, sí.
+    assert e.loc[FECHAS[0], "estado"] == "sin dividendos confirmados"
+    assert "anterior al fin" in e.loc[FECHAS[0], "motivo"]
+    assert np.isfinite(e.loc[FECHAS[0], "retorno_precio_log"])
+    # La consulta del workflow del histórico, a las 10:21, habilita la etiqueta y fija su madurez.
+    descargar_eventos(tmp_path, [anunciado], desde="2025-11-18T15:21:00Z")
+    t, r, e = piloto()
     p = r.principal.set_index("fecha")
     spy = {f: verdad["objetivo"][(f, "09:45")] for f in FECHAS}
     # El mid de la última cotización con los dos lados (la más reciente no tiene bid).
     assert p.loc[FECHAS[0], "ret_1_objetivo"] == pytest.approx(np.log((spy[FECHAS[1]] + monto) / spy[FECHAS[0]]))
     assert p.loc[FECHAS[0], "ret_precio_1_objetivo"] == pytest.approx(np.log(spy[FECHAS[1]] / spy[FECHAS[0]]))
-    e = r.etiquetas[(r.etiquetas["serie"] == "objetivo") & (r.etiquetas["estado"] == "ok")]
-    # Madura cuando se supo del dividendo que suma: la consulta de las 21:00, después del fin.
-    assert len(e) == 1 and e.iloc[0]["label_available_at"] == pd.Timestamp("2025-11-18T21:00:00Z")
-    assert set(e["fuente"]) == {"alpaca/sip"}
-    # Si ya se conocía antes (anunciado días antes, como hace SPY), madura con la publicación del SIP.
-    descargar_eventos(tmp_path, [anunciado], desde="2025-11-14T21:00:00Z")
-    t = al.tablas_para_piloto(tmp_path, cfg_implicito=implicito, reglas=cfg.reglas)
-    r = pl.ejecutar(t.cotizaciones, t.subyacente, FECHAS, cfg, fuente_objetivo="alpaca/sip", dividendos=t.dividendos)
-    e = r.etiquetas[(r.etiquetas["serie"] == "objetivo") & (r.etiquetas["estado"] == "ok")]
-    assert e.iloc[0]["label_available_at"] == cal.instante(FECHAS[1]) + pd.Timedelta(minutes=15)
-    assert r.principal.set_index("fecha").loc[FECHAS[0], "div_1_objetivo"] == monto
+    assert p.loc[FECHAS[0], "div_1_objetivo"] == monto and p.loc[FECHAS[0], "estado_div_1_objetivo"] == "provisional"
+    ok = e[e["estado"] == "ok"]
+    assert len(ok) == 1 and ok.iloc[0]["label_available_at"] == pd.Timestamp("2025-11-18T15:21:00Z")
+    assert set(ok["fuente"]) == {"alpaca/sip"}
     a = r.dictamen["alcance"]
-    assert a["fuente_objetivo"] == "alpaca/sip" and a["dividendos_objetivo"].startswith("consultados hasta")
+    assert a["fuente_objetivo"] == "alpaca/sip" and a["dividendos_objetivo"].startswith("2 consultas completas")
     # Ninguna influencia sobre las señales: las medidas de SPXW no cambian sin el histórico.
     sin_sip = t.subyacente[t.subyacente["feed"] != "sip"]
     base = pl.ejecutar(t.cotizaciones, sin_sip, FECHAS, cfg, fuente_objetivo="alpaca/iex").principal
@@ -630,13 +655,6 @@ def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
     pd.testing.assert_frame_equal(r.principal[medidas], base[medidas])
     pd.testing.assert_frame_equal(r.completa, pl.ejecutar(t.cotizaciones, sin_sip, FECHAS, cfg,
                                                           fuente_objetivo="alpaca/iex").completa)
-    # Una consulta de dividendos anterior al fin de la etiqueta no la confirma.
-    temprano = t.dividendos.assign(consultado_utc=cal.instante(FECHAS[1]) - pd.Timedelta(hours=1))
-    e = pl.ejecutar(t.cotizaciones, t.subyacente, FECHAS, cfg, fuente_objetivo="alpaca/sip",
-                    dividendos=temprano).etiquetas
-    fila = e[(e["serie"] == "objetivo") & (e["horizonte"] == 1)].set_index("sesion").loc[FECHAS[0]]
-    assert fila["estado"] == "sin dividendos confirmados" and np.isnan(fila["retorno_log"])
-    assert np.isfinite(fila["retorno_precio_log"])
 
 
 # --- Revalidación de d815bdd: recuperación operativa ----------------------------------------
