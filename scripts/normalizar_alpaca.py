@@ -2,14 +2,22 @@
 
 Uso, desde la raíz del repositorio::
 
-    python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-06
+    python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-13
     python scripts/piloto.py --cotizaciones data/normalized/alpaca/cotizaciones.parquet \
-        --subyacente data/normalized/alpaca/subyacente.parquet --desde 2026-09-28 --hasta 2026-11-06
+        --subyacente data/normalized/alpaca/subyacente.parquet \
+        --dividendos data/normalized/alpaca/dividendos.parquet \
+        --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 
-Lee solo el crudo y sus manifiestos (comprobando hashes), añade el nivel
-implícito de SPX y escribe las dos tablas y un manifiesto con los manifiestos
-de captura usados, la configuración, los fallos del nivel implícito, el entorno
-y los hashes de salida. Reprocesar el mismo crudo da los mismos bytes.
+El rango de la normalización debe cubrir también las sesiones finales de las
+etiquetas (cinco sesiones después de la última del piloto).
+
+Lee solo el crudo y sus manifiestos (comprobando hashes): capturas en vivo,
+histórico SIP del objetivo y eventos corporativos. Añade el nivel implícito de
+SPX y escribe cotizaciones, subyacente y dividendos, con un manifiesto de los
+manifiestos usados, la configuración, los fallos del nivel implícito, el
+entorno y los hashes de salida. Reprocesar el mismo crudo da los mismos bytes.
+Un evento corporativo distinto de un dividendo en efectivo dentro del rango
+detiene la normalización.
 """
 from __future__ import annotations
 
@@ -40,26 +48,39 @@ def main() -> int:
     with open(args.config, "rb") as f:
         bruto = tomllib.load(f)
     piloto = cargar_config(args.config_piloto)
-    cot, sub, resumenes, fallos, manifiestos = alpaca.tablas_para_piloto(datos, args.desde, args.hasta,
-                                                                         bruto.get("implicito"), piloto.reglas)
-    if not manifiestos:
+    t = alpaca.tablas_para_piloto(datos, args.desde, args.hasta, bruto.get("implicito"), piloto.reglas)
+    if not t.manifiestos:
         print(f"no hay capturas entre {args.desde} y {args.hasta} en {datos}", file=sys.stderr)
         return 1
-    rutas = {"cotizaciones": salida / "cotizaciones.parquet", "subyacente": salida / "subyacente.parquet"}
-    salidas = {nombre: almacen.escribir_tabla(tabla, rutas[nombre])
-               for nombre, tabla in (("cotizaciones", cot), ("subyacente", sub))}
+    tablas = {"cotizaciones": t.cotizaciones, "subyacente": t.subyacente, "dividendos": t.dividendos}
+    salidas = {nombre: almacen.escribir_tabla(tabla, salida / f"{nombre}.parquet") for nombre, tabla in tablas.items()}
+
+    def usados(manifiestos, *campos):
+        return [{"manifiesto": m["_ruta"], "sha256": almacen.sha256_archivo(datos / m["_ruta"]),
+                 **{c: m.get(c) for c in campos}} for m in manifiestos]
+
     almacen.escribir_json({
         "desde": args.desde, "hasta": args.hasta,
         "config": {"version": bruto["captura"]["version"], "huella": almacen.huella_datos(bruto),
                    "piloto": piloto.version, "huella_piloto": piloto.huella},
-        "capturas": [{"manifiesto": m["_ruta"], "sha256": almacen.sha256_archivo(datos / m["_ruta"]),
-                      "etiqueta": m["etiqueta"], "modo": m.get("modo"), "feed_opciones": m.get("feed_opciones")}
-                     for m in manifiestos],
-        "resumenes": resumenes, "implicito_no_identificado": fallos, "entorno": entorno, "salidas": salidas,
+        "capturas": usados(t.manifiestos, "etiqueta", "modo", "feed_opciones"),
+        "historico": usados(t.manifiestos_historico, "etiqueta", "feed", "disponible_utc"),
+        "eventos": usados(t.manifiestos_eventos, "etiqueta", "simbolos"),
+        "resumenes": t.resumenes, "resumenes_historico": t.resumenes_historico,
+        "implicito_no_identificado": t.fallos_implicito, "eventos_no_tratados": t.eventos_no_tratados,
+        "entorno": entorno, "salidas": salidas,
     }, salida / "manifiesto_normalizacion.json")
-    print(f"{len(manifiestos)} capturas -> {len(cot)} cotizaciones y {len(sub)} filas de subyacente en {salida}")
-    for f in fallos:
+    print(f"{len(t.manifiestos)} capturas, {len(t.manifiestos_historico)} cortes del histórico SIP y "
+          f"{len(t.manifiestos_eventos)} consultas de eventos -> {len(t.cotizaciones)} cotizaciones, "
+          f"{len(t.subyacente)} filas de subyacente y {len(t.dividendos)} dividendos en {salida}")
+    for f in t.fallos_implicito:
         print(f"  nivel implícito no identificado en {f['captura']}: {f['motivo']}")
+    cortes = {(r["fecha"], r["hora"]) for r in t.resumenes_historico}
+    for m in t.manifiestos:
+        if m.get("modo") == "programada" and (m["fecha"], m["hora"]) not in cortes:
+            print(f"  sin histórico SIP del objetivo en {m['etiqueta']}: ejecute scripts/historico_alpaca.py")
+    for e in t.eventos_no_tratados:
+        print(f"  evento corporativo fuera del rango, no tratado: {e['tipo']} de {e['simbolo']} el {e['fecha']}")
     return 0
 
 

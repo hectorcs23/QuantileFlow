@@ -242,8 +242,8 @@ def test_precio_para_etiqueta_usa_la_ultima_cotizacion_valida():
 def test_validacion_de_dividendos():
     base = {"simbolo": "SPY", "fecha_ex": dt.date(2025, 12, 19), "monto": 1.9, "fecha_pago": dt.date(2026, 1, 30),
             "clase": "ordinario", "disponible_utc": pd.Timestamp("2025-12-17T21:00:00Z"),
-            "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"), "proveedor": "alpaca",
-            "feed": "corporate_actions"}
+            "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
+            "consultado_utc": pd.Timestamp("2026-01-06T15:20:00Z"), "proveedor": "alpaca", "feed": "corporate_actions"}
     assert ct.validar(pd.DataFrame([base]), ct.DIVIDENDOS) == []
     problemas = ct.validar(pd.DataFrame([base, dict(base, clase="extra", monto=-1.0), base]), ct.DIVIDENDOS)
     assert any("clase" in p for p in problemas) and any("monto" in p for p in problemas)

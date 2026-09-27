@@ -103,7 +103,8 @@ def test_dividendo_en_el_rendimiento_total_y_en_la_madurez():
     precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
     anuncio = cal.instante(fechas[3]) + pd.Timedelta(hours=1)  # anunciado después del fin de la etiqueta
     dividendo = pd.DataFrame({"fecha_ex": [fechas[2]], "monto": [1.5], "disponible_utc": [anuncio],
-                              "recibido_utc": [pd.Timestamp("2026-01-05T15:00:00Z")]})
+                              "recibido_utc": [pd.Timestamp("2026-01-05T15:00:00Z")],
+                              "consultado_utc": [pd.Timestamp("2026-01-05T15:00:00Z")]})
     e = et.etiquetas_retorno(precios, horizontes=(1, 2), dividendos=dividendo).set_index(["sesion", "horizonte"])
     cruza = e.loc[(fechas[1], 1)]  # de 09:45 del día anterior a 09:45 del día ex: incluye la apertura ex
     assert cruza["dividendos"] == 1.5
@@ -118,3 +119,20 @@ def test_dividendo_en_el_rendimiento_total_y_en_la_madurez():
         "2026-01-05T15:00:00Z")  # sin anuncio documentado, madura con la recepción
     with pytest.raises(ValueError, match="no es una sesión"):
         et.etiquetas_retorno(precios, dividendos=dividendo.assign(fecha_ex=[dt.date(2025, 11, 22)]))
+
+
+def test_rendimiento_total_exige_una_consulta_de_dividendos_posterior_al_fin():
+    fechas = cal.sesiones("2025-11-17", "2025-11-21")
+    precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
+    consulta = cal.instante(fechas[2]) + pd.Timedelta(hours=6)  # la tarde del miércoles
+    tabla = pd.DataFrame({"fecha_ex": [fechas[0]], "monto": [0.5], "disponible_utc": [pd.NaT],
+                          "recibido_utc": [consulta], "consultado_utc": [consulta]})
+    e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla).set_index("sesion")
+    assert e.loc[fechas[1], "estado"] == "ok"  # termina el miércoles a las 09:45: la consulta lo cubre
+    tarde = e.loc[fechas[2]]  # termina el jueves: un dividendo anunciado después no estaría en la tabla
+    assert tarde["estado"] == "sin dividendos confirmados" and "antes del fin" in tarde["motivo"]
+    assert np.isnan(tarde["retorno_log"]) and tarde["retorno_precio_log"] == pytest.approx(np.log(100.0 / 99.5))
+    sin_consulta = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla.iloc[:0]).set_index("sesion")
+    assert (sin_consulta["motivo"].iloc[:-1] == "sin consulta de dividendos").all()
+    sin_tabla = et.etiquetas_retorno(precios, horizontes=(1,)).set_index("sesion")  # índice de precio
+    assert sin_tabla.loc[fechas[2], "retorno_log"] == sin_tabla.loc[fechas[2], "retorno_precio_log"]

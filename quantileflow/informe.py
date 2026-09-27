@@ -226,6 +226,7 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         f"- Medición: {al['medicion']}.",
         f"- Referencia de las opciones: {al['referencia_opciones']}.",
         f"- Precio objetivo: {al['precio_objetivo']}; instrumento: {al['instrumento_objetivo']}.",
+        f"- Rendimiento del objetivo: {al['rendimiento_objetivo']}; dividendos: {al['dividendos_objetivo']}.",
         f"- Evaluación con precios de mercado: {al['evaluacion_con_precios_de_mercado']}.", "",
         "## Calidad de los datos", "",
         f"- Sesiones procesadas: {int((p['estado_sesion'] == 'procesada').sum())} de {len(p)}.",
@@ -256,7 +257,8 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         "## Tabla diaria", "",
         "Completa en `tabla_diaria.csv` (hora principal) y `tabla_todas_las_horas.csv`. RR25 y cambios en "
         "puntos de volatilidad; rendimientos en porcentaje. El movimiento previo es de la referencia de las "
-        f"opciones ({cfg.subyacente}, regla puntual); los rendimientos a 1 y 5 sesiones son totales del objetivo "
+        f"opciones ({cfg.subyacente}, regla puntual); los rendimientos a 1 y 5 sesiones son "
+        f"{'totales' if cfg.objetivo_rendimiento == 'total' else 'de precio'} del objetivo "
         f"({al['simbolo_objetivo']}, regla histórica).", "",
         "| Sesión | RR25 | Banda | Cambio | Asim. log | Válidas/filas | Alertas | Mov. previo ref. | Rend. 1 obj. "
         "| Rend. 5 obj. |",

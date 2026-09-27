@@ -48,6 +48,8 @@ edad_maxima_precio_s = 60.0   # referencia más vieja al corte: sus etiquetas au
 # la etiqueta. Rendimiento total (con dividendos en su fecha ex) y de precio, por separado.
 simbolo = "SPY"
 tipo_precio = "observado"
+rendimiento = "total"             # total: dividendos en efectivo sumados en su fecha ex; "precio": sin dividendos.
+                                  # Con "total", la etiqueta exige una consulta de dividendos posterior a su fin.
 edad_maxima_s = 60.0              # cotización más vieja respecto del corte: no vale
 spread_relativo_max = 0.0005      # 5 pb: una cotización con spread mayor se descarta como anormal
 retraso_publicacion_s = 900.0     # piso de la madurez de sus etiquetas, también de las ausentes: el SIP

@@ -32,6 +32,9 @@ Dos reglas para elegir un precio, según su uso:
   entra como dato conocido en el corte.
 
 ``DIVIDENDOS``: dividendos en efectivo por fecha ex, para el rendimiento total.
+Como un dividendo se anuncia antes de su fecha ex, una consulta completa hecha
+en ``consultado_utc`` incluye todos los que tienen la fecha ex hasta ese
+instante: una etiqueta que termina después no puede confirmar sus dividendos.
 """
 from __future__ import annotations
 
@@ -89,7 +92,9 @@ DIVIDENDOS = {
     "fecha_pago": ("fecha", False, "fecha de pago"),
     "clase": ("texto", True, "ordinario o especial"),
     "disponible_utc": ("instante", False, "anuncio documentado (nulo si el proveedor no lo da)"),
-    "recibido_utc": ("instante", True, "descarga o recepción local"),
+    "recibido_utc": ("instante", True, "primera descarga que lo incluye"),
+    "consultado_utc": ("instante", True, "consulta completa más reciente que lo incluye; la mayor de la tabla "
+                                         "marca hasta cuándo la lista del símbolo está completa"),
     "proveedor": ("texto", True, "proveedor de los datos"),
     "feed": ("texto", True, "producto concreto"),
 }
@@ -222,7 +227,9 @@ def precio_para_etiqueta(tabla: pd.DataFrame, simbolo, fecha, corte_utc, fuente_
     implícito), vale el precio. No exige que el precio estuviera disponible en el
     corte: devuelve cuándo lo estuvo (la documentada o, si falta, la recepción)
     para fijar la madurez. Una barra con sello 09:45 no sirve: abarca operaciones
-    posteriores.
+    posteriores. Si dos cotizaciones válidas comparten el sello (truncado a
+    microsegundos), vale la última en el orden de la tabla: la normalización la
+    ordena por la hora del evento en nanosegundos.
     """
     corte_utc = pd.Timestamp(corte_utc)
     filas = _del_dia_hasta(tabla[tabla["subyacente"] == simbolo], fecha, corte_utc)
@@ -246,7 +253,7 @@ def precio_para_etiqueta(tabla: pd.DataFrame, simbolo, fecha, corte_utc, fuente_
                        f"(> {spread_relativo_max:g}) antes del corte de {fecha}")
     validas = filas[valida]
     referencia = validas["sello_evento_utc"].fillna(validas["sello_snapshot_utc"])
-    fila = validas.loc[referencia.idxmax()]
+    fila = validas.loc[referencia.index[referencia == referencia.max()][-1]]  # empate: la última en la tabla
     disponible = fila["disponible_utc"] if not pd.isna(fila["disponible_utc"]) else fila["recibido_utc"]
     return {"precio": float(mid[fila.name]) if con_libro[fila.name] else float(fila["precio"]),
             "sello_utc": referencia.max(), "disponible_utc": disponible,

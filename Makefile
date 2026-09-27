@@ -2,7 +2,7 @@ PYTHON ?= python3
 DOC := docs/propuesta
 
 .PHONY: todo test figuras pdf limpiar verificar piloto-sintetico captura captura-prueba \
-	normalizar-alpaca verificar-alpaca
+	historico-alpaca normalizar-alpaca verificar-alpaca
 
 todo: test figuras pdf
 
@@ -29,6 +29,10 @@ captura:
 # Captura inmediata de prueba (fuera de sesión usa las últimas cotizaciones de la sesión anterior).
 captura-prueba:
 	$(PYTHON) scripts/capturar_alpaca.py --ahora
+
+# Precio del objetivo (SIP de SPY, pasados 15 minutos de cada corte) y eventos corporativos; completa lo que falte.
+historico-alpaca:
+	$(PYTHON) scripts/historico_alpaca.py
 
 # make normalizar-alpaca DESDE=AAAA-MM-DD HASTA=AAAA-MM-DD
 normalizar-alpaca:

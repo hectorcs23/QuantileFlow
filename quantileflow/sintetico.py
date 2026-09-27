@@ -392,7 +392,8 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
         verdad["dividendos"] = pd.DataFrame([{
             "simbolo": objetivo, "fecha_ex": ex, "monto": dividendo, "fecha_pago": ex + dt.timedelta(days=42),
             "clase": "ordinario", "disponible_utc": pd.Timestamp(ex - dt.timedelta(days=30), tz="UTC"),
-            "recibido_utc": recibido_utc, "proveedor": "sintetico", "feed": "dividendos_sinteticos"}])
+            "recibido_utc": recibido_utc, "consultado_utc": recibido_utc, "proveedor": "sintetico",
+            "feed": "dividendos_sinteticos"}])
     cotizaciones = pd.DataFrame(filas)
     sub = pd.DataFrame(filas_sub)
     for tabla in (cotizaciones, sub):

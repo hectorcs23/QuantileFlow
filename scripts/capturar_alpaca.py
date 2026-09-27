@@ -174,22 +174,22 @@ def main() -> int:
         print(f"{hora}: {manifiesto['estado']}; {n} respuestas en {duracion:.2f} s; después del corte: "
               f"{paso['despues_del_corte']}; errores: {len(paso['errores'])} -> {paso['manifiesto']}")
 
-    # Tablas normalizadas del día, reconstruidas desde el crudo.
+    # Tablas normalizadas del día, reconstruidas desde el crudo (el histórico SIP llega después, con su script).
     piloto = cargar_config(args.config_piloto)
-    cot, sub, resumenes, fallos, _ = alpaca.tablas_para_piloto(datos, fecha, fecha, bruto.get("implicito"),
-                                                               piloto.reglas)
+    t = alpaca.tablas_para_piloto(datos, fecha, fecha, bruto.get("implicito"), piloto.reglas)
     salida = datos / "normalized" / "alpaca" / "diario" / str(fecha)
-    hashes = {"cotizaciones.parquet": almacen.escribir_tabla(cot, salida / "cotizaciones.parquet"),
-              "subyacente.parquet": almacen.escribir_tabla(sub, salida / "subyacente.parquet")}
-    almacen.escribir_json({"fecha": str(fecha), "capturas": resumenes, "implicito_no_identificado": fallos,
-                           "salidas": hashes, "config": info_config, "entorno": almacen.huella_entorno(RAIZ)},
-                          salida / "resumen.json")
-    for r in resumenes:
+    hashes = {"cotizaciones.parquet": almacen.escribir_tabla(t.cotizaciones, salida / "cotizaciones.parquet"),
+              "subyacente.parquet": almacen.escribir_tabla(t.subyacente, salida / "subyacente.parquet")}
+    almacen.escribir_json({"fecha": str(fecha), "capturas": t.resumenes, "implicito_no_identificado":
+                           t.fallos_implicito, "salidas": hashes, "config": info_config,
+                           "entorno": almacen.huella_entorno(RAIZ)}, salida / "resumen.json")
+    for r in t.resumenes:
         print(f"{r['captura']}: {r.get('con_cotizacion', 0)} cotizaciones de {r.get('snapshots', 0)} snapshots; "
               f"sin cotización {r.get('sin_cotizacion', 0)}; sin metadatos {r.get('sin_metadatos', 0)}")
-    for _, fila in sub.iterrows():
+    en_vivo = t.subyacente[t.subyacente["feed"] != "sip"]
+    for _, fila in en_vivo.iterrows():
         print(f"  subyacente {fila['subyacente']} = {fila['precio']:.2f} ({fila['feed']}) en {fila['captura']}")
-    for f in fallos:
+    for f in t.fallos_implicito:
         print(f"  subyacente implícito no identificado en {f['captura']}: {f['motivo']}")
     return terminar()
 

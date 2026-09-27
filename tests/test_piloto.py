@@ -29,8 +29,8 @@ def mercado():
 
 @pytest.fixture(scope="module")
 def resultado(cfg, mercado):
-    cot, sub, _ = mercado
-    return pl.ejecutar(cot, sub, FECHAS, cfg)
+    cot, sub, verdad = mercado
+    return pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"])
 
 
 # --- Plazo constante ----------------------------------------------------------------
@@ -281,7 +281,7 @@ def test_objetivo_con_la_regla_historica(cfg, mercado):
     # Publicado dos horas tarde: vale para la etiqueta, que madura con esa publicación.
     tarde = sub.copy()
     tarde.loc[fila, "disponible_utc"] = corte + pd.Timedelta(hours=2)
-    e = _serie(pl.ejecutar(cot, tarde, fechas, cfg), "objetivo")
+    e = _serie(pl.ejecutar(cot, tarde, fechas, cfg, dividendos=verdad["dividendos"]), "objetivo")
     spy = {f: verdad["objetivo"][(f, cfg.hora_principal)] for f in fechas}
     assert e.loc[fechas[0], "estado"] == "ok"
     assert e.loc[fechas[0], "retorno_log"] == pytest.approx(np.log(spy[fechas[1]] / spy[fechas[0]]))
@@ -355,3 +355,21 @@ def test_dividendo_ausencia_y_spread_anormal_del_objetivo(cfg):
     base = pl.ejecutar(cot, sub[sub["subyacente"] != "SPY"], FECHAS, cfg).principal
     medidas = [c for c in base.columns if not c.endswith("_objetivo")]
     pd.testing.assert_frame_equal(p.reset_index()[medidas], base[medidas])
+
+
+def test_rendimiento_total_sin_dividendos_queda_ausente(cfg, mercado, resultado):
+    cot, sub, _ = mercado
+    sin = pl.ejecutar(cot, sub, FECHAS, cfg)  # sin tabla de dividendos
+    p, con = sin.principal, resultado.principal
+    assert p["ret_1_objetivo"].isna().all() and (p["estado_ret_1_objetivo"] == "sin dividendos confirmados").all()
+    pd.testing.assert_series_equal(p["ret_precio_1_objetivo"], con["ret_precio_1_objetivo"])
+    assert sin.dictamen["alcance"]["dividendos_objetivo"].startswith("sin consulta")
+    criterio = next(c for c in sin.dictamen["criterios"] if c["criterio"].startswith("Etiqueta del objetivo"))
+    assert criterio["valor"] == 0.0 and criterio["critico"]
+    # Con la convención de precio no hacen falta: las dos columnas coinciden.
+    datos = dict(cfg.fuente, objetivo=dict(cfg.fuente["objetivo"], rendimiento="precio"))
+    precio = pl.ejecutar(cot, sub, FECHAS, pl.config_desde_dict(datos)).principal
+    pd.testing.assert_series_equal(precio["ret_1_objetivo"], precio["ret_precio_1_objetivo"], check_names=False)
+    assert (precio["div_1_objetivo"] == 0.0).all()
+    with pytest.raises(ValueError, match="rendimiento debe ser total o precio"):
+        pl.config_desde_dict(dict(cfg.fuente, objetivo=dict(cfg.fuente["objetivo"], rendimiento="ajustado")))

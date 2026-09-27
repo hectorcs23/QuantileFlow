@@ -11,10 +11,14 @@ necesariamente el lunes. Cada etiqueta guarda tres instantes en UTC:
   de publicación o, si es posterior, la disponibilidad documentada de los
   precios inicial y final y de los dividendos que se suman.
 
-``retorno_log`` es el rendimiento total: un dividendo cuya fecha ex abre
-dentro de ``(inicio, fin]`` se suma al precio final, porque quien tenía el
-activo al inicio lo cobra. ``retorno_precio_log`` excluye los dividendos y
-``dividendos`` guarda el monto sumado, para auditar la diferencia.
+Con una tabla de dividendos, ``retorno_log`` es el rendimiento total: un
+dividendo cuya fecha ex abre dentro de ``(inicio, fin]`` se suma al precio
+final, porque quien tenía el activo al inicio lo cobra. ``retorno_precio_log``
+excluye los dividendos y ``dividendos`` guarda el monto sumado, para auditar la
+diferencia. Si la consulta de dividendos más reciente es anterior al fin, el
+rendimiento total queda ausente («sin dividendos confirmados»): un dividendo
+anunciado después no estaría en la tabla. Sin tabla, las dos columnas son el
+rendimiento de precio (un índice de precio como la referencia).
 
 Entrenamiento y calibración solo pueden consultar etiquetas con
 ``label_available_at`` anterior o igual al instante simulado
@@ -52,9 +56,14 @@ def _por_fecha(valores):
 
 
 def _dividendos(tabla, codigo):
-    """Pares ``(apertura_ex_utc, monto, disponible_utc)`` de una tabla con fecha_ex, monto y disponibilidad."""
+    """``(apertura_ex_utc, monto, disponible_utc)`` de cada dividendo y la cobertura de la tabla.
+
+    La cobertura es el mayor ``consultado_utc`` (NaT si la tabla está vacía o no
+    lo trae): hasta ese instante la lista está completa.
+    """
     if tabla is None or len(tabla) == 0:
-        return []
+        return [], pd.NaT
+    cobertura = pd.to_datetime(tabla["consultado_utc"], utc=True).max() if "consultado_utc" in tabla else pd.NaT
     salida = []
     for fila in pd.DataFrame(tabla).itertuples():
         fecha_ex = _fecha(fila.fecha_ex)
@@ -64,7 +73,7 @@ def _dividendos(tabla, codigo):
         if pd.isna(disponible):
             disponible = getattr(fila, "recibido_utc", pd.NaT)
         salida.append((apertura(fecha_ex, codigo), float(fila.monto), disponible))
-    return salida
+    return salida, cobertura
 
 
 def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
@@ -77,12 +86,12 @@ def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
     que la necesitan. ``disponibles`` (instante UTC por sesión) retrasa la
     madurez hasta que el precio se publicó; ``motivos`` explica por qué falta un
     precio y pasa a la columna ``motivo``. ``dividendos`` (columnas ``fecha_ex``,
-    ``monto`` y ``disponible_utc`` o ``recibido_utc``) entra en el rendimiento
-    total y en la madurez.
+    ``monto``, ``disponible_utc`` o ``recibido_utc`` y ``consultado_utc``;
+    puede estar vacía) entra en el rendimiento total y en la madurez.
     """
     serie = _serie_por_sesion(precios, codigo)
     disponibles, motivos = _por_fecha(disponibles), _por_fecha(motivos)
-    pagos = _dividendos(dividendos, codigo)
+    pagos, cobertura = _dividendos(dividendos, codigo)
     latencia = pd.Timedelta(seconds=float(latencia_s))
     retraso = pd.Timedelta(seconds=float(retraso_publicacion_s))
 
@@ -120,8 +129,13 @@ def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
             elif not np.isfinite(p1):
                 fila.update(estado="sin precio final", motivo=motivo(fin_fecha))
             else:
-                fila["retorno_log"] = float(np.log((p1 + dividendo) / p0))
                 fila["retorno_precio_log"] = float(np.log(p1 / p0))
+                if dividendos is not None and not cobertura >= fin:
+                    fila.update(estado="sin dividendos confirmados",
+                                motivo=f"dividendos consultados hasta {cobertura}, antes del fin {fin}"
+                                if not pd.isna(cobertura) else "sin consulta de dividendos")
+                else:
+                    fila["retorno_log"] = float(np.log((p1 + dividendo) / p0))
             filas.append(fila)
     return pd.DataFrame(filas)
 

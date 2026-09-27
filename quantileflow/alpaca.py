@@ -19,6 +19,16 @@ entorno y la documentación oficial; detalle en ``docs/fuente_alpaca.md``):
 * **Subyacente**: no hay nivel del índice SPX. SPY llega por IEX en tiempo real
   en el plan gratuito (``/v2/stocks/snapshots``). Para SPX se estima un
   subyacente implícito por paridad (``implicito.py``).
+* **Histórico SIP** (``/v2/stocks/quotes``, ``feed=sip``): NBBO consolidado de
+  todas las bolsas, con el bid y el ask de bolsas distintas y hora en
+  nanosegundos. Sin suscripción solo se puede consultar una ventana que terminó
+  hace al menos 15 minutos. Es el precio del **objetivo** (SPY) en cada corte:
+  se descarga después y su disponibilidad fija la madurez de la etiqueta, sin
+  entrar nunca en una medida del corte.
+* **Eventos corporativos** (``/v1/corporate-actions``): dividendos en efectivo
+  con fecha ex, registro y pago; el filtro de fechas es por ``process_date``
+  (el pago) y un dividendo aparece desde que se anuncia. No trae la hora del
+  anuncio.
 
 Sellos de tiempo. ``sello_evento_utc`` es la hora de la cotización según
 Alpaca, truncada a microsegundos. Una captura en vivo no trae hora de snapshot
@@ -71,6 +81,8 @@ ESTILO = {"european": "europeo", "american": "americano"}
 TIPO = {"call": "C", "put": "P"}
 EXTRAS_COTIZACIONES = ["bolsa_bid", "bolsa_ask", "condicion", "captura"]
 EXTRAS_SUBYACENTE = ["fuente_precio", "captura"]
+EXTRAS_DIVIDENDOS = ["id_evento", "fecha_registro", "fecha_proceso", "subtipo"]
+FEED_EVENTOS = "corporate_actions"
 
 
 class ErrorAlpaca(RuntimeError):
@@ -205,11 +217,12 @@ class ClienteAlpaca:
                 self.dormir(self._espera(intento, estado, cab))
         raise ErrorAlpaca(estado, ruta, f"sin respuesta válida tras {self.reintentos + 1} intentos: {ultimo}")
 
-    def paginas(self, servicio, ruta, params=(), maximo=200, al_recibir=None) -> list[Respuesta]:
+    def paginas(self, servicio, ruta, params=(), maximo=200, al_recibir=None, hasta=None) -> list[Respuesta]:
         """Todas las páginas de una consulta (``next_page_token``), cada una como respuesta propia.
 
         ``al_recibir(respuesta, numero)`` se llama en cuanto llega cada página:
-        así una página ya recibida no se pierde si falla la siguiente.
+        así una página ya recibida no se pierde si falla la siguiente. Con
+        ``hasta``, se detiene tras esa cantidad de páginas aunque haya más.
         """
         respuestas, token = [], None
         while True:
@@ -220,6 +233,8 @@ class ClienteAlpaca:
             respuestas.append(respuesta)
             if al_recibir is not None:
                 al_recibir(respuesta, len(respuestas))
+            if hasta is not None and len(respuestas) >= hasta:
+                return respuestas
             cuerpo = respuesta.json()
             token = cuerpo.get("next_page_token") if isinstance(cuerpo, dict) else None
             if not token:
@@ -238,15 +253,16 @@ class Solicitud:
     """Consulta declarada: su ``nombre`` identifica el crudo; ``tipo`` decide cómo se normaliza."""
 
     nombre: str
-    tipo: str  # "reloj", "contratos", "cadena" o "acciones"
+    tipo: str  # "reloj", "contratos", "cadena", "acciones", "historico" o "eventos"
     servicio: str
     ruta: str
     params: tuple = ()
+    paginas_max: int | None = None  # None: todas las páginas
 
 
-def _solicitud(nombre, tipo, servicio, ruta, **params):
+def _solicitud(nombre, tipo, servicio, ruta, paginas_max=None, **params):
     return Solicitud(nombre, tipo, servicio, ruta,
-                     tuple(sorted((k, str(v)) for k, v in params.items() if v is not None)))
+                     tuple(sorted((k, str(v)) for k, v in params.items() if v is not None)), paginas_max)
 
 
 def pedir_reloj() -> Solicitud:
@@ -275,6 +291,25 @@ def pedir_acciones(simbolos, feed) -> Solicitud:
                       symbols=",".join(simbolos), feed=feed)
 
 
+def pedir_historico(simbolos, feed, corte_utc, ventana_s, limite) -> Solicitud:
+    """Las ``limite`` cotizaciones más recientes con evento en ``[corte - ventana, corte]`` (extremos incluidos).
+
+    Una sola página en orden descendente: basta para encontrar la última
+    cotización válida y no descarga toda la ventana (SPY cotiza cientos de veces
+    por segundo).
+    """
+    corte = pd.Timestamp(corte_utc)
+    return _solicitud(f"historico_{'-'.join(simbolos)}", "historico", "datos", "/v2/stocks/quotes", paginas_max=1,
+                      symbols=",".join(simbolos), feed=feed, start=iso(corte - pd.Timedelta(seconds=float(ventana_s))),
+                      end=iso(corte), sort="desc", limit=int(limite))
+
+
+def pedir_eventos(simbolos, desde, hasta) -> Solicitud:
+    """Eventos corporativos de todos los tipos con ``process_date`` entre dos fechas (incluidas)."""
+    return _solicitud(f"eventos_{'-'.join(simbolos)}", "eventos", "datos", "/v1/corporate-actions",
+                      symbols=",".join(simbolos), start=str(_fecha(desde)), end=str(_fecha(hasta)), limit=1000)
+
+
 def ejecutar(cliente: ClienteAlpaca, solicitudes, hilos=8, registro=None):
     """Ejecuta las solicitudes en paralelo; con ``registro``, guarda cada página en cuanto llega.
 
@@ -296,7 +331,8 @@ def ejecutar(cliente: ClienteAlpaca, solicitudes, hilos=8, registro=None):
         if registro is not None:
             registro.iniciar(solicitud)
         try:
-            cliente.paginas(solicitud.servicio, solicitud.ruta, solicitud.params, al_recibir=al_recibir)
+            cliente.paginas(solicitud.servicio, solicitud.ruta, solicitud.params, al_recibir=al_recibir,
+                            hasta=solicitud.paginas_max)
         except (ErrorAlpaca, OSError, ValueError, http.client.HTTPException) as error:
             texto = (f"{error} ({len(recibidas)} páginas recibidas antes del fallo; el total es desconocido: "
                      "la paginación es por cursor)")
@@ -397,15 +433,16 @@ def reloj_servidor(respuesta: Respuesta) -> dict:
             "proximo_cierre": d.get("next_close")}
 
 
-def ruta_manifiesto(raiz_datos, fecha, etiqueta) -> Path:
-    return directorio_crudo(raiz_datos) / "capturas" / str(fecha) / f"{etiqueta}.json"
+def ruta_manifiesto(raiz_datos, fecha, etiqueta, carpeta="capturas") -> Path:
+    """``capturas`` (en vivo), ``historico`` (SIP de cada corte) o ``eventos`` (eventos corporativos)."""
+    return directorio_crudo(raiz_datos) / carpeta / str(fecha) / f"{etiqueta}.json"
 
 
-def escribir_manifiesto(manifiesto: dict, raiz_datos) -> Path:
-    """Escribe el manifiesto de una captura en solo lectura; nunca sobrescribe uno existente."""
-    ruta = ruta_manifiesto(raiz_datos, manifiesto["fecha"], manifiesto["etiqueta"])
+def escribir_manifiesto(manifiesto: dict, raiz_datos, carpeta="capturas") -> Path:
+    """Escribe un manifiesto en solo lectura; nunca sobrescribe uno existente."""
+    ruta = ruta_manifiesto(raiz_datos, manifiesto["fecha"], manifiesto["etiqueta"], carpeta)
     if ruta.exists():
-        raise FileExistsError(f"{ruta} ya existe: una captura no se sobrescribe")
+        raise FileExistsError(f"{ruta} ya existe: un manifiesto no se sobrescribe")
     almacen.escribir_json(manifiesto, ruta)
     os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
     return ruta
@@ -495,18 +532,93 @@ def codigo_salida(plan) -> int:
     return 0 if plan and all(p["estado"] == "completa" for p in plan) else 1
 
 
-def escribir_ejecucion(registro: dict, raiz_datos) -> Path:
-    """Registro de una ejecución del script (disparo, horas planificadas y su estado), en solo lectura."""
+def escribir_ejecucion(registro: dict, raiz_datos, sufijo="") -> Path:
+    """Registro de una ejecución de un script (disparo, horas planificadas y su estado), en solo lectura."""
     ruta = (directorio_crudo(raiz_datos) / "ejecuciones" / registro["fecha"]
-            / f"{pd.Timestamp(registro['inicio_utc']):%Y%m%dT%H%M%S%fZ}.json")
+            / f"{pd.Timestamp(registro['inicio_utc']):%Y%m%dT%H%M%S%fZ}{sufijo}.json")
     almacen.escribir_json(registro, ruta)
     os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
     return ruta
 
 
-def leer_manifiestos(raiz_datos, desde=None, hasta=None) -> list[dict]:
-    """Manifiestos de captura entre dos fechas de sesión (incluidas), en orden de ruta."""
-    base = directorio_crudo(raiz_datos) / "capturas"
+# ---------------------------------------------------------------------------
+# Histórico SIP del objetivo y eventos corporativos
+# ---------------------------------------------------------------------------
+
+
+def planificar_historico(raiz_datos, fecha, horas, ahora_utc, retraso_s, margen_s, codigo=CALENDARIO) -> list[dict]:
+    """Qué descargar del histórico de una sesión según lo ya descargado y la hora actual.
+
+    ``completa``: ya hay una descarga completa y se omite. Si no, la ventana del
+    corte se puede consultar desde ``corte + retraso_s`` (SIP sin suscripción:
+    900 s); con ``margen_s`` más, la acción es ``descargar`` y antes,
+    ``esperar``. A diferencia de la captura en vivo, un intento fallido se
+    repite: el dato histórico no cambia.
+    """
+    previas = {}
+    for m in leer_manifiestos(raiz_datos, fecha, fecha, "historico"):
+        previas.setdefault(m["hora"], []).append(m["estado"])
+    plan = []
+    for hora in horas:
+        corte = instante(fecha, hora, codigo)
+        estados = previas.get(hora, [])
+        consultable = corte + pd.Timedelta(seconds=float(retraso_s) + float(margen_s))
+        paso = {"hora": hora, "corte_utc": corte, "consultable_utc": consultable, "intentos_previos": estados,
+                "etiqueta": f"{_fecha(fecha)}T{hora.replace(':', '')}" + (f"-{len(estados) + 1}" if estados else "")}
+        if "completa" in estados:
+            paso.update(estado="completa", accion="omitir")
+        else:
+            paso.update(estado="pendiente", accion="esperar" if pd.Timestamp(ahora_utc) < consultable else "descargar")
+        plan.append(paso)
+    return plan
+
+
+def meta_historico(fecha, paso: dict, retraso_s, simbolos, feed, ventana_s, limite) -> dict:
+    """Metadatos de la descarga histórica de un paso de ``planificar_historico``.
+
+    ``disponible_utc`` es el corte más ``retraso_s``: la disponibilidad
+    documentada del dato, que fija la madurez de las etiquetas.
+    """
+    corte = pd.Timestamp(paso["corte_utc"])
+    return {"fecha": str(_fecha(fecha)), "hora": paso["hora"], "corte_utc": iso(corte), "etiqueta": paso["etiqueta"],
+            "retraso_s": float(retraso_s), "disponible_utc": iso(corte + pd.Timedelta(seconds=float(retraso_s))),
+            "simbolos": list(simbolos), "feed": feed, "ventana_s": float(ventana_s), "limite": int(limite)}
+
+
+def _descargar(cliente, solicitud, raiz_datos, meta, carpeta):
+    registro = Registro(raiz_datos)
+    inicio = cliente.reloj()
+    _, errores = ejecutar(cliente, [solicitud], 1, registro)
+    manifiesto = {"proveedor": PROVEEDOR, "version_adaptador": VERSION_ADAPTADOR, "cuenta": cliente.cuenta,
+                  **meta, "inicio_utc": iso(inicio), "fin_utc": iso(cliente.reloj()),
+                  "solicitudes": registro.entradas, "errores": errores,
+                  "estado": registro.entradas[solicitud.nombre]["estado"]}
+    return manifiesto, escribir_manifiesto(manifiesto, raiz_datos, carpeta)
+
+
+def descargar_historico(cliente: ClienteAlpaca, solicitud: Solicitud, raiz_datos, meta: dict):
+    """Descarga las cotizaciones históricas de un corte y escribe su manifiesto en ``historico/``.
+
+    ``meta`` trae ``fecha``, ``hora``, ``corte_utc``, ``etiqueta`` y
+    ``disponible_utc``: desde cuándo se puede consultar la ventana (el corte más
+    el retraso del SIP sin suscripción), que la normalización registra como
+    disponibilidad documentada. Consultar antes es un error: Alpaca respondería
+    403 y, con suscripción, el dato no mediría lo que se podía saber en vivo.
+    """
+    if pd.Timestamp(cliente.reloj()) < pd.Timestamp(meta["disponible_utc"]):
+        raise ValueError(f"{meta['etiqueta']}: la ventana del corte solo se puede consultar desde "
+                         f"{meta['disponible_utc']}")
+    return _descargar(cliente, solicitud, raiz_datos, meta, "historico")
+
+
+def descargar_eventos(cliente: ClienteAlpaca, solicitud: Solicitud, raiz_datos, meta: dict):
+    """Descarga los eventos corporativos y escribe su manifiesto en ``eventos/`` (``fecha`` es la de la consulta)."""
+    return _descargar(cliente, solicitud, raiz_datos, meta, "eventos")
+
+
+def leer_manifiestos(raiz_datos, desde=None, hasta=None, carpeta="capturas") -> list[dict]:
+    """Manifiestos de ``carpeta`` entre dos fechas (incluidas), en orden de ruta."""
+    base = directorio_crudo(raiz_datos) / carpeta
     if not base.exists():
         return []
     salida = []
@@ -690,26 +802,174 @@ def normalizar(raiz_datos, desde=None, hasta=None):
     return cot, sub, resumenes, manifiestos
 
 
-def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, reglas=None):
-    """Cotizaciones y subyacente normalizados, con el subyacente implícito si se configura.
+def filas_historico(cuerpo: dict, corte_utc, disponible_utc, recibido_utc, feed, captura,
+                    cuentas: Counter) -> list[dict]:
+    """Filas ``SUBYACENTE`` de una página de ``/v2/stocks/quotes``: una por cotización con los dos lados.
+
+    ``sello_snapshot_utc`` es el corte (la consulta pide el estado hasta él) y
+    ``disponible_utc``, desde cuándo el proveedor deja consultarlo. Las filas
+    van en orden de la hora del evento en nanosegundos. Una cotización sin bid
+    o sin ask no tiene mid: se cuenta y no se normaliza. Una cruzada sí, y la
+    regla histórica (``contrato.precio_para_etiqueta``) la descarta después.
+    """
+    filas = []
+    for simbolo in sorted(cuerpo.get("quotes") or {}):
+        for q in sorted(cuerpo["quotes"][simbolo] or [], key=lambda q: pd.Timestamp(q["t"])):
+            bid, ask = float(q.get("bp") or 0.0), float(q.get("ap") or 0.0)
+            if bid <= 0.0 or ask <= 0.0:
+                cuentas["de_un_lado"] += 1
+                continue
+            if pd.Timestamp(q["t"]) > pd.Timestamp(corte_utc):
+                raise ValueError(f"{captura}: cotización de {simbolo} posterior al corte ({q['t']})")
+            cuentas["cotizaciones"] += 1
+            filas.append({"subyacente": simbolo, "precio": 0.5 * (bid + ask), "bid": bid, "ask": ask,
+                          "sello_evento_utc": q["t"], "sello_snapshot_utc": corte_utc,
+                          "disponible_utc": disponible_utc, "recibido_utc": recibido_utc, "proveedor": PROVEEDOR,
+                          "feed": feed, "tipo_precio": "observado", "fuente_precio": "mid", "captura": captura})
+    return filas
+
+
+def normalizar_historico(raiz_datos, desde=None, hasta=None):
+    """Filas ``SUBYACENTE`` de la primera descarga histórica completa de cada corte y sus resúmenes.
+
+    Comprueba que cada página se descargó después de la disponibilidad
+    documentada del corte: el dato no pudo influir en nada anterior.
+    Devuelve ``(subyacente, resumenes, manifiestos_usados)``.
+    """
+    elegidos = {}
+    for m in leer_manifiestos(raiz_datos, desde, hasta, "historico"):
+        if m["estado"] == "completa":
+            elegidos.setdefault((m["fecha"], m["hora"]), m)
+    partes, resumenes, usados = [], [], []
+    for clave in sorted(elegidos):
+        m = elegidos[clave]
+        filas, cuentas, recibidos = [], Counter(), []
+        for nombre in sorted(m["solicitudes"]):
+            for p in m["solicitudes"][nombre]["paginas"]:
+                if pd.Timestamp(p["recibido_utc"]) < pd.Timestamp(m["disponible_utc"]):
+                    raise ValueError(f"{m['etiqueta']}: página recibida antes de la disponibilidad documentada")
+                recibidos.append(p["recibido_utc"])
+                filas += filas_historico(leer_crudo(raiz_datos, p), m["corte_utc"], m["disponible_utc"],
+                                         p["recibido_utc"], p["params"].get("feed"), m["etiqueta"], cuentas)
+        tabla = _tabla(filas, contrato.SUBYACENTE, EXTRAS_SUBYACENTE)
+        problemas = contrato.validar(tabla, contrato.SUBYACENTE) if len(tabla) else []
+        if problemas:
+            raise ValueError(f"{m['_ruta']}: " + "; ".join(problemas))
+        partes.append(tabla)
+        usados.append(m)
+        resumenes.append({"captura": m["etiqueta"], "fecha": m["fecha"], "hora": m["hora"],
+                          "corte_utc": m["corte_utc"], "disponible_utc": m["disponible_utc"],
+                          "recibido_utc": min(recibidos) if recibidos else None, **dict(sorted(cuentas.items())),
+                          "primer_evento_utc": iso(tabla["sello_evento_utc"].min()) if len(tabla) else None,
+                          "ultimo_evento_utc": iso(tabla["sello_evento_utc"].max()) if len(tabla) else None})
+    sub = (pd.concat(partes, ignore_index=True) if partes else _tabla([], contrato.SUBYACENTE, EXTRAS_SUBYACENTE))
+    return sub, resumenes, usados
+
+
+def _valores_dividendo(x):
+    return (x["symbol"], x["ex_date"], float(x["rate"]), bool(x.get("special")), x.get("payable_date"))
+
+
+def normalizar_eventos(raiz_datos):
+    """Dividendos en efectivo (``contrato.DIVIDENDOS``) de las consultas completas de eventos, y los demás eventos.
+
+    Por dividendo (id de Alpaca) vale la versión más reciente; ``recibido_utc``
+    es la primera consulta que la trajo. ``consultado_utc`` es la consulta
+    completa más reciente del símbolo: como un dividendo aparece desde que se
+    anuncia, la lista está completa hasta ella. ``disponible_utc`` queda nulo:
+    Alpaca no da la hora del anuncio. Los demás tipos (splits, fusiones,
+    cambios de nombre, etc.) se devuelven aparte: el piloto no los trata.
+    Devuelve ``(dividendos, otros_eventos, manifiestos_usados)``.
+    """
+    manifiestos = [m for m in leer_manifiestos(raiz_datos, None, None, "eventos") if m["estado"] == "completa"]
+    dividendos, otros, consultado = {}, {}, {}
+    listados = []
+    for m in manifiestos:
+        for nombre in sorted(m["solicitudes"]):
+            for p in m["solicitudes"][nombre]["paginas"]:
+                recibido = pd.Timestamp(p["recibido_utc"])
+                for simbolo in p["params"].get("symbols", "").split(","):
+                    consultado[simbolo] = max(consultado.get(simbolo, recibido), recibido)
+                for tipo, lista in sorted((leer_crudo(raiz_datos, p).get("corporate_actions") or {}).items()):
+                    listados += [(recibido, tipo, x) for x in lista or []]
+    for recibido, tipo, x in sorted(listados, key=lambda t: (t[0], t[1], t[2].get("id", ""))):
+        if tipo != "cash_dividends":
+            fecha = x.get("ex_date") or x.get("effective_date") or x.get("process_date")
+            otros[x.get("id")] = {"tipo": tipo, "simbolo": x.get("symbol") or x.get("old_symbol") or
+                                  x.get("target_symbol"), "fecha": fecha, "id": x.get("id")}
+            continue
+        previo = dividendos.get(x["id"])
+        if previo is None or _valores_dividendo(previo["datos"]) != _valores_dividendo(x):
+            dividendos[x["id"]] = {"datos": x, "recibido": recibido}
+    filas = []
+    for id_evento in sorted(dividendos, key=lambda k: (dividendos[k]["datos"]["symbol"],
+                                                       dividendos[k]["datos"]["ex_date"], k)):
+        x, recibido = dividendos[id_evento]["datos"], dividendos[id_evento]["recibido"]
+        filas.append({"simbolo": x["symbol"], "fecha_ex": _fecha(x["ex_date"]), "monto": float(x["rate"]),
+                      "fecha_pago": _fecha(x["payable_date"]) if x.get("payable_date") else None,
+                      "clase": "especial" if x.get("special") else "ordinario", "disponible_utc": None,
+                      "recibido_utc": iso(recibido), "consultado_utc": iso(consultado[x["symbol"]]),
+                      "proveedor": PROVEEDOR, "feed": FEED_EVENTOS, "id_evento": id_evento,
+                      "fecha_registro": x.get("record_date"), "fecha_proceso": x.get("process_date"),
+                      "subtipo": x.get("sub_type")})
+    tabla = _tabla(filas, contrato.DIVIDENDOS, EXTRAS_DIVIDENDOS)
+    problemas = contrato.validar(tabla, contrato.DIVIDENDOS) if len(tabla) else []
+    if problemas:
+        raise ValueError("dividendos de Alpaca: " + "; ".join(problemas))
+    return tabla, sorted(otros.values(), key=lambda e: (str(e["fecha"]), str(e["id"]))), manifiestos
+
+
+@dataclass(frozen=True, eq=False)
+class TablasAlpaca:
+    """Tablas normalizadas de Alpaca para el piloto y lo que las explica."""
+
+    cotizaciones: pd.DataFrame
+    subyacente: pd.DataFrame  # IEX, nivel implícito y SIP histórico
+    dividendos: pd.DataFrame
+    resumenes: list  # capturas en vivo
+    resumenes_historico: list
+    fallos_implicito: list
+    manifiestos: list  # capturas en vivo
+    manifiestos_historico: list
+    manifiestos_eventos: list
+    eventos_no_tratados: list
+
+
+def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, reglas=None) -> TablasAlpaca:
+    """Cotizaciones, subyacente y dividendos normalizados, con el subyacente implícito si se configura.
 
     ``cfg_implicito`` es la sección ``[implicito]`` de la configuración de
-    captura; ``reglas`` son las reglas de calidad del piloto. Devuelve
-    ``(cotizaciones, subyacente, resumenes, fallos_implicito, manifiestos)``.
+    captura; ``reglas`` son las reglas de calidad del piloto. El subyacente
+    reúne las cotizaciones en vivo (IEX), el nivel implícito y el histórico SIP
+    del objetivo. Un evento corporativo distinto de un dividendo en efectivo
+    con fecha dentro del rango detiene la normalización: cambiaría los precios
+    sin que las etiquetas lo traten.
     """
     cot, sub, resumenes, manifiestos = normalizar(raiz_datos, desde, hasta)
-    fallos = []
+    fallos, partes = [], [sub]
     if cfg_implicito and len(cot):
         c = cfg_implicito
         capturas = [(m["etiqueta"], m["fecha"], m["corte_utc"]) for m in manifiestos]
         imp, fallos = implicito.subyacente_implicito(
             cot, capturas, c["raiz"], c["subyacente"], float(c["tasa"]), float(c["rendimiento_dividendo"]),
             reglas or cadenas.ReglasCalidad(), int(c["minimo_pares"]), float(c["dias_max"]))
-        partes = [t for t in (sub, imp) if len(t)]
-        if partes:
-            sub = pd.concat(partes, ignore_index=True) if len(partes) > 1 else partes[0]
-            sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
-    return cot, sub, resumenes, fallos, manifiestos
+        partes.append(imp)
+    historico, resumenes_hist, manifiestos_hist = normalizar_historico(raiz_datos, desde, hasta)
+    partes.append(historico)
+    partes = [t for t in partes if len(t)]
+    if len(partes) > 1:
+        sub = pd.concat(partes, ignore_index=True)
+    elif partes:
+        sub = partes[0]
+    sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
+    dividendos, otros, manifiestos_ev = normalizar_eventos(raiz_datos)
+    en_rango = [e for e in otros if e["fecha"] and (desde is None or _fecha(e["fecha"]) >= _fecha(desde))
+                and (hasta is None or _fecha(e["fecha"]) <= _fecha(hasta))]
+    if en_rango:
+        raise ValueError("eventos corporativos no tratados en el rango: "
+                         + "; ".join(f"{e['tipo']} de {e['simbolo']} el {e['fecha']}" for e in en_rango))
+    return TablasAlpaca(cot, sub, dividendos, resumenes, resumenes_hist, fallos, manifiestos, manifiestos_hist,
+                        manifiestos_ev, otros)
 
 
 def esperar_hasta(objetivo_utc, reloj=None, dormir=time.sleep, paso_max=30.0):
