@@ -234,7 +234,8 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         f"- Dividendos del objetivo: {al['dividendos_objetivo']}.",
         *([f"- Rendimiento total a {cfg.horizontes[0]} sesión, por estado de sus dividendos: "
            + ", ".join(f"{n} {PLURALES[k] if n != 1 else k}" for k, n in al["estados_rendimiento_objetivo"].items())
-           + f"; con el valor revisado después de madurar: {al.get('revisadas_objetivo', 0)}."]
+           + f"; con el valor revisado después de madurar: {al.get('revisadas_objetivo', 0)}, y después de "
+           f"aceptarse: {al.get('revisadas_tras_aceptar_objetivo', 0)}."]
           if "estados_rendimiento_objetivo" in al else []),
         f"- Evaluación con precios de mercado: {al['evaluacion_con_precios_de_mercado']}.", "",
         "## Calidad de los datos", "",

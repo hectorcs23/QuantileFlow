@@ -591,4 +591,9 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
                                                           for k in ("provisional", "aceptada", "pendiente")}
     revisadas = principal.loc[principal[f"estado_ret_{h1}_objetivo"] == "ok", f"version_{h1}_objetivo"]
     veredicto["alcance"]["revisadas_objetivo"] = int((revisadas > 1).sum())
+    # La prueba de la política: etiquetas cuyo valor cambió después de haber quedado aceptadas.
+    obj = etiquetas[(etiquetas["serie"] == "objetivo") & (etiquetas["horizonte"] == h1) & (etiquetas["estado"] == "ok")]
+    aceptada = obj[obj["estado_dividendos"] == "aceptada"].groupby("sesion")["version"].min()
+    ultima = obj.groupby("sesion")["version"].max()
+    veredicto["alcance"]["revisadas_tras_aceptar_objetivo"] = int((ultima.reindex(aceptada.index) > aceptada).sum())
     return ResultadoPiloto(principal, completa, etiquetas, detalles, veredicto, cfg)

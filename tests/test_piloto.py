@@ -379,6 +379,30 @@ def test_dividendo_ausencia_y_spread_anormal_del_objetivo(cfg):
     pd.testing.assert_frame_equal(p.reset_index()[medidas], base[medidas])
 
 
+def test_revisiones_despues_de_madurar_y_de_aceptarse(cfg, mercado, resultado):
+    # Revalidación de a5e2748, §4: los 60 días son una política, no una garantía; se miden las revisiones.
+    a = resultado.dictamen["alcance"]
+    assert (a["revisadas_objetivo"], a["revisadas_tras_aceptar_objetivo"]) == (0, 0)
+    cot, sub, verdad = mercado
+    d = verdad["dividendos"]
+    tarde = pd.Timestamp("2026-10-01T15:00:00Z")  # corregido después de la consulta que acepta (26 de septiembre)
+    corregido = pd.concat([d.assign(retirado_utc=tarde, motivo_retiro="corregido"),
+                           d.assign(monto=1.85, recibido_utc=tarde)], ignore_index=True)
+    r = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=corregido, cobertura=verdad["cobertura"])
+    a = r.dictamen["alcance"]
+    assert (a["revisadas_objetivo"], a["revisadas_tras_aceptar_objetivo"]) == (1, 1)
+    assert a["estados_rendimiento_objetivo"]["provisional"] == 1  # vuelve a provisional hasta otra consulta
+    viernes = FECHAS[2]
+    p = r.principal.set_index("fecha")
+    assert (p.loc[viernes, "div_1_objetivo"], p.loc[viernes, "version_1_objetivo"]) == (1.85, 2)
+    # Madurada con la corrección ya conocida (antes de aceptarse), la revisión no cuenta como posterior.
+    temprano = pd.Timestamp("2025-12-01T15:00:00Z")
+    antes = pd.concat([d.assign(retirado_utc=temprano, motivo_retiro="corregido"),
+                       d.assign(monto=1.85, recibido_utc=temprano)], ignore_index=True)
+    a = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=antes, cobertura=verdad["cobertura"]).dictamen["alcance"]
+    assert (a["revisadas_objetivo"], a["revisadas_tras_aceptar_objetivo"]) == (1, 0)
+
+
 def test_rendimiento_total_sin_dividendos_queda_ausente(cfg, mercado, resultado):
     cot, sub, _ = mercado
     sin = pl.ejecutar(cot, sub, FECHAS, cfg)  # sin tabla de dividendos
