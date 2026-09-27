@@ -7,6 +7,7 @@ import dataclasses
 import datetime as dt
 import gzip
 import http.client
+import importlib.util
 import json
 import os
 import stat
@@ -33,6 +34,7 @@ from quantileflow import sintetico as sn
 
 RAIZ = Path(__file__).resolve().parents[1]
 CLAVE, SECRETO = "PKPRUEBA0123456789", "secreto-que-no-debe-aparecer"
+CLIENTE_REAL, VIGILANTE_REAL = al.ClienteAlpaca, al.Vigilante  # antes de cualquier sustitución en una prueba
 FECHAS = cal.sesiones("2025-11-17", "2025-11-18")
 
 
@@ -837,6 +839,73 @@ def test_un_dividendo_sin_simbolo_atribuible_detiene_la_normalizacion(tmp_path):
                          {"fecha": "2025-11-19", "etiqueta": "eventos-dos", "simbolos": ["SPY", "QQQ"]})
     with pytest.raises(ValueError, match="cash_dividends_incompleto"):
         al.tablas_para_piloto(tmp_path, "2020-01-01", "2020-01-31")
+
+
+def correr_captura(mercado, datos, monkeypatch, **fallos):
+    """``scripts/capturar_alpaca.py --ahora`` de punta a punta, con la API sintética y solo SPXW.
+
+    ``fallos`` sustituye funciones de ``alpaca`` por otras que lanzan un error.
+    Devuelve el código de salida y el registro de la ejecución (o ``None``).
+    """
+    spec = importlib.util.spec_from_file_location("capturar_alpaca", RAIZ / "scripts" / "capturar_alpaca.py")
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    texto = (RAIZ / "configs" / "captura_alpaca.toml").read_text()
+    texto = texto[:texto.index('[[captura.opciones]]\nsubyacente = "SPY"')] + texto[texto.index("[captura.acciones]"):]
+    config = datos / "captura.toml"
+    config.parent.mkdir(parents=True, exist_ok=True)
+    config.write_text(texto)
+    reloj = Reloj("2025-11-17T14:45:00Z")  # el corte inmediato: la cadena sintética tiene cotizaciones
+    api, vigilantes = api_sintetica(mercado, reloj), []
+
+    class Vigilante(VIGILANTE_REAL):  # para cancelarlos siempre, pase lo que pase
+        def __init__(self, *a, **k):
+            super().__init__(*a, **k)
+            vigilantes.append(self)
+
+    monkeypatch.setattr(al.Credenciales, "del_entorno", classmethod(lambda cls, entorno=None: al.Credenciales(
+        CLAVE, SECRETO)))
+    monkeypatch.setattr(al, "ClienteAlpaca", lambda cred, **kw: CLIENTE_REAL(cred, api, reloj, reloj.dormir, **kw))
+    monkeypatch.setattr(al, "Vigilante", Vigilante)
+    for nombre, error in fallos.items():
+        monkeypatch.setattr(al, nombre, lambda *a, error=error, **k: (_ for _ in ()).throw(error))
+    monkeypatch.setattr(sys, "argv", ["capturar_alpaca.py", "--datos", str(datos), "--config", str(config), "--ahora"])
+    try:
+        codigo = script.main()
+    finally:
+        for v in vigilantes:
+            v.cancelar()
+    registros = sorted((datos / "raw" / "alpaca" / "ejecuciones").rglob("*.json"))
+    return codigo, (json.loads(registros[0].read_text()) if registros else None)
+
+
+def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkeypatch):
+    # Cierre de b240dc2 (operación): el registro de la ejecución mide la puntualidad; un error no puede perderlo.
+    # 1. Un evento que la normalización del piloto rechaza no toca el resumen del día: no lee los eventos.
+    datos = tmp_path / "evento_raro"
+    sin_simbolo = {k: v for k, v in dividendo_json("d2", "2025-12-19", 0.5).items() if k != "symbol"}
+    api = API({"/v1/corporate-actions": lambda p: {"corporate_actions": {"cash_dividends": [sin_simbolo]},
+                                                   "next_page_token": None}})
+    al.descargar_eventos(cliente(api, Reloj("2025-11-16T21:00:00Z")), al.pedir_eventos(["SPY", "QQQ"], "2024-10-15",
+                         "2026-03-18"), datos, {"fecha": "2025-11-16", "etiqueta": "eventos-dos",
+                                                "simbolos": ["SPY", "QQQ"]})
+    codigo, registro = correr_captura(mercado, datos, monkeypatch)
+    assert codigo == 0 and registro["horas"][0]["estado"] == "completa" and "error" not in registro
+    assert (datos / "normalized" / "alpaca" / "diario" / "2025-11-17" / "resumen.json").exists()
+    with pytest.raises(ValueError, match="cash_dividends_incompleto"):  # la del piloto sí se detiene
+        al.tablas_para_piloto(datos, "2025-11-17", "2025-11-17")
+    # 2. Si falla la normalización del día, la captura ya está: registro con el error y código 5.
+    codigo, registro = correr_captura(mercado, tmp_path / "normalizacion", monkeypatch,
+                                      tablas_para_piloto=RuntimeError("fallo simulado"))
+    assert codigo == al.CODIGO_SIN_NORMALIZAR and registro["horas"][0]["estado"] == "completa"
+    assert registro["error"]["etapa"] == "normalización del día" and "fallo simulado" in registro["error"]["error"]
+    assert list((tmp_path / "normalizacion" / "raw" / "alpaca" / "capturas").rglob("*T*.json"))
+    # 3. Si falla la preparación, la hora queda fallida con el motivo, y el registro existe.
+    codigo, registro = correr_captura(mercado, tmp_path / "preparacion", monkeypatch,
+                                      elegir_vencimientos=ValueError("sin vencimientos"))
+    assert codigo == 1 and registro["horas"][0]["estado"] == "fallida"
+    assert registro["horas"][0]["motivo"] == "error inesperado: ValueError"
+    assert registro["error"]["etapa"] == "preparación y captura" and "listo_utc" not in registro
 
 
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):

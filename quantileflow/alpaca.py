@@ -90,6 +90,7 @@ FEED_EVENTOS = "corporate_actions"
 SUFIJO_DIARIO = ".diario.jsonl"
 CODIGO_PLAZO_VENCIDO = 3
 CODIGO_SIN_PREPARAR = 4
+CODIGO_SIN_NORMALIZAR = 5  # las horas terminaron, pero falló la normalización del día (el crudo ya está)
 
 
 class ErrorAlpaca(RuntimeError):
@@ -1436,7 +1437,7 @@ class TablasAlpaca:
 
 
 def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, reglas=None,
-                       resoluciones=None) -> TablasAlpaca:
+                       resoluciones=None, eventos=True) -> TablasAlpaca:
     """Cotizaciones, subyacente y dividendos normalizados, con el subyacente implícito si se configura.
 
     ``cfg_implicito`` es la sección ``[implicito]`` de la configuración de
@@ -1445,7 +1446,9 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
     del objetivo. Un evento corporativo distinto de un dividendo en efectivo
     con fecha dentro del rango detiene la normalización: cambiaría los precios
     sin que las etiquetas lo traten. Un dividendo que no se puede atribuir a un
-    símbolo la detiene siempre.
+    símbolo la detiene siempre. Con ``eventos=False`` (el resumen del día que
+    escribe la captura) no se leen los eventos: las tablas de dividendos quedan
+    vacías y no se comprueba nada de ellos.
     """
     cot, sub, resumenes, manifiestos = normalizar(raiz_datos, desde, hasta)
     fallos, partes = [], [sub]
@@ -1464,6 +1467,10 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
     elif partes:
         sub = partes[0]
     sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
+    if not eventos:
+        return TablasAlpaca(cot, sub, _tabla([], contrato.DIVIDENDOS, EXTRAS_DIVIDENDOS),
+                            _tabla([], contrato.COBERTURA_DIVIDENDOS, []), resumenes, resumenes_hist, fallos,
+                            manifiestos, manifiestos_hist, [], [])
     dividendos, cobertura, otros, manifiestos_ev = normalizar_eventos(raiz_datos, resoluciones)
     def en_rango(e):
         if e["tipo"] in NO_BLOQUEAN:

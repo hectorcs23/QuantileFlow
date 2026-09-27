@@ -33,6 +33,11 @@ colgada, y los dos dejan el registro de la ejecución:
   arranque y llegue al corte;
 * **absoluto** (código 3): ``plazo_s`` después del último corte.
 
+Un error inesperado tampoco pierde el registro: queda en él, con la etapa. Al
+preparar o capturar, las horas en curso quedan ``fallida`` (código 1). En la
+normalización del día, que es posterior y no toca el crudo ni sus manifiestos,
+el código es 5 si las horas habían terminado completas.
+
 Al empezar, y con ``--recuperar``, cada diario sin manifiesto se convierte en el
 manifiesto de lo que llegó, ``parcial`` o ``fallida`` y marcado como interrumpido.
 
@@ -47,6 +52,7 @@ import datetime as dt
 import os
 import sys
 import tomllib
+import traceback
 from pathlib import Path
 
 import pandas as pd
@@ -188,82 +194,102 @@ def main() -> int:
     vigilante = alpaca.Vigilante(plazo, cliente.reloj, al_vencer=al_interrumpir("interrumpida"))
     ejecucion.update(plazo_utc=alpaca.iso(plazo), listo_antes_utc=alpaca.iso(listo_antes))
 
-    # Contratos del día: metadatos para normalizar y para elegir vencimientos. Cada página se guarda al llegar.
-    desde, hasta = fecha, fecha + dt.timedelta(days=int(cfg["ventana_contratos_dias"]))
-    pedidos = [alpaca.pedir_contratos(o["subyacente"], desde, hasta, o["raiz"]) for o in cfg["opciones"]]
-    registro = alpaca.Registro(datos)
-    resultados, errores = alpaca.ejecutar(cliente, pedidos, cfg["hilos"], registro)
-    if errores:
-        # Sin manifiesto de captura: una ejecución posterior aún puede capturar si llega antes del corte.
-        print(f"no se pudieron pedir los contratos: {errores}", file=sys.stderr)
+    def registrar_error(etapa, error):
+        traceback.print_exc()
+        ejecucion["error"] = {"etapa": etapa, "error": f"{type(error).__name__}: {error}",
+                             "utc": alpaca.iso(cliente.reloj())}
+
+    try:
+        # Contratos del día: metadatos para normalizar y para elegir vencimientos. Cada página se guarda al llegar.
+        desde, hasta = fecha, fecha + dt.timedelta(days=int(cfg["ventana_contratos_dias"]))
+        pedidos = [alpaca.pedir_contratos(o["subyacente"], desde, hasta, o["raiz"]) for o in cfg["opciones"]]
+        registro = alpaca.Registro(datos)
+        resultados, errores = alpaca.ejecutar(cliente, pedidos, cfg["hilos"], registro)
+        if errores:
+            # Sin manifiesto de captura: una ejecución posterior aún puede capturar si llega antes del corte.
+            print(f"no se pudieron pedir los contratos: {errores}", file=sys.stderr)
+            preparacion.cancelar()
+            vigilante.cancelar()
+            for paso in pendientes:
+                paso.update(estado="fallida", motivo="sin contratos del día")
+            return terminar()
+        previas = {**registro.entradas, **alpaca.guardar_respuestas(reloj, {"reloj": "reloj"}, datos)}
+        meta = alpaca.metadatos_contratos(r.json() for rs in resultados.values() for r in rs)
+        seleccion, solicitudes = {}, []
+        for o in cfg["opciones"]:
+            vencimientos = {c["expiration_date"] for c in meta.values() if c["root_symbol"] == o["raiz"]}
+            elegidos, plazos = alpaca.elegir_vencimientos(
+                vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivo_dias"],
+                o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
+            seleccion[o["raiz"]] = {"vencimientos": [str(v) for v in elegidos],
+                                    "dias": {str(v): round(plazos[v], 4) for v in elegidos}}
+            print(f"{o['raiz']}: " + ", ".join(f"{v} ({plazos[v]:.1f} d)" for v in elegidos))
+            solicitudes += [alpaca.pedir_cadena(o["raiz"], v, cfg["feed_opciones"]) for v in elegidos]
+        solicitudes.append(alpaca.pedir_acciones(bruto["captura"]["acciones"]["simbolos"], cfg["feed_acciones"]))
+        preparacion.cancelar()
+        ejecucion["listo_utc"] = alpaca.iso(cliente.reloj())
+        print(f"lista a las {cliente.reloj().tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York); "
+              f"plazo de preparación {listo_antes.tz_convert(NUEVA_YORK):%H:%M:%S}")
+
+        for paso in pendientes:
+            hora, corte = paso["hora"], paso["corte_utc"]
+            if hora != "inmediata":
+                inicio = corte - pd.Timedelta(seconds=cfg["adelanto_s"])
+                print(f"{hora}: esperando hasta {inicio.tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York)")
+                alpaca.esperar_hasta(inicio, cliente.reloj)
+            m = {"fecha": str(fecha), "hora": hora, "corte_utc": alpaca.iso(corte), "etiqueta": paso["etiqueta"],
+                 "modo": "inmediata" if hora == "inmediata" else "programada", "feed_opciones": cfg["feed_opciones"],
+                 "feed_acciones": cfg["feed_acciones"], "adelanto_s": cfg["adelanto_s"], "config": info_config,
+                 "seleccion": seleccion, "reloj": estado_reloj, "codigo": ejecucion["codigo"]}
+            paso["estado"] = "en curso"
+            try:
+                manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"], vigilante)
+            except FileExistsError as error:
+                print(f"{hora}: {error}", file=sys.stderr)
+                paso.update(estado="fallida", motivo=str(error))
+                continue
+            duracion = (pd.Timestamp(manifiesto["fin_utc"]) - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds()
+            n = sum(len(e["paginas"]) for e in manifiesto["solicitudes"].values())
+            paso.update(estado=manifiesto["estado"], manifiesto=ruta.relative_to(datos).as_posix(), respuestas=n,
+                        duracion_s=round(duracion, 3),
+                        despues_del_corte=len(manifiesto["respuestas_despues_del_corte"]),
+                        errores=sorted(manifiesto["errores"]),
+                        margen_s=round((corte - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds(), 3))
+            print(f"{hora}: {manifiesto['estado']}; {n} respuestas en {duracion:.2f} s; después del corte: "
+                  f"{paso['despues_del_corte']}; errores: {len(paso['errores'])} -> {paso['manifiesto']}")
+    except Exception as error:  # un error inesperado no puede perder el registro de la ejecución
         preparacion.cancelar()
         vigilante.cancelar()
+        registrar_error("preparación y captura", error)
         for paso in pendientes:
-            paso.update(estado="fallida", motivo="sin contratos del día")
+            if paso["estado"] in ("pendiente", "en curso"):
+                paso.update(estado="fallida", motivo=f"error inesperado: {type(error).__name__}")
         return terminar()
-    previas = {**registro.entradas, **alpaca.guardar_respuestas(reloj, {"reloj": "reloj"}, datos)}
-    meta = alpaca.metadatos_contratos(r.json() for rs in resultados.values() for r in rs)
-    seleccion, solicitudes = {}, []
-    for o in cfg["opciones"]:
-        vencimientos = {c["expiration_date"] for c in meta.values() if c["root_symbol"] == o["raiz"]}
-        elegidos, plazos = alpaca.elegir_vencimientos(
-            vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivo_dias"],
-            o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
-        seleccion[o["raiz"]] = {"vencimientos": [str(v) for v in elegidos],
-                                "dias": {str(v): round(plazos[v], 4) for v in elegidos}}
-        print(f"{o['raiz']}: " + ", ".join(f"{v} ({plazos[v]:.1f} d)" for v in elegidos))
-        solicitudes += [alpaca.pedir_cadena(o["raiz"], v, cfg["feed_opciones"]) for v in elegidos]
-    solicitudes.append(alpaca.pedir_acciones(bruto["captura"]["acciones"]["simbolos"], cfg["feed_acciones"]))
-    preparacion.cancelar()
-    ejecucion["listo_utc"] = alpaca.iso(cliente.reloj())
-    print(f"lista a las {cliente.reloj().tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York); "
-          f"plazo de preparación {listo_antes.tz_convert(NUEVA_YORK):%H:%M:%S}")
-
-    for paso in pendientes:
-        hora, corte = paso["hora"], paso["corte_utc"]
-        if hora != "inmediata":
-            inicio = corte - pd.Timedelta(seconds=cfg["adelanto_s"])
-            print(f"{hora}: esperando hasta {inicio.tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York)")
-            alpaca.esperar_hasta(inicio, cliente.reloj)
-        m = {"fecha": str(fecha), "hora": hora, "corte_utc": alpaca.iso(corte), "etiqueta": paso["etiqueta"],
-             "modo": "inmediata" if hora == "inmediata" else "programada", "feed_opciones": cfg["feed_opciones"],
-             "feed_acciones": cfg["feed_acciones"], "adelanto_s": cfg["adelanto_s"], "config": info_config,
-             "seleccion": seleccion, "reloj": estado_reloj, "codigo": ejecucion["codigo"]}
-        paso["estado"] = "en curso"
-        try:
-            manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"], vigilante)
-        except FileExistsError as error:
-            print(f"{hora}: {error}", file=sys.stderr)
-            paso.update(estado="fallida", motivo=str(error))
-            continue
-        duracion = (pd.Timestamp(manifiesto["fin_utc"]) - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds()
-        n = sum(len(e["paginas"]) for e in manifiesto["solicitudes"].values())
-        paso.update(estado=manifiesto["estado"], manifiesto=ruta.relative_to(datos).as_posix(), respuestas=n,
-                    duracion_s=round(duracion, 3), despues_del_corte=len(manifiesto["respuestas_despues_del_corte"]),
-                    errores=sorted(manifiesto["errores"]),
-                    margen_s=round((corte - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds(), 3))
-        print(f"{hora}: {manifiesto['estado']}; {n} respuestas en {duracion:.2f} s; después del corte: "
-              f"{paso['despues_del_corte']}; errores: {len(paso['errores'])} -> {paso['manifiesto']}")
-
     vigilante.cancelar()  # lo que sigue es local y no compite con ningún corte
 
     # Tablas normalizadas del día, reconstruidas desde el crudo (el histórico SIP llega después, con su script).
-    piloto = cargar_config(args.config_piloto)
-    t = alpaca.tablas_para_piloto(datos, fecha, fecha, bruto.get("implicito"), piloto.reglas)
-    salida = datos / "normalized" / "alpaca" / "diario" / str(fecha)
-    hashes = {"cotizaciones.parquet": almacen.escribir_tabla(t.cotizaciones, salida / "cotizaciones.parquet"),
-              "subyacente.parquet": almacen.escribir_tabla(t.subyacente, salida / "subyacente.parquet")}
-    almacen.escribir_json({"fecha": str(fecha), "capturas": t.resumenes, "implicito_no_identificado":
-                           t.fallos_implicito, "salidas": hashes, "config": info_config,
-                           "entorno": almacen.huella_entorno(RAIZ)}, salida / "resumen.json")
-    for r in t.resumenes:
-        print(f"{r['captura']}: {r.get('con_cotizacion', 0)} cotizaciones de {r.get('snapshots', 0)} snapshots; "
-              f"sin cotización {r.get('sin_cotizacion', 0)}; sin metadatos {r.get('sin_metadatos', 0)}")
-    en_vivo = t.subyacente[t.subyacente["feed"] != "sip"]
-    for _, fila in en_vivo.iterrows():
-        print(f"  subyacente {fila['subyacente']} = {fila['precio']:.2f} ({fila['feed']}) en {fila['captura']}")
-    for f in t.fallos_implicito:
-        print(f"  subyacente implícito no identificado en {f['captura']}: {f['motivo']}")
+    # Un fallo aquí no toca la captura: el crudo y sus manifiestos ya están escritos.
+    try:
+        piloto = cargar_config(args.config_piloto)
+        t = alpaca.tablas_para_piloto(datos, fecha, fecha, bruto.get("implicito"), piloto.reglas,
+                                      eventos=False)
+        salida = datos / "normalized" / "alpaca" / "diario" / str(fecha)
+        hashes = {"cotizaciones.parquet": almacen.escribir_tabla(t.cotizaciones, salida / "cotizaciones.parquet"),
+                  "subyacente.parquet": almacen.escribir_tabla(t.subyacente, salida / "subyacente.parquet")}
+        almacen.escribir_json({"fecha": str(fecha), "capturas": t.resumenes, "implicito_no_identificado":
+                               t.fallos_implicito, "salidas": hashes, "config": info_config,
+                               "entorno": almacen.huella_entorno(RAIZ)}, salida / "resumen.json")
+        for r in t.resumenes:
+            print(f"{r['captura']}: {r.get('con_cotizacion', 0)} cotizaciones de {r.get('snapshots', 0)} snapshots; "
+                  f"sin cotización {r.get('sin_cotizacion', 0)}; sin metadatos {r.get('sin_metadatos', 0)}")
+        en_vivo = t.subyacente[t.subyacente["feed"] != "sip"]
+        for _, fila in en_vivo.iterrows():
+            print(f"  subyacente {fila['subyacente']} = {fila['precio']:.2f} ({fila['feed']}) en {fila['captura']}")
+        for f in t.fallos_implicito:
+            print(f"  subyacente implícito no identificado en {f['captura']}: {f['motivo']}")
+    except Exception as error:
+        registrar_error("normalización del día", error)
+        return terminar() or alpaca.CODIGO_SIN_NORMALIZAR
     return terminar()
 
 
