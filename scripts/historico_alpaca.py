@@ -14,6 +14,9 @@ disponibilidad documentada que la normalización registra y que fija la madurez
 de las etiquetas, así que el dato nunca entra en una medida del corte. Un corte
 ya descargado no se repite; un intento fallido sí, porque el dato histórico no
 cambia. Después consulta los eventos corporativos del objetivo (dividendos).
+Además, registra el estado de cada hora de captura de las sesiones del rango
+(``completa``, ``parcial``, ``fallida`` o ``perdida``): un corte perdido queda
+anotado aunque ninguna ejecución de captura haya llegado a correr.
 
 Guarda el crudo como la captura en vivo, un manifiesto por corte en
 ``raw/alpaca/historico/<fecha>/``, uno por consulta de eventos en
@@ -95,7 +98,14 @@ def main() -> int:
                  "desde": str(desde), "hasta": str(hasta), "cortes": []}
 
     fallos = 0
+    ejecucion["capturas"] = []
     for fecha in (sesiones(desde, hasta, codigo) if desde <= hasta else []):
+        for paso in alpaca.planificar(datos, fecha, cfg["horas"], cliente.reloj(), cfg["adelanto_s"], codigo):
+            if paso["estado"] != "pendiente":
+                ejecucion["capturas"].append({"fecha": str(fecha), "hora": paso["hora"], "estado": paso["estado"],
+                                              "capturas_previas": paso["capturas_previas"]})
+                if paso["estado"] != "completa":
+                    print(f"{fecha} {paso['hora']}: captura {paso['estado']}", file=sys.stderr)
         plan = alpaca.planificar_historico(datos, fecha, cfg["horas"], cliente.reloj(), h["retraso_s"],
                                            h["margen_s"], codigo)
         for paso in plan:

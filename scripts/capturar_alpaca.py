@@ -24,10 +24,17 @@ corte y el estado de cada hora.
 
 Recuperación. Cada página queda en el diario de su captura
 (``<etiqueta>.diario.jsonl``) en cuanto llega, y el manifiesto final se escribe
-de forma atómica. Un plazo absoluto (``plazo_s`` después del último corte)
-termina el proceso con código 3 aunque una solicitud siga colgada. Al empezar,
-y con ``--recuperar``, cada diario sin manifiesto se convierte en el manifiesto
-de lo que llegó, ``parcial`` o ``fallida`` y marcado como interrumpido.
+de forma atómica. Dos plazos terminan el proceso aunque una solicitud siga
+colgada, y los dos dejan el registro de la ejecución:
+
+* de **preparación** (código 4): si los contratos y los vencimientos no están
+  listos ``preparacion_s`` antes del corte (o ``preparacion_minima_s`` después de
+  arrancar, si se arrancó tarde), para que el respaldo de esa hora, en cola,
+  arranque y llegue al corte;
+* **absoluto** (código 3): ``plazo_s`` después del último corte.
+
+Al empezar, y con ``--recuperar``, cada diario sin manifiesto se convierte en el
+manifiesto de lo que llegó, ``parcial`` o ``fallida`` y marcado como interrumpido.
 
 Fuera de sesión, ``--ahora`` toma como sesión de referencia la última que ya
 abrió y como corte el menor entre ahora y su cierre: sirve para verificar el
@@ -160,11 +167,26 @@ def main() -> int:
     pendientes = [p for p in plan if p["accion"] == "capturar"]
     if not pendientes:
         return terminar()
-    # Plazo absoluto: pase lo que pase, el proceso termina poco después del último corte.
-    plazo = max([ahora] + [p["corte_utc"] for p in pendientes]) + pd.Timedelta(
+
+    def al_interrumpir(estado):
+        def registrar(motivo):  # corre en el hilo del plazo, justo antes de terminar el proceso
+            for paso in pendientes:
+                if paso["estado"] in ("pendiente", "en curso"):
+                    paso.update(estado=estado, motivo=motivo)
+            ejecucion["interrupcion"] = {"motivo": motivo, "utc": alpaca.iso(cliente.reloj())}
+            terminar()
+        return registrar
+
+    # Plazo de preparación: si no está lista a tiempo, termina y deja que el respaldo de esa hora llegue al corte.
+    listo_antes = alpaca.plazo_preparacion(min(p["corte_utc"] for p in pendientes), ahora, cfg["preparacion_s"],
+                                           cfg["preparacion_minima_s"], cfg["adelanto_s"], programada=not args.ahora)
+    preparacion = alpaca.Vigilante(listo_antes, cliente.reloj, codigo=alpaca.CODIGO_SIN_PREPARAR,
+                                   motivo="sin preparar a tiempo", al_vencer=al_interrumpir("fallida"))
+    # Plazo absoluto: pase lo que pase, el proceso termina poco después del último corte (y de la preparación).
+    plazo = max([listo_antes] + [p["corte_utc"] for p in pendientes]) + pd.Timedelta(
         seconds=args.plazo_s if args.plazo_s is not None else float(cfg["plazo_s"]))
-    vigilante = alpaca.Vigilante(plazo, cliente.reloj)
-    ejecucion["plazo_utc"] = alpaca.iso(plazo)
+    vigilante = alpaca.Vigilante(plazo, cliente.reloj, al_vencer=al_interrumpir("interrumpida"))
+    ejecucion.update(plazo_utc=alpaca.iso(plazo), listo_antes_utc=alpaca.iso(listo_antes))
 
     # Contratos del día: metadatos para normalizar y para elegir vencimientos. Cada página se guarda al llegar.
     desde, hasta = fecha, fecha + dt.timedelta(days=int(cfg["ventana_contratos_dias"]))
@@ -174,6 +196,8 @@ def main() -> int:
     if errores:
         # Sin manifiesto de captura: una ejecución posterior aún puede capturar si llega antes del corte.
         print(f"no se pudieron pedir los contratos: {errores}", file=sys.stderr)
+        preparacion.cancelar()
+        vigilante.cancelar()
         for paso in pendientes:
             paso.update(estado="fallida", motivo="sin contratos del día")
         return terminar()
@@ -190,6 +214,10 @@ def main() -> int:
         print(f"{o['raiz']}: " + ", ".join(f"{v} ({plazos[v]:.1f} d)" for v in elegidos))
         solicitudes += [alpaca.pedir_cadena(o["raiz"], v, cfg["feed_opciones"]) for v in elegidos]
     solicitudes.append(alpaca.pedir_acciones(bruto["captura"]["acciones"]["simbolos"], cfg["feed_acciones"]))
+    preparacion.cancelar()
+    ejecucion["listo_utc"] = alpaca.iso(cliente.reloj())
+    print(f"lista a las {cliente.reloj().tz_convert(NUEVA_YORK):%H:%M:%S} (Nueva York); "
+          f"plazo de preparación {listo_antes.tz_convert(NUEVA_YORK):%H:%M:%S}")
 
     for paso in pendientes:
         hora, corte = paso["hora"], paso["corte_utc"]
@@ -201,6 +229,7 @@ def main() -> int:
              "modo": "inmediata" if hora == "inmediata" else "programada", "feed_opciones": cfg["feed_opciones"],
              "feed_acciones": cfg["feed_acciones"], "adelanto_s": cfg["adelanto_s"], "config": info_config,
              "seleccion": seleccion, "reloj": estado_reloj, "codigo": ejecucion["codigo"]}
+        paso["estado"] = "en curso"
         try:
             manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"], vigilante)
         except FileExistsError as error:

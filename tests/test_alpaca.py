@@ -762,3 +762,39 @@ def test_diario_con_la_ultima_linea_truncada_o_roto_en_medio(tmp_path):
         al.leer_diario(ruta)
     with pytest.raises(FileExistsError):  # un diario existente nunca se continúa
         al.Diario(ruta, {"evento": "inicio"})
+
+
+# --- Revisión de 8c97b2b: el respaldo de la misma hora llega al corte ------------------------------
+
+def test_plazo_de_preparacion_deja_llegar_al_respaldo():
+    corte = cal.instante(FECHAS[0], "09:45")
+
+    def antes(minutos):
+        return corte - pd.Timedelta(minutes=minutos)
+
+    def plazo(ahora, programada=True):
+        return al.plazo_preparacion(corte, ahora, 360.0, 120.0, 5.0, programada)
+
+    assert plazo(antes(32)) == antes(6)  # el titular de las 09:13 debe estar listo a las 09:39
+    assert plazo(antes(4.5)) == antes(2.5)  # el respaldo que arranca a las 09:40:30 tiene dos minutos
+    assert plazo(antes(1.5)) == corte - pd.Timedelta(seconds=5)  # nunca después del inicio de la ráfaga
+    assert plazo(antes(600), programada=False) == antes(598)  # captura inmediata: dos minutos desde ahora
+
+
+def test_vigilante_de_preparacion_registra_y_termina():
+    import threading
+    fin, salidas, motivos = threading.Event(), [], []
+
+    def salir(codigo):
+        salidas.append(codigo)
+        fin.set()
+
+    plazo = pd.Timestamp.now(tz="UTC") + pd.Timedelta(seconds=0.2)
+    al.Vigilante(plazo, salir=salir, codigo=al.CODIGO_SIN_PREPARAR, motivo="sin preparar a tiempo",
+                 al_vencer=motivos.append)
+    assert fin.wait(10) and salidas == [al.CODIGO_SIN_PREPARAR]
+    assert motivos == [f"sin preparar a tiempo ({al.iso(plazo)})"]
+    cancelado = al.Vigilante(pd.Timestamp.now(tz="UTC") + pd.Timedelta(seconds=0.2), salir=salir)
+    cancelado.cancelar()  # lista a tiempo: no termina nada
+    time.sleep(0.4)
+    assert salidas == [al.CODIGO_SIN_PREPARAR]

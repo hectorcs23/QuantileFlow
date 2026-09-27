@@ -86,6 +86,7 @@ EXTRAS_DIVIDENDOS = ["id_evento", "version", "fecha_registro", "fecha_proceso", 
 FEED_EVENTOS = "corporate_actions"
 SUFIJO_DIARIO = ".diario.jsonl"
 CODIGO_PLAZO_VENCIDO = 3
+CODIGO_SIN_PREPARAR = 4
 
 
 class ErrorAlpaca(RuntimeError):
@@ -652,20 +653,25 @@ def recuperar(raiz_datos, ahora_utc=None, fecha=None) -> list[dict]:
 
 
 class Vigilante:
-    """Plazo absoluto de una ejecución.
+    """Plazo de una ejecución: al vencer, deja constancia y termina el proceso.
 
-    Al vencer, anota la interrupción en el diario de la captura en curso y
-    termina el proceso de inmediato (``os._exit`` con ``CODIGO_PLAZO_VENCIDO``):
-    una solicitud colgada no puede retrasar la salida ni estirar la captura más
-    allá del corte. Lo que llegó ya está en el crudo y en el diario;
-    ``recuperar`` lo convierte después en su manifiesto.
+    Anota la interrupción en el diario de la captura en curso, llama a
+    ``al_vencer(motivo)`` (p. ej., para escribir el registro de la ejecución) y
+    termina de inmediato (``os._exit`` con ``codigo``), aunque una solicitud
+    siga colgada. Lo que llegó ya está en el crudo y en el diario; ``recuperar``
+    lo convierte después en su manifiesto. Hay dos usos: el plazo absoluto
+    después del corte (``CODIGO_PLAZO_VENCIDO``) y el de preparación antes del
+    corte (``CODIGO_SIN_PREPARAR``), que libera a tiempo al respaldo de esa hora.
     """
 
-    def __init__(self, plazo_utc, reloj=None, salir=None, codigo=CODIGO_PLAZO_VENCIDO):
+    def __init__(self, plazo_utc, reloj=None, salir=None, codigo=CODIGO_PLAZO_VENCIDO,
+                 motivo="plazo absoluto vencido", al_vencer=None):
         self.plazo_utc = pd.Timestamp(plazo_utc)
-        self.codigo = codigo
+        self.codigo, self.motivo = codigo, motivo
         self._salir = salir or os._exit
+        self._al_vencer = al_vencer
         self._registro = None
+        self._cancelado = False
         self._candado = threading.Lock()
         segundos = max((self.plazo_utc - (reloj or _ahora)()).total_seconds(), 0.0)
         self._temporizador = threading.Timer(segundos, self._vencer)
@@ -677,14 +683,42 @@ class Vigilante:
             self._registro = registro
 
     def cancelar(self):
-        self._temporizador.cancel()
+        with self._candado:
+            self._cancelado = True
+            self._temporizador.cancel()
 
     def _vencer(self):
         with self._candado:
+            if self._cancelado:
+                return
+            texto = f"{self.motivo} ({iso(self.plazo_utc)})"
             if self._registro is not None:
-                self._registro.interrumpir(f"plazo absoluto vencido ({iso(self.plazo_utc)})", _ahora())
-        print(f"plazo absoluto vencido ({iso(self.plazo_utc)}): se termina el proceso", file=sys.stderr, flush=True)
-        self._salir(self.codigo)
+                self._registro.interrumpir(texto, _ahora())
+            if self._al_vencer is not None:
+                try:
+                    self._al_vencer(texto)
+                except Exception as error:  # registrar es lo secundario: el proceso termina igual
+                    print(f"no se pudo registrar la interrupción: {error!r}", file=sys.stderr, flush=True)
+            print(f"{texto}: se termina el proceso", file=sys.stderr, flush=True)
+            self._salir(self.codigo)
+
+
+def plazo_preparacion(primer_corte_utc, ahora_utc, preparacion_s, minima_s, adelanto_s, programada=True):
+    """Hasta cuándo debe quedar lista (contratos y vencimientos) una captura antes de esperar el corte.
+
+    Por omisión, ``preparacion_s`` antes del primer corte, para que un titular
+    colgado termine a tiempo de que el respaldo de esa hora arranque y llegue.
+    Una ejecución que arranca tarde (el respaldo) tiene al menos ``minima_s``,
+    pero nunca más allá del inicio de la ráfaga (``adelanto_s`` antes del
+    corte). Una captura inmediata tiene ``minima_s`` desde ahora.
+    """
+    ahora = pd.Timestamp(ahora_utc)
+    minima = ahora + pd.Timedelta(seconds=float(minima_s))
+    if not programada:
+        return minima
+    corte = pd.Timestamp(primer_corte_utc)
+    return min(max(corte - pd.Timedelta(seconds=float(preparacion_s)), minima),
+               corte - pd.Timedelta(seconds=float(adelanto_s)))
 
 
 def planificar(raiz_datos, fecha, horas, ahora_utc, adelanto_s, codigo=CALENDARIO) -> list[dict]:
