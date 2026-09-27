@@ -123,7 +123,13 @@ cierre anticipado, y seis días degradados a propósito:
 - [x] Decidir el feed: `indicative` por ahora; OPRA se decide tras 3–5 sesiones reales.
 - [x] Corregir los ocho hallazgos de la revisión de `e2b92f0` (commit `79c1554`;
       [respuesta](respuesta_revision_e2b92f0.md)).
-- [ ] Decidir el precio objetivo independiente: el SPX inferido por paridad no sirve para evaluar.
+- [x] Decidir el precio objetivo independiente: SPY observado en el SIP histórico, con rendimiento
+      total y de precio. El SPX inferido queda como referencia de las opciones
+      ([respuesta a la revalidación de `d815bdd`](respuesta_revalidacion_d815bdd.md)).
+- [x] Histórico SIP y dividendos de Alpaca; diario de captura con recuperación; plazo absoluto;
+      workflows por hora (commits `03f2230`, `79bf8a7`, `3b266a4` y `fcb8637`).
+- [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos: puntualidad, estados,
+      recuperación y madurez de las etiquetas del objetivo.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.

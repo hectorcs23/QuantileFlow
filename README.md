@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación (26 de septiembre de 2026).**
+**Versión de investigación (27 de septiembre de 2026).**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -23,6 +23,9 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_revalidacion_d815bdd.md`](docs/respuesta_revalidacion_d815bdd.md): la entrega que
+  pidió la revalidación de `d815bdd`: señal, referencia y objetivo separados; SPY del SIP histórico
+  con dividendos; recuperación de capturas interrumpidas y workflows por hora.
 - [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): qué ofrece Alpaca (verificado el 26 de septiembre
   de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
   pendientes (dónde corre la captura y qué feed usar).
@@ -49,13 +52,16 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   cadenas.py           captura cruda inmutable, controles con motivos de exclusión, paridad del
                        mismo strike con forward fuera de muestra, desamericanización, asimetría
                        call − put (distancia logarítmica, RR25, pendiente), métricas de calidad
-  etiquetas.py         rendimientos a 1 y 5 sesiones con decision_at, label_end_at, label_available_at
-  piloto.py            plazo constante de 30 días, tabla diaria, cambios, estabilidad y dictamen
+  etiquetas.py         rendimientos a 1 y 5 sesiones con decision_at, label_end_at, label_available_at;
+                       rendimiento total (dividendos en su fecha ex) y de precio
+  piloto.py            plazo constante de 30 días, tabla diaria, cambios, estabilidad y dictamen;
+                       señal (SPXW), referencia de las opciones (regla puntual) y objetivo (regla histórica)
   informe.py           tabla exportable, gráficas e informe Markdown del piloto
   corrida.py           corrida reproducible con manifiesto de hashes
   almacen.py           crudo inmutable, Parquet, manifiestos y huella del entorno
-  alpaca.py            adaptador de Alpaca: cliente, crudo inmutable por respuesta, manifiesto por captura,
-                       elección de vencimientos y normalización al contrato
+  alpaca.py            adaptador de Alpaca: cliente, crudo inmutable por respuesta, diario y manifiesto por
+                       captura, recuperación, plazo absoluto, histórico SIP, dividendos, elección de
+                       vencimientos y normalización al contrato
   implicito.py         nivel implícito del subyacente por paridad (Alpaca no da el nivel de SPX)
   diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
   opciones.py          Black, griegas, árbol binomial con dividendos
@@ -73,9 +79,10 @@ tests/                 pruebas de propiedades del núcleo, cuantiles, conformal,
                        calendario, etiquetas, almacenamiento, piloto y adaptador de Alpaca (sin red)
 configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
 configs/captura_alpaca.toml  qué, cuándo y con qué feed se captura en Alpaca
-ops/repo_datos/        plantilla del repositorio privado de datos: workflow diario de captura y README
+ops/repo_datos/        plantilla del repositorio privado de datos: workflows por hora de captura, histórico
+                       SIP y README
 scripts/               piloto con datos normalizados, plantilla sintética, registro del entorno, captura,
-                       normalización y verificación de Alpaca
+                       histórico, normalización y verificación de Alpaca
 reports/               informes generados (no se editan a mano) y registros de verificación
 docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
 ```
@@ -97,15 +104,18 @@ Captura en Alpaca (requiere `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el ento
 ```bash
 make captura-prueba                                   # captura inmediata de prueba
 make captura                                          # día hábil: espera y captura a las 09:45 y 10:00 ET
+make historico-alpaca                                 # SIP de SPY en cada corte (pasados 15 min) y dividendos
 make verificar-alpaca FECHA=2026-09-28                # elegibilidad y calidad en reports/verificacion_alpaca/
-make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-06   # tablas para el piloto desde el crudo
+make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-13   # tablas para el piloto desde el crudo
 ```
 
-Con datos reales normalizados (esquemas de `quantileflow/contrato.py`):
+Con datos reales normalizados (esquemas de `quantileflow/contrato.py`). El objetivo es SPY del SIP
+histórico, con dividendos:
 
 ```bash
-python scripts/piloto.py --cotizaciones data/normalized/cotizaciones.parquet \
-    --subyacente data/normalized/subyacente.parquet --desde AAAA-MM-DD --hasta AAAA-MM-DD
+N=data/normalized/alpaca
+python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
+    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde AAAA-MM-DD --hasta AAAA-MM-DD
 ```
 
 `data/` queda fuera de Git (licencias y tamaño; este repositorio es público): `data/raw/` guarda los

@@ -1,0 +1,34 @@
+# Captura del corte de las 09:45 de Nueva York (hora principal del piloto).
+# Plantilla versionada en hectorcs23/QuantileFlow: ops/repo_datos/.github/workflows/
+name: captura-0945
+
+on:
+  schedule:
+    # El cron de GitHub va en UTC y suele retrasarse unos minutos. Hay un disparo y un respaldo para cada horario
+    # (EDT y EST); la compuerta deja pasar solo los que arrancan entre las 09:00 y las 09:43 de Nueva York.
+    - cron: "11 13 * * 1-5"   # 09:11 EDT / 08:11 EST
+    - cron: "26 13 * * 1-5"   # 09:26 EDT / 08:26 EST (respaldo)
+    - cron: "11 14 * * 1-5"   # 10:11 EDT / 09:11 EST
+    - cron: "26 14 * * 1-5"   # 10:26 EDT / 09:26 EST (respaldo)
+  workflow_dispatch:
+    inputs:
+      ahora:
+        description: "Captura inmediata de prueba (fuera de sesión usa el cierre anterior)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:  # el respaldo espera a que termine la corrida de esta hora y después no repite lo ya capturado
+  group: captura-0945
+  cancel-in-progress: false
+
+jobs:
+  capturar:
+    uses: ./.github/workflows/captura-hora.yml
+    with:
+      hora: "09:45"
+      ultimo_arranque: "0943"
+      ahora: ${{ inputs.ahora == true }}
+    secrets: inherit

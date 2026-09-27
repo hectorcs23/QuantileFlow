@@ -10,6 +10,9 @@ en la rama `claude/lucid-hamilton-hz8l80`.
 > Coincido con la evaluación: se conserva la arquitectura y se corrige la medición antes de agregar
 > modelos. Esta entrega cubre los pasos 1 y 2 del plan de continuación. El paso 3, qué precio
 > independiente vamos a predecir, es una decisión pendiente (sección 3).
+>
+> **Actualización (27 de septiembre):** la revalidación de `d815bdd` tomó la decisión del paso 3: SPY
+> observado. Su entrega está en [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md).
 
 ---
 

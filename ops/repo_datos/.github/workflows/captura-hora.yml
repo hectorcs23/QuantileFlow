@@ -1,0 +1,128 @@
+# Captura de una hora de corte (workflow reutilizable). La llaman captura-0945.yml y captura-1000.yml: cada hora
+# corre en su propia máquina y su propio proceso, así que un fallo o un cuelgue en una no toca a la otra.
+# Corre en el repositorio PRIVADO de datos: el crudo de mercado no se redistribuye.
+# Plantilla versionada en hectorcs23/QuantileFlow: ops/repo_datos/.github/workflows/
+name: captura-hora
+
+on:
+  workflow_call:
+    inputs:
+      hora:
+        description: "Hora de corte de Nueva York (HH:MM)"
+        type: string
+        required: true
+      ultimo_arranque:
+        description: "Última hora de Nueva York (HHMM) a la que un disparo programado todavía llega al corte"
+        type: string
+        required: true
+      ahora:
+        description: "Captura inmediata de prueba"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  REPO_CODIGO: hectorcs23/QuantileFlow
+  # Commit revisado del código de captura, fijo durante el piloto (verificado en reports/verificacion/<commit>.json).
+  # Cambiarlo es cambiar la versión de medición; cada manifiesto registra el commit usado.
+  REF_CODIGO: fcb863782508706d94f001f091e23551ec16baac
+
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Compuerta horaria (Nueva York)
+        id: compuerta
+        env:
+          ULTIMO: ${{ inputs.ultimo_arranque }}
+        run: |
+          hora=$((10#$(TZ=America/New_York date +%H%M)))
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || { [ "$hora" -ge 900 ] && [ "$hora" -le $((10#$ULTIMO)) ]; }; then
+            echo "seguir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "seguir=false" >> "$GITHUB_OUTPUT"
+            echo "Hora de Nueva York $(TZ=America/New_York date +%H:%M): fuera de la ventana de arranque de las ${{ inputs.hora }}; no se captura."
+          fi
+
+      # Cada paso de preparación tiene su propio límite: un primer disparo atascado termina pronto y el respaldo
+      # todavía llega al corte.
+      - name: Código de captura
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REPO_CODIGO }}
+          ref: ${{ env.REF_CODIGO }}
+          path: codigo
+
+      - name: Datos
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/checkout@v4
+        with:
+          path: datos
+
+      - name: Python
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: codigo/requirements-bloqueo.txt
+
+      - name: Dependencias
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 8
+        run: pip install -r codigo/requirements-bloqueo.txt
+
+      - name: Capturar
+        # El script recupera primero las capturas interrumpidas de ejecuciones anteriores, espera hasta 5 s antes
+        # del corte y se termina solo (código 3) si pasa el plazo absoluto (60 s después del corte).
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 45
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          ALPACA_PAPER: "true"
+          AHORA: ${{ inputs.ahora }}
+          HORA: ${{ inputs.hora }}
+          DISPARO: ${{ github.event.schedule }}  # cron que disparó la corrida: mide el retraso del arranque
+        run: |
+          if [ "$AHORA" = "true" ]; then
+            python codigo/scripts/capturar_alpaca.py --datos datos --ahora
+          else
+            python codigo/scripts/capturar_alpaca.py --datos datos --horas "$HORA"
+          fi
+
+      - name: Recuperar capturas interrumpidas
+        # Si el paso anterior se cortó (plazo, límite de tiempo o cancelación), su diario se convierte aquí en un
+        # manifiesto parcial o fallido con lo que llegó. No usa credenciales.
+        if: always() && steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        run: python codigo/scripts/capturar_alpaca.py --datos datos --recuperar
+
+      - name: Guardar el crudo
+        # También tras una captura parcial: lo que llegó se conserva y el fallo queda en el paso de captura.
+        if: always() && steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        working-directory: datos
+        env:
+          HORA: ${{ inputs.hora }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -d raw ]; then echo "Sin crudo."; exit 0; fi
+          git add raw
+          if git diff --cached --quiet; then echo "Sin crudo nuevo."; exit 0; fi
+          git commit -q -m "Captura de las $HORA del $(TZ=America/New_York date +%F) ($GITHUB_EVENT_NAME)"
+          # Cada hora escribe archivos propios (o idénticos, direccionados por contenido): el rebase no choca.
+          for intento in 1 2 3 4; do
+            git push && exit 0
+            sleep $((intento * 5))
+            git pull -q --rebase
+          done
+          exit 1

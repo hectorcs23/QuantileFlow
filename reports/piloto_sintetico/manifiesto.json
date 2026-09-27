@@ -1,18 +1,25 @@
 {
   "alcance": {
+    "dividendos_objetivo": "consultados hasta 2026-09-26T12:00:00+00:00",
     "evaluacion_con_precios_de_mercado": "no permitida: datos sintéticos",
-    "fuente_subyacente": "sintetico/indice_sintetico",
+    "fuente_objetivo": "sintetico/sip_sintetico",
+    "fuente_referencia": "sintetico/indice_sintetico",
     "fuentes_opciones": [
       "sintetico/nbbo_intervalos_sintetico"
     ],
+    "instrumento_objetivo": "SPY, distinto de SPX: otro instrumento, con sus dividendos, gastos y diferencias de seguimiento",
     "medicion": "sintética",
     "precio_objetivo": "observado",
-    "tipo_precio_subyacente": "observado"
+    "referencia_opciones": "observado",
+    "rendimiento_objetivo": "total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte",
+    "simbolo_objetivo": "SPY",
+    "tipo_precio_objetivo": "observado",
+    "tipo_precio_referencia": "observado"
   },
   "config": {
-    "huella": "ae34b82cae16e9b46495f7c44175491a7708a2dac4171d82e7c138382f056f17",
-    "ruta": "/home/user/QuantileFlow/configs/piloto.toml",
-    "version": "piloto-0.2"
+    "huella": "b2dacce8865c7ed224cc981ec8e2eae1a6c516758271a49b66f3aa697c202d5d",
+    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/configs/piloto.toml",
+    "version": "piloto-0.3"
   },
   "cortes": [
     "09:45",
@@ -25,16 +32,21 @@
       "sha256": "ffa5ef67da36e6139e3d44819d226b0b497c04c18af4eea61aec9459b1bbaadb"
     },
     {
-      "bytes": 11987,
+      "bytes": 24048,
       "nombre": "subyacente_sintetico.csv",
-      "sha256": "dedfa76cf752197cb5ff1668a090618ed77896f1b968740db23cd34f85ba034f"
+      "sha256": "52a82b6c93a32ec9332d77409226ee2fcd301716ec87e29672d79912f3d0b423"
+    },
+    {
+      "bytes": 248,
+      "nombre": "dividendos_sinteticos.csv",
+      "sha256": "3cb913134d4649d5d0effe7631b1d4834fc8994a202a1d0bf3648608ae4de731"
     }
   ],
   "dictamen": "apto con limitaciones",
   "entorno": {
     "git": {
       "cambios_sin_registrar": false,
-      "commit": "79c15549bacd71cec2bd60f1ac0888e9162019b3"
+      "commit": "fcb863782508706d94f001f091e23551ec16baac"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -50,12 +62,16 @@
   },
   "entradas": {
     "cotizaciones": {
-      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/cotizaciones.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/cotizaciones.parquet",
       "sha256": "b7527536bf16f0520ea91a807354fce9029cf338b2a28093177313036cc5f411"
     },
+    "dividendos": {
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/dividendos.parquet",
+      "sha256": "0dac218ffca74cc029fac6f840faa4653ffb50cf5403d42454fcbedec659dce8"
+    },
     "subyacente": {
-      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/subyacente.parquet",
-      "sha256": "91d3927e62e4d8a892ed4515d2092999d71f31a470b07a3726a4212c2a62ae2c"
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/subyacente.parquet",
+      "sha256": "303ffdf08fc97ded46f649332334262c1b7a06b264fca314dcb3ffda01a615af"
     }
   },
   "exclusiones_hora_principal": {
@@ -63,7 +79,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-26T23:50:36+00:00",
+  "fecha_corrida_utc": "2026-09-27T03:16:44+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
@@ -78,11 +94,11 @@
     "cambio_rr25_vs_movimiento.png": "31a2c63dddc00fb6c068ca3c67720a6797ed5014405ea801dd54974cb6512374",
     "disponibilidad_exclusiones.png": "7600837d32577a5e40c4069bf89c1a5f7dacab52a7a5f9c1fbfaa6e75da0379d",
     "estabilidad_0945_1000.png": "f89f7cf82caa32b48df0b8e082b3dc8262375e4f5c5e718e42b2fc12832ee2ea",
-    "etiquetas.csv": "fec4424c35dbf62b221acd5cdce88dea58f72d10805bfcdcff61516f2adeadf2",
-    "informe.md": "a0ff0a2c7c0ac416bb8e3f93af6873ecb414cec3c94ecf9f62173bd33b15260d",
+    "etiquetas.csv": "ff4c3016ba53198134c04b0365c971ce5151374c683d4adc62344d413b0d9f74",
+    "informe.md": "236276445048dc980af13b4d5efd7520aa9fff23c61e907054c40b1606307d9f",
     "rr25_30d.png": "cba399b90bd6cf6818d97a68872e3608298d0d3c0eec16394d3c678ea1012533",
-    "tabla_diaria.csv": "feb5b5448b1dbed7b07a7be8f84a024fb1a548e9dddf3b0febf5e4136c53d065",
-    "tabla_todas_las_horas.csv": "616327aec4717770a4b62f7566cbaee6ab49bf1cba62ca378266b2c7d1aed34f"
+    "tabla_diaria.csv": "7f56ec4af8b54065830726fc21b8ae25092dc96b6b6b64678df7d672f0e13323",
+    "tabla_todas_las_horas.csv": "af33a8a6b3a6b2cbdeb9aa57b634988fb7d095f97b2c6262fe766796c606967a"
   },
   "sesiones": {
     "desde": "2025-10-20",

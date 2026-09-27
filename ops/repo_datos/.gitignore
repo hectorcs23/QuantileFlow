@@ -2,3 +2,5 @@
 # (scripts/normalizar_alpaca.py en hectorcs23/QuantileFlow).
 normalized/
 __pycache__/
+# Temporales de una escritura atómica que un corte brusco dejó a medias: nunca son datos.
+*.tmp

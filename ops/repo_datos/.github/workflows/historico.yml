@@ -1,0 +1,97 @@
+# Precio del objetivo (NBBO consolidado de SPY en cada corte, SIP de Alpaca) y eventos corporativos.
+# Sin suscripción, Alpaca solo deja consultar el SIP pasados 15 minutos: se descarga después de los cortes y esa
+# disponibilidad fija la madurez de las etiquetas. Completa además lo que falte de la última semana.
+# Plantilla versionada en hectorcs23/QuantileFlow: ops/repo_datos/.github/workflows/
+name: historico-alpaca
+
+on:
+  schedule:
+    # La compuerta deja pasar solo el disparo que arranca entre las 10:16 y las 11:15 de Nueva York.
+    - cron: "21 14 * * 1-5"   # 10:21 EDT / 09:21 EST
+    - cron: "21 15 * * 1-5"   # 11:21 EDT / 10:21 EST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historico-alpaca
+  cancel-in-progress: false
+
+env:
+  REPO_CODIGO: hectorcs23/QuantileFlow
+  REF_CODIGO: fcb863782508706d94f001f091e23551ec16baac  # el mismo commit revisado que la captura
+
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Compuerta horaria (Nueva York)
+        id: compuerta
+        run: |
+          hora=$((10#$(TZ=America/New_York date +%H%M)))
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || { [ "$hora" -ge 1016 ] && [ "$hora" -le 1115 ]; }; then
+            echo "seguir=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "seguir=false" >> "$GITHUB_OUTPUT"
+            echo "Hora de Nueva York $(TZ=America/New_York date +%H:%M): este disparo es del otro horario."
+          fi
+
+      - name: Código
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REPO_CODIGO }}
+          ref: ${{ env.REF_CODIGO }}
+          path: codigo
+
+      - name: Datos
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/checkout@v4
+        with:
+          path: datos
+
+      - name: Python
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: codigo/requirements-bloqueo.txt
+
+      - name: Dependencias
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 8
+        run: pip install -r codigo/requirements-bloqueo.txt
+
+      - name: Descargar
+        if: steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 20
+        env:
+          APCA_API_KEY_ID: ${{ secrets.APCA_API_KEY_ID }}
+          APCA_API_SECRET_KEY: ${{ secrets.APCA_API_SECRET_KEY }}
+          ALPACA_PAPER: "true"
+          DISPARO: ${{ github.event.schedule }}
+        run: python codigo/scripts/historico_alpaca.py --datos datos --esperar
+
+      - name: Guardar el crudo
+        if: always() && steps.compuerta.outputs.seguir == 'true'
+        timeout-minutes: 5
+        working-directory: datos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ ! -d raw ]; then echo "Sin crudo."; exit 0; fi
+          git add raw
+          if git diff --cached --quiet; then echo "Sin crudo nuevo."; exit 0; fi
+          git commit -q -m "Histórico del $(TZ=America/New_York date +%F) ($GITHUB_EVENT_NAME)"
+          for intento in 1 2 3 4; do
+            git push && exit 0
+            sleep $((intento * 5))
+            git pull -q --rebase
+          done
+          exit 1

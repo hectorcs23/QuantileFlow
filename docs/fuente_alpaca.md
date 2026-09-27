@@ -11,6 +11,12 @@
 > [respuesta a la revisión](respuesta_revision_e2b92f0.md). Cambian el diagnóstico (elegibilidad
 > estricta siempre; modo descriptivo solo si se pide), los estados de captura y la separación de
 > fuentes en el piloto.
+>
+> **Actualización tras la revalidación de `d815bdd` (27 de septiembre):** el objetivo es SPY
+> observado en el SIP histórico. El SPX implícito queda como referencia de las opciones. Hay
+> dividendos, diario de captura con recuperación, plazo absoluto y workflows por hora. Detalle en
+> [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md). La captura queda fijada en
+> `fcb8637`.
 
 ---
 
@@ -30,6 +36,8 @@ documentación oficial de Alpaca (actualizada entre septiembre de 2025 y septiem
 | Historia de cotizaciones | **No hay.** Solo barras y operaciones de opciones desde febrero de 2024. El bid/ask de las 09:45 de sesiones pasadas no se puede reconstruir: la muestra se captura hacia adelante. |
 | Nivel del índice | **No hay** nivel de SPX (lo dice la documentación de opciones sobre índices). |
 | SPY | Cotización IEX en tiempo real en el plan básico. El histórico SIP es consultable pasados 15 minutos. Los dividendos en efectivo de SPY están en `/v1/corporate-actions`. |
+| Histórico SIP de SPY (27 de septiembre) | `/v2/stocks/quotes?feed=sip` devuelve el **NBBO consolidado**: bid y ask de bolsas distintas, hora en nanosegundos y spread de 1 a 3 centavos. Con una ventana que termina hace menos de 15 minutos responde `403: subscription does not permit querying recent SIP data`. En 10 cortes del 21 al 25 de septiembre, las 1 000 cotizaciones más recientes cubren entre 6 y 19 s antes del corte; la última está a menos de 10 ms. La mediana del spread es de 0.26 pb y el máximo de 1.2 pb. |
+| Eventos corporativos de SPY | Los dividendos trimestrales aparecen desde que se anuncian (el del 18 de septiembre, con pago el 30 de octubre, ya figura). El filtro de fechas es por `process_date`, que es el día de pago. No traen la hora del anuncio. |
 | Límites | 200 solicitudes por minuto. Una cadena de un vencimiento cabe en una página de 1 000 contratos y tarda 0.25–0.45 s. |
 
 Consecuencias para el plan:
@@ -40,9 +48,10 @@ Consecuencias para el plan:
    diaria a partir del 28 de septiembre.
 3. **Nivel implícito de SPX.** Sin índice, el nivel de SPX sale de la paridad del vencimiento SPXW
    más cercano (el del día, si existe), con el descuento fijado por la tasa de referencia, y se lleva a
-   contado con `S = F e^{-(r-q)T}`. A plazo de horas, esa conversión mueve el nivel menos de 0.01 %.
-   Las etiquetas son rendimientos de ese nivel implícito, no del índice publicado.
-   (`quantileflow/implicito.py`).
+   contado con `S = F e^{-(r-q)T}`. A plazo de horas, esa conversión mueve el nivel menos de 0.01 %
+   (`quantileflow/implicito.py`). Es la **referencia de las opciones**: la usan los controles y las
+   medidas de la cadena. Desde la revalidación de `d815bdd`, el **objetivo** de las etiquetas es SPY
+   observado en el SIP histórico, con rendimiento total y de precio por separado.
 4. **El feed importa.** Con `indicative` el piloto mide ese feed, no el NBBO de SPXW. Ver sección 3.
 
 ---
@@ -59,11 +68,15 @@ Consecuencias para el plan:
 | Captura diaria | Consulta el reloj de Alpaca y los contratos del día. Elige, por raíz, dos vencimientos a cada lado de 30 días (y el más cercano en SPXW). Espera hasta 5 s antes de cada corte (09:45 y 10:00) y lanza todas las solicitudes en paralelo; la ráfaga completa tardó 0.7 s. Cada página se guarda al llegar. Cada captura queda `completa`, `parcial` o `fallida`, y una hora sin captura, `perdida`. El código de salida es 0 solo si todas las horas están completas, y cada ejecución deja un registro en `raw/alpaca/ejecuciones/`. | `scripts/capturar_alpaca.py`, `configs/captura_alpaca.toml` |
 | Tablas para el piloto | Reconstruye desde el crudo las tablas de un rango de sesiones, con manifiesto. Reprocesar da los mismos bytes (comprobado). | `scripts/normalizar_alpaca.py` |
 | Diagnóstico | Elegibilidad al corte con controles estrictos, siempre. Además, cobertura, grilla de ticks, anchos, edades, agrupación de sellos, paridad y medidas por vencimiento y a 30 días. El modo descriptivo del cierre solo se aplica con `--cierre-descriptivo` y a capturas inmediatas recibidas con la sesión cerrada, y se declara no elegible. Solo publica agregados. | `quantileflow/diagnostico.py`, `scripts/verificar_alpaca.py` |
-| Pruebas | 11 pruebas sin red con respuestas de la forma real y precios sintéticos. Cubren reintentos, paginación, crudo sin secretos, normalización, replay, crudo alterado y nivel implícito. Una de ellas va de punta a punta: capturas → piloto con RR25 identificado. | `tests/test_alpaca.py` |
+| Histórico SIP del objetivo | Pasados 15 minutos y un margen de cada corte, pide las 1 000 cotizaciones más recientes de SPY hasta el corte, en una página y en orden descendente. Un corte completo no se repite; un intento fallido sí. Normaliza a `SUBYACENTE` (feed `sip`): el snapshot es el corte, la disponibilidad documentada es el corte más 15 minutos y la recepción es la de la descarga. | `scripts/historico_alpaca.py`, `alpaca.pedir_historico`, `alpaca.normalizar_historico` |
+| Dividendos | Consulta los eventos corporativos de SPY del último año y los ya anunciados. Por dividendo, `recibido_utc` es la primera consulta con la versión vigente y `consultado_utc`, la consulta completa más reciente. Un evento no tratado (split, fusión, etc.) dentro del rango detiene la normalización. | `alpaca.normalizar_eventos`, esquema `contrato.DIVIDENDOS` |
+| Diario y recuperación | Cada captura tiene un diario (`<etiqueta>.diario.jsonl`), creado de forma atómica con su inicio, con una línea sincronizada por solicitud, página y fin. `recuperar` convierte un diario sin manifiesto en un manifiesto `parcial` o `fallida`, marcado como interrumpido. Manifiestos y registros se escriben de forma atómica y sin sobrescribir. | `alpaca.Diario`, `alpaca.recuperar`, `almacen.crear_nuevo`, `capturar_alpaca.py --recuperar` |
+| Plazo absoluto | 60 s después del último corte, el proceso anota la interrupción y termina con código 3, aunque una solicitud siga colgada. | `alpaca.Vigilante`, `plazo_s` |
+| Pruebas | 22 pruebas sin red, con respuestas de la forma real y precios sintéticos. Cubren reintentos, paginación, crudo sin secretos, normalización, replay, crudo alterado, nivel implícito, histórico SIP y dividendos. Dos van de punta a punta: capturas → piloto con RR25 identificado, y SIP → etiquetas del objetivo. Otras dos matan el proceso: tras la primera página (SIGKILL) y con una solicitud colgada (plazo). | `tests/test_alpaca.py` |
 
 `contrato.captura_de_filas` separa, de `captura_desde_tabla`, la construcción de la captura a partir de
-filas ya elegidas y un corte explícito. Lo usan el nivel implícito y el diagnóstico; el piloto no
-cambia. La batería pasó de 142 a 153 pruebas y, con las regresiones de la revisión, a 167.
+filas ya elegidas y un corte explícito. Lo usan el nivel implícito y el diagnóstico. La batería pasó
+de 142 a 153 pruebas, a 167 con las regresiones de la revisión y a 186 con la revalidación.
 
 ---
 
@@ -111,7 +124,7 @@ Tomadas el 26 de septiembre:
 
 | Decisión | Elección | Consecuencia |
 |---|---|---|
-| Dónde corre la captura y dónde quedan los datos | Repositorio **privado** `QuantileFlow-datos` con un workflow programado de GitHub Actions. Este repositorio es público y los datos de Alpaca/OPRA no se pueden redistribuir: el crudo no puede ir aquí. | La plantilla está en [`ops/repo_datos/`](../ops/repo_datos/): workflow, `.gitignore` y README. El workflow arranca hacia las 09:17 de Nueva York, con un respaldo a las 09:32, y espera al corte: así tolera los retrasos habituales del cron de GitHub. Solo guarda el crudo. Consume unos 1 000 minutos de Actions al mes. |
+| Dónde corre la captura y dónde quedan los datos | Repositorio **privado** `QuantileFlow-datos` con workflows programados de GitHub Actions. Este repositorio es público y los datos de Alpaca/OPRA no se pueden redistribuir: el crudo no puede ir aquí. | La plantilla está en [`ops/repo_datos/`](../ops/repo_datos/): workflows, `.gitignore` y README. `captura-0945` y `captura-1000` corren cada uno en su máquina: arrancan hacia las 09:11 y 09:21 de Nueva York, con un respaldo 15 minutos después, y esperan al corte. `historico-alpaca` corre hacia las 10:21. Solo guardan el crudo. Consumen unos 1 700 minutos de Actions al mes, sobre todo en la espera al corte (comprobar la cuota de minutos del plan para repositorios privados). |
 | Feed de opciones | `indicative` por ahora. OPRA se decide después de ver 3–5 sesiones reales a las 09:45. | Si se contrata OPRA, se cambia `feed_opciones` en una versión nueva de `configs/captura_alpaca.toml`. Las dos series no se mezclan: el piloto cuenta sus sesiones desde que empieza OPRA. |
 
 Pendiente de revisar con las primeras sesiones: `desfase_spot_max_s = 2` avisará en casi todas las
@@ -125,22 +138,28 @@ junto con `edad_maxima_s`, sin tocar ninguno antes de ver datos.
 2. Copiar ahí el contenido de `ops/repo_datos/` (o pedir a Claude que lo suba; la aplicación de GitHub
    de Claude necesita acceso a ese repositorio).
 3. En **Settings → Secrets and variables → Actions**, crear `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`.
-4. Probar con **Actions → captura-alpaca → Run workflow** y la opción «ahora».
+4. Probar con **Actions → captura-0945 → Run workflow** y la opción «ahora», y con
+   **Actions → historico-alpaca → Run workflow**.
 
 ## 5. Cómo operar
 
 ```bash
 python scripts/capturar_alpaca.py --ahora          # prueba inmediata (fuera de sesión: cierre anterior)
 python scripts/capturar_alpaca.py                  # día hábil: espera y captura a las 09:45 y 10:00 ET
+python scripts/capturar_alpaca.py --horas 09:45    # una sola hora (así corre cada workflow)
+python scripts/capturar_alpaca.py --recuperar      # convierte diarios sin manifiesto
+python scripts/historico_alpaca.py --esperar       # SIP de SPY en cada corte (pasados 15 min) y dividendos
 python scripts/verificar_alpaca.py --fecha 2026-09-28            # elegibilidad y calidad del feed
 python scripts/verificar_alpaca.py --fecha 2026-09-25 --cierre-descriptivo
-python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-06
-python scripts/piloto.py --cotizaciones data/normalized/alpaca/cotizaciones.parquet \
-    --subyacente data/normalized/alpaca/subyacente.parquet --desde 2026-09-28 --hasta 2026-11-06
+python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-13   # cinco sesiones más que el piloto
+N=data/normalized/alpaca
+python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
+    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 ```
 
-Si las tablas traen varias fuentes, por ejemplo `indicative` y `opra`, el piloto exige elegir una:
-`--fuente-opciones alpaca/opra --fuente-subyacente alpaca/implicito_paridad_SPXW_opra`. Nunca las
+SPY llega de dos fuentes: IEX en vivo (diagnóstico) y el SIP histórico (objetivo). Por eso el piloto
+exige `--fuente-objetivo alpaca/sip`. Lo mismo vale si las opciones traen `indicative` y `opra`:
+`--fuente-opciones alpaca/opra --fuente-referencia alpaca/implicito_paridad_SPXW_opra`. Nunca las
 mezcla, y el informe dice de qué fuente sale cada serie.
 
 `data/` sigue fuera de Git. Con el repositorio de datos, se pasa `--datos ../QuantileFlow-datos` a los
@@ -153,6 +172,12 @@ unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
   corrida, pero no se corrige.
 - El nivel implícito depende de la tasa y el dividendo de referencia fijos (4 % y 1.3 %), aunque a
   plazo de horas su efecto es despreciable. La curva de tasas con fuente sigue pendiente.
-- Para SPY no se cargan todavía dividendos discretos en la captura: el próximo ex-dividendo cae en
-  diciembre, fuera de la ventana de 30 días hasta mediados de noviembre.
+- Alpaca no da la hora del anuncio de un dividendo. Una etiqueta que lo suma madura cuando la
+  consulta diaria lo vio por primera vez, y una etiqueta cuyo fin es posterior a la última consulta
+  queda «sin dividendos confirmados». El próximo ex-dividendo de SPY cae en diciembre.
+- El precio del objetivo sale de la primera página del SIP (1 000 cotizaciones, de 6 a 19 s en la
+  prueba). Si todas fueran anómalas, la etiqueta quedaría ausente, aunque hubiera una válida más atrás
+  dentro de los 60 s.
+- Una captura recuperada nunca queda `completa`, aunque su diario muestre que llegó todo: la ejecución
+  no terminó.
 - El ajuste robusto de superficie (B4) sigue pendiente.
