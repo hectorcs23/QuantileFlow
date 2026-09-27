@@ -28,7 +28,8 @@
 > **Corrección (revalidación de `a5e2748`):** los estados pasan a ser provisional, aceptada (bajo la
 > política de 60 días, una regla y no una garantía) y pendiente. Una ausencia abre una discrepancia en
 > vez de retirar el dividendo. Ver [respuesta a la revalidación de `a5e2748`](respuesta_revalidacion_a5e2748.md).
-> La captura se fija en `8316540`.
+> La captura se fija en `8316540`; tras la [revalidación de `5c15028`](respuesta_revalidacion_5c15028.md),
+> en `7fb0585`.
 
 ---
 

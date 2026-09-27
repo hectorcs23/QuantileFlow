@@ -30,6 +30,13 @@
 > (una regla, no una garantía) y pendiente. Detalle en
 > [respuesta a la revalidación de `a5e2748`](respuesta_revalidacion_a5e2748.md). La captura queda
 > fijada en `8316540`, sin cambios de comportamiento.
+>
+> **Actualización tras la revalidación de `5c15028`:** un dividendo que llega sin fecha ex o sin monto
+> ya no queda fuera: es una versión con la discrepancia `incompleto`. Las etiquetas cuyo periodo podría
+> contener su fecha ex quedan pendientes hasta que el proveedor lo complete o una resolución dé la
+> fecha ex y el monto. Detalle en
+> [respuesta a la revalidación de `5c15028`](respuesta_revalidacion_5c15028.md). La captura queda
+> fijada en `7fb0585`, sin cambios de comportamiento.
 
 ---
 
@@ -82,7 +89,7 @@ Consecuencias para el plan:
 | Tablas para el piloto | Reconstruye desde el crudo las tablas de un rango de sesiones, con manifiesto. Reprocesar da los mismos bytes (comprobado). | `scripts/normalizar_alpaca.py` |
 | Diagnóstico | Elegibilidad al corte con controles estrictos, siempre. Además, cobertura, grilla de ticks, anchos, edades, agrupación de sellos, paridad y medidas por vencimiento y a 30 días. El modo descriptivo del cierre solo se aplica con `--cierre-descriptivo` y a capturas inmediatas recibidas con la sesión cerrada, y se declara no elegible. Solo publica agregados. | `quantileflow/diagnostico.py`, `scripts/verificar_alpaca.py` |
 | Histórico SIP del objetivo | Pasados 15 minutos y un margen de cada corte, pide las 1 000 cotizaciones más recientes de SPY hasta el corte, en una página y en orden descendente. Un corte completo no se repite; un intento fallido sí. Normaliza a `SUBYACENTE` (feed `sip`): el snapshot es el corte, la disponibilidad documentada es el corte más 15 minutos y la recepción es la de la descarga. | `scripts/historico_alpaca.py`, `alpaca.pedir_historico`, `alpaca.normalizar_historico` |
-| Dividendos | Consulta los eventos corporativos de SPY del último año y los ya anunciados. Guarda la **cobertura** de cada consulta, aunque venga vacía o falle, y las **versiones** de cada dividendo, con desde cuándo se conoce cada una y hasta cuándo vale. Una consulta comparable que ya no trae un dividendo abre una **discrepancia**: no lo retira. Solo la resuelve evidencia fechada: una reaparición, una corrección o una resolución registrada en `resoluciones_dividendos.csv`. Las etiquetas maduran con la primera consulta posterior a su fin que puede confirmar dividendos. Son provisionales, aceptadas bajo la política de 60 días o pendientes (con una discrepancia abierta). Un evento no tratado (split, fusión, etc.) dentro del rango detiene la normalización. | `alpaca.normalizar_eventos`, `alpaca.cargar_resoluciones`, esquemas `contrato.DIVIDENDOS`, `COBERTURA_DIVIDENDOS` y `RESOLUCIONES_DIVIDENDOS`, `etiquetas.py` |
+| Dividendos | Consulta los eventos corporativos de SPY del último año y los ya anunciados. Guarda la **cobertura** de cada consulta, aunque venga vacía o falle, y las **versiones** de cada dividendo, con desde cuándo se conoce cada una y hasta cuándo vale. Una consulta comparable que ya no trae un dividendo abre una **discrepancia**: no lo retira. Un dividendo que llega sin fecha ex o sin monto también abre una (`incompleto`) y deja pendientes las etiquetas cuyo periodo podría contener su fecha ex. Solo la resuelve evidencia fechada: una reaparición, una corrección o una resolución registrada en `resoluciones_dividendos.csv`. Las etiquetas maduran con la primera consulta posterior a su fin que puede confirmar dividendos. Son provisionales, aceptadas bajo la política de 60 días o pendientes (con una discrepancia abierta). Un evento no tratado (split, fusión, etc.) dentro del rango detiene la normalización. | `alpaca.normalizar_eventos`, `alpaca.cargar_resoluciones`, esquemas `contrato.DIVIDENDOS`, `COBERTURA_DIVIDENDOS` y `RESOLUCIONES_DIVIDENDOS`, `etiquetas.py` |
 | Diario y recuperación | Cada captura tiene un diario (`<etiqueta>.diario.jsonl`), creado de forma atómica con su inicio, con una línea sincronizada por solicitud, página y fin. `recuperar` convierte un diario sin manifiesto en un manifiesto `parcial` o `fallida`, marcado como interrumpido. Manifiestos y registros se escriben de forma atómica y sin sobrescribir. | `alpaca.Diario`, `alpaca.recuperar`, `almacen.crear_nuevo`, `capturar_alpaca.py --recuperar` |
 | Plazo absoluto | 60 s después del último corte, el proceso anota la interrupción y termina con código 3, aunque una solicitud siga colgada. | `alpaca.Vigilante`, `plazo_s` |
 | Pruebas | 22 pruebas sin red, con respuestas de la forma real y precios sintéticos. Cubren reintentos, paginación, crudo sin secretos, normalización, replay, crudo alterado, nivel implícito, histórico SIP y dividendos. Dos van de punta a punta: capturas → piloto con RR25 identificado, y SIP → etiquetas del objetivo. Otras dos matan el proceso: tras la primera página (SIGKILL) y con una solicitud colgada (plazo). | `tests/test_alpaca.py` |
@@ -194,7 +201,8 @@ unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
     dividendos de SPY), no una garantía, y se mide cuántas etiquetas cambian después de aceptarse.
   - Para entrenar o evaluar, solo etiquetas aceptadas.
   - Un dividendo que Alpaca no publicara nunca no abre ninguna discrepancia: solo lo detectaría otra
-    fuente.
+    fuente. Uno publicado sin fecha ex, en cambio, deja pendientes las etiquetas que podría afectar:
+    entre la primera fecha de proceso posible menos 60 días y la última.
   - El próximo ex-dividendo de SPY cae en diciembre.
 - El respaldo de una hora puede llegar al corte si el titular se cuelga antes de estar listo (plazo de
   preparación). La cronología es un escenario favorable, no una garantía: depende del retraso de los

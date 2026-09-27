@@ -83,7 +83,8 @@ captura interrumpida, con otra etiqueta (`-2`), y conserva la primera.
   - **provisionales**: maduran con la primera consulta completa posterior a su fin;
   - **aceptadas**: bajo la política de 60 días, con una consulta recibida después de ese margen y sin
     discrepancias abiertas. Es una regla, no una garantía;
-  - **pendientes**: mientras un dividendo que dejó de aparecer no se resuelva con evidencia fechada.
+  - **pendientes**: mientras un dividendo que dejó de aparecer, o que llegó sin fecha ex o sin monto y
+    podría caer en su periodo, no se resuelva con evidencia fechada.
 
 ## Estructura
 
@@ -97,10 +98,10 @@ raw/alpaca/ejecuciones/<fecha>/<inicio>[_sufijo].json   registro de cada ejecuci
 resoluciones_dividendos.csv                             evidencia registrada a mano sobre dividendos (opcional)
 ```
 
-**Resoluciones de dividendos.** Si un dividendo deja de aparecer en una consulta comparable, sus
-etiquetas quedan pendientes. Solo lo resuelve que reaparezca, que se corrija o una resolución
-registrada con evidencia, por ejemplo el aviso de distribución del emisor. Se registra en
-`resoluciones_dividendos.csv` con las columnas:
+**Resoluciones de dividendos.** Si un dividendo deja de aparecer en una consulta comparable, o llega
+sin fecha ex o sin monto, sus etiquetas quedan pendientes. Solo lo resuelve que reaparezca, que el
+proveedor lo corrija o complete, o una resolución registrada con evidencia, por ejemplo el aviso de
+distribución del emisor. Se registra en `resoluciones_dividendos.csv` con las columnas:
 
 | Columna | Qué lleva |
 |---|---|
@@ -110,6 +111,7 @@ registrada con evidencia, por ejemplo el aviso de distribución del emisor. Se r
 | `conocido_utc` | Cuándo se conoció la evidencia, con zona (`2026-11-20T15:00:00Z`); nunca antes de su publicación |
 | `fuente` | De dónde sale la evidencia |
 | `nota` | Opcional |
+| `fecha_ex`, `monto` | Con `vigente`, los que el proveedor no dio (obligatorios entonces). Completan; no corrigen un valor ya dado. |
 
 La normalización lo lee, lo valida y registra su hash. Cada línea es un cambio de medición: se
 registra con commit, como el crudo.

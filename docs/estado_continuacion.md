@@ -134,6 +134,9 @@ cierre anticipado, y seis días degradados a propósito:
       evidencia fechada; solo cuentan las consultas que piden dividendos; tramos con el estado de cada
       instante (provisional, aceptada bajo la política de 60 días, pendiente); se miden las revisiones
       después de aceptarse (`c5aaded`, `8316540`; [respuesta](respuesta_revalidacion_a5e2748.md)).
+- [x] Revalidación de `5c15028`: un dividendo recibido sin fecha ex o sin monto es una versión con
+      discrepancia y deja pendientes las etiquetas que podría afectar (`7fb0585`;
+      [respuesta](respuesta_revalidacion_5c15028.md)).
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos: puntualidad, estados,
       recuperación y madurez de las etiquetas del objetivo.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.

@@ -13,7 +13,8 @@ sobre `853047b`.
 - revisión de `8c97b2b`: `6f0e748` (cobertura y versiones de dividendos), `f2a5663` (plazo de
   preparación) y `a5e2748` (su documentación);
 - revalidación de `a5e2748`: `c5aaded` (discrepancias, cobertura con filtros y tramos de etiqueta),
-  `8316540` (revisiones después de aceptarse) y el de su documentación.
+  `8316540` (revisiones después de aceptarse) y `5c15028` (su documentación);
+- revalidación de `5c15028`: `7fb0585` (dividendos incompletos) y el de su documentación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -41,8 +42,13 @@ sobre `853047b`.
 > estado futuro. Ahora una ausencia abre una discrepancia que solo resuelve evidencia fechada. Solo
 > cuentan las consultas que piden dividendos. Las etiquetas tienen tramos con el estado de cada
 > instante: provisional, aceptada bajo la política de 60 días (una regla, no una garantía) o
-> pendiente. Hay 197 pruebas; detalle en
-> [respuesta a la revalidación de `a5e2748`](respuesta_revalidacion_a5e2748.md).
+> pendiente. Detalle en [respuesta a la revalidación de `a5e2748`](respuesta_revalidacion_a5e2748.md).
+>
+> **La revalidación de `5c15028`** cerró esos tres hallazgos y encontró otro: un dividendo recibido
+> sin fecha ex quedaba fuera de la normalización y podía terminar como cero aceptado. Ahora es una
+> versión con la discrepancia `incompleto`, que deja pendientes las etiquetas cuyo periodo podría
+> contener su fecha ex. Hay 200 pruebas; detalle en
+> [respuesta a la revalidación de `5c15028`](respuesta_revalidacion_5c15028.md).
 
 ---
 
@@ -170,8 +176,10 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/respuesta_revision_e2b92f0.md`](respuesta_revision_e2b92f0.md) | Los ocho hallazgos de la revisión externa, sus correcciones, pruebas y decisiones pendientes |
 | [`docs/respuesta_revalidacion_d815bdd.md`](respuesta_revalidacion_d815bdd.md) | La entrega de la revalidación: papeles, SIP histórico, convenciones, recuperación y lo que falta |
 | [`docs/respuesta_revalidacion_a5e2748.md`](respuesta_revalidacion_a5e2748.md) | Discrepancias y resoluciones de dividendos, cobertura con filtros, tramos con estado puntual, la política de 60 días y el respaldo como escenario favorable |
-| [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en los workflows: árbol limpio, 197 pruebas pasadas |
-| [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado en la entrega anterior: 191 pruebas pasadas |
+| [`docs/respuesta_revalidacion_5c15028.md`](respuesta_revalidacion_5c15028.md) | Dividendos recibidos sin fecha ex o sin monto: versiones con discrepancia, etiquetas pendientes y cómo se resuelven |
+| [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado en los workflows: árbol limpio, 200 pruebas pasadas |
+| [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
+| [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado antes: 191 pruebas pasadas |
 | [`reports/verificacion/fcb863782508.json`](../reports/verificacion/fcb863782508.json) | Registro del commit fijado en la entrega anterior: 186 pruebas pasadas |
 | [`docs/respuesta_revision_8c97b2b.md`](respuesta_revision_8c97b2b.md) | Cobertura y versiones de dividendos, estados de las etiquetas, plazo de preparación y correcciones |
 | [`reports/verificacion/79c15549bacd.json`](../reports/verificacion/79c15549bacd.json) | Registro del commit revisado anterior: árbol limpio, 167 pruebas pasadas |
@@ -188,7 +196,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 
 | Archivo | Qué es |
 |---|---|
-| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `8316540` (`REF_CODIGO`). |
+| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `7fb0585` (`REF_CODIGO`). |
 | [`ops/repo_datos/.github/workflows/captura-0945.yml`](../ops/repo_datos/.github/workflows/captura-0945.yml), [`captura-1000.yml`](../ops/repo_datos/.github/workflows/captura-1000.yml) | Disparos y respaldos de cada hora, cada una en su máquina y con su concurrencia |
 | [`ops/repo_datos/.github/workflows/historico.yml`](../ops/repo_datos/.github/workflows/historico.yml) | SIP de SPY y eventos corporativos hacia las 10:21 de Nueva York |
 | [`ops/repo_datos/README.md`](../ops/repo_datos/README.md) | Configuración de secretos, qué hace el workflow, estructura y uso de los datos |
@@ -248,7 +256,7 @@ caben en menos de 100 MB.
 - [ ] B4: pérdida robusta en el ajuste de superficie.
 - [x] Precio objetivo independiente: SPY observado en el SIP histórico
       ([respuesta a la revalidación](respuesta_revalidacion_d815bdd.md)).
-- [ ] Los workflows están fijados al commit `8316540` (`REF_CODIGO`): actualizarlo es cambiar la
+- [ ] Los workflows están fijados al commit `7fb0585` (`REF_CODIGO`): actualizarlo es cambiar la
       versión de medición.
 
 ---
@@ -257,7 +265,7 @@ caben en menos de 100 MB.
 
 ```bash
 pip install -r requirements-bloqueo.txt
-make test                                                   # 197 pruebas
+make test                                                   # 200 pruebas
 python scripts/capturar_alpaca.py --ahora                   # captura de prueba inmediata
 python scripts/capturar_alpaca.py                           # día hábil: espera y captura 09:45 y 10:00 ET
 python scripts/capturar_alpaca.py --recuperar               # convierte diarios sin manifiesto

@@ -16,6 +16,10 @@ cambia la normalización de eventos.
 **Registro de verificación:** [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json).
 Árbol limpio, 197 pruebas pasadas (191 en `a5e2748`).
 
+> **Nota posterior (revalidación de `5c15028`):** esta entrega apartaba los dividendos recibidos sin
+> fecha ex o sin monto, y uno así podía terminar como cero aceptado. Ahora son versiones con la
+> discrepancia `incompleto`. Ver [respuesta a la revalidación de `5c15028`](respuesta_revalidacion_5c15028.md).
+
 > Coincido con el dictamen y conservo la arquitectura. Reproduje los tres hallazgos con las cifras de
 > la revisión, los convertí en pruebas de regresión y los corregí.
 >
