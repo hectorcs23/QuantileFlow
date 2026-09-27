@@ -118,6 +118,8 @@ registra con commit, como el crudo.
 
 Los registros de `ejecuciones/` son los que miden la puntualidad real: con qué retraso arrancó cada
 disparo y cuánto margen quedó hasta cada corte. Una corrida en verde no la demuestra.
+`scripts/revisar_operacion.py` los resume por corte, con los manifiestos: estado final, intentos, el
+cron de la captura, retraso y márgenes, plazos, errores, recuperaciones y SIP.
 
 Cada manifiesto registra, por solicitud:
 
@@ -136,6 +138,8 @@ git clone https://github.com/hectorcs23/QuantileFlow.git
 git clone https://github.com/hectorcs23/QuantileFlow-datos.git
 cd QuantileFlow
 python scripts/verificar_alpaca.py --datos ../QuantileFlow-datos --fecha 2026-09-28
+# Operación de las sesiones: estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.
+python scripts/revisar_operacion.py --datos ../QuantileFlow-datos --desde 2026-09-28 --hasta 2026-10-02
 # El rango de la normalización cubre también las sesiones finales de las etiquetas (cinco sesiones más).
 python scripts/normalizar_alpaca.py --datos ../QuantileFlow-datos --desde 2026-09-28 --hasta 2026-11-13
 N=../QuantileFlow-datos/normalized/alpaca

@@ -14,7 +14,9 @@ sobre `853047b`.
   preparación) y `a5e2748` (su documentación);
 - revalidación de `a5e2748`: `c5aaded` (discrepancias, cobertura con filtros y tramos de etiqueta),
   `8316540` (revisiones después de aceptarse) y `5c15028` (su documentación);
-- revalidación de `5c15028`: `7fb0585` (dividendos incompletos) y el de su documentación.
+- revalidación de `5c15028`: `7fb0585` (dividendos incompletos) y `b240dc2` (su documentación);
+- tras el cierre de la revalidación de `b240dc2`: `7a59d04` (registro de la ejecución a prueba de
+  errores), `bbbdc6e` (revisión de la operación) y el de su documentación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -47,8 +49,14 @@ sobre `853047b`.
 > **La revalidación de `5c15028`** cerró esos tres hallazgos y encontró otro: un dividendo recibido
 > sin fecha ex quedaba fuera de la normalización y podía terminar como cero aceptado. Ahora es una
 > versión con la discrepancia `incompleto`, que deja pendientes las etiquetas cuyo periodo podría
-> contener su fecha ex. Hay 200 pruebas; detalle en
+> contener su fecha ex. Detalle en
 > [respuesta a la revalidación de `5c15028`](respuesta_revalidacion_5c15028.md).
+>
+> **La revalidación de `b240dc2` cerró** ese hallazgo sin defectos nuevos y recomendó pasar a la
+> prueba operativa con `7fb0585`. Después agregué dos cosas, sin mover la versión fijada hasta que
+> se revisen: el registro de cada ejecución ya no se pierde si algo falla después de capturar, y
+> `revisar_operacion.py` resume la operación de las sesiones. Hay 202 pruebas; detalle en
+> [respuesta al cierre de `b240dc2`](respuesta_cierre_b240dc2.md).
 
 ---
 
@@ -161,6 +169,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`scripts/capturar_alpaca.py`](../scripts/capturar_alpaca.py) | Captura diaria a las 09:45 y 10:00 ET (o una hora con `--horas`), inmediata con `--ahora`; recupera diarios con `--recuperar`; plazo absoluto | nuevo |
 | [`scripts/historico_alpaca.py`](../scripts/historico_alpaca.py) | SIP de SPY en cada corte, pasados 15 minutos, y eventos corporativos | nuevo (revalidación) |
 | [`scripts/normalizar_alpaca.py`](../scripts/normalizar_alpaca.py) | Tablas para el piloto de un rango de sesiones, desde el crudo | nuevo |
+| [`scripts/revisar_operacion.py`](../scripts/revisar_operacion.py) y [`quantileflow/operacion.py`](../quantileflow/operacion.py) | Revisión de la operación de un rango de sesiones: estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos | nuevo |
 | [`scripts/verificar_alpaca.py`](../scripts/verificar_alpaca.py) | Diagnóstico agregado de las capturas de una fecha | nuevo |
 | [`configs/captura_alpaca.toml`](../configs/captura_alpaca.toml) | Qué, cuándo y con qué feed se captura; histórico y eventos; plazo absoluto (versión `captura-alpaca-0.2`) | nuevo |
 | [`configs/piloto.toml`](../configs/piloto.toml) | Sección `[objetivo]`: SPY observado, regla histórica, rendimiento total (versión `piloto-0.3`) | modificado |
@@ -177,7 +186,9 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/respuesta_revalidacion_d815bdd.md`](respuesta_revalidacion_d815bdd.md) | La entrega de la revalidación: papeles, SIP histórico, convenciones, recuperación y lo que falta |
 | [`docs/respuesta_revalidacion_a5e2748.md`](respuesta_revalidacion_a5e2748.md) | Discrepancias y resoluciones de dividendos, cobertura con filtros, tramos con estado puntual, la política de 60 días y el respaldo como escenario favorable |
 | [`docs/respuesta_revalidacion_5c15028.md`](respuesta_revalidacion_5c15028.md) | Dividendos recibidos sin fecha ex o sin monto: versiones con discrepancia, etiquetas pendientes y cómo se resuelven |
+| [`docs/respuesta_cierre_b240dc2.md`](respuesta_cierre_b240dc2.md) | Tras el cierre de la revalidación: registro de la ejecución a prueba de errores, revisión de la operación y cómo seguir con la prueba de captura |
 | [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado en los workflows: árbol limpio, 200 pruebas pasadas |
+| [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro del commit propuesto (aún no fijado): árbol limpio, 202 pruebas pasadas |
 | [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
 | [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado antes: 191 pruebas pasadas |
 | [`reports/verificacion/fcb863782508.json`](../reports/verificacion/fcb863782508.json) | Registro del commit fijado en la entrega anterior: 186 pruebas pasadas |
@@ -240,8 +251,9 @@ caben en menos de 100 MB.
       corrida programada: esos avisos le llegan a quien modificó el cron por última vez.
 - [ ] Probar en **Actions → captura-0945 → Run workflow** con la opción «ahora», y en
       **Actions → historico-alpaca → Run workflow**.
-- [ ] Dejar correr 3–5 sesiones y revisar los registros de `ejecuciones/`: puntualidad, estados y
-      recuperaciones.
+- [ ] Dejar correr 3–5 sesiones y revisarlas con
+      `python scripts/revisar_operacion.py --datos ../QuantileFlow-datos --desde … --hasta …`:
+      estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.
 
 ### Siguiente trabajo técnico
 
@@ -265,12 +277,13 @@ caben en menos de 100 MB.
 
 ```bash
 pip install -r requirements-bloqueo.txt
-make test                                                   # 200 pruebas
+make test                                                   # 202 pruebas
 python scripts/capturar_alpaca.py --ahora                   # captura de prueba inmediata
 python scripts/capturar_alpaca.py                           # día hábil: espera y captura 09:45 y 10:00 ET
 python scripts/capturar_alpaca.py --recuperar               # convierte diarios sin manifiesto
 python scripts/historico_alpaca.py --esperar                # SIP de SPY (pasados 15 min) y dividendos
 python scripts/verificar_alpaca.py --fecha 2026-09-28       # diagnóstico agregado
+python scripts/revisar_operacion.py --desde 2026-09-28 --hasta 2026-10-02   # operación de las sesiones
 python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-13   # con resoluciones_dividendos.csv si existe
 N=data/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \

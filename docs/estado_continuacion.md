@@ -137,8 +137,13 @@ cierre anticipado, y seis días degradados a propósito:
 - [x] Revalidación de `5c15028`: un dividendo recibido sin fecha ex o sin monto es una versión con
       discrepancia y deja pendientes las etiquetas que podría afectar (`7fb0585`;
       [respuesta](respuesta_revalidacion_5c15028.md)).
-- [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos: puntualidad, estados,
-      recuperación y madurez de las etiquetas del objetivo.
+- [x] Cierre de la revalidación de `b240dc2`: sin defectos nuevos; pasar a la prueba operativa con
+      `7fb0585`. Después: registro de la ejecución a prueba de errores y revisión de la operación
+      (`7a59d04`, `bbbdc6e`, sin fijar hasta revisarlos; [respuesta](respuesta_cierre_b240dc2.md)).
+- [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
+      `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
+      operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará
+      aceptada al terminarla.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.

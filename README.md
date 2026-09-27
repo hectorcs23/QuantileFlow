@@ -23,6 +23,9 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_cierre_b240dc2.md`](docs/respuesta_cierre_b240dc2.md): después del cierre de la
+  revalidación: el registro de cada ejecución a prueba de errores, la revisión de la operación de las
+  primeras sesiones y cómo seguir con la prueba de captura.
 - [`docs/respuesta_revalidacion_5c15028.md`](docs/respuesta_revalidacion_5c15028.md): la revalidación
   de `5c15028`: un dividendo recibido sin fecha ex o sin monto deja pendientes las etiquetas que podría
   afectar, hasta que el proveedor lo complete o una resolución dé los datos.
@@ -74,6 +77,7 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
                        vencimientos y normalización al contrato
   implicito.py         nivel implícito del subyacente por paridad (Alpaca no da el nivel de SPX)
   diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
+  operacion.py         revisión de la operación: estado de cada corte, puntualidad, respaldo, SIP y dividendos
   opciones.py          Black, griegas, árbol binomial con dividendos
   superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
   distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
@@ -92,7 +96,7 @@ configs/captura_alpaca.toml  qué, cuándo y con qué feed se captura en Alpaca
 ops/repo_datos/        plantilla del repositorio privado de datos: workflows por hora de captura, histórico
                        SIP y README
 scripts/               piloto con datos normalizados, plantilla sintética, registro del entorno, captura,
-                       histórico, normalización y verificación de Alpaca
+                       histórico, normalización, verificación y revisión de la operación de Alpaca
 reports/               informes generados (no se editan a mano) y registros de verificación
 docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
 ```
