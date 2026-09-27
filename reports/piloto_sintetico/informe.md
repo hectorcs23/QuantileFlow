@@ -2,7 +2,7 @@
 
 > **DATOS SINTÉTICOS.** Datos generados por el código, no de mercado: este documento es la plantilla del informe piloto. Sus cifras no dicen nada sobre SPX ni sobre ninguna señal.
 
-- Configuración: `piloto-0.3` (huella `b2dacce8865c`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
+- Configuración: `piloto-0.3` (huella `8d6dc48abb9f`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
 - Corte principal 09:45 y secundario 10:00 (America/New_York); plazo constante de 30 días naturales; etiquetas a 1, 5 sesiones.
 - Sesiones: 30, del 2025-10-20 al 2025-12-01.
 - Fuentes: opciones sintetico/nbbo_intervalos_sintetico; referencia de las opciones SPX sintetico/indice_sintetico (observado); objetivo SPY sintetico/sip_sintetico (observado).
@@ -28,7 +28,9 @@ Un criterio crítico incumplido hace el dictamen «insuficiente»; uno no críti
 - Medición: sintética.
 - Referencia de las opciones: observado.
 - Precio objetivo: observado; instrumento: SPY, distinto de SPX: otro instrumento, con sus dividendos, gastos y diferencias de seguimiento.
-- Rendimiento del objetivo: total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte; dividendos: consultados hasta 2026-09-26T12:00:00+00:00.
+- Rendimiento del objetivo: total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte.
+- Dividendos del objetivo: 36 consultas completas, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera consulta completa posterior a su fin que cubre el periodo (provisional) y se reconcilia con una recibida 60 días después del fin.
+- Rendimiento total a 1 sesión, por estado de sus dividendos: 0 provisionales, 28 reconciliadas, 0 revisadas.
 - Evaluación con precios de mercado: no permitida: datos sintéticos.
 
 ## Calidad de los datos

@@ -15,8 +15,13 @@
 > **Actualización tras la revalidación de `d815bdd` (27 de septiembre):** el objetivo es SPY
 > observado en el SIP histórico. El SPX implícito queda como referencia de las opciones. Hay
 > dividendos, diario de captura con recuperación, plazo absoluto y workflows por hora. Detalle en
-> [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md). La captura queda fijada en
-> `fcb8637`.
+> [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md).
+>
+> **Actualización tras la revisión de `8c97b2b`:** la cobertura de dividendos va aparte. Los eventos
+> y las etiquetas se versionan, y el rendimiento total es provisional, reconciliado o revisado. Un
+> plazo de preparación deja llegar al respaldo de la misma hora. Detalle en
+> [respuesta a la revisión de `8c97b2b`](respuesta_revision_8c97b2b.md). La captura queda fijada en
+> `f2a5663`.
 
 ---
 
@@ -37,7 +42,7 @@ documentación oficial de Alpaca (actualizada entre septiembre de 2025 y septiem
 | Nivel del índice | **No hay** nivel de SPX (lo dice la documentación de opciones sobre índices). |
 | SPY | Cotización IEX en tiempo real en el plan básico. El histórico SIP es consultable pasados 15 minutos. Los dividendos en efectivo de SPY están en `/v1/corporate-actions`. |
 | Histórico SIP de SPY (27 de septiembre) | `/v2/stocks/quotes?feed=sip` devuelve el **NBBO consolidado**: bid y ask de bolsas distintas, hora en nanosegundos y spread de 1 a 3 centavos. Con una ventana que termina hace menos de 15 minutos responde `403: subscription does not permit querying recent SIP data`. En 10 cortes del 21 al 25 de septiembre, las 1 000 cotizaciones más recientes cubren entre 6 y 19 s antes del corte; la última está a menos de 10 ms. La mediana del spread es de 0.26 pb y el máximo de 1.2 pb. |
-| Eventos corporativos de SPY | Los dividendos trimestrales aparecen desde que se anuncian (el del 18 de septiembre, con pago el 30 de octubre, ya figura). El filtro de fechas es por `process_date`, que es el día de pago. No traen la hora del anuncio. |
+| Eventos corporativos de SPY | El dividendo del 18 de septiembre, con pago el 30 de octubre, ya figuraba antes de su pago. Pero Alpaca **no garantiza** cuándo publica un evento: puede llegar con retraso respecto del anuncio. El filtro por omisión excluye además los registros incompletos todavía no procesados, aunque los procesados se devuelven siempre. El filtro de fechas es por `process_date` (el pago, de 41 a 43 días después de la fecha ex en los últimos seis). No traen la hora del anuncio. |
 | Límites | 200 solicitudes por minuto. Una cadena de un vencimiento cabe en una página de 1 000 contratos y tarda 0.25–0.45 s. |
 
 Consecuencias para el plan:
@@ -69,7 +74,7 @@ Consecuencias para el plan:
 | Tablas para el piloto | Reconstruye desde el crudo las tablas de un rango de sesiones, con manifiesto. Reprocesar da los mismos bytes (comprobado). | `scripts/normalizar_alpaca.py` |
 | Diagnóstico | Elegibilidad al corte con controles estrictos, siempre. Además, cobertura, grilla de ticks, anchos, edades, agrupación de sellos, paridad y medidas por vencimiento y a 30 días. El modo descriptivo del cierre solo se aplica con `--cierre-descriptivo` y a capturas inmediatas recibidas con la sesión cerrada, y se declara no elegible. Solo publica agregados. | `quantileflow/diagnostico.py`, `scripts/verificar_alpaca.py` |
 | Histórico SIP del objetivo | Pasados 15 minutos y un margen de cada corte, pide las 1 000 cotizaciones más recientes de SPY hasta el corte, en una página y en orden descendente. Un corte completo no se repite; un intento fallido sí. Normaliza a `SUBYACENTE` (feed `sip`): el snapshot es el corte, la disponibilidad documentada es el corte más 15 minutos y la recepción es la de la descarga. | `scripts/historico_alpaca.py`, `alpaca.pedir_historico`, `alpaca.normalizar_historico` |
-| Dividendos | Consulta los eventos corporativos de SPY del último año y los ya anunciados. Por dividendo, `recibido_utc` es la primera consulta con la versión vigente y `consultado_utc`, la consulta completa más reciente. Un evento no tratado (split, fusión, etc.) dentro del rango detiene la normalización. | `alpaca.normalizar_eventos`, esquema `contrato.DIVIDENDOS` |
+| Dividendos | Consulta los eventos corporativos de SPY del último año y los ya anunciados. Guarda la **cobertura** de cada consulta, aunque venga vacía o falle, y las **versiones** de cada dividendo: desde cuándo se conoce cada una y cuándo una consulta comparable la corrigió o ya no la trajo. Las etiquetas maduran con la primera consulta completa posterior a su fin y son provisionales, reconciliadas (60 días después) o revisadas. Un evento no tratado (split, fusión, etc.) dentro del rango detiene la normalización. | `alpaca.normalizar_eventos`, esquemas `contrato.DIVIDENDOS` y `COBERTURA_DIVIDENDOS`, `etiquetas.py` |
 | Diario y recuperación | Cada captura tiene un diario (`<etiqueta>.diario.jsonl`), creado de forma atómica con su inicio, con una línea sincronizada por solicitud, página y fin. `recuperar` convierte un diario sin manifiesto en un manifiesto `parcial` o `fallida`, marcado como interrumpido. Manifiestos y registros se escriben de forma atómica y sin sobrescribir. | `alpaca.Diario`, `alpaca.recuperar`, `almacen.crear_nuevo`, `capturar_alpaca.py --recuperar` |
 | Plazo absoluto | 60 s después del último corte, el proceso anota la interrupción y termina con código 3, aunque una solicitud siga colgada. | `alpaca.Vigilante`, `plazo_s` |
 | Pruebas | 22 pruebas sin red, con respuestas de la forma real y precios sintéticos. Cubren reintentos, paginación, crudo sin secretos, normalización, replay, crudo alterado, nivel implícito, histórico SIP y dividendos. Dos van de punta a punta: capturas → piloto con RR25 identificado, y SIP → etiquetas del objetivo. Otras dos matan el proceso: tras la primera página (SIGKILL) y con una solicitud colgada (plazo). | `tests/test_alpaca.py` |
@@ -154,7 +159,8 @@ python scripts/verificar_alpaca.py --fecha 2026-09-25 --cierre-descriptivo
 python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-13   # cinco sesiones más que el piloto
 N=data/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
-    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
+    --dividendos $N/dividendos.parquet --cobertura-dividendos $N/cobertura_dividendos.parquet \
+    --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 ```
 
 SPY llega de dos fuentes: IEX en vivo (diagnóstico) y el SIP histórico (objetivo). Por eso el piloto
@@ -172,9 +178,13 @@ unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
   corrida, pero no se corrige.
 - El nivel implícito depende de la tasa y el dividendo de referencia fijos (4 % y 1.3 %), aunque a
   plazo de horas su efecto es despreciable. La curva de tasas con fuente sigue pendiente.
-- Alpaca no da la hora del anuncio de un dividendo. Una etiqueta que lo suma madura cuando la
-  consulta diaria lo vio por primera vez, y una etiqueta cuyo fin es posterior a la última consulta
-  queda «sin dividendos confirmados». El próximo ex-dividendo de SPY cae en diciembre.
+- Alpaca no da la hora del anuncio de un dividendo ni garantiza cuándo lo publica. Una etiqueta con
+  rendimiento total madura con la primera consulta completa posterior a su fin (provisional). Solo se
+  reconcilia con una consulta recibida 60 días después, cuando el dividendo ya fue procesado. Para
+  entrenar o evaluar, solo etiquetas reconciliadas. El próximo ex-dividendo de SPY cae en diciembre.
+- El respaldo de una hora llega al corte si el titular se cuelga antes de estar listo (plazo de
+  preparación). No rescata un cuelgue durante la ráfaga: el plazo absoluto conserva lo recibido,
+  pero ese instante de mercado se pierde y queda registrado.
 - El precio del objetivo sale de la primera página del SIP (1 000 cotizaciones, de 6 a 19 s en la
   prueba). Si todas fueran anómalas, la etiqueta quedaría ausente, aunque hubiera una válida más atrás
   dentro de los 60 s.

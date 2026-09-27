@@ -17,6 +17,13 @@
 > De acuerdo con la decisión: **SPY observado es el primer objetivo de investigación**. Esta entrega
 > cubre los puntos 1 a 4 de la entrega sugerida. El 5 (repositorio privado) y el 6 (prueba de 3–5
 > sesiones) dependen de tu parte, que se describe en la sección 5.
+>
+> **Corrección (revisión de `8c97b2b`):** la cobertura de dividendos de la sección 2 partía de una
+> premisa falsa. Alpaca no garantiza cuándo publica un evento, y además la madurez no incluía la
+> consulta que habilitaba la etiqueta. Quedó rediseñada: cobertura aparte, versiones de eventos y
+> etiquetas provisional, reconciliada y revisada. Ver
+> [respuesta a la revisión de `8c97b2b`](respuesta_revision_8c97b2b.md). La captura se fija ahora en
+> `f2a5663`.
 
 ---
 
@@ -73,10 +80,10 @@ Una barra con sello 09:45 no sirve: abarca operaciones posteriores.
   el alcance.
 - La referencia, un índice de precio, no suma dividendos.
 
-**Cobertura de los dividendos.** Un dividendo aparece en Alpaca desde que se anuncia, antes de su
-fecha ex. Por eso, una consulta completa hecha después del fin de la etiqueta incluye todos los que le
-tocan. Si la consulta más reciente es anterior al fin, o no hay consulta, el rendimiento total queda
-«sin dividendos confirmados» y el de precio se calcula igual.
+**Cobertura de los dividendos** (*corregida después; ver la nota inicial*). Esta entrega suponía que
+un dividendo aparece en Alpaca desde que se anuncia y que una consulta completa posterior al fin
+incluye todos los que le tocan. Alpaca no lo garantiza. La política vigente está en
+[respuesta a la revisión de `8c97b2b`](respuesta_revision_8c97b2b.md), sección 3.
 
 Alpaca no da la hora del anuncio. Un dividendo cuenta como conocido desde la primera consulta que lo
 trajo. Si sus datos cambian, cuenta desde la primera que trajo la versión vigente.
@@ -165,7 +172,8 @@ El diagnóstico del 25 de septiembre, regenerado con el código nuevo, sale **id
 - el estado de cada hora y si hubo recuperaciones (no debería haber ninguna);
 - que cada corte tenga su histórico SIP, descargado después de su disponibilidad;
 - que las etiquetas del objetivo maduren a la hora esperada;
-- que el `indicative` no se aleje de SPY del SIP de forma sistemática;
+- la coherencia amplia entre el SPX implícito y SPY del SIP (*corregido*: no mide el sesgo de RR25
+  del feed indicativo; para eso hace falta una referencia de opciones comparable, como OPRA);
 - con esos datos, `desfase_spot_max_s` y `edad_maxima_s`, sin tocarlos antes.
 
 **Decisiones que siguen abiertas:**

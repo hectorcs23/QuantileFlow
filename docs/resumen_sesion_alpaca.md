@@ -3,11 +3,15 @@
 **Fecha:** 26 de septiembre de 2026 (sábado; el mercado reabre el lunes 28); actualizado el 27.
 **Rama:** [`claude/lucid-hamilton-hz8l80`](https://github.com/hectorcs23/QuantileFlow/tree/claude/lucid-hamilton-hz8l80),
 sobre `853047b`.
-**Commits de la sesión:** `f6ee438` (adaptador y captura), `f447f9b` (verificación y documentos),
-`40c80ab` (plantilla del repositorio de datos), `e2b92f0` (este resumen), `79c1554` (correcciones de la
-revisión externa), `d815bdd` (su documentación), y los de la revalidación: `03f2230` (señal,
-referencia y objetivo), `79bf8a7` (SIP histórico y dividendos), `3b266a4` (recuperación operativa), `fcb8637` (rastro de
-las cotizaciones repetidas) y el de su documentación.
+**Commits de la sesión:**
+- `f6ee438` (adaptador y captura), `f447f9b` (verificación y documentos), `40c80ab` (plantilla del
+  repositorio de datos) y `e2b92f0` (este resumen);
+- revisión de `e2b92f0`: `79c1554` (correcciones) y `d815bdd` (su documentación);
+- revalidación de `d815bdd`: `03f2230` (señal, referencia y objetivo), `79bf8a7` (SIP histórico y
+  dividendos), `3b266a4` (recuperación operativa), `fcb8637` (rastro de las cotizaciones repetidas) y
+  `8c97b2b` (su documentación);
+- revisión de `8c97b2b`: `6f0e748` (cobertura y versiones de dividendos), `f2a5663` (plazo de
+  preparación) y el de su documentación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -21,8 +25,15 @@ las cotizaciones repetidas) y el de su documentación.
 > **La revalidación de `d815bdd`** confirmó las ocho correcciones y eligió SPY observado como objetivo.
 > Ahora las señales salen de SPXW, la referencia de las opciones es el SPX implícito y el objetivo es
 > SPY del SIP histórico (NBBO consolidado, descargado pasados 15 minutos), con dividendos. Las capturas
-> tienen diario, recuperación y plazo absoluto, y cada hora corre en su propio workflow. Hay 186
-> pruebas; detalle en [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md).
+> tienen diario, recuperación y plazo absoluto, y cada hora corre en su propio workflow. Detalle en
+> [respuesta a la revalidación](respuesta_revalidacion_d815bdd.md).
+>
+> **La revisión de `8c97b2b`** encontró que una consulta de dividendos futura volvía disponible una
+> etiqueta en el pasado, que un evento retirado se seguía sumando y que una consulta vacía perdía su
+> evidencia. También que Alpaca no garantiza cuándo publica los eventos. Ahora la cobertura va aparte,
+> eventos y etiquetas se versionan (provisional, reconciliada, revisada) y un plazo de preparación
+> deja llegar al respaldo de la misma hora. Hay 191 pruebas; detalle en
+> [respuesta a la revisión de `8c97b2b`](respuesta_revision_8c97b2b.md).
 
 ---
 
@@ -149,7 +160,9 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/resumen_sesion_alpaca.md`](resumen_sesion_alpaca.md) | Este resumen |
 | [`docs/respuesta_revision_e2b92f0.md`](respuesta_revision_e2b92f0.md) | Los ocho hallazgos de la revisión externa, sus correcciones, pruebas y decisiones pendientes |
 | [`docs/respuesta_revalidacion_d815bdd.md`](respuesta_revalidacion_d815bdd.md) | La entrega de la revalidación: papeles, SIP histórico, convenciones, recuperación y lo que falta |
-| [`reports/verificacion/fcb863782508.json`](../reports/verificacion/fcb863782508.json) | Registro del commit fijado en los workflows: árbol limpio, 186 pruebas pasadas |
+| [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado en los workflows: árbol limpio, 191 pruebas pasadas |
+| [`reports/verificacion/fcb863782508.json`](../reports/verificacion/fcb863782508.json) | Registro del commit fijado en la entrega anterior: 186 pruebas pasadas |
+| [`docs/respuesta_revision_8c97b2b.md`](respuesta_revision_8c97b2b.md) | Cobertura y versiones de dividendos, estados de las etiquetas, plazo de preparación y correcciones |
 | [`reports/verificacion/79c15549bacd.json`](../reports/verificacion/79c15549bacd.json) | Registro del commit revisado anterior: árbol limpio, 167 pruebas pasadas |
 | [`reports/piloto_sintetico/informe.md`](../reports/piloto_sintetico/informe.md) | Plantilla del informe piloto (datos sintéticos) con referencia y objetivo separados |
 | [`docs/fuente_alpaca.md`](fuente_alpaca.md) | Documento de referencia: qué se comprobó, qué se construyó, verificación, decisiones, puesta en marcha y limitaciones |
@@ -164,7 +177,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 
 | Archivo | Qué es |
 |---|---|
-| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `fcb8637` (`REF_CODIGO`). |
+| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `f2a5663` (`REF_CODIGO`). |
 | [`ops/repo_datos/.github/workflows/captura-0945.yml`](../ops/repo_datos/.github/workflows/captura-0945.yml), [`captura-1000.yml`](../ops/repo_datos/.github/workflows/captura-1000.yml) | Disparos y respaldos de cada hora, cada una en su máquina y con su concurrencia |
 | [`ops/repo_datos/.github/workflows/historico.yml`](../ops/repo_datos/.github/workflows/historico.yml) | SIP de SPY y eventos corporativos hacia las 10:21 de Nueva York |
 | [`ops/repo_datos/README.md`](../ops/repo_datos/README.md) | Configuración de secretos, qué hace el workflow, estructura y uso de los datos |
@@ -223,7 +236,7 @@ caben en menos de 100 MB.
 - [ ] B4: pérdida robusta en el ajuste de superficie.
 - [x] Precio objetivo independiente: SPY observado en el SIP histórico
       ([respuesta a la revalidación](respuesta_revalidacion_d815bdd.md)).
-- [ ] Los workflows están fijados al commit `fcb8637` (`REF_CODIGO`): actualizarlo es cambiar la
+- [ ] Los workflows están fijados al commit `f2a5663` (`REF_CODIGO`): actualizarlo es cambiar la
       versión de medición.
 
 ---
@@ -232,7 +245,7 @@ caben en menos de 100 MB.
 
 ```bash
 pip install -r requirements-bloqueo.txt
-make test                                                   # 186 pruebas
+make test                                                   # 191 pruebas
 python scripts/capturar_alpaca.py --ahora                   # captura de prueba inmediata
 python scripts/capturar_alpaca.py                           # día hábil: espera y captura 09:45 y 10:00 ET
 python scripts/capturar_alpaca.py --recuperar               # convierte diarios sin manifiesto
@@ -241,7 +254,8 @@ python scripts/verificar_alpaca.py --fecha 2026-09-28       # diagnóstico agreg
 python scripts/normalizar_alpaca.py --desde 2026-09-28 --hasta 2026-11-13
 N=data/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
-    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
+    --dividendos $N/dividendos.parquet --cobertura-dividendos $N/cobertura_dividendos.parquet \
+    --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 ```
 
 Con el repositorio de datos clonado al lado, se agrega `--datos ../QuantileFlow-datos` a los scripts

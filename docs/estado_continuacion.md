@@ -128,6 +128,9 @@ cierre anticipado, y seis días degradados a propósito:
       ([respuesta a la revalidación de `d815bdd`](respuesta_revalidacion_d815bdd.md)).
 - [x] Histórico SIP y dividendos de Alpaca; diario de captura con recuperación; plazo absoluto;
       workflows por hora (commits `03f2230`, `79bf8a7`, `3b266a4` y `fcb8637`).
+- [x] Revisión de `8c97b2b`: cobertura de dividendos aparte, eventos y etiquetas versionados
+      (provisional, reconciliada, revisada) y plazo de preparación del respaldo (`6f0e748`, `f2a5663`;
+      [respuesta](respuesta_revision_8c97b2b.md)).
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos: puntualidad, estados,
       recuperación y madurez de las etiquetas del objetivo.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.

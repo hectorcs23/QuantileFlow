@@ -23,6 +23,9 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_revision_8c97b2b.md`](docs/respuesta_revision_8c97b2b.md): la revisión de `8c97b2b`:
+  cobertura de dividendos aparte, eventos y etiquetas versionados (provisional, reconciliada,
+  revisada), plazo de preparación del respaldo y correcciones a la entrega anterior.
 - [`docs/respuesta_revalidacion_d815bdd.md`](docs/respuesta_revalidacion_d815bdd.md): la entrega que
   pidió la revalidación de `d815bdd`: señal, referencia y objetivo separados; SPY del SIP histórico
   con dividendos; recuperación de capturas interrumpidas y workflows por hora.
@@ -115,7 +118,8 @@ histórico, con dividendos:
 ```bash
 N=data/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
-    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde AAAA-MM-DD --hasta AAAA-MM-DD
+    --dividendos $N/dividendos.parquet --cobertura-dividendos $N/cobertura_dividendos.parquet \
+    --fuente-objetivo alpaca/sip --desde AAAA-MM-DD --hasta AAAA-MM-DD
 ```
 
 `data/` queda fuera de Git (licencias y tamaño; este repositorio es público): `data/raw/` guarda los

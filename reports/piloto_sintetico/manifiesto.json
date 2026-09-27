@@ -1,6 +1,11 @@
 {
   "alcance": {
-    "dividendos_objetivo": "consultados hasta 2026-09-26T12:00:00+00:00",
+    "dividendos_objetivo": "36 consultas completas, la última recibida el 2026-09-26T12:00:00+00:00. Cada etiqueta madura con la primera consulta completa posterior a su fin que cubre el periodo (provisional) y se reconcilia con una recibida 60 días después del fin",
+    "estados_rendimiento_objetivo": {
+      "provisional": 0,
+      "reconciliada": 28,
+      "revisada": 0
+    },
     "evaluacion_con_precios_de_mercado": "no permitida: datos sintéticos",
     "fuente_objetivo": "sintetico/sip_sintetico",
     "fuente_referencia": "sintetico/indice_sintetico",
@@ -17,7 +22,7 @@
     "tipo_precio_referencia": "observado"
   },
   "config": {
-    "huella": "b2dacce8865c7ed224cc981ec8e2eae1a6c516758271a49b66f3aa697c202d5d",
+    "huella": "8d6dc48abb9fb1ccd512a89f4ef77f297dbdf5d2781006c27afd4b2d5ed6efc2",
     "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/configs/piloto.toml",
     "version": "piloto-0.3"
   },
@@ -37,16 +42,21 @@
       "sha256": "52a82b6c93a32ec9332d77409226ee2fcd301716ec87e29672d79912f3d0b423"
     },
     {
-      "bytes": 248,
+      "bytes": 236,
       "nombre": "dividendos_sinteticos.csv",
-      "sha256": "3cb913134d4649d5d0effe7631b1d4834fc8994a202a1d0bf3648608ae4de731"
+      "sha256": "1a84a7216e733db9e70f55e9229b1f3a6bd71af7fee7a68e623cfe0a7f09470a"
+    },
+    {
+      "bytes": 5678,
+      "nombre": "cobertura_dividendos_sintetica.csv",
+      "sha256": "587994e2f7929738102dca2a3b2782503c2751116a7fc185786a40d7b9bc4cd9"
     }
   ],
   "dictamen": "apto con limitaciones",
   "entorno": {
     "git": {
       "cambios_sin_registrar": false,
-      "commit": "fcb863782508706d94f001f091e23551ec16baac"
+      "commit": "f2a566353d8d6ac9979b5af2a241b15ac64b906e"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -61,13 +71,17 @@
     "python": "3.11.15"
   },
   "entradas": {
+    "cobertura_dividendos": {
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/cobertura_dividendos.parquet",
+      "sha256": "d85348525881c2783392ec672beff899c42f178414ff669bdd78a0a7f1dead8c"
+    },
     "cotizaciones": {
       "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/cotizaciones.parquet",
       "sha256": "b7527536bf16f0520ea91a807354fce9029cf338b2a28093177313036cc5f411"
     },
     "dividendos": {
       "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/dividendos.parquet",
-      "sha256": "0dac218ffca74cc029fac6f840faa4653ffb50cf5403d42454fcbedec659dce8"
+      "sha256": "4803356269f7fceb42295a84a1baf7316d374b8a716cb56e4630ebf55e37dc33"
     },
     "subyacente": {
       "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/arboles/sint/data/normalized/sintetico/subyacente.parquet",
@@ -79,7 +93,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-27T03:16:44+00:00",
+  "fecha_corrida_utc": "2026-09-27T12:23:29+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
@@ -94,10 +108,10 @@
     "cambio_rr25_vs_movimiento.png": "31a2c63dddc00fb6c068ca3c67720a6797ed5014405ea801dd54974cb6512374",
     "disponibilidad_exclusiones.png": "7600837d32577a5e40c4069bf89c1a5f7dacab52a7a5f9c1fbfaa6e75da0379d",
     "estabilidad_0945_1000.png": "f89f7cf82caa32b48df0b8e082b3dc8262375e4f5c5e718e42b2fc12832ee2ea",
-    "etiquetas.csv": "ff4c3016ba53198134c04b0365c971ce5151374c683d4adc62344d413b0d9f74",
-    "informe.md": "236276445048dc980af13b4d5efd7520aa9fff23c61e907054c40b1606307d9f",
+    "etiquetas.csv": "1260e8bc29a6d06c4007518c06f0425e6d526deb8283ba646a61b1512a74e8b3",
+    "informe.md": "30e00694abeb6a62948823636ef73add3e2fcd6d88d0da5f750434c5c40dc02e",
     "rr25_30d.png": "cba399b90bd6cf6818d97a68872e3608298d0d3c0eec16394d3c678ea1012533",
-    "tabla_diaria.csv": "7f56ec4af8b54065830726fc21b8ae25092dc96b6b6b64678df7d672f0e13323",
+    "tabla_diaria.csv": "bd3ab9c2640ad3a6c2c25352fac6e13a77756ddc0315ff364d708e56930b9aef",
     "tabla_todas_las_horas.csv": "af33a8a6b3a6b2cbdeb9aa57b634988fb7d095f97b2c6262fe766796c606967a"
   },
   "sesiones": {

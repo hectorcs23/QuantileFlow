@@ -1,0 +1,24 @@
+{
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": false,
+      "commit": "f2a566353d8d6ac9979b5af2a241b15ac64b906e"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "fecha_utc": "2026-09-27T12:23:09+00:00",
+  "pruebas": {
+    "codigo_salida": 0,
+    "resumen": "191 passed in 54.06s"
+  }
+}

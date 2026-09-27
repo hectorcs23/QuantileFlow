@@ -35,8 +35,13 @@ su propia máquina y su propio proceso. Un fallo o un cuelgue en las 09:45 no to
   - la cotización IEX de SPY (diagnóstico).
 - Cada página se guarda en cuanto llega y queda anotada en el **diario** de la captura, sincronizado
   en disco. El manifiesto final se escribe de forma atómica: está completo o no existe.
+- **Plazo de preparación**: si los contratos y los vencimientos no están listos 6 minutos antes del
+  corte, el proceso termina con código 4 y deja su registro. Así el respaldo, en cola en el mismo
+  grupo, arranca antes de la compuerta y todavía llega al corte. Un respaldo que arranca tarde tiene
+  al menos 2 minutos.
 - **Plazo absoluto**: 60 s después del corte, el proceso termina solo, con código 3, aunque una
-  solicitud siga colgada.
+  solicitud siga colgada. Un cuelgue durante la ráfaga no se rescata: se conserva lo que llegó, pero
+  ese instante de mercado se pierde y queda registrado.
 - El paso «Recuperar capturas interrumpidas» corre siempre. Convierte el diario de una captura
   cortada (por el plazo, el límite de tiempo del paso o una cancelación) en un manifiesto `parcial` o
   `fallida` con lo que llegó, marcado como interrumpido. La próxima ejecución también lo haría.
@@ -65,6 +70,11 @@ captura interrumpida, con otra etiqueta (`-2`), y conserva la primera.
 - Consulta los eventos corporativos de SPY (dividendos).
 - Completa lo que falte de la última semana; un intento fallido se repite, porque el dato histórico no
   cambia.
+- Anota el estado de cada hora de captura de esos días: un corte perdido queda registrado aunque no
+  haya corrido ninguna captura.
+- Guarda la cobertura de cada consulta de eventos, aunque venga vacía o falle. Las etiquetas del
+  objetivo maduran con la primera consulta completa posterior a su fin (provisionales) y se
+  reconcilian con una recibida 60 días después: Alpaca no garantiza cuándo publica un evento.
 
 ## Estructura
 
@@ -101,7 +111,8 @@ python scripts/verificar_alpaca.py --datos ../QuantileFlow-datos --fecha 2026-09
 python scripts/normalizar_alpaca.py --datos ../QuantileFlow-datos --desde 2026-09-28 --hasta 2026-11-13
 N=../QuantileFlow-datos/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
-    --dividendos $N/dividendos.parquet --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
+    --dividendos $N/dividendos.parquet --cobertura-dividendos $N/cobertura_dividendos.parquet \
+    --fuente-objetivo alpaca/sip --desde 2026-09-28 --hasta 2026-11-06
 ```
 
 Los papeles, sin mezclarlos:
