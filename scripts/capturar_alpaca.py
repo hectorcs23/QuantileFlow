@@ -33,10 +33,14 @@ colgada, y los dos dejan el registro de la ejecución:
   arranque y llegue al corte;
 * **absoluto** (código 3): ``plazo_s`` después del último corte.
 
-Un error inesperado tampoco pierde el registro: queda en él, con la etapa. Al
-preparar o capturar, las horas en curso quedan ``fallida`` (código 1). En la
-normalización del día, que es posterior y no toca el crudo ni sus manifiestos,
-el código es 5 si las horas habían terminado completas.
+Un error inesperado tampoco pierde el registro, que se abre antes de cualquier
+llamada externa: queda en él, con la etapa. Al iniciar (credenciales, reloj del
+servidor, recuperación o planificación), las horas pedidas quedan ``sin
+iniciar`` y el código es 1; el registro no inventa lo que no llegó (``reloj``
+queda nulo si el servidor no respondió). Al preparar o capturar, las horas en
+curso quedan ``fallida`` (código 1). En la normalización del día, que es
+posterior y no toca el crudo ni sus manifiestos, el código es 5 si las horas
+habían terminado completas. Los instantes del registro son del reloj local.
 
 Al empezar, y con ``--recuperar``, cada diario sin manifiesto se convierte en el
 manifiesto de lo que llegó, ``parcial`` o ``fallida`` y marcado como interrumpido.
@@ -83,19 +87,26 @@ def sesion_de_referencia(ahora_utc, codigo):
 
 
 def recuperar(datos) -> int:
-    """Convierte cada diario sin manifiesto y deja constancia en un registro de ejecución."""
+    """Convierte cada diario sin manifiesto y deja constancia en un registro de ejecución (también si falla)."""
     ahora = pd.Timestamp.now(tz="UTC")
-    recuperadas = alpaca.recuperar(datos, ahora)
+    registro = {"tipo": "recuperacion", "inicio_utc": alpaca.iso(ahora), "fuente_instantes": "reloj local",
+                "fecha": str(ahora.tz_convert(NUEVA_YORK).date()),
+                "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"), "run_id": os.environ.get("GITHUB_RUN_ID"),
+                "codigo": almacen.estado_git(RAIZ)}
+    try:
+        recuperadas = alpaca.recuperar(datos, ahora)
+    except Exception as error:  # el diario sigue ahí: la próxima ejecución lo vuelve a intentar
+        traceback.print_exc()
+        alpaca.escribir_ejecucion({**registro, "recuperadas": [], "error": {
+            "etapa": "recuperación", "error": f"{type(error).__name__}: {error}", "utc": alpaca.iso(ahora)}},
+            datos, sufijo="_recuperacion")
+        return 1
     for m in recuperadas:
         print(f"recuperada {m['etiqueta']}: {m['estado']} ({m['motivo_interrupcion']})")
     if recuperadas:
-        alpaca.escribir_ejecucion({"tipo": "recuperacion", "inicio_utc": alpaca.iso(ahora),
-                                   "fecha": str(ahora.tz_convert(NUEVA_YORK).date()),
-                                   "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"),
-                                   "run_id": os.environ.get("GITHUB_RUN_ID"), "codigo": almacen.estado_git(RAIZ),
-                                   "recuperadas": [{"etiqueta": m["etiqueta"], "estado": m["estado"],
-                                                    "motivo": m["motivo_interrupcion"]} for m in recuperadas]},
-                                  datos, sufijo="_recuperacion")
+        alpaca.escribir_ejecucion({**registro, "recuperadas": [
+            {"etiqueta": m["etiqueta"], "estado": m["estado"], "motivo": m["motivo_interrupcion"]}
+            for m in recuperadas]}, datos, sufijo="_recuperacion")
     else:
         print("no hay capturas interrumpidas")
     return 0
@@ -119,44 +130,74 @@ def main() -> int:
     datos = Path(args.datos)
     if args.recuperar:
         return recuperar(datos)
-    cliente = alpaca.ClienteAlpaca(alpaca.Credenciales.del_entorno(), reintentos=cfg["reintentos"],
-                                   espera_max=cfg["espera_max_s"])
     info_config = {"ruta": Path(args.config).resolve().relative_to(RAIZ).as_posix()
                    if Path(args.config).resolve().is_relative_to(RAIZ) else args.config,
                    "version": cfg["version"], "huella": almacen.huella_datos(bruto)}
-
-    # Reloj del servidor, antes de nada: el horario depende del reloj local.
-    reloj, err = alpaca.ejecutar(cliente, [alpaca.pedir_reloj()], 1)
-    if err:
-        print(f"no se pudo consultar el reloj de Alpaca: {err}", file=sys.stderr)
-        return 1
-    estado_reloj = alpaca.reloj_servidor(reloj["reloj"][0])
-    print(f"cuenta {cliente.cuenta}; desfase del reloj local {estado_reloj['desfase_s']:+.3f} s "
-          f"(± {estado_reloj['incertidumbre_s']:.3f}); mercado abierto: {estado_reloj['mercado_abierto']}")
-    if abs(estado_reloj["desfase_s"]) > 1.0:
-        print("AVISO: el reloj local difiere más de 1 s del de Alpaca; los sellos locales quedan desplazados",
-              file=sys.stderr)
-
-    ahora = cliente.reloj()
-    recuperadas = alpaca.recuperar(datos, ahora)  # capturas interrumpidas de ejecuciones anteriores
-    for m in recuperadas:
-        print(f"recuperada {m['etiqueta']}: {m['estado']} ({m['motivo_interrupcion']})", file=sys.stderr)
-    ejecucion = {"inicio_utc": alpaca.iso(ahora), "modo": "inmediata" if args.ahora else "programada",
+    # El registro se abre antes de cualquier llamada externa: un fallo al iniciar también deja constancia. Sus
+    # instantes son del reloj local; «reloj» guarda el desfase con el del servidor, si respondió.
+    ejecucion = {"modo": "inmediata" if args.ahora else "programada", "fuente_instantes": "reloj local",
                  "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"), "disparo": os.environ.get("DISPARO") or None,
                  "run_id": os.environ.get("GITHUB_RUN_ID"), "intento": os.environ.get("GITHUB_RUN_ATTEMPT"),
-                 "reloj": estado_reloj, "codigo": almacen.estado_git(RAIZ), "config": info_config,
-                 "recuperadas": [{"etiqueta": m["etiqueta"], "estado": m["estado"]} for m in recuperadas]}
-    if args.ahora:
-        fecha, corte_inmediato = sesion_de_referencia(ahora, codigo)
-        plan = [{"hora": "inmediata", "corte_utc": corte_inmediato, "etiqueta": f"{fecha}Tinmediata-{ahora:%H%M%S}",
-                 "capturas_previas": [], "estado": "pendiente", "accion": "capturar"}]
-    else:
-        fecha = ahora.tz_convert(NUEVA_YORK).date()
-        if not es_sesion(fecha, codigo):
-            print(f"{fecha} no es sesión de {codigo}: no hay captura")
-            return 0
-        plan = alpaca.planificar(datos, fecha, args.horas or cfg["horas"], ahora, cfg["adelanto_s"], codigo)
-    ejecucion["fecha"] = str(fecha)
+                 "reloj": None, "codigo": almacen.estado_git(RAIZ), "config": info_config, "recuperadas": []}
+    horas_pedidas = ["inmediata"] if args.ahora else list(args.horas or cfg["horas"])
+    cliente, etapa = None, "credenciales"
+
+    def sin_iniciar(etapa, error):
+        """Registro de una ejecución que falló antes de planificar: sin datos del servidor que no llegaron."""
+        traceback.print_exc()
+        instante = cliente.reloj() if cliente is not None else pd.Timestamp.now(tz="UTC")
+        ejecucion.setdefault("inicio_utc", alpaca.iso(instante))
+        ejecucion.setdefault("fecha", str(instante.tz_convert(NUEVA_YORK).date()))
+        ejecucion.update(fin_utc=alpaca.iso(instante),
+                         error={"etapa": etapa, "error": f"{type(error).__name__}: {error}",
+                                "utc": alpaca.iso(instante)},
+                         horas=[{"hora": h, "accion": "ninguna", "estado": "sin iniciar",
+                                 "motivo": f"error al iniciar ({etapa})"} for h in horas_pedidas])
+        ruta = alpaca.escribir_ejecucion(ejecucion, datos)
+        print(f"sin iniciar ({etapa}): {error} -> {ruta.relative_to(datos)}", file=sys.stderr)
+        return 1
+
+    try:
+        cliente = alpaca.ClienteAlpaca(alpaca.Credenciales.del_entorno(), reintentos=cfg["reintentos"],
+                                       espera_max=cfg["espera_max_s"])
+        inicio = cliente.reloj()
+        ejecucion.update(inicio_utc=alpaca.iso(inicio), fecha=str(inicio.tz_convert(NUEVA_YORK).date()))
+
+        # Reloj del servidor, antes de nada: el horario depende del reloj local.
+        etapa = "reloj del servidor"
+        reloj, err = alpaca.ejecutar(cliente, [alpaca.pedir_reloj()], 1)
+        if err:
+            raise RuntimeError(f"no se pudo consultar el reloj de Alpaca: {err}")
+        estado_reloj = alpaca.reloj_servidor(reloj["reloj"][0])
+        ejecucion["reloj"] = estado_reloj
+        print(f"cuenta {cliente.cuenta}; desfase del reloj local {estado_reloj['desfase_s']:+.3f} s "
+              f"(± {estado_reloj['incertidumbre_s']:.3f}); mercado abierto: {estado_reloj['mercado_abierto']}")
+        if abs(estado_reloj["desfase_s"]) > 1.0:
+            print("AVISO: el reloj local difiere más de 1 s del de Alpaca; los sellos locales quedan desplazados",
+                  file=sys.stderr)
+
+        etapa = "recuperación"
+        ahora = cliente.reloj()
+        recuperadas = alpaca.recuperar(datos, ahora)  # capturas interrumpidas de ejecuciones anteriores
+        for m in recuperadas:
+            print(f"recuperada {m['etiqueta']}: {m['estado']} ({m['motivo_interrupcion']})", file=sys.stderr)
+        ejecucion["recuperadas"] = [{"etiqueta": m["etiqueta"], "estado": m["estado"]} for m in recuperadas]
+
+        etapa = "planificación"
+        if args.ahora:
+            fecha, corte_inmediato = sesion_de_referencia(ahora, codigo)
+            plan = [{"hora": "inmediata", "corte_utc": corte_inmediato,
+                     "etiqueta": f"{fecha}Tinmediata-{ahora:%H%M%S}", "capturas_previas": [], "estado": "pendiente",
+                     "accion": "capturar"}]
+        else:
+            fecha = ahora.tz_convert(NUEVA_YORK).date()
+            if not es_sesion(fecha, codigo):
+                print(f"{fecha} no es sesión de {codigo}: no hay captura")
+                return 0
+            plan = alpaca.planificar(datos, fecha, horas_pedidas, ahora, cfg["adelanto_s"], codigo)
+        ejecucion["fecha"] = str(fecha)
+    except Exception as error:  # sin registro, una hora perdida no dice por qué
+        return sin_iniciar(etapa, error)
     for paso in plan:
         if paso["accion"] == "omitir":
             print(f"{paso['hora']}: {paso['estado']}; se omite", file=sys.stderr if paso["estado"] != "completa"

@@ -15,7 +15,9 @@ cotizaciones. Para cada sesión y hora de corte:
   ``cron`` (incluye la preparación del workflow), el margen con que quedó lista
   la captura antes del corte y el de la ráfaga;
 * los plazos que terminaron un proceso (preparación, absoluto), los errores y
-  las recuperaciones;
+  las recuperaciones. Una ejecución que falló al iniciar (reloj del servidor,
+  recuperación...) aparece en las horas que pedía como ``sin iniciar``, con su
+  etapa: se distingue de un corte sin ninguna ejecución;
 * el estado del SIP histórico del objetivo en ese corte.
 
 Además, el resumen de los dividendos (``alpaca.resumen_dividendos``): versiones,
@@ -107,6 +109,8 @@ def revisar(raiz_datos, desde, hasta, horas, adelanto_s, codigo=CALENDARIO, ahor
     recuperaciones = [{"registro": r["_ruta"], **x} for r in registros if r.get("tipo") == "recuperacion"
                       for x in r.get("recuperadas", [])]
     recuperaciones += [{"registro": r["_ruta"], **x} for r in capturas for x in r.get("recuperadas", [])]
+    errores_recuperacion = [{"registro": r["_ruta"], "inicio_utc": r["inicio_utc"], **r["error"]}
+                            for r in registros if r.get("tipo") == "recuperacion" and r.get("error")]
     eventos = [{"fecha": r.get("fecha"), "inicio_utc": r["inicio_utc"], **(r.get("eventos") or {})}
                for r in registros if r.get("tipo") == "historico" and r.get("eventos")]
     try:
@@ -115,11 +119,12 @@ def revisar(raiz_datos, desde, hasta, horas, adelanto_s, codigo=CALENDARIO, ahor
     except (ValueError, RuntimeError) as error:
         resumen_dividendos = {"error": str(error)}
     return {"desde": str(_fecha(desde)), "hasta": str(_fecha(hasta)), "revisado_utc": alpaca.iso(ahora),
-            "resumen": resumir(cortes, recuperaciones), "cortes": cortes, "recuperaciones": recuperaciones,
-            "eventos": eventos, "dividendos": resumen_dividendos}
+            "resumen": resumir(cortes, recuperaciones, errores_recuperacion), "cortes": cortes,
+            "recuperaciones": recuperaciones, "errores_recuperacion": errores_recuperacion, "eventos": eventos,
+            "dividendos": resumen_dividendos}
 
 
-def resumir(cortes, recuperaciones) -> dict:
+def resumir(cortes, recuperaciones, errores_recuperacion=()) -> dict:
     """Conteos y extremos: estados de los cortes, respaldos, plazos, errores y puntualidad."""
     ejecuciones = [e for c in cortes for e in c["ejecuciones"]]
     capturaron = [e for e in ejecuciones if e["accion"] == "capturar"]
@@ -136,7 +141,8 @@ def resumir(cortes, recuperaciones) -> dict:
             "sin_preparar_a_tiempo": sum("sin preparar" in e["interrupcion"] for e in ejecuciones),
             "plazo_absoluto": sum("plazo absoluto" in e["interrupcion"] for e in ejecuciones),
             "errores": sum(bool(e["error"]) for e in ejecuciones),
-            "recuperaciones": len(recuperaciones),
+            "sin_iniciar": sum(e["estado"] == "sin iniciar" for e in ejecuciones),
+            "recuperaciones": len(recuperaciones), "errores_de_recuperacion": len(errores_recuperacion),
             "retraso_max_s": extremo([e["retraso_s"] for e in ejecuciones], max),
             "margen_listo_min_s": extremo([e["margen_listo_s"] for e in capturaron], min),
             "margen_rafaga_min_s": extremo([e["margen_rafaga_s"] for e in capturaron], min),
@@ -171,7 +177,8 @@ def informe(revision: dict) -> str:
               f"- Ejecuciones de captura: {r['ejecuciones_de_captura']}; cortes con más de un intento de captura: "
               f"{r['cortes_con_reintento']}.",
               f"- Plazo de preparación vencido: {r['sin_preparar_a_tiempo']}; plazo absoluto: {r['plazo_absoluto']}; "
-              f"errores: {r['errores']}; recuperaciones: {r['recuperaciones']}.",
+              f"errores: {r['errores']} (al iniciar: {r['sin_iniciar']}); recuperaciones: {r['recuperaciones']} "
+              f"(con error: {r['errores_de_recuperacion']}).",
               f"- Retraso máximo del arranque respecto del cron: {_texto(r['retraso_max_s'])} s. Margen mínimo "
               f"hasta el corte: al quedar lista, {_texto(r['margen_listo_min_s'])} s; al empezar la ráfaga, "
               f"{_texto(r['margen_rafaga_min_s'], '{:.1f}')} s. Respuestas después del corte: "
@@ -191,7 +198,7 @@ def informe(revision: dict) -> str:
     incidencias = [(c, e) for c in revision["cortes"] for e in c["ejecuciones"]
                    if e["interrupcion"] or e["error"] or e["estado"] not in ("completa", None)]
     lineas += ["", "## Incidencias", ""]
-    if not incidencias and not revision["recuperaciones"]:
+    if not incidencias and not revision["recuperaciones"] and not revision["errores_recuperacion"]:
         lineas.append("Ninguna.")
     for c, e in incidencias:
         detalle = "; ".join(_sin_repetir([e["interrupcion"], e["error"], e["motivo"]]))
@@ -200,6 +207,8 @@ def informe(revision: dict) -> str:
     for x in revision["recuperaciones"]:
         lineas.append(f"- Recuperada {x.get('etiqueta')}: {x.get('estado')}"
                       + (f" ({x['motivo']})" if x.get("motivo") else "") + f"; `{x['registro']}`.")
+    for x in revision["errores_recuperacion"]:
+        lineas.append(f"- La recuperación de {x['inicio_utc']} falló ({x['error']}); `{x['registro']}`.")
     d = revision["dividendos"]
     lineas += ["", "## Dividendos del objetivo", ""]
     if "error" in d:

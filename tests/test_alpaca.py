@@ -683,7 +683,7 @@ def test_resoluciones_registradas_resuelven_y_fijan_el_estado_del_dividendo(tmp_
                     "d1,SPY,cancelado,2025-11-21T12:00:00Z,aviso del emisor,prueba\n"
                     "d1,SPY,vigente,2025-11-25T12:00:00Z,aviso del emisor,\n"
                     "d9,SPY,vigente,2025-11-25T12:00:00Z,aviso del emisor,sin evento\n"
-                    "d1,SPY,vigente,2025-11-26T12:00:00Z,aviso del emisor,ya confirmado\n")
+                    "d1,SPY,vigente,2025-11-26T12:00:00Z,aviso del emisor,ya confirmado\n", encoding="utf-8")
     resoluciones = al.cargar_resoluciones(ruta)
     assert ct.validar(resoluciones, ct.RESOLUCIONES_DIVIDENDOS) == []
     tabla, _, otros, _ = al.normalizar_eventos(tmp_path, resoluciones)
@@ -723,11 +723,11 @@ def test_resoluciones_registradas_resuelven_y_fijan_el_estado_del_dividendo(tmp_
     for linea, error in (("d1,QQQ,vigente,2025-11-19T12:00:00Z,x,", "el evento es de SPY"),
                          ("d1,SPY,vigente,2025-11-19 12:00,x,", "zona explícita"),
                          ("d1,SPY,quizas,2025-11-19T12:00:00Z,x,", "resolucion: solo se admite")):
-        ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n" + linea + "\n")
+        ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n" + linea + "\n", encoding="utf-8")
         with pytest.raises(ValueError, match=error):
             al.normalizar_eventos(tmp_path, al.cargar_resoluciones(ruta))
     ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n"
-                    + "d1,SPY,vigente,2025-11-19T12:00:00Z,x,\n" * 2)
+                    + "d1,SPY,vigente,2025-11-19T12:00:00Z,x,\n" * 2, encoding="utf-8")
     with pytest.raises(ValueError, match="repetidas"):
         al.cargar_resoluciones(ruta)
 
@@ -788,14 +788,16 @@ def test_un_dividendo_incompleto_deja_pendientes_las_etiquetas_que_podria_afecta
         consulta_eventos(otro, cuerpo, t[nombre])
     ruta = otro / "resoluciones_dividendos.csv"
     encabezado = "id_evento,simbolo,resolucion,conocido_utc,fuente,nota,fecha_ex,monto\n"
-    ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso del emisor,,2025-11-18,\n")
+    ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso del emisor,,2025-11-18,\n",
+                    encoding="utf-8")
     tabla, otros, e = etiqueta(otro, al.cargar_resoluciones(ruta))
     assert otros == [] and list(tabla["origen"]) == ["consulta", "resolucion"]
     assert (tabla.iloc[1]["fecha_ex"], tabla.iloc[1]["monto"]) == (dt.date(2025, 11, 18), 1.8)
     assert list(e["estado_dividendos"]) == ["provisional", "aceptada", "pendiente", "provisional", "aceptada"]
     assert e.iloc[3]["vigente_desde_utc"] == pd.Timestamp("2026-02-01T15:00:00Z") and e.iloc[3]["dividendos"] == 1.8
     for evidencia, error in ((",", "debe darlos"), ("2025-11-18,1.9", "contradice")):
-        ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso,," + evidencia + "\n")
+        ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso,," + evidencia + "\n",
+                        encoding="utf-8")
         with pytest.raises(ValueError, match=error):
             al.normalizar_eventos(otro, al.cargar_resoluciones(ruta))
 
@@ -842,22 +844,30 @@ def test_un_dividendo_sin_simbolo_atribuible_detiene_la_normalizacion(tmp_path):
         al.tablas_para_piloto(tmp_path, "2020-01-01", "2020-01-31")
 
 
-def correr_captura(mercado, datos, monkeypatch, **fallos):
-    """``scripts/capturar_alpaca.py --ahora`` de punta a punta, con la API sintética y solo SPXW.
+def borrar(ruta):
+    """Borra un archivo del almacén, que lo deja de solo lectura (en Windows no se puede borrar así)."""
+    os.chmod(ruta, stat.S_IREAD | stat.S_IWRITE)
+    ruta.unlink()
 
-    ``fallos`` sustituye funciones de ``alpaca`` por otras que lanzan un error.
-    Devuelve el código de salida y el registro de la ejecución (o ``None``).
+
+def correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora",), fallos_api=None, **fallos):
+    """``scripts/capturar_alpaca.py`` (por omisión, ``--ahora``) de punta a punta, con la API sintética y solo SPXW.
+
+    ``fallos_api`` inyecta estados HTTP por ruta; ``fallos`` sustituye funciones
+    de ``alpaca`` por otras que lanzan un error. Devuelve el código de salida y
+    el registro de la ejecución (o ``None``).
     """
     spec = importlib.util.spec_from_file_location("capturar_alpaca", RAIZ / "scripts" / "capturar_alpaca.py")
     script = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(script)
-    texto = (RAIZ / "configs" / "captura_alpaca.toml").read_text()
+    texto = (RAIZ / "configs" / "captura_alpaca.toml").read_text(encoding="utf-8")
     texto = texto[:texto.index('[[captura.opciones]]\nsubyacente = "SPY"')] + texto[texto.index("[captura.acciones]"):]
     config = datos / "captura.toml"
     config.parent.mkdir(parents=True, exist_ok=True)
-    config.write_text(texto)
+    config.write_text(texto, encoding="utf-8")
     reloj = Reloj("2025-11-17T14:45:00Z")  # el corte inmediato: la cadena sintética tiene cotizaciones
     api, vigilantes = api_sintetica(mercado, reloj), []
+    api.fallos = dict(fallos_api or {})
 
     class Vigilante(VIGILANTE_REAL):  # para cancelarlos siempre, pase lo que pase
         def __init__(self, *a, **k):
@@ -870,14 +880,15 @@ def correr_captura(mercado, datos, monkeypatch, **fallos):
     monkeypatch.setattr(al, "Vigilante", Vigilante)
     for nombre, error in fallos.items():
         monkeypatch.setattr(al, nombre, lambda *a, error=error, **k: (_ for _ in ()).throw(error))
-    monkeypatch.setattr(sys, "argv", ["capturar_alpaca.py", "--datos", str(datos), "--config", str(config), "--ahora"])
+    monkeypatch.setattr(sys, "argv", ["capturar_alpaca.py", "--datos", str(datos), "--config", str(config),
+                                      *argumentos])
     try:
         codigo = script.main()
     finally:
         for v in vigilantes:
             v.cancelar()
     registros = sorted((datos / "raw" / "alpaca" / "ejecuciones").rglob("*.json"))
-    return codigo, (json.loads(registros[0].read_text()) if registros else None)
+    return codigo, (json.loads(registros[0].read_text(encoding="utf-8")) if registros else None)
 
 
 def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkeypatch):
@@ -907,13 +918,33 @@ def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkey
     assert codigo == 1 and registro["horas"][0]["estado"] == "fallida"
     assert registro["horas"][0]["motivo"] == "error inesperado: ValueError"
     assert registro["error"]["etapa"] == "preparación y captura" and "listo_utc" not in registro
+    # 4. Revisión de los cambios operativos, P2: el reloj del servidor falla (403) antes de planificar. El registro
+    # se abrió antes, con el reloj local; no inventa el del servidor y marca la hora pedida «sin iniciar».
+    codigo, registro = correr_captura(mercado, tmp_path / "reloj", monkeypatch, fallos_api={"/v2/clock": [403]})
+    assert codigo == 1 and registro["error"]["etapa"] == "reloj del servidor"
+    assert "HTTP 403" in registro["error"]["error"]
+    assert registro["reloj"] is None and registro["fuente_instantes"] == "reloj local"
+    assert registro["inicio_utc"] == "2025-11-17T14:45:00.000000Z" and registro["fecha"] == "2025-11-17"
+    assert registro["horas"] == [{"hora": "inmediata", "accion": "ninguna", "estado": "sin iniciar",
+                                  "motivo": "error al iniciar (reloj del servidor)"}]
+    # 5. Falla la recuperación de diarios anteriores, también antes del bloque protegido.
+    codigo, registro = correr_captura(mercado, tmp_path / "recuperacion", monkeypatch,
+                                      recuperar=OSError("diario ilegible"))
+    assert codigo == 1 and registro["error"] == {"etapa": "recuperación", "error": "OSError: diario ilegible",
+                                                 "utc": "2025-11-17T14:45:00.000000Z"}
+    assert registro["reloj"] is not None and registro["horas"][0]["estado"] == "sin iniciar"
+    # 6. La recuperación aparte (paso «Recuperar» del workflow) también deja el suyo si falla.
+    codigo, registro = correr_captura(mercado, tmp_path / "recuperar", monkeypatch, argumentos=("--recuperar",),
+                                      recuperar=OSError("diario ilegible"))
+    assert codigo == 1 and registro["tipo"] == "recuperacion" and registro["recuperadas"] == []
+    assert registro["error"]["etapa"] == "recuperación" and registro["fuente_instantes"] == "reloj local"
 
 
 def test_revision_de_la_operacion_de_las_sesiones(mercado, tmp_path):
     # Cierre de b240dc2, pasos 4 y 5: estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.
     capturar_sesiones(mercado, tmp_path)
     descargar_historicos(mercado, tmp_path, horas=("09:45",))  # el SIP de las 10:00 aún no se descargó
-    (tmp_path / "raw" / "alpaca" / "capturas" / str(FECHAS[1]) / f"{FECHAS[1]}T1000.json").unlink()  # perdida
+    borrar(tmp_path / "raw" / "alpaca" / "capturas" / str(FECHAS[1]) / f"{FECHAS[1]}T1000.json")  # perdida
     consulta_eventos(tmp_path, {"corporate_actions": {"cash_dividends": [dividendo_incompleto()]}},
                      "2025-11-18T20:21:00Z")
 
@@ -942,6 +973,14 @@ def test_revision_de_la_operacion_de_las_sesiones(mercado, tmp_path):
     registro("2025-11-18T14:40:10Z", FECHAS[1], modo="programada", evento="schedule", disparo="26 14 * * 1-5",
              listo_utc="2025-11-18T14:42:00Z", horas=[hora("09:45", **ok)])
     registro("2025-11-18T15:21:00Z", FECHAS[1], tipo="historico", eventos={"estado": "completa", "errores": []})
+    # Las 10:00 de la segunda sesión: un intento que falló al iniciar (sin reloj del servidor), no una ausencia.
+    registro("2025-11-18T14:43:10Z", FECHAS[1], modo="programada", evento="schedule", disparo="41 14 * * 1-5",
+             fuente_instantes="reloj local", reloj=None,
+             error={"etapa": "reloj del servidor", "error": "RuntimeError: HTTP 403", "utc": "2025-11-18T14:43:10Z"},
+             horas=[hora("10:00", accion="ninguna", estado="sin iniciar",
+                         motivo="error al iniciar (reloj del servidor)")])
+    registro("2025-11-18T15:05:00Z", FECHAS[1], tipo="recuperacion", recuperadas=[],
+             error={"etapa": "recuperación", "error": "OSError: diario ilegible", "utc": "2025-11-18T15:05:00Z"})
     registro("2025-11-18T14:00:00Z", FECHAS[1], modo="inmediata", horas=[hora("inmediata", **ok)])  # no cuenta
 
     revision = operacion.revisar(tmp_path, FECHAS[0], FECHAS[1], ["09:45", "10:00"], 5.0,
@@ -954,20 +993,61 @@ def test_revision_de_la_operacion_de_las_sesiones(mercado, tmp_path):
         150.0, 1850.0, 5.0)
     assert (dos["intentos"], dos["captura"]["disparo"], dos["captura"]["retraso_s"],
             dos["captura"]["margen_listo_s"]) == (2, "26 14 * * 1-5", 850.0, 180.0)
-    assert (perdido["estado"], perdido["ejecuciones"], perdido["sip"]) == ("perdida", [], "sin descargar")
+    assert (perdido["estado"], perdido["intentos"], perdido["sip"]) == ("perdida", 0, "sin descargar")
+    assert [(e["estado"], e["error"]) for e in perdido["ejecuciones"]] == [("sin iniciar", "RuntimeError: HTTP 403")]
     r = revision["resumen"]
     assert r["estados"] == {"completa": 3, "parcial": 0, "fallida": 0, "perdida": 1, "pendiente": 0}
     assert (r["cortes_con_reintento"], r["sin_preparar_a_tiempo"], r["plazo_absoluto"], r["recuperaciones"],
             r["retraso_max_s"], r["margen_listo_min_s"], r["sip_completo"]) == (1, 1, 0, 1, 850.0, 180.0, 2)
+    assert (r["errores"], r["sin_iniciar"], r["errores_de_recuperacion"]) == (1, 1, 1)
     assert revision["dividendos"]["discrepancias_abiertas"] == {"incompleto": 1}
     assert revision["eventos"] == [{"fecha": str(FECHAS[1]), "inicio_utc": "2025-11-18T15:21:00Z",
                                     "estado": "completa", "errores": []}]
     texto = operacion.informe(revision)
-    assert f"| {FECHAS[1]} | 10:00 | perdida | sin descargar | 0 | 0 | — |" in texto
+    assert f"| {FECHAS[1]} | 10:00 | perdida | sin descargar | 1 | 0 | — |" in texto
+    assert (f"- {FECHAS[1]} 10:00: sin iniciar en la ejecución de 2025-11-18T14:43:10Z "
+            "(RuntimeError: HTTP 403;") in texto
+    assert "La recuperación de 2025-11-18T15:05:00Z falló (OSError: diario ilegible)" in texto
     assert "sin preparar a tiempo" in texto and f"Recuperada {FECHAS[1]}T0945: fallida" in texto
     assert "Discrepancias abiertas: incompleto 1;" in texto
     assert "(sin preparar a tiempo (2025-11-18T14:39:00+00:00));" in texto  # el motivo, una sola vez
     assert not any(x in texto.lower() for x in ("bid", "ask", "precio", "580"))  # solo agregados, sin precios
+    # Sin ninguna ejecución registrada, los cortes pasados quedan perdidos y sin actividad inventada.
+    vacia = operacion.revisar(tmp_path / "vacia", FECHAS[0], FECHAS[1], ["09:45", "10:00"], 5.0,
+                              ahora_utc="2025-11-19T00:00:00Z")
+    assert [(c["estado"], c["ejecuciones"]) for c in vacia["cortes"]] == [("perdida", [])] * 4
+
+
+def test_revisar_operacion_valida_la_ruta_de_resoluciones(tmp_path, monkeypatch):
+    # Revisión de los cambios operativos, P2: una ruta explícita que no existe no se ignora en silencio.
+    spec = importlib.util.spec_from_file_location("revisar_operacion", RAIZ / "scripts" / "revisar_operacion.py")
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    datos = tmp_path / "datos"
+    consulta_eventos(datos, {"corporate_actions": {"cash_dividends": [dividendo_json("d1", "2025-11-18", 1.8)]}},
+                     "2025-11-18T21:00:00Z")
+    texto = ("id_evento,simbolo,resolucion,conocido_utc,fuente,nota,fecha_ex,monto\n"
+             "d1,SPY,vigente,2025-11-19T15:00:00Z,aviso del emisor,,,\n")
+
+    def correr(nombre, *extra):
+        salida = tmp_path / nombre
+        monkeypatch.setattr(sys, "argv", ["revisar_operacion.py", "--datos", str(datos), "--desde", "2025-11-17",
+                                          "--hasta", "2025-11-17", "--salida", str(salida), *extra])
+        codigo = script.main()
+        return codigo, json.loads((salida / "resumen.json").read_text(encoding="utf-8"))
+
+    codigo, resumen = correr("sin_archivo")  # sin el argumento ni el archivo por omisión: opcional
+    assert codigo == 1 and resumen["dividendos"]["confirmadas_por_resolucion"] == 0  # 1: sin capturas
+    with pytest.raises(SystemExit) as salida:
+        correr("inexistente", "--resoluciones", str(tmp_path / "no_existe.csv"))
+    assert salida.value.code == 2 and not (tmp_path / "inexistente").exists()
+    (datos / "resoluciones_dividendos.csv").write_text(texto, encoding="utf-8")  # el archivo por omisión se aplica
+    assert correr("por_omision")[1]["dividendos"]["confirmadas_por_resolucion"] == 1
+    explicito = tmp_path / "resoluciones.csv"
+    explicito.write_text(texto, encoding="utf-8")
+    borrar_por_omision = datos / "resoluciones_dividendos.csv"
+    borrar_por_omision.unlink()
+    assert correr("explicito", "--resoluciones", str(explicito))[1]["dividendos"]["confirmadas_por_resolucion"] == 1
 
 
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):

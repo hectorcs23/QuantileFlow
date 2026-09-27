@@ -15,24 +15,24 @@ from quantileflow import sintetico as sn
 
 def test_crudo_inmutable_y_direccionado_por_contenido(tmp_path):
     origen = tmp_path / "cadena.csv"
-    origen.write_text("strike,bid,ask\n100,1.0,1.1\n")
+    origen.write_text("strike,bid,ask\n100,1.0,1.1\n", encoding="utf-8")
     info = almacen.guardar_crudo(origen, tmp_path / "raw")
     assert info["sha256"] == almacen.sha256_archivo(origen)
     assert info["ruta"].endswith(f"{info['sha256']}_cadena.csv")
     assert not os.stat(info["ruta"]).st_mode & stat.S_IWUSR  # solo lectura
     assert almacen.guardar_crudo(origen, tmp_path / "raw") == info  # idempotente
     # Un archivo distinto con el mismo nombre no pisa al anterior: tiene otro hash y otra ruta.
-    origen.write_text("strike,bid,ask\n100,1.0,1.2\n")
+    origen.write_text("strike,bid,ask\n100,1.0,1.2\n", encoding="utf-8")
     otro = almacen.guardar_crudo(origen, tmp_path / "raw")
     assert otro["ruta"] != info["ruta"] and os.path.exists(info["ruta"])
 
 
 def test_crudo_alterado_se_detecta(tmp_path):
     origen = tmp_path / "a.csv"
-    origen.write_text("x\n1\n")
+    origen.write_text("x\n1\n", encoding="utf-8")
     info = almacen.guardar_crudo(origen, tmp_path / "raw")
     os.chmod(info["ruta"], stat.S_IRUSR | stat.S_IWUSR)
-    with open(info["ruta"], "a") as f:
+    with open(info["ruta"], "a", encoding="utf-8") as f:
         f.write("2\n")
     with pytest.raises(RuntimeError):
         almacen.guardar_crudo(origen, tmp_path / "raw")
@@ -57,7 +57,8 @@ def test_huellas(tmp_path):
     assert entorno["paquetes"]["numpy"] == np.__version__
     assert almacen.huella_datos({"b": 1, "a": [1, 2]}) == almacen.huella_datos({"a": [1, 2], "b": 1})
     h = almacen.escribir_json({"z": 1, "a": 2}, tmp_path / "m.json")
-    assert (tmp_path / "m.json").read_text().index('"a"') < (tmp_path / "m.json").read_text().index('"z"')
+    texto = (tmp_path / "m.json").read_text(encoding="utf-8")
+    assert texto.index('"a"') < texto.index('"z"')
     assert h == almacen.sha256_archivo(tmp_path / "m.json")
 
 
@@ -67,5 +68,5 @@ def test_escritura_atomica_que_no_sobrescribe(tmp_path):
     assert h == almacen.sha256_archivo(ruta) and not os.stat(ruta).st_mode & stat.S_IWUSR
     with pytest.raises(FileExistsError):
         almacen.escribir_json_nuevo({"estado": "parcial"}, ruta)
-    assert json.loads(ruta.read_text()) == {"estado": "completa"}
+    assert json.loads(ruta.read_text(encoding="utf-8")) == {"estado": "completa"}
     assert [p.name for p in tmp_path.iterdir()] == ["manifiesto.json"]  # sin temporales a la vista

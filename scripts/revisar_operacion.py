@@ -6,10 +6,13 @@ Uso, desde la raíz del repositorio::
 
 Lee los registros de ``ejecuciones/`` y los manifiestos del repositorio de datos,
 y ``resoluciones_dividendos.csv`` si existe (``quantileflow/operacion.py``).
-Escribe en ``reports/operacion/<desde>_<hasta>/`` un informe Markdown y un
-resumen JSON. Solo son agregados (estados, tiempos y conteos), nunca
-cotizaciones. El código de salida es 0 si ningún corte del rango quedó
-``parcial``, ``fallida`` o ``perdida``.
+Un ``--resoluciones`` explícito que no existe es un error (código 2); el
+archivo por omisión es opcional. Escribe en
+``reports/operacion/<desde>_<hasta>/`` un informe Markdown y un resumen JSON.
+Solo son agregados (estados, tiempos y conteos), nunca cotizaciones. El código
+de salida es 0 si ningún corte del rango quedó ``parcial``, ``fallida`` o
+``perdida``; solo mira los estados de captura, así que el SIP y los dividendos
+se revisan en el informe.
 """
 from __future__ import annotations
 
@@ -38,6 +41,8 @@ def main() -> int:
         cfg = tomllib.load(f)["captura"]
     datos = Path(args.datos)
     ruta_res = Path(args.resoluciones) if args.resoluciones else datos / "resoluciones_dividendos.csv"
+    if args.resoluciones and not ruta_res.is_file():  # pedido explícitamente: no se ignora en silencio
+        a.error(f"no existe el archivo de resoluciones {ruta_res}")
     resoluciones = alpaca.cargar_resoluciones(ruta_res) if ruta_res.is_file() else None
     revision = operacion.revisar(datos, args.desde, args.hasta, cfg["horas"], cfg["adelanto_s"], cfg["calendario"],
                                  resoluciones=resoluciones)

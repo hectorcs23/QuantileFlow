@@ -157,9 +157,9 @@ def estado_git(directorio=".") -> dict:
     """Commit completo y si el árbol de trabajo tiene cambios sin registrar."""
     try:
         commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=directorio, capture_output=True,
-                                text=True, check=True).stdout.strip()
+                                text=True, encoding="utf-8", check=True).stdout.strip()
         cambios = subprocess.run(["git", "status", "--porcelain"], cwd=directorio, capture_output=True,
-                                 text=True, check=True).stdout.strip()
+                                 text=True, encoding="utf-8", check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return {"commit": None, "cambios_sin_registrar": None}
     return {"commit": commit, "cambios_sin_registrar": bool(cambios)}
