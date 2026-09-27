@@ -37,10 +37,16 @@ discrepancias.
   siempre; pero 60 días son una regla operativa, no una garantía de
   completitud.
 * **Pendiente**: un dividendo del periodo tiene una discrepancia sin resolver
-  (faltó en una consulta comparable o, cancelado por una resolución, el
-  proveedor lo trae con otros valores). El valor se conserva para diagnóstico,
-  pero la etiqueta no se acepta: ni el paso del tiempo ni repetir la ausencia la
-  resuelven, solo evidencia fechada (``alpaca.normalizar_eventos``).
+  (faltó en una consulta comparable; cancelado por una resolución, el
+  proveedor lo trae con otros valores; o llegó sin fecha ex o sin monto). El
+  valor se conserva para diagnóstico, pero la etiqueta no se acepta: ni el paso
+  del tiempo ni repetir la ausencia la resuelven, solo evidencia fechada
+  (``alpaca.normalizar_eventos``). Un dividendo sin fecha ex afecta a toda
+  etiqueta cuyo periodo pueda contenerla: con el mismo supuesto con el que la
+  política da por cubierta una etiqueta (el proceso cae entre la fecha ex y
+  ``margen_proceso_dias`` después), su fecha ex está entre la primera fecha de
+  proceso posible menos el margen y la última. No suma al valor: no se sabe si
+  corresponde.
 
 Cada etiqueta se parte en **tramos** de valor y estado constantes
 (``vigente_desde_utc``, ``vigente_hasta_utc``); ``version`` cuenta los cambios
@@ -69,9 +75,11 @@ INSTANTES = ("inicio_at", "decision_at", "label_end_at", "label_available_at", "
 CALIDADES_COBERTURA = ("complete",)  # los eventos procesados siempre vuelven; con "all" hay registros sin fecha ex
 CAMPOS_POR_EX = ("ex_date",)
 CAMPOS_POSTERIORES_A_EX = ("process_date", "payable_date")
-_Version = namedtuple("_Version", "abre monto conocida hasta discrepancia desde_discrepancia fecha_ex")
+_Version = namedtuple("_Version",
+                      "abre monto conocida hasta discrepancia desde_discrepancia fecha_ex ex_desde ex_hasta")
 _DISCREPANCIAS = {"ausente": "ausente en una consulta comparable",
-                  "reaparece_cancelado": "cancelado por una resolución y de nuevo en el proveedor con otros valores"}
+                  "reaparece_cancelado": "cancelado por una resolución y de nuevo en el proveedor con otros valores",
+                  "incompleto": "recibido incompleto"}
 _Consulta = namedtuple("_Consulta", "recibido desde hasta por_ex")
 
 
@@ -96,20 +104,26 @@ def _instante(valor):
     return pd.NaT if valor is None or pd.isna(valor) else pd.Timestamp(valor)
 
 
-def _versiones(tabla, codigo, conocido_hasta):
-    """Versiones de dividendos conocidas hasta ``conocido_hasta``: apertura ex, monto, vigencia y discrepancia.
+def _hay(valor) -> bool:
+    return valor is not None and not pd.isna(valor)
+
+
+def _versiones(tabla, codigo, conocido_hasta, margen):
+    """Versiones de dividendos conocidas hasta ``conocido_hasta``: fecha ex (o sus cotas), monto y discrepancia.
 
     Una versión se conoce desde su anuncio documentado o, si falta, desde la
     consulta que la trajo. Lo que ocurrió después de ``conocido_hasta`` (un
-    retiro, una ausencia) todavía no se sabía.
+    retiro, una ausencia) todavía no se sabía. Una versión sin fecha ex o sin
+    monto lleva siempre la discrepancia «incompleto» (aunque la tabla no la
+    traiga); sin fecha ex, sus cotas salen del intervalo de su fecha de proceso
+    y del margen de la política.
     """
     if tabla is None or len(tabla) == 0:
         return []
     salida = []
     for fila in pd.DataFrame(tabla).itertuples():
-        fecha_ex = _fecha(fila.fecha_ex)
-        if not es_sesion(fecha_ex, codigo):
-            raise ValueError(f"fecha ex {fecha_ex} no es una sesión")
+        fecha_ex = _fecha(fila.fecha_ex) if _hay(getattr(fila, "fecha_ex", None)) else None
+        monto = float(fila.monto) if _hay(getattr(fila, "monto", None)) else np.nan
         conocida = _instante(getattr(fila, "disponible_utc", None))
         if pd.isna(conocida):
             conocida = _instante(getattr(fila, "recibido_utc", None))
@@ -121,10 +135,36 @@ def _versiones(tabla, codigo, conocido_hasta):
             hasta = hasta if pd.isna(hasta) or hasta <= conocido_hasta else pd.NaT
             desde = desde if pd.isna(desde) or desde <= conocido_hasta else pd.NaT
         tipo = getattr(fila, "discrepancia", "") if not pd.isna(desde) else ""
+        if (fecha_ex is None or not np.isfinite(monto)) and pd.isna(desde):
+            tipo, desde = "incompleto", conocida
         if not pd.isna(desde) and tipo not in _DISCREPANCIAS:
             raise ValueError(f"discrepancia desconocida en el dividendo con fecha ex {fecha_ex}: {tipo!r}")
-        salida.append(_Version(apertura(fecha_ex, codigo), float(fila.monto), conocida, hasta, tipo, desde, fecha_ex))
+        if fecha_ex is not None:
+            if not es_sesion(fecha_ex, codigo):
+                raise ValueError(f"fecha ex {fecha_ex} no es una sesión")
+            abre, ex_desde, ex_hasta = apertura(fecha_ex, codigo), fecha_ex, fecha_ex
+        else:
+            p0, p1 = getattr(fila, "proceso_desde", None), getattr(fila, "proceso_hasta", None)
+            if not (_hay(p0) and _hay(p1)):
+                raise ValueError("un dividendo sin fecha ex debe traer el intervalo de su fecha de proceso")
+            abre, ex_desde, ex_hasta = pd.NaT, (pd.Timestamp(_fecha(p0)) - margen).date(), _fecha(p1)
+        salida.append(_Version(abre, monto, conocida, hasta, tipo, desde, fecha_ex, ex_desde, ex_hasta))
     return salida
+
+
+def _afecta(v, inicio, fin) -> bool:
+    """Si la versión toca el periodo ``(inicio, fin]``: su fecha ex dentro o, sin fecha ex, posible dentro."""
+    if not pd.isna(v.abre):
+        return inicio < v.abre <= fin
+    return v.ex_desde <= fin.tz_convert(NUEVA_YORK).date() and v.ex_hasta > inicio.tz_convert(NUEVA_YORK).date()
+
+
+def _describir(v) -> str:
+    cual = f"con fecha ex {v.fecha_ex}" if v.fecha_ex is not None else "sin fecha ex"
+    monto = f"{v.monto:g}" if np.isfinite(v.monto) else "sin monto"
+    posible = (f", con fecha ex posible entre {v.ex_desde} y {v.ex_hasta}" if v.fecha_ex is None else "")
+    return (f"dividendo {cual} ({monto}) {_DISCREPANCIAS[v.discrepancia]} desde {v.desde_discrepancia}{posible}, "
+            "sin resolver")
 
 
 def _consultas(tabla, conocido_hasta):
@@ -186,7 +226,7 @@ def _con_dividendos(base, p0, p1, inicio, fin, versiones, consultas, descartadas
         return [dict(base, estado="sin dividendos confirmados", motivo=motivo,
                      vigente_desde_utc=base["label_available_at"])]
     disponible = max(base["label_available_at"], min(habilitantes))
-    propias = [v for v in versiones if inicio < v.abre <= fin]
+    propias = [v for v in versiones if _afecta(v, inicio, fin)]
     aceptadoras = [q.recibido for q in cubren if q.recibido >= fin + margen]
     instantes = sorted({disponible} | {t for v in propias for t in (v.conocida, v.hasta, v.desde_discrepancia)
                                        if not pd.isna(t) and t > disponible}
@@ -194,7 +234,8 @@ def _con_dividendos(base, p0, p1, inicio, fin, versiones, consultas, descartadas
     tramos, cambio_valor, fin_discrepancia, monto_previo, abiertas_previas = [], disponible, disponible, None, False
     for t in instantes:
         vigentes = [v for v in propias if v.conocida <= t and (pd.isna(v.hasta) or v.hasta > t)]
-        monto = round(float(sum(v.monto for v in vigentes)), 10)  # redondeado: los tramos comparan exacto
+        # Solo suman los de fecha ex y monto conocidos; redondeado: los tramos comparan exacto.
+        monto = round(float(sum(v.monto for v in vigentes if not pd.isna(v.abre) and np.isfinite(v.monto))), 10)
         abiertas = [v for v in vigentes if not pd.isna(v.desde_discrepancia) and v.desde_discrepancia <= t]
         if monto_previo is not None and monto != monto_previo:
             cambio_valor = t
@@ -203,8 +244,7 @@ def _con_dividendos(base, p0, p1, inicio, fin, versiones, consultas, descartadas
         desde_aceptable = max(fin + margen, cambio_valor, fin_discrepancia)
         if abiertas:
             estado = "pendiente"
-            motivo = "; ".join(f"dividendo con fecha ex {v.fecha_ex} ({v.monto:g}) {_DISCREPANCIAS[v.discrepancia]} "
-                               f"desde {v.desde_discrepancia}, sin resolver" for v in abiertas)
+            motivo = "; ".join(_describir(v) for v in abiertas)
         else:
             estado = "aceptada" if any(desde_aceptable <= q <= t for q in aceptadoras) else "provisional"
             motivo = ""
@@ -245,9 +285,9 @@ def etiquetas_retorno(precios, hora="09:45", horizontes=(1, 5), latencia_s=0.0,
     disponibles, motivos = _por_fecha(disponibles), _por_fecha(motivos)
     total = dividendos is not None or cobertura is not None
     corte = None if conocido_hasta is None else pd.Timestamp(conocido_hasta)
-    versiones = _versiones(dividendos, codigo, corte)
-    consultas, descartadas = _consultas(cobertura, corte)
     margen = pd.Timedelta(days=float(margen_proceso_dias))
+    versiones = _versiones(dividendos, codigo, corte, margen)
+    consultas, descartadas = _consultas(cobertura, corte)
     latencia = pd.Timedelta(seconds=float(latencia_s))
     retraso = pd.Timedelta(seconds=float(retraso_publicacion_s))
 

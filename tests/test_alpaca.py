@@ -729,6 +729,116 @@ def test_resoluciones_registradas_resuelven_y_fijan_el_estado_del_dividendo(tmp_
         al.cargar_resoluciones(ruta)
 
 
+def dividendo_incompleto(id_evento="d1", monto=1.8, proceso="2025-12-30", **cambios):
+    """Un dividendo de SPY sin fecha ex (ni de registro), con fecha de proceso y de pago."""
+    x = {k: v for k, v in dividendo_json(id_evento, "2025-11-18", monto).items() if k not in ("ex_date", "record_date")}
+    return dict(x, process_date=proceso, payable_date=proceso, **cambios)
+
+
+def test_un_dividendo_incompleto_deja_pendientes_las_etiquetas_que_podria_afectar(tmp_path):
+    # Revalidación de 5c15028, P2: un dividendo recibido sin fecha ex no puede terminar como cero aceptado.
+    vacia = {"corporate_actions": {}}
+    completo = {"corporate_actions": {"cash_dividends": [dividendo_json("d1", "2025-11-18", 1.8)]}}
+    incompleto = {"corporate_actions": {"cash_dividends": [dividendo_incompleto()]}}
+    t = {n: pd.Timestamp(x) for n, x in (("habilita", "2025-11-18T21:00:00Z"), ("acepta", "2026-01-19T21:00:00Z"),
+                                         ("incompleto", "2026-01-20T21:00:00Z"), ("completo", "2026-02-20T21:00:00Z"))}
+    precios = pd.Series([100.0, 100.0], index=FECHAS)
+
+    def etiqueta(directorio, resoluciones=None, hasta=None):
+        tabla, cobertura, otros, _ = al.normalizar_eventos(directorio, resoluciones)
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla, cobertura=cobertura,
+                                 margen_proceso_dias=60, conocido_hasta=hasta)
+        return tabla, otros, e[e["sesion"] == FECHAS[0]]
+
+    for nombre, cuerpo in (("habilita", vacia), ("acepta", vacia), ("incompleto", incompleto), ("completo", completo)):
+        consulta_eventos(tmp_path, cuerpo, t[nombre])
+    tabla, otros, e = etiqueta(tmp_path)
+    assert ct.validar(tabla, ct.DIVIDENDOS) == [] and otros == []
+    # Una versión con la discrepancia «incompleto» y el intervalo de su fecha de proceso; el registro completo la
+    # corrige.
+    v1, v2 = tabla.iloc[0], tabla.iloc[1]
+    assert (pd.isna(v1["fecha_ex"]), v1["monto"], v1["proceso_desde"], v1["proceso_hasta"], v1["discrepancia"],
+            v1["discrepancia_desde_utc"], v1["retirado_utc"], v1["motivo_retiro"]) == (
+        True, 1.8, dt.date(2025, 12, 30), dt.date(2025, 12, 30), "incompleto", t["incompleto"], t["completo"],
+        "corregido")
+    assert (v2["fecha_ex"], v2["monto"], v2["discrepancia"]) == (dt.date(2025, 11, 18), 1.8, "")
+    assert list(e["estado_dividendos"]) == ["provisional", "aceptada", "pendiente", "aceptada"]
+    assert list(e["dividendos"]) == [0.0, 0.0, 0.0, 1.8] and list(e["version"]) == [1, 1, 1, 2]
+    assert "sin fecha ex (1.8) recibido incompleto" in e.iloc[2]["motivo"]
+    assert "entre 2025-10-31 y 2025-12-30" in e.iloc[2]["motivo"]
+    # 1. No pasa la política aceptada mientras siga incompleto.
+    entre = pd.Timestamp("2026-02-01T00:00:00Z")
+    assert et.etiquetas_maduras(e, entre, politica="aceptada").empty
+    assert et.etiquetas_maduras(e, entre).iloc[0]["estado_dividendos"] == "pendiente"
+    # 2. Lo conocido antes de recibirlo no cambia: aceptada con cero, igual en la reconstrucción truncada.
+    antes = t["incompleto"] - pd.Timedelta(seconds=1)
+    assert et.etiquetas_maduras(e, antes, politica="aceptada")["dividendos"].tolist() == [0.0]
+    _, _, truncada = etiqueta(tmp_path, hasta=antes)
+    assert list(truncada["estado_dividendos"]) == ["provisional", "aceptada"]
+    # 3. El registro completo actualiza la etiqueta desde que llega.
+    assert et.etiquetas_maduras(e, t["completo"], politica="aceptada")["dividendos"].tolist() == [1.8]
+
+    # 3'. O una resolución con la fecha ex: desde su fecha de conocimiento, y la acepta la consulta siguiente.
+    otro = tmp_path / "con_resolucion"
+    for nombre, cuerpo in (("habilita", vacia), ("acepta", vacia), ("incompleto", incompleto),
+                           ("completo", incompleto)):  # el proveedor lo sigue trayendo incompleto: nada nuevo
+        consulta_eventos(otro, cuerpo, t[nombre])
+    ruta = otro / "resoluciones_dividendos.csv"
+    encabezado = "id_evento,simbolo,resolucion,conocido_utc,fuente,nota,fecha_ex,monto\n"
+    ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso del emisor,,2025-11-18,\n")
+    tabla, otros, e = etiqueta(otro, al.cargar_resoluciones(ruta))
+    assert otros == [] and list(tabla["origen"]) == ["consulta", "resolucion"]
+    assert (tabla.iloc[1]["fecha_ex"], tabla.iloc[1]["monto"]) == (dt.date(2025, 11, 18), 1.8)
+    assert list(e["estado_dividendos"]) == ["provisional", "aceptada", "pendiente", "provisional", "aceptada"]
+    assert e.iloc[3]["vigente_desde_utc"] == pd.Timestamp("2026-02-01T15:00:00Z") and e.iloc[3]["dividendos"] == 1.8
+    for evidencia, error in ((",", "debe darlos"), ("2025-11-18,1.9", "contradice")):
+        ruta.write_text(encabezado + "d1,SPY,vigente,2026-02-01T15:00:00Z,aviso,," + evidencia + "\n")
+        with pytest.raises(ValueError, match=error):
+            al.normalizar_eventos(otro, al.cargar_resoluciones(ruta))
+
+    # 5. Una fecha ex conocida fuera del periodo, o un proceso que no la deja caer en él, no afecta a la etiqueta.
+    for cuerpo in ({"cash_dividends": [dividendo_json("d1", "2025-12-19", 1.8)]},
+                   {"cash_dividends": [dict(dividendo_json("d1", "2025-12-19", 1.8), rate=None)]},
+                   {"cash_dividends": [dividendo_incompleto(proceso="2026-06-30")]}):
+        aparte = tmp_path / f"aparte-{len(list(tmp_path.glob('aparte-*')))}"
+        for nombre, c in (("habilita", vacia), ("acepta", vacia), ("incompleto", {"corporate_actions": cuerpo})):
+            consulta_eventos(aparte, c, t[nombre])
+        tabla, _, e = etiqueta(aparte)
+        assert tabla.iloc[0]["discrepancia"] == ("incompleto" if _incompleto_json(cuerpo) else "")
+        assert list(e["estado_dividendos"]) == ["provisional", "aceptada"] and (e["dividendos"] == 0.0).all()
+    # 4. Una respuesta de verdad vacía se sigue aceptando con cero.
+    solo_vacias = tmp_path / "vacias"
+    for nombre in ("habilita", "acepta", "incompleto"):
+        consulta_eventos(solo_vacias, vacia, t[nombre])
+    tabla, _, e = etiqueta(solo_vacias)
+    assert tabla.empty and e.iloc[-1]["estado_dividendos"] == "aceptada" and e.iloc[-1]["dividendos"] == 0.0
+
+
+def _incompleto_json(cuerpo):
+    x = cuerpo["cash_dividends"][0]
+    return not x.get("ex_date") or x.get("rate") is None
+
+
+def test_un_dividendo_sin_simbolo_atribuible_detiene_la_normalizacion(tmp_path):
+    # Sin identificador, se deriva uno estable; sin símbolo, vale el de la consulta si pidió uno solo.
+    sin_id = {k: v for k, v in dividendo_json("d1", "2025-11-18", 1.8).items() if k != "id"}
+    sin_simbolo = {k: v for k, v in dividendo_json("d2", "2025-12-19", 0.5).items() if k != "symbol"}
+    consulta_eventos(tmp_path, {"corporate_actions": {"cash_dividends": [sin_id, sin_simbolo]}},
+                     "2025-11-18T21:00:00Z")
+    tabla, cobertura, otros, _ = al.normalizar_eventos(tmp_path)
+    assert otros == [] and list(tabla["simbolo"]) == ["SPY", "SPY"] and list(cobertura["eventos"]) == [2.0]
+    assert tabla.iloc[0]["id_evento"].startswith("sin-id-") and tabla.iloc[1]["id_evento"] == "d2"
+    assert al.normalizar_eventos(tmp_path)[0]["id_evento"].tolist() == tabla["id_evento"].tolist()  # estable
+    # Con dos símbolos pedidos, uno sin símbolo no se puede atribuir: detiene la normalización, con cualquier fecha.
+    reloj = Reloj("2025-11-19T21:00:00Z")
+    api = API({"/v1/corporate-actions": lambda p: {"corporate_actions": {"cash_dividends": [sin_simbolo]},
+                                                   "next_page_token": None}})
+    al.descargar_eventos(cliente(api, reloj), al.pedir_eventos(["SPY", "QQQ"], "2024-10-15", "2026-03-18"), tmp_path,
+                         {"fecha": "2025-11-19", "etiqueta": "eventos-dos", "simbolos": ["SPY", "QQQ"]})
+    with pytest.raises(ValueError, match="cash_dividends_incompleto"):
+        al.tablas_para_piloto(tmp_path, "2020-01-01", "2020-01-31")
+
+
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
     cot_sint, sub_sint, verdad = mercado
     capturar_sesiones(mercado, tmp_path)

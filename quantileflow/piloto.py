@@ -484,8 +484,9 @@ def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetiv
                       f"{cfg.objetivo_margen_proceso_dias:g} días (una regla, no una garantía de completitud) con "
                       "una recibida después de ese margen, del último cambio de valor y de la última discrepancia "
                       "resuelta, sin discrepancias abiertas. Con una discrepancia sin resolver (un dividendo "
-                      "ausente en una consulta comparable, o uno cancelado por una resolución que el proveedor "
-                      "vuelve a traer con otros valores) queda pendiente: solo la resuelve evidencia fechada")
+                      "ausente en una consulta comparable, uno cancelado por una resolución que el proveedor "
+                      "vuelve a traer con otros valores, o uno recibido sin fecha ex o sin monto que podría caer "
+                      "en el periodo) queda pendiente: solo la resuelve evidencia fechada")
     return {
         "fuentes_opciones": list(fuentes_opciones), "fuente_referencia": fuente_referencia or "",
         "tipo_precio_referencia": tipo_referencia or "", "simbolo_objetivo": cfg.objetivo_simbolo,

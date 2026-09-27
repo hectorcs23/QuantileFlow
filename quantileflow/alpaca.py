@@ -47,6 +47,7 @@ reprocesarlos produce las mismas tablas.
 """
 from __future__ import annotations
 
+import datetime as dt
 import gzip
 import http.client
 import json
@@ -1091,8 +1092,62 @@ def normalizar_historico(raiz_datos, desde=None, hasta=None):
 
 
 def _valores_dividendo(x):
-    return (x["symbol"], x["ex_date"], float(x["rate"]), bool(x.get("special")), x.get("payable_date"),
-            x.get("process_date"))
+    """Los valores que definen una versión; ``None`` donde el proveedor no dio el campo."""
+    return (x["symbol"], x.get("ex_date") or None, None if x.get("rate") is None else float(x["rate"]),
+            bool(x.get("special")), x.get("payable_date") or None, x.get("process_date") or None)
+
+
+def _novedad(listado, datos) -> bool:
+    """Si un listado del proveedor trae algo nuevo sobre ``datos``: un campo que faltaba o un valor distinto.
+
+    Un campo que el listado no trae no es novedad: repetir con menos datos no
+    corrige lo que ya se sabía.
+    """
+    return any(n is not None and n != v for n, v in zip(_valores_dividendo(listado), _valores_dividendo(datos)))
+
+
+def _incompleto(x) -> bool:
+    return not x.get("ex_date") or x.get("rate") is None
+
+
+def _identificar(x, simbolos):
+    """Un dividendo con identificador y símbolo, o ``None`` si no se puede atribuir.
+
+    Sin símbolo, vale el de la consulta si pidió uno solo. Sin identificador, se
+    deriva uno estable de su contenido.
+    """
+    simbolo = x.get("symbol") or (simbolos[0] if len(simbolos) == 1 else None)
+    if not simbolo:
+        return None
+    contenido = json.dumps(x, sort_keys=True, default=str).encode()
+    return dict(x, symbol=simbolo, id=x.get("id") or f"sin-id-{almacen.sha256_bytes(contenido)[:16]}")
+
+
+def _completar(id_evento, datos, resolucion):
+    """Los valores de un dividendo con la evidencia de una resolución «vigente»: completa, no corrige."""
+    x = dict(datos)
+    evidencia = {"ex_date": None if pd.isna(resolucion.fecha_ex) else str(_fecha(resolucion.fecha_ex)),
+                 "rate": None if pd.isna(resolucion.monto) else float(resolucion.monto)}
+    for campo, valor in evidencia.items():
+        if valor is None:
+            continue
+        conocido = x.get(campo)
+        if conocido is not None and (_fecha(conocido) != _fecha(valor) if campo == "ex_date"
+                                     else abs(float(conocido) - valor) > 1e-12):
+            raise ValueError(f"resolución de {id_evento}: {campo} {valor} contradice el valor conocido {conocido} "
+                             "(una resolución completa lo que falta; no corrige)")
+        x[campo] = valor
+    if _incompleto(x):
+        raise ValueError(f"resolución vigente de {id_evento}: el dividendo llegó sin fecha ex o sin monto; la "
+                         "resolución debe darlos (fecha_ex, monto)")
+    return x
+
+
+def _con_opcionales(resoluciones):
+    """Las resoluciones con las columnas opcionales del contrato que falten, vacías."""
+    faltan = {c: None for c, (_, obligatoria, _) in contrato.RESOLUCIONES_DIVIDENDOS.items()
+              if not obligatoria and c not in resoluciones}
+    return resoluciones.assign(**faltan) if faltan else resoluciones
 
 
 def _consultas_eventos(raiz_datos):
@@ -1120,8 +1175,10 @@ def _consultas_eventos(raiz_datos):
 def _comparable(consulta, version) -> bool:
     """Si la ausencia de ``version`` en ``consulta`` dice algo: completa, mismos filtros y su proceso dentro."""
     x = version["datos"]
-    fecha = _fecha(x.get("process_date") or x.get("payable_date") or x["ex_date"])
-    tipos = consulta["tipos"]
+    fecha = x.get("process_date") or x.get("payable_date") or x.get("ex_date")
+    if not fecha:
+        return False
+    fecha, tipos = _fecha(fecha), consulta["tipos"]
     return (consulta["estado"] == "completa" and consulta["calidad"] == version["calidad"]
             and (tipos == "todos" or "cash_dividend" in tipos.split(",")) and x["symbol"] in consulta["simbolos"]
             and consulta["desde"] <= fecha <= consulta["hasta"])
@@ -1156,12 +1213,18 @@ def normalizar_eventos(raiz_datos, resoluciones=None):
       que el proveedor vuelve a traer igual, no aporta nada nuevo (se cuenta en
       ``otros_eventos``). Si el proveedor trae un cancelado con **otros**
       valores, se abre una versión con la discrepancia «reaparece_cancelado»,
-      que solo resuelve otra resolución.
+      que solo resuelve otra resolución;
+    * un dividendo que llega **sin fecha ex o sin monto** también es una
+      versión, con la discrepancia «incompleto» y, sin fecha ex, el intervalo
+      de su fecha de proceso (el del proveedor o el de la consulta que lo
+      trajo). La resuelve el registro completo del proveedor (una versión
+      nueva) o una resolución «vigente» con la fecha ex y el monto que falten.
+      Un listado posterior con menos datos no es novedad.
 
     Nada se borra. ``disponible_utc`` queda nulo: Alpaca no da la hora del
     anuncio. Los demás tipos (splits, fusiones, cambios de nombre, etc.) y los
-    dividendos sin fecha ex o sin monto se devuelven aparte: el piloto no los
-    trata. Devuelve ``(dividendos, cobertura, otros_eventos, manifiestos)``;
+    dividendos sin identificador o sin símbolo se devuelven aparte: el piloto no
+    los trata. Devuelve ``(dividendos, cobertura, otros_eventos, manifiestos)``;
     en ``otros_eventos`` quedan también, con su tipo, las resoluciones sin
     dividendo sobre el que actuar (``resolucion_sin_efecto``) y las consultas
     que contradicen una resolución sin valores nuevos
@@ -1170,16 +1233,19 @@ def normalizar_eventos(raiz_datos, resoluciones=None):
     consultas = _consultas_eventos(raiz_datos)
     pasos = [(q["recibido"], 0, q["consulta"], q) for q in consultas]
     if resoluciones is not None and len(resoluciones):
+        resoluciones = _con_opcionales(resoluciones)
         problemas = contrato.validar(resoluciones, contrato.RESOLUCIONES_DIVIDENDOS)
         if problemas:
             raise ValueError("resoluciones de dividendos: " + "; ".join(problemas))
         pasos += [(r.conocido_utc, 1, str(r.id_evento), r) for r in resoluciones.itertuples()]
     cobertura, versiones, vigentes, cancelados, otros = [], [], {}, {}, {}
 
-    def abrir(id_evento, x, desde, calidad, origen="consulta", discrepancia=None):
+    def abrir(id_evento, x, desde, calidad, ventana, origen="consulta", discrepancia=None):
+        if discrepancia is None and _incompleto(x):
+            discrepancia = ("incompleto", desde)
         vigentes[id_evento] = len(versiones)
         versiones.append({"id": id_evento, "datos": x, "recibido": desde, "retirado": None, "motivo": "",
-                          "discrepancia": discrepancia, "calidad": calidad, "origen": origen})
+                          "discrepancia": discrepancia, "calidad": calidad, "origen": origen, "ventana": ventana})
 
     def cerrar(id_evento, cuando, motivo):
         v = versiones[vigentes.pop(id_evento)]
@@ -1197,61 +1263,67 @@ def normalizar_eventos(raiz_datos, resoluciones=None):
             if previa is not None and previa["datos"]["symbol"] != paso.simbolo:
                 raise ValueError(f"resolución de {id_paso}: el evento es de {previa['datos']['symbol']}, "
                                  f"no de {paso.simbolo}")
+            # La evidencia de una «vigente» completa lo que falta; nunca contradice lo conocido.
+            datos = (_completar(id_paso, previa["datos"], paso)
+                     if previa is not None and paso.resolucion == "vigente" else None)
             if id_paso in vigentes and not (paso.resolucion == "vigente" and previa["origen"] == "resolucion"):
                 cerrar(id_paso, cuando, "confirmado" if paso.resolucion == "vigente" else "cancelado")
                 if paso.resolucion == "vigente":
-                    abrir(id_paso, previa["datos"], cuando, previa["calidad"], "resolucion")
+                    abrir(id_paso, datos, cuando, previa["calidad"], previa["ventana"], "resolucion")
                 else:
                     cancelados[id_paso] = previa
             elif id_paso in cancelados and paso.resolucion == "vigente":
                 del cancelados[id_paso]
-                abrir(id_paso, previa["datos"], cuando, previa["calidad"], "resolucion")
+                abrir(id_paso, datos, cuando, previa["calidad"], previa["ventana"], "resolucion")
             else:  # evento desconocido, ya cancelado o ya confirmado
                 otros[f"resolucion-{id_paso}-{iso(cuando)}"] = {
                     "tipo": "resolucion_sin_efecto", "simbolo": paso.simbolo, "fecha": str(cuando.date()),
                     "id": id_paso}
             continue
         q = paso
+        atribuidos = [_identificar(x, q["simbolos"]) for t, x in q["eventos"] if t == "cash_dividends"]
         for simbolo in q["simbolos"]:
             cobertura.append({
                 "simbolo": simbolo, "desde": q["desde"], "hasta": q["hasta"], "campo_fecha": "process_date",
                 "recibido_utc": iso(q["recibido"]), "estado": q["estado"],
-                "eventos": float(sum(t == "cash_dividends" and x.get("symbol") == simbolo for t, x in q["eventos"])),
+                "eventos": float(sum(x is not None and x["symbol"] == simbolo for x in atribuidos)),
                 "calidad": q["calidad"], "tipos": q["tipos"], "consulta": q["consulta"], "proveedor": PROVEEDOR,
                 "feed": FEED_EVENTOS})
         if q["estado"] != "completa":
             continue
         presentes = {}
         for tipo, x in q["eventos"]:
-            if tipo == "cash_dividends" and x.get("ex_date") and x.get("rate") is not None:
-                presentes[x["id"]] = x
+            dividendo = _identificar(x, q["simbolos"]) if tipo == "cash_dividends" else None
+            if dividendo is not None:  # también sin fecha ex o sin monto: la versión lleva la discrepancia
+                presentes[dividendo["id"]] = dividendo
                 continue
             otros[x.get("id")] = {"tipo": tipo if tipo != "cash_dividends" else "cash_dividends_incompleto",
                                   "simbolo": x.get("symbol") or x.get("old_symbol") or x.get("target_symbol"),
                                   "fecha": x.get("ex_date") or x.get("effective_date") or x.get("process_date"),
                                   "id": x.get("id")}
-        recibido = q["recibido"]
+        recibido, ventana = q["recibido"], (q["desde"], q["hasta"])
         for id_evento in sorted(presentes):
             x = presentes[id_evento]
             if id_evento in vigentes:
                 v = versiones[vigentes[id_evento]]
                 tipo = v["discrepancia"][0] if v["discrepancia"] else None
-                if _valores_dividendo(v["datos"]) != _valores_dividendo(x):
+                if _novedad(x, v["datos"]):
                     cerrar(id_evento, recibido, "corregido")
                     # Una corrección responde a una ausencia, no a la resolución que lo canceló.
                     sigue = ("reaparece_cancelado", recibido) if tipo == "reaparece_cancelado" else None
-                    abrir(id_evento, x, recibido, q["calidad"], discrepancia=sigue)
-                elif tipo == "ausente":
+                    abrir(id_evento, x, recibido, q["calidad"], ventana, discrepancia=sigue)
+                elif tipo == "ausente":  # reaparece sin nada nuevo: sigue con lo que ya se sabía
                     cerrar(id_evento, recibido, "reaparecido")
-                    abrir(id_evento, x, recibido, q["calidad"])
+                    abrir(id_evento, v["datos"], recibido, q["calidad"], v["ventana"])
             elif id_evento in cancelados:
-                if _valores_dividendo(cancelados[id_evento]["datos"]) == _valores_dividendo(x):
+                if not _novedad(x, cancelados[id_evento]["datos"]):
                     anotar("listado_tras_cancelar", id_evento, x["symbol"], recibido)
                 else:
                     del cancelados[id_evento]
-                    abrir(id_evento, x, recibido, q["calidad"], discrepancia=("reaparece_cancelado", recibido))
+                    abrir(id_evento, x, recibido, q["calidad"], ventana,
+                          discrepancia=("reaparece_cancelado", recibido))
             else:
-                abrir(id_evento, x, recibido, q["calidad"])
+                abrir(id_evento, x, recibido, q["calidad"], ventana)
         for id_evento, i in sorted(vigentes.items()):
             v = versiones[i]
             if id_evento in presentes or v["discrepancia"] is not None or not _comparable(q, v):
@@ -1264,9 +1336,14 @@ def normalizar_eventos(raiz_datos, resoluciones=None):
     for v in versiones:
         x, (tipo, desde) = v["datos"], v["discrepancia"] or ("", None)
         numero[v["id"]] = numero.get(v["id"], 0) + 1
-        filas.append({"simbolo": x["symbol"], "fecha_ex": _fecha(x["ex_date"]), "monto": float(x["rate"]),
+        # Sin fecha ex, el intervalo de su fecha de proceso: la del proveedor o, si falta, el de la consulta.
+        proceso = ((None, None) if x.get("ex_date") else (_fecha(x["process_date"]),) * 2 if x.get("process_date")
+                   else v["ventana"])
+        filas.append({"simbolo": x["symbol"], "fecha_ex": _fecha(x["ex_date"]) if x.get("ex_date") else None,
+                      "monto": float(x["rate"]) if x.get("rate") is not None else None,
                       "fecha_pago": _fecha(x["payable_date"]) if x.get("payable_date") else None,
-                      "clase": "especial" if x.get("special") else "ordinario", "disponible_utc": None,
+                      "clase": "especial" if x.get("special") else "ordinario",
+                      "proceso_desde": proceso[0], "proceso_hasta": proceso[1], "disponible_utc": None,
                       "recibido_utc": iso(v["recibido"]),
                       "retirado_utc": iso(v["retirado"]) if v["retirado"] is not None else None,
                       "motivo_retiro": v["motivo"], "discrepancia": tipo,
@@ -1274,7 +1351,13 @@ def normalizar_eventos(raiz_datos, resoluciones=None):
                       "proveedor": PROVEEDOR, "feed": FEED_EVENTOS, "id_evento": v["id"], "version": numero[v["id"]],
                       "origen": v["origen"], "fecha_registro": x.get("record_date"),
                       "fecha_proceso": x.get("process_date"), "subtipo": x.get("sub_type")})
-    filas.sort(key=lambda f: (f["simbolo"], f["fecha_ex"], f["id_evento"], f["version"]))
+    # Las versiones de un evento, juntas; los eventos, por su primera fecha ex conocida (sin ella, al final).
+    primera = {}
+    for f in filas:
+        if f["fecha_ex"] is not None:
+            primera[f["id_evento"]] = min(primera.get(f["id_evento"], f["fecha_ex"]), f["fecha_ex"])
+    filas.sort(key=lambda f: (f["simbolo"], primera.get(f["id_evento"]) is None,
+                              primera.get(f["id_evento"]) or dt.date.min, f["id_evento"], f["version"]))
     tabla = _tabla(filas, contrato.DIVIDENDOS, EXTRAS_DIVIDENDOS)
     cob = _tabla(cobertura, contrato.COBERTURA_DIVIDENDOS, [])
     for t, esquema, nombre in ((tabla, contrato.DIVIDENDOS, "dividendos"),
@@ -1290,13 +1373,18 @@ def cargar_resoluciones(ruta) -> pd.DataFrame:
     """Resoluciones de dividendos registradas a mano (CSV con el esquema ``contrato.RESOLUCIONES_DIVIDENDOS``).
 
     ``conocido_utc`` se lee como instante UTC (con zona explícita en el
-    archivo). Lanza ``ValueError`` si la tabla no cumple el contrato.
+    archivo); ``fecha_ex`` y ``monto`` son opcionales (una «vigente» los da
+    cuando el proveedor no los dio). Lanza ``ValueError`` si la tabla no cumple
+    el contrato.
     """
-    tabla = pd.read_csv(ruta, dtype=str, keep_default_na=False)
+    tabla = _con_opcionales(pd.read_csv(ruta, dtype=str, keep_default_na=False))
     if "conocido_utc" in tabla:
         if not tabla["conocido_utc"].str.contains(r"(?:Z|[+-]\d{2}:?\d{2})$", regex=True).all():
             raise ValueError(f"{ruta}: conocido_utc debe llevar la zona explícita (p. ej., 2026-11-20T15:00:00Z)")
         tabla["conocido_utc"] = pd.to_datetime(tabla["conocido_utc"], utc=True, format="ISO8601").dt.as_unit("us")
+    vacias = {c: tabla[c].fillna("").astype(str).str.strip() == "" for c in ("fecha_ex", "monto")}
+    tabla["fecha_ex"] = [None if vacia else _fecha(v) for v, vacia in zip(tabla["fecha_ex"], vacias["fecha_ex"])]
+    tabla["monto"] = pd.to_numeric(tabla["monto"].where(~vacias["monto"]), errors="raise").astype(float)
     for columna, (tipo, obligatoria, _) in contrato.RESOLUCIONES_DIVIDENDOS.items():
         if columna in tabla and tipo == "texto" and obligatoria:  # una celda vacía es un valor que falta
             tabla[columna] = tabla[columna].mask(tabla[columna].str.strip() == "")
@@ -1356,7 +1444,8 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
     reúne las cotizaciones en vivo (IEX), el nivel implícito y el histórico SIP
     del objetivo. Un evento corporativo distinto de un dividendo en efectivo
     con fecha dentro del rango detiene la normalización: cambiaría los precios
-    sin que las etiquetas lo traten.
+    sin que las etiquetas lo traten. Un dividendo que no se puede atribuir a un
+    símbolo la detiene siempre.
     """
     cot, sub, resumenes, manifiestos = normalizar(raiz_datos, desde, hasta)
     fallos, partes = [], [sub]
@@ -1376,9 +1465,15 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
         sub = partes[0]
     sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
     dividendos, cobertura, otros, manifiestos_ev = normalizar_eventos(raiz_datos, resoluciones)
-    en_rango = [e for e in otros if e["tipo"] not in NO_BLOQUEAN and e["fecha"]
-                and (desde is None or _fecha(e["fecha"]) >= _fecha(desde))
-                and (hasta is None or _fecha(e["fecha"]) <= _fecha(hasta))]
+    def en_rango(e):
+        if e["tipo"] in NO_BLOQUEAN:
+            return False
+        if e["tipo"] == "cash_dividends_incompleto":  # sin símbolo atribuible: no se sabe a qué etiquetas toca
+            return True
+        return bool(e["fecha"]) and ((desde is None or _fecha(e["fecha"]) >= _fecha(desde))
+                                     and (hasta is None or _fecha(e["fecha"]) <= _fecha(hasta)))
+
+    en_rango = [e for e in otros if en_rango(e)]
     if en_rango:
         raise ValueError("eventos corporativos no tratados en el rango: "
                          + "; ".join(f"{e['tipo']} de {e['simbolo']} el {e['fecha']}" for e in en_rango))

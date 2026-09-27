@@ -38,15 +38,18 @@ Dividendos, para el rendimiento total:
   con su motivo). Una ausencia en una consulta comparable **no** retira una
   versión: abre una discrepancia (``discrepancia``, ``discrepancia_desde_utc``)
   que queda sin resolver hasta que haya evidencia fechada (una reaparición o una
-  corrección del proveedor, o una resolución registrada). Nada se borra: con las
-  versiones se reconstruye lo que se sabía en cualquier instante.
+  corrección del proveedor, o una resolución registrada). Un dividendo que llega
+  sin fecha ex o sin monto también es una versión, con la discrepancia
+  «incompleto» y, sin fecha ex, el intervalo de su fecha de proceso. Nada se
+  borra: con las versiones se reconstruye lo que se sabía en cualquier instante.
 * ``COBERTURA_DIVIDENDOS``: una fila por consulta al proveedor y símbolo, con
   su intervalo, sus filtros y su estado, también si vino vacía o falló. Una
   consulta completa acredita que la descarga terminó, no que el proveedor ya
   tuviera todos los anuncios (Alpaca no garantiza cuándo los publica).
 * ``RESOLUCIONES_DIVIDENDOS``: evidencia registrada a mano, con su fecha de
-  conocimiento, sobre un dividendo: sigue vigente o se canceló. Resuelve una
-  discrepancia abierta y fija el estado del dividendo frente al proveedor.
+  conocimiento, sobre un dividendo: sigue vigente (con la fecha ex y el monto
+  que falten) o se canceló. Resuelve una discrepancia abierta y fija el estado
+  del dividendo frente al proveedor.
 
 Con todo ello las etiquetas distinguen provisional, aceptada (bajo una
 política, no una garantía) y pendiente (``etiquetas.py``).
@@ -102,18 +105,23 @@ TIPOS_PRECIO = ("observado", "implicito")
 
 DIVIDENDOS = {
     "simbolo": ("texto", True, "símbolo que paga el dividendo"),
-    "fecha_ex": ("fecha", True, "primera sesión que cotiza sin derecho al dividendo"),
-    "monto": ("real", True, "dividendo en efectivo por acción"),
+    "fecha_ex": ("fecha", False, "primera sesión que cotiza sin derecho al dividendo (nula si el proveedor no "
+                                 "la dio)"),
+    "monto": ("real", False, "dividendo en efectivo por acción (nulo si el proveedor no lo dio)"),
     "fecha_pago": ("fecha", False, "fecha de pago"),
     "clase": ("texto", True, "ordinario o especial"),
+    "proceso_desde": ("fecha", False, "sin fecha ex: primera fecha de proceso posible (la del proveedor o, si falta, "
+                                      "el inicio del intervalo de la consulta que lo trajo)"),
+    "proceso_hasta": ("fecha", False, "sin fecha ex: última fecha de proceso posible (ídem, con el fin del "
+                                      "intervalo)"),
     "disponible_utc": ("instante", False, "anuncio documentado (nulo si el proveedor no lo da)"),
     "recibido_utc": ("instante", True, "desde cuándo se conoce: la consulta que la trajo o la resolución que la "
                                        "confirmó"),
     "retirado_utc": ("instante", False, "desde cuándo deja de valer esta versión (nulo: vigente)"),
     "motivo_retiro": ("texto", False, "corregido o cancelado; reaparecido o confirmado si sigue otra versión igual"),
     "discrepancia": ("texto", False, "ausente: una consulta comparable ya no la trajo; reaparece_cancelado: el "
-                                     "proveedor la trae con otros valores aunque una resolución la canceló "
-                                     "(vacío: sin discrepancia)"),
+                                     "proveedor la trae con otros valores aunque una resolución la canceló; "
+                                     "incompleto: llegó sin fecha ex o sin monto (vacío: sin discrepancia)"),
     "discrepancia_desde_utc": ("instante", False, "desde cuándo: sigue sin resolver hasta retirado_utc "
                                                   "(nulo: sin discrepancia)"),
     "proveedor": ("texto", True, "proveedor de los datos"),
@@ -121,7 +129,7 @@ DIVIDENDOS = {
 }
 CLASES_DIVIDENDO = ("ordinario", "especial")
 MOTIVOS_RETIRO = ("corregido", "cancelado", "reaparecido", "confirmado")
-DISCREPANCIAS = ("ausente", "reaparece_cancelado")
+DISCREPANCIAS = ("ausente", "reaparece_cancelado", "incompleto")
 
 RESOLUCIONES_DIVIDENDOS = {
     "id_evento": ("texto", True, "identificador del evento en el proveedor"),
@@ -130,6 +138,9 @@ RESOLUCIONES_DIVIDENDOS = {
     "conocido_utc": ("instante", True, "desde cuándo se conoce la evidencia (nunca antes de que se publicara)"),
     "fuente": ("texto", True, "de dónde sale la evidencia (p. ej., el aviso del emisor)"),
     "nota": ("texto", False, "detalle"),
+    "fecha_ex": ("fecha", False, "con «vigente»: la fecha ex según la evidencia; obligatoria si el proveedor no "
+                                 "la dio"),
+    "monto": ("real", False, "con «vigente»: el monto según la evidencia; obligatorio si el proveedor no lo dio"),
 }
 RESOLUCIONES = ("vigente", "cancelado")
 
@@ -213,6 +224,13 @@ def validar(tabla: pd.DataFrame, esquema=COTIZACIONES) -> list[str]:
                 tabla.loc[con & retiradas, "discrepancia_desde_utc"]
                 > tabla.loc[con & retiradas, "retirado_utc"]).any():
             problemas.append("discrepancia_desde_utc: fuera de la vigencia de la versión")
+        incompletas = tabla["fecha_ex"].isna() | tabla["monto"].isna()
+        if not con[incompletas].all():
+            problemas.append("un dividendo sin fecha ex o sin monto debe llevar su discrepancia")
+        sin_ex = tabla["fecha_ex"].isna()
+        desde, hasta = pd.to_datetime(tabla["proceso_desde"]), pd.to_datetime(tabla["proceso_hasta"])
+        if desde[sin_ex].isna().any() or hasta[sin_ex].isna().any() or (desde[sin_ex] > hasta[sin_ex]).any():
+            problemas.append("un dividendo sin fecha ex debe llevar el intervalo de su fecha de proceso")
     if esquema is COBERTURA_DIVIDENDOS and not problemas:
         if not tabla["estado"].isin(ESTADOS_CONSULTA).all():
             problemas.append("estado: solo se admite completa, parcial o fallida")
@@ -227,6 +245,8 @@ def validar(tabla: pd.DataFrame, esquema=COTIZACIONES) -> list[str]:
             problemas.append("resolucion: solo se admite vigente o cancelado")
         if tabla[["id_evento", "conocido_utc"]].astype(str).duplicated().any():
             problemas.append("hay resoluciones repetidas del mismo evento en el mismo instante")
+        if (tabla["monto"] <= 0).any():
+            problemas.append("monto: debe ser positivo")
     if esquema is COTIZACIONES and not problemas:
         if not tabla["tipo"].isin(["C", "P"]).all():
             problemas.append("tipo: solo se admite C o P")

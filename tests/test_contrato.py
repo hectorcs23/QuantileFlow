@@ -241,7 +241,8 @@ def test_precio_para_etiqueta_usa_la_ultima_cotizacion_valida():
 
 def test_validacion_de_dividendos_y_su_cobertura():
     base = {"simbolo": "SPY", "fecha_ex": dt.date(2025, 12, 19), "monto": 1.9, "fecha_pago": dt.date(2026, 1, 30),
-            "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
+            "clase": "ordinario", "proceso_desde": None, "proceso_hasta": None,
+            "disponible_utc": pd.NaT, "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
             "retirado_utc": pd.NaT, "motivo_retiro": "", "discrepancia": "", "discrepancia_desde_utc": pd.NaT,
             "proveedor": "alpaca", "feed": "corporate_actions"}
 
@@ -270,12 +271,27 @@ def test_validacion_de_dividendos_y_su_cobertura():
                         (dict(corregida, discrepancia="ausente",
                               discrepancia_desde_utc=pd.Timestamp("2026-01-07T15:20:00Z")), "fuera de la")):
         assert any(texto in p for p in ct.validar(tabla(mala), ct.DIVIDENDOS)), mala
+    # Revalidación de 5c15028, P2: un dividendo sin fecha ex o sin monto es una versión con su discrepancia y, sin
+    # fecha ex, con el intervalo de su fecha de proceso.
+    incompleto = dict(base, fecha_ex=None, proceso_desde=dt.date(2025, 12, 30), proceso_hasta=dt.date(2025, 12, 30),
+                      discrepancia="incompleto", discrepancia_desde_utc=base["recibido_utc"])
+    assert ct.validar(tabla(incompleto), ct.DIVIDENDOS) == []
+    assert ct.validar(tabla(dict(base, monto=float("nan"), discrepancia="incompleto",
+                                 discrepancia_desde_utc=base["recibido_utc"])), ct.DIVIDENDOS) == []
+    for mala, texto in ((dict(incompleto, discrepancia="", discrepancia_desde_utc=pd.NaT), "su discrepancia"),
+                        (dict(base, monto=float("nan")), "su discrepancia"),
+                        (dict(incompleto, proceso_hasta=None), "intervalo de su fecha de proceso"),
+                        (dict(incompleto, proceso_desde=dt.date(2026, 1, 2)), "intervalo de su fecha de proceso")):
+        assert any(texto in p for p in ct.validar(tabla(mala), ct.DIVIDENDOS)), mala
     resolucion = pd.DataFrame([{"id_evento": "d1", "simbolo": "SPY", "resolucion": "vigente",
-                                "conocido_utc": pd.Timestamp("2026-01-08T15:20:00Z"), "fuente": "aviso", "nota": ""}])
+                                "conocido_utc": pd.Timestamp("2026-01-08T15:20:00Z"), "fuente": "aviso", "nota": "",
+                                "fecha_ex": None, "monto": float("nan")}])
     assert ct.validar(resolucion, ct.RESOLUCIONES_DIVIDENDOS) == []
+    assert ct.validar(resolucion.assign(fecha_ex=dt.date(2025, 11, 18), monto=1.8), ct.RESOLUCIONES_DIVIDENDOS) == []
     assert any("vigente o cancelado" in p for p in ct.validar(resolucion.assign(resolucion="quizas"),
                                                               ct.RESOLUCIONES_DIVIDENDOS))
     assert any("repetidas" in p for p in ct.validar(pd.concat([resolucion] * 2), ct.RESOLUCIONES_DIVIDENDOS))
+    assert any("monto" in p for p in ct.validar(resolucion.assign(monto=-1.0), ct.RESOLUCIONES_DIVIDENDOS))
     consulta = {"simbolo": "SPY", "desde": dt.date(2025, 1, 1), "hasta": dt.date(2026, 3, 1),
                 "campo_fecha": "process_date", "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
                 "estado": "completa", "eventos": 0.0, "calidad": "complete", "tipos": "todos", "consulta": "q1",

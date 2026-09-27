@@ -116,7 +116,8 @@ def _dividendos(*versiones):
         motivo = resto[0] if resto else ("corregido" if hasta is not None else "")
         discrepancia = resto[1] if len(resto) > 1 else None
         filas.append({"simbolo": "SPY", "fecha_ex": pd.Timestamp(ex).date(), "monto": monto, "fecha_pago": None,
-                      "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": desde, "retirado_utc": hasta,
+                      "clase": "ordinario", "proceso_desde": None, "proceso_hasta": None,
+                      "disponible_utc": pd.NaT, "recibido_utc": desde, "retirado_utc": hasta,
                       "motivo_retiro": motivo,
                       "discrepancia": (resto[2] if len(resto) > 2 else "ausente") if discrepancia is not None else "",
                       "discrepancia_desde_utc": discrepancia, "proveedor": "prueba", "feed": "eventos"})
@@ -311,6 +312,39 @@ def test_ausencia_sin_resolver_queda_pendiente_y_fuera_de_la_politica_aceptada()
     e = etiquetas(confirmada, diarias + [_ny("2026-01-26 16:00"), vuelve])
     assert list(e["estado_dividendos"])[-3:] == ["pendiente", "provisional", "aceptada"]
     assert e.iloc[-1]["vigente_desde_utc"] == _ny("2026-03-20 16:00")  # la primera consulta tras la resolución
+
+
+def test_un_dividendo_sin_fecha_ex_afecta_las_etiquetas_que_podrian_contenerla():
+    # Revalidación de 5c15028, P2: proceso el 30 de diciembre y margen de 60 días: fecha ex posible del 31 de octubre
+    # al 30 de diciembre. Solo esas etiquetas quedan pendientes, sin sumar el monto, y solo desde que se recibe.
+    fechas = cal.sesiones("2025-10-28", "2026-01-02")
+    precios = _precios(fechas, [100.0] * len(fechas))
+    recibido, proceso = _ny("2025-12-31 16:00"), pd.Timestamp("2025-12-30").date()
+    sin_ex = _dividendos((fechas[0], 1.8, recibido, None, "", recibido, "incompleto")).assign(
+        fecha_ex=[None], proceso_desde=[proceso], proceso_hasta=[proceso])
+    assert ct.validar(sin_ex, ct.DIVIDENDOS) == []
+    # Una consulta por sesión, como el workflow, y una final que acepta todo lo que no esté pendiente.
+    consultas = _consultas(*[cal.instante(f, "10:21") for f in fechas], _ny("2026-03-20 16:00"))
+
+    def estados(dividendos, hasta=None):
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=dividendos, cobertura=consultas,
+                                 margen_proceso_dias=60, conocido_hasta=hasta)
+        e = et.etiquetas_vigentes(e[e["estado"] == "ok"])
+        return {(f, e.loc[e["sesion"] == f, "sesion_fin"].iloc[0]): (r["estado_dividendos"], r["dividendos"])
+                for f, (_, r) in zip(e["sesion"], e.iterrows())}
+
+    pendientes = {k for k, (estado, monto) in estados(sin_ex).items() if estado == "pendiente"}
+    assert min(pendientes) == (pd.Timestamp("2025-10-30").date(), pd.Timestamp("2025-10-31").date())
+    assert max(pendientes) == (pd.Timestamp("2025-12-29").date(), pd.Timestamp("2025-12-30").date())
+    assert all(monto == 0.0 for _, monto in estados(sin_ex).values())  # sin fecha ex no se suma a ninguna
+    assert all(estado == "aceptada" for k, (estado, _) in estados(sin_ex).items() if k not in pendientes)
+    # Antes de recibirlo, nada queda pendiente.
+    antes = {e for e, _ in estados(sin_ex, hasta=recibido - pd.Timedelta(seconds=1)).values()}
+    assert antes and "pendiente" not in antes
+    # Sin monto pero con fecha ex, solo la etiqueta que la contiene, y con la discrepancia aunque la tabla no la traiga.
+    sin_monto = _dividendos(("2025-12-19", 1.8, recibido, None)).assign(monto=[float("nan")])
+    pendientes = {k for k, (estado, _) in estados(sin_monto).items() if estado == "pendiente"}
+    assert pendientes == {(pd.Timestamp("2025-12-18").date(), pd.Timestamp("2025-12-19").date())}
 
 
 def test_una_consulta_sin_dividendos_en_sus_tipos_no_confirma_ni_acepta():
