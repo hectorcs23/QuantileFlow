@@ -336,7 +336,8 @@ def test_piloto_de_punta_a_punta_con_respuestas_de_alpaca(mercado, tmp_path):
     assert (p["estado_sesion"] == "procesada").all() and (p["rr25_estado"] == "identificada").all()
     assert p["cambio_rr25"].notna().iloc[1:].all()
     assert (p["spot"] / [verdad["spot"][(f, "09:45")] for f in p["fecha"]] - 1).abs().max() < 5e-5
-    assert (p["tipo_precio_subyacente"] == "implicito").all()
+    assert (p["tipo_precio_referencia"] == "implicito").all()
+    assert set(p["fuente_referencia"]) == {"alpaca/implicito_paridad_SPXW_indicative"}
     assert set(p["fuente_opciones"]) == {"alpaca/indicative"}
     assert resultado.dictamen["alcance"]["evaluacion_con_precios_de_mercado"].startswith("no permitida")
 

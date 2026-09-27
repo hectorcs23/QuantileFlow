@@ -18,13 +18,29 @@ Para cada sesión y hora de corte (la principal y una secundaria solo de diagnó
 Una medida no identificada queda ausente con su motivo; nunca se rellena. El
 piloto valida medición e ingestión: no evalúa capacidad predictiva.
 
+Tres papeles, sin mezclarlos:
+
+* **Señal**: las opciones (``raiz``), con su fuente explícita.
+* **Referencia de las opciones** (``subyacente``): el precio que usan los
+  controles y las medidas de la cadena. Se toma con la regla **puntual**:
+  disponible al corte y no desfasado. En Alpaca es el nivel de SPX inferido
+  por paridad, identificado como ``implicito``.
+* **Objetivo** (``[objetivo]``): el precio cuyo rendimiento se etiqueta. Debe ser
+  observado, no construido con las cotizaciones de las opciones, y se toma con
+  la regla **histórica**: el precio vigente en el corte, aunque se publique
+  después (SIP con 15 minutos de retraso). Su publicación fija la madurez de
+  la etiqueta; nunca entra en una medida del corte. Añadir el objetivo no cambia
+  ninguna medida de las opciones.
+
+La referencia también da etiquetas auxiliares (``*_referencia``) y el
+movimiento previo, ambos con la regla puntual; son diagnóstico de medición, no
+confirmación independiente de una predicción.
+
 Fuentes. Cada serie usa fuentes elegidas de forma explícita cuando hay más de
-una (``proveedor/feed``): las opciones de una sesión vienen de una sola fuente
-y el precio objetivo de una sola fuente en toda la corrida. Cada fila guarda su
-procedencia; el cambio diario queda ausente cuando cambia el segmento de
-medición (fuente y versión de la configuración). El precio objetivo solo se usa
-si estaba disponible al corte y no está desfasado; si es implícito (inferido de
-las mismas opciones), el dictamen lo declara y no permite evaluar con él.
+una (``proveedor/feed``): las opciones de una sesión vienen de una sola fuente,
+y la referencia y el objetivo de una sola fuente cada uno en toda la corrida.
+Cada fila guarda su procedencia; el cambio diario queda ausente cuando cambia el
+segmento de medición (fuente y versión de la configuración).
 """
 from __future__ import annotations
 
@@ -73,6 +89,11 @@ class ConfigPiloto:
     dictamen: dict
     feeds_indicativos: tuple
     edad_maxima_precio_s: float
+    objetivo_simbolo: str
+    objetivo_tipo: str
+    objetivo_edad_maxima_s: float
+    objetivo_spread_max: float
+    objetivo_retraso_s: float
     fuente: dict
     huella: str
 
@@ -103,7 +124,11 @@ def config_desde_dict(d: dict) -> ConfigPiloto:
         retraso_publicacion_s=float(d["etiquetas"]["retraso_publicacion_s"]),
         tasa=float(d["referencia"]["tasa"]), rendimiento_dividendo=float(d["referencia"]["rendimiento_dividendo"]),
         reglas=reglas, dictamen=dict(d["dictamen"]), feeds_indicativos=tuple(d["fuente"]["feeds_indicativos"]),
-        edad_maxima_precio_s=float(d["etiquetas"]["edad_maxima_precio_s"]), fuente=d, huella=huella_datos(d))
+        edad_maxima_precio_s=float(d["etiquetas"]["edad_maxima_precio_s"]),
+        objetivo_simbolo=d["objetivo"]["simbolo"], objetivo_tipo=d["objetivo"]["tipo_precio"],
+        objetivo_edad_maxima_s=float(d["objetivo"]["edad_maxima_s"]),
+        objetivo_spread_max=float(d["objetivo"]["spread_relativo_max"]),
+        objetivo_retraso_s=float(d["objetivo"]["retraso_publicacion_s"]), fuente=d, huella=huella_datos(d))
 
 
 def cargar_config(ruta) -> ConfigPiloto:
@@ -177,7 +202,7 @@ def plazo_constante(medidas, plazos, T, base_dias=365.0):
 
 def _vacia(fecha, hora):
     return {"fecha": _fecha(fecha), "hora": hora, "estado_sesion": "no disponible", "motivo_sesion": "",
-            "fuente_opciones": "", "fuente_subyacente": "", "tipo_precio_subyacente": "", "segmento": "",
+            "fuente_opciones": "", "fuente_referencia": "", "tipo_precio_referencia": "", "segmento": "",
             "vencimiento_1": None, "dias_1": NAN, "vencimiento_2": None, "dias_2": NAN, "spot": NAN,
             "forward": NAN, "forward_error": NAN, "tasa_implicita": NAN, "forward_menos_contractual": NAN,
             "log_forward_spot": NAN, "rr25_estado": "no identificada", "rr25": NAN, "rr25_inferior": NAN,
@@ -189,8 +214,11 @@ def _vacia(fecha, hora):
             "n_alertas": 0, "alertas": ""}
 
 
-def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto, fuente_subyacente=None):
-    """Fila de una sesión y hora, y el detalle por vencimiento (capturas y resultados)."""
+def medir(cotizaciones, referencia, fecha, hora, cfg: ConfigPiloto, fuente_referencia=None):
+    """Fila de una sesión y hora, y el detalle por vencimiento (capturas y resultados).
+
+    ``referencia`` es la tabla del subyacente de las opciones (regla puntual).
+    """
     fila, detalle = _vacia(fecha, hora), {}
     corte = instante(fecha, hora, cfg.calendario)
     sesion = contrato._del_dia_hasta(cotizaciones[cotizaciones["raiz"] == cfg.raiz], fecha, corte)
@@ -212,8 +240,8 @@ def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto, fuente_subya
     for v in elegidos:
         try:
             cap, info = contrato.captura_desde_tabla(
-                cotizaciones, subyacente, cfg.raiz, v, fecha, hora, cfg.tasa, cfg.rendimiento_dividendo,
-                base_dias=cfg.base_dias, codigo=cfg.calendario, fuente_subyacente=fuente_subyacente)
+                cotizaciones, referencia, cfg.raiz, v, fecha, hora, cfg.tasa, cfg.rendimiento_dividendo,
+                base_dias=cfg.base_dias, codigo=cfg.calendario, fuente_subyacente=fuente_referencia)
         except contrato.SinDatos as error:
             fila["motivo_sesion"] = str(error)
             return fila, {}
@@ -237,7 +265,7 @@ def medir(cotizaciones, subyacente, fecha, hora, cfg: ConfigPiloto, fuente_subya
     cercano = min(elegidos, key=lambda v: abs(plazos[v] - cfg.objetivo_dias))
     obs = cadenas.fila_informe(detalle[cercano]["resultado"])
     info = detalle[cercano]["info"]
-    fila.update(fuente_subyacente=info["fuente_subyacente"], tipo_precio_subyacente=info["tipo_precio_subyacente"])
+    fila.update(fuente_referencia=info["fuente_subyacente"], tipo_precio_referencia=info["tipo_precio_subyacente"])
     fila.update(estado_sesion="procesada", spot=detalle[cercano]["captura"].spot, forward=obs["obs_forward"],
                 forward_error=obs["obs_forward_error"], tasa_implicita=obs["obs_tasa_implicita"],
                 forward_menos_contractual=obs["obs_forward_menos_contractual"],
@@ -308,20 +336,23 @@ def _cambios(principal: pd.DataFrame, cfg: ConfigPiloto) -> pd.DataFrame:
     return principal.assign(**extra)
 
 
-def _precios_subyacente(subyacente, fechas, cfg: ConfigPiloto, fuente_subyacente=None) -> pd.DataFrame:
-    """Precio objetivo a la hora principal en la muestra y en las sesiones posteriores disponibles.
+def _candidatas(tabla, fechas, cfg: ConfigPiloto):
+    """Sesiones de la muestra y posteriores con filas en ``tabla`` (para madurar etiquetas)."""
+    locales = tabla["sello_snapshot_utc"].dt.tz_convert("America/New_York").dt.date if len(tabla) else []
+    return sorted({d for d in set(locales) if d >= min(fechas) and es_sesion(d, cfg.calendario)} | set(fechas))
+
+
+def _precios_referencia(referencia, fechas, cfg: ConfigPiloto, fuente_referencia=None) -> pd.DataFrame:
+    """Precio de referencia a la hora principal con la regla **puntual** (señales y etiquetas auxiliares).
 
     Solo cuenta un precio disponible al corte y con una antigüedad no mayor que
     ``edad_maxima_precio_s``; si no, queda NaN con su motivo.
     """
-    locales = subyacente["sello_snapshot_utc"].dt.tz_convert("America/New_York").dt.date
-    candidatas = sorted({d for d in locales.unique() if d >= min(fechas) and es_sesion(d, cfg.calendario)}
-                        | set(fechas))
     filas = {}
-    for d in candidatas:
+    for d in _candidatas(referencia, fechas, cfg):
         corte = instante(d, cfg.hora_principal, cfg.calendario)
         try:
-            info = contrato.precio_al_corte(subyacente, cfg.subyacente, d, corte, fuente_subyacente)
+            info = contrato.precio_al_corte(referencia, cfg.subyacente, d, corte, fuente_referencia)
         except contrato.SinDatos as error:
             filas[d] = {"precio": NAN, "disponible_utc": pd.NaT, "motivo": str(error)}
             continue
@@ -329,6 +360,24 @@ def _precios_subyacente(subyacente, fechas, cfg: ConfigPiloto, fuente_subyacente
         if edad > cfg.edad_maxima_precio_s:
             filas[d] = {"precio": NAN, "disponible_utc": pd.NaT,
                         "motivo": f"precio de {cfg.subyacente} desfasado {edad:.0f} s al corte de {d}"}
+            continue
+        filas[d] = {"precio": info["precio"], "disponible_utc": info["disponible_utc"], "motivo": ""}
+    return pd.DataFrame.from_dict(filas, orient="index", columns=["precio", "disponible_utc", "motivo"])
+
+
+def _precios_objetivo(objetivo, fechas, cfg: ConfigPiloto, fuente_objetivo=None) -> pd.DataFrame:
+    """Precio objetivo a la hora principal con la regla **histórica** (``contrato.precio_para_etiqueta``).
+
+    Su disponibilidad (quizá posterior al corte) solo fija la madurez de la etiqueta.
+    """
+    filas = {}
+    for d in _candidatas(objetivo, fechas, cfg):
+        corte = instante(d, cfg.hora_principal, cfg.calendario)
+        try:
+            info = contrato.precio_para_etiqueta(objetivo, cfg.objetivo_simbolo, d, corte, fuente_objetivo,
+                                                 cfg.objetivo_edad_maxima_s, cfg.objetivo_spread_max)
+        except contrato.SinDatos as error:
+            filas[d] = {"precio": NAN, "disponible_utc": pd.NaT, "motivo": str(error)}
             continue
         filas[d] = {"precio": info["precio"], "disponible_utc": info["disponible_utc"], "motivo": ""}
     return pd.DataFrame.from_dict(filas, orient="index", columns=["precio", "disponible_utc", "motivo"])
@@ -346,7 +395,7 @@ def dictamen(principal: pd.DataFrame, cfg: ConfigPiloto) -> dict:
     else:
         estabilidad = NAN
     alertas = float((principal["n_alertas"] > 0).mean()) if n else 0.0
-    etiquetas = float((principal["estado_ret_1"] == "ok").mean()) if n else 0.0
+    etiquetas = float((principal["estado_ret_1_objetivo"] == "ok").mean()) if n else 0.0
 
     def criterio(nombre, valor, umbral, cumple, critico):
         return {"criterio": nombre, "valor": valor, "umbral": umbral, "cumple": bool(cumple),
@@ -363,7 +412,7 @@ def dictamen(principal: pd.DataFrame, cfg: ConfigPiloto) -> dict:
                  False),
         criterio("Sesiones con alertas de sincronía, edad o disponibilidad", alertas, f"<= {u['alertas_max']}",
                  alertas <= u["alertas_max"], False),
-        criterio("Etiqueta a 1 sesión disponible", etiquetas, f">= {u['etiquetas_min']}",
+        criterio("Etiqueta del objetivo a 1 sesión disponible", etiquetas, f">= {u['etiquetas_min']}",
                  etiquetas >= u["etiquetas_min"], True),
     ]
     if any(c["critico"] for c in criterios):
@@ -389,38 +438,47 @@ def _elegir_fuentes(tabla, nombre, elegidas):
     return tabla[contrato.fuente(tabla).isin(elegidas)], elegidas
 
 
-def alcance(fuentes_opciones, fuente_subyacente, tipo_precio, cfg: ConfigPiloto) -> dict:
+def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetivo, tipo_objetivo,
+            cfg: ConfigPiloto) -> dict:
     """Qué permite concluir la muestra según sus fuentes, aparte de la aptitud de los datos."""
     indicativas = [f for f in fuentes_opciones if f.split("/", 1)[-1] in cfg.feeds_indicativos]
-    sinteticas = [f for f in (*fuentes_opciones, fuente_subyacente or "")
+    sinteticas = [f for f in (*fuentes_opciones, fuente_referencia or "", fuente_objetivo or "")
                   if f.split("/", 1)[0] in PROVEEDORES_SINTETICOS]
     motivos = []
     if sinteticas:
         motivos.append("datos sintéticos")
     if indicativas:
         motivos.append("cotizaciones indicativas, modificadas por el proveedor (" + ", ".join(indicativas) + ")")
-    if tipo_precio == "implicito":
-        motivos.append("precio objetivo inferido de las mismas opciones: no es independiente de las señales")
-    if not fuente_subyacente:
+    if not fuente_objetivo:
         motivos.append("sin precio objetivo")
+    elif tipo_objetivo != "observado":
+        motivos.append("precio objetivo inferido de las mismas opciones: no es independiente de las señales")
+    tipos = {"observado": "observado", "implicito": "inferido por paridad de las opciones"}
+    otro = cfg.objetivo_simbolo != cfg.subyacente
     return {
-        "fuentes_opciones": list(fuentes_opciones), "fuente_subyacente": fuente_subyacente or "",
-        "tipo_precio_subyacente": tipo_precio or "",
+        "fuentes_opciones": list(fuentes_opciones), "fuente_referencia": fuente_referencia or "",
+        "tipo_precio_referencia": tipo_referencia or "", "simbolo_objetivo": cfg.objetivo_simbolo,
+        "fuente_objetivo": fuente_objetivo or "", "tipo_precio_objetivo": tipo_objetivo or "",
         "medicion": "sintética" if sinteticas else ("indicativa" if indicativas
                                                     else "cotizaciones sin modificar según el proveedor"),
-        "precio_objetivo": {"observado": "observado", "implicito": "inferido de las opciones"}.get(tipo_precio,
-                                                                                                  "sin precio"),
+        "referencia_opciones": tipos.get(tipo_referencia, "sin precio"),
+        "precio_objetivo": tipos.get(tipo_objetivo, "sin precio"),
+        "instrumento_objetivo": (f"{cfg.objetivo_simbolo}, distinto de {cfg.subyacente}: otro instrumento, con sus "
+                                 "dividendos, gastos y diferencias de seguimiento" if otro else cfg.subyacente),
         "evaluacion_con_precios_de_mercado": "permitida" if not motivos else "no permitida: " + "; ".join(motivos),
     }
 
 
 def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: ConfigPiloto,
-             fuentes_opciones=None, fuente_subyacente=None) -> ResultadoPiloto:
+             fuentes_opciones=None, fuente_referencia=None, fuente_objetivo=None,
+             dividendos: pd.DataFrame | None = None) -> ResultadoPiloto:
     """Mide todas las sesiones y horas, añade cambios, estabilidad y etiquetas, y dictamina.
 
-    ``fuentes_opciones`` (``proveedor/feed``, una o varias) y
-    ``fuente_subyacente`` (una) son obligatorias cuando los datos traen más de
-    una fuente para esa serie.
+    ``subyacente`` trae la referencia de las opciones (``cfg.subyacente``) y el
+    objetivo (``cfg.objetivo_simbolo``). ``fuentes_opciones`` (una o varias),
+    ``fuente_referencia`` y ``fuente_objetivo`` (``proveedor/feed``) son
+    obligatorias cuando los datos traen más de una fuente para esa serie.
+    ``dividendos`` sigue el esquema ``contrato.DIVIDENDOS``.
     """
     fechas = sorted({_fecha(f) for f in fechas})
     no_sesiones = [f for f in fechas if not es_sesion(f, cfg.calendario)]
@@ -428,15 +486,23 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
         raise ValueError(f"fechas que no son sesiones: {no_sesiones}")
     cotizaciones, fuentes_op = _elegir_fuentes(cotizaciones[cotizaciones["raiz"] == cfg.raiz],
                                                f"opciones {cfg.raiz}", fuentes_opciones)
-    subyacente, fuentes_sub = _elegir_fuentes(
-        subyacente[subyacente["subyacente"] == cfg.subyacente], f"subyacente {cfg.subyacente}",
-        None if fuente_subyacente is None else (fuente_subyacente,))
-    fuente_sub = fuentes_sub[0] if fuentes_sub else None
-    tipo_sub = "|".join(sorted(set(subyacente["tipo_precio"]))) if len(subyacente) else ""
+    referencia, fuentes_ref = _elegir_fuentes(
+        subyacente[subyacente["subyacente"] == cfg.subyacente], f"referencia {cfg.subyacente}",
+        None if fuente_referencia is None else (fuente_referencia,))
+    objetivo, fuentes_obj = _elegir_fuentes(
+        subyacente[subyacente["subyacente"] == cfg.objetivo_simbolo], f"objetivo {cfg.objetivo_simbolo}",
+        None if fuente_objetivo is None else (fuente_objetivo,))
+    fuente_ref = fuentes_ref[0] if fuentes_ref else None
+    fuente_obj = fuentes_obj[0] if fuentes_obj else None
+    tipo_ref = "|".join(sorted(set(referencia["tipo_precio"]))) if len(referencia) else ""
+    tipo_obj = "|".join(sorted(set(objetivo["tipo_precio"]))) if len(objetivo) else ""
+    if tipo_obj and tipo_obj != cfg.objetivo_tipo:
+        raise ValueError(f"el objetivo {cfg.objetivo_simbolo} debe ser {cfg.objetivo_tipo}; "
+                         f"la fuente {fuente_obj} da precios {tipo_obj}")
     filas, detalles = [], {}
     for fecha in fechas:
         for hora in cfg.horas:
-            fila, detalle = medir(cotizaciones, subyacente, fecha, hora, cfg, fuente_sub)
+            fila, detalle = medir(cotizaciones, referencia, fecha, hora, cfg, fuente_ref)
             filas.append(fila)
             detalles[(fecha, hora)] = detalle
     completa = pd.DataFrame(filas)
@@ -446,16 +512,30 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
         secundaria = completa[completa["hora"] == cfg.hora_secundaria].set_index("fecha")["rr25"]
         principal["rr25_secundaria"] = principal["fecha"].map(secundaria)
         principal["dif_rr25_secundaria"] = principal["rr25_secundaria"] - principal["rr25"]
-    precios = _precios_subyacente(subyacente, fechas, cfg, fuente_sub)
-    etiquetas = etiquetas_retorno(precios["precio"], cfg.hora_principal, cfg.horizontes, cfg.latencia_s,
-                                  cfg.retraso_publicacion_s, cfg.calendario, disponibles=precios["disponible_utc"],
-                                  motivos=precios["motivo"])
-    etiquetas["fuente"], etiquetas["tipo_precio"] = fuente_sub or "", tipo_sub
-    for h in cfg.horizontes:
-        e = etiquetas[etiquetas["horizonte"] == h].set_index("sesion")
-        principal[f"ret_{h}"] = principal["fecha"].map(e["retorno_log"])
-        principal[f"estado_ret_{h}"] = principal["fecha"].map(e["estado"])
-    principal["retorno_previo"] = principal["fecha"].map(movimiento_previo(precios["precio"], cfg.calendario))
+    divs = dividendos if dividendos is not None else pd.DataFrame(columns=list(contrato.DIVIDENDOS))
+    series = []
+    for serie, precios, simbolo, fuente, tipo, retraso in (
+            ("objetivo", _precios_objetivo(objetivo, fechas, cfg, fuente_obj), cfg.objetivo_simbolo, fuente_obj,
+             tipo_obj, max(cfg.retraso_publicacion_s, cfg.objetivo_retraso_s)),
+            ("referencia", _precios_referencia(referencia, fechas, cfg, fuente_ref), cfg.subyacente, fuente_ref,
+             tipo_ref, cfg.retraso_publicacion_s)):
+        # El retraso del objetivo es un piso: una etiqueta ausente tampoco se conoce antes de la publicación.
+        e = etiquetas_retorno(precios["precio"], cfg.hora_principal, cfg.horizontes, cfg.latencia_s, retraso,
+                              cfg.calendario, disponibles=precios["disponible_utc"], motivos=precios["motivo"],
+                              dividendos=divs[divs["simbolo"] == simbolo])
+        series.append(e.assign(serie=serie, simbolo=simbolo, fuente=fuente or "", tipo_precio=tipo))
+        for h in cfg.horizontes:
+            eh = e[e["horizonte"] == h].set_index("sesion")
+            principal[f"ret_{h}_{serie}"] = principal["fecha"].map(eh["retorno_log"])
+            if serie == "objetivo":
+                principal[f"ret_precio_{h}_{serie}"] = principal["fecha"].map(eh["retorno_precio_log"])
+                principal[f"div_{h}_{serie}"] = principal["fecha"].map(eh["dividendos"])
+            principal[f"estado_ret_{h}_{serie}"] = principal["fecha"].map(eh["estado"])
+        if serie == "referencia":
+            principal["retorno_previo_referencia"] = principal["fecha"].map(
+                movimiento_previo(precios["precio"], cfg.calendario))
+    etiquetas = pd.concat(series, ignore_index=True)
+    principal["fuente_objetivo"], principal["tipo_precio_objetivo"] = fuente_obj or "", tipo_obj
     veredicto = dictamen(principal, cfg)
-    veredicto["alcance"] = alcance(fuentes_op, fuente_sub, tipo_sub, cfg)
+    veredicto["alcance"] = alcance(fuentes_op, fuente_ref, tipo_ref, fuente_obj, tipo_obj, cfg)
     return ResultadoPiloto(principal, completa, etiquetas, detalles, veredicto, cfg)

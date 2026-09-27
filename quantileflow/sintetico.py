@@ -6,6 +6,8 @@ plausibles, no para reproducir un activo real.
 """
 from __future__ import annotations
 
+import datetime as dt
+
 import numpy as np
 
 from .cadenas import HORA_CORTE, Captura
@@ -224,7 +226,7 @@ def panel_distribuciones(rng, n_dias=260, tau=30 / DIAS_ANIO, dia_choque=170, di
 # ---------------------------------------------------------------------------
 
 ESCENARIOS = ("desfasadas", "sin_hora_evento", "hueco_calls", "spreads_anchos", "spot_desfasado",
-              "sin_subyacente")
+              "sin_subyacente", "objetivo_sin_cotizacion", "objetivo_spread_anormal")
 
 
 def _tick_indice(precio):
@@ -254,7 +256,7 @@ def iv_en_delta_ssvi(theta, rho, phi, T, delta, es_call):
 def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:45", "10:00"),
                       raiz="SPXW", subyacente="SPX", paso_strike=10.0, rango_k=(-0.10, 0.05),
                       dias_vencimiento=(18, 48), escenarios=None, sesiones_extra=5,
-                      recibido="2026-09-26T12:00:00Z"):
+                      recibido="2026-09-26T12:00:00Z", objetivo="SPY", ex_objetivo=None, dividendo=1.8):
     """Cotizaciones y subyacente sintéticos con el esquema de ``contrato`` (SINTÉTICO).
 
     Opciones europeas con liquidación PM que vencen los viernes hábiles entre
@@ -262,9 +264,18 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
     cambian cada sesión, y ruido dentro del spread. ``escenarios`` asigna a
     cada fecha nombres de ``ESCENARIOS`` que degradan la hora principal:
     cotizaciones desfasadas, snapshot sin hora de evento, hueco de strikes call
-    cerca de delta 25, spreads anchos, subyacente desfasado o ausente. El
-    subyacente se extiende ``sesiones_extra`` sesiones para madurar etiquetas.
-    Devuelve ``(cotizaciones, subyacente, verdad)``.
+    cerca de delta 25, spreads anchos, subyacente desfasado o ausente, objetivo
+    sin cotización o con spread anormal. El subyacente se extiende
+    ``sesiones_extra`` sesiones para madurar etiquetas.
+
+    ``objetivo`` (si no es ``None``) añade un ETF observado tipo SPY:
+    ``subyacente / 10`` más el dividendo que se acumula linealmente y cae en su
+    fecha ex (``ex_objetivo``; por omisión, la sesión central de ``fechas``).
+    Se publica 15 minutos después del corte, como el SIP de Alpaca sin
+    suscripción. Usa su propio generador aleatorio: no cambia el resto.
+
+    Devuelve ``(cotizaciones, subyacente, verdad)``; ``verdad["dividendos"]``
+    sigue el esquema ``contrato.DIVIDENDOS``.
     """
     import pandas as pd
 
@@ -357,6 +368,31 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                             "sello_snapshot_utc": corte, "disponible_utc": corte,
                             "recibido_utc": recibido_utc, "proveedor": "sintetico",
                             "feed": "nbbo_intervalos_sintetico"})
+    if objetivo:
+        rng_obj = np.random.default_rng(semilla + 1_000_003)
+        ex = pd.Timestamp(ex_objetivo).date() if ex_objetivo else fechas[len(fechas) // 2]
+        previo = ex - dt.timedelta(days=91)
+        verdad["objetivo"] = {}
+        for fecha in todas:
+            esc = escenarios.get(fecha, set())
+            dias = (fecha - (previo if fecha < ex else ex)).days
+            acumulado = dividendo * dias / 91.0  # el dividendo que se va a pagar, acumulado desde la fecha ex previa
+            for hora in horas:
+                corte = instante(fecha, hora)
+                mid = round(spot[(fecha, hora)] / 10.0 + acumulado, 2)
+                verdad["objetivo"][(fecha, hora)] = mid
+                if hora == principal and "objetivo_sin_cotizacion" in esc:
+                    continue
+                medio = 0.5 if hora == principal and "objetivo_spread_anormal" in esc else 0.005
+                filas_sub.append({"subyacente": objetivo, "precio": mid, "bid": mid - medio, "ask": mid + medio,
+                                  "sello_evento_utc": corte - pd.Timedelta(seconds=rng_obj.uniform(0.0, 1.0)),
+                                  "sello_snapshot_utc": corte, "disponible_utc": corte + pd.Timedelta(minutes=15),
+                                  "recibido_utc": recibido_utc, "proveedor": "sintetico", "feed": "sip_sintetico",
+                                  "tipo_precio": "observado"})
+        verdad["dividendos"] = pd.DataFrame([{
+            "simbolo": objetivo, "fecha_ex": ex, "monto": dividendo, "fecha_pago": ex + dt.timedelta(days=42),
+            "clase": "ordinario", "disponible_utc": pd.Timestamp(ex - dt.timedelta(days=30), tz="UTC"),
+            "recibido_utc": recibido_utc, "proveedor": "sintetico", "feed": "dividendos_sinteticos"}])
     cotizaciones = pd.DataFrame(filas)
     sub = pd.DataFrame(filas_sub)
     for tabla in (cotizaciones, sub):

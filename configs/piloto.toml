@@ -3,12 +3,12 @@
 # piloto y se congelan, con una versión nueva, antes del periodo de evaluación.
 
 [piloto]
-version = "piloto-0.2"
+version = "piloto-0.3"
 descripcion = "SPXW PM a las 09:45 de Nueva York, plazo constante de 30 días"
 
 [instrumento]
 raiz = "SPXW"            # no se mezcla con SPX de liquidación AM ni con SPY
-subyacente = "SPX"
+subyacente = "SPX"       # referencia de las opciones: controles y medidas de la cadena (regla puntual)
 ejercicio = "europeo"
 liquidacion = "PM"
 calendario = "XNYS"
@@ -38,7 +38,20 @@ hueco_max_delta_k = 0.02
 horizontes = [1, 5]      # sesiones del calendario, de 09:45 a 09:45
 latencia_s = 0.0         # corte -> decision_at
 retraso_publicacion_s = 0.0
-edad_maxima_precio_s = 60.0   # precio objetivo más viejo al corte: la etiqueta queda ausente con su motivo
+edad_maxima_precio_s = 60.0   # referencia más vieja al corte: sus etiquetas auxiliares y el movimiento
+                              # previo quedan ausentes con su motivo
+
+[objetivo]
+# Precio cuyo rendimiento se etiqueta: lo que se intenta predecir. Observado, no construido con las cotizaciones
+# de las opciones, y tomado con la regla histórica: el mid de la última cotización válida con evento no
+# posterior al corte, aunque se publique después (SIP de Alpaca: 15 minutos); su publicación fija la madurez de
+# la etiqueta. Rendimiento total (con dividendos en su fecha ex) y de precio, por separado.
+simbolo = "SPY"
+tipo_precio = "observado"
+edad_maxima_s = 60.0              # cotización más vieja respecto del corte: no vale
+spread_relativo_max = 0.0005      # 5 pb: una cotización con spread mayor se descarta como anormal
+retraso_publicacion_s = 900.0     # piso de la madurez de sus etiquetas, también de las ausentes: el SIP
+                                  # de Alpaca sin suscripción se publica 15 minutos después del evento
 
 [referencia]
 # Solo para la discrepancia del forward implícito frente a una referencia externa.

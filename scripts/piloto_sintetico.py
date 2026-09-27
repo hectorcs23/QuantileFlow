@@ -1,6 +1,7 @@
 """Plantilla del informe piloto con datos SINTÉTICOS, por el mismo camino que los reales.
 
-1. Genera un mercado tipo SPXW de 30 sesiones con escenarios de mala calidad.
+1. Genera un mercado tipo SPXW de 30 sesiones con escenarios de mala calidad, un
+   objetivo tipo SPY publicado 15 minutos después del corte y un ex-dividendo.
 2. Lo guarda como archivos «del proveedor» inmutables en ``data/raw`` (fuera de Git).
 3. Normaliza y valida, escribe Parquet en ``data/normalized/sintetico``.
 4. Ejecuta el piloto y escribe ``reports/piloto_sintetico``.
@@ -30,6 +31,7 @@ ESCENARIOS = {
     "2025-11-12": ["spreads_anchos"],
     "2025-11-18": ["spot_desfasado"],
     "2025-11-20": ["sin_subyacente"],
+    "2025-11-25": ["objetivo_spread_anormal"],
 }
 
 
@@ -37,22 +39,25 @@ def main() -> int:
     datos = RAIZ / "data"
     trabajo = datos / "tmp"
     trabajo.mkdir(parents=True, exist_ok=True)
-    cot, sub, _ = mercado_sintetico(sesiones(DESDE, HASTA), semilla=7, escenarios=ESCENARIOS)
+    cot, sub, verdad = mercado_sintetico(sesiones(DESDE, HASTA), semilla=7, escenarios=ESCENARIOS)
     crudos = []
-    for nombre, tabla in (("cotizaciones_sinteticas.csv", cot), ("subyacente_sintetico.csv", sub)):
+    for nombre, tabla in (("cotizaciones_sinteticas.csv", cot), ("subyacente_sintetico.csv", sub),
+                          ("dividendos_sinteticos.csv", verdad["dividendos"])):
         tabla.to_csv(trabajo / nombre, index=False, lineterminator="\n")
         crudos.append(almacen.guardar_crudo(trabajo / nombre, datos / "raw"))
     normal = datos / "normalized" / "sintetico"
     rutas = {}
     for info, esquema, nombre in ((crudos[0], contrato.COTIZACIONES, "cotizaciones.parquet"),
-                                  (crudos[1], contrato.SUBYACENTE, "subyacente.parquet")):
+                                  (crudos[1], contrato.SUBYACENTE, "subyacente.parquet"),
+                                  (crudos[2], contrato.DIVIDENDOS, "dividendos.parquet")):
         rutas[nombre] = normal / nombre
         almacen.escribir_tabla(contrato.leer_csv_normalizado(info["ruta"], esquema), rutas[nombre])
     salida = RAIZ / "reports" / "piloto_sintetico"
     _, manifiesto = correr(RAIZ / "configs" / "piloto.toml", rutas["cotizaciones.parquet"],
                            rutas["subyacente.parquet"], DESDE, HASTA, salida,
                            "Informe piloto: plantilla con datos sintéticos", aviso="datos sintéticos",
-                           crudos=[{k: v for k, v in c.items() if k != "ruta"} for c in crudos])
+                           crudos=[{k: v for k, v in c.items() if k != "ruta"} for c in crudos],
+                           dividendos=rutas["dividendos.parquet"])
     print(f"{salida.relative_to(RAIZ)}: {manifiesto['sesiones']['n']} sesiones; dictamen: {manifiesto['dictamen']}")
     return 0
 

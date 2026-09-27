@@ -17,15 +17,16 @@ import pandas as pd
 from .piloto import ResultadoPiloto
 
 COLUMNAS_TABLA = [
-    "fecha", "hora", "estado_sesion", "motivo_sesion", "fuente_opciones", "fuente_subyacente",
-    "tipo_precio_subyacente", "segmento", "vencimiento_1", "dias_1", "vencimiento_2", "dias_2",
+    "fecha", "hora", "estado_sesion", "motivo_sesion", "fuente_opciones", "fuente_referencia",
+    "tipo_precio_referencia", "fuente_objetivo", "tipo_precio_objetivo", "segmento", "vencimiento_1", "dias_1",
+    "vencimiento_2", "dias_2",
     "spot", "forward", "forward_error", "tasa_implicita", "forward_menos_contractual", "log_forward_spot",
     "rr25_estado", "rr25", "rr25_inferior", "rr25_superior", "rr25_motivo", "cambio_rr25",
     "cambio_rr25_inferior", "cambio_rr25_superior", "cambio_rr25_motivo", "asim_log_estado", "asim_log",
     "asim_log_inferior", "asim_log_superior", "asim_log_motivo", "cambio_asim_log", "paridad_pares",
     "paridad_fuera_de_banda", "paridad_interpretables", "paridad_mediana_multiplo", "filas", "filas_validas",
     "filas_solo_cota", "exclusiones", "ancho_ticks_mediano", "edad_mediana_s", "desfase_spot_s", "n_alertas",
-    "alertas", "rr25_secundaria", "dif_rr25_secundaria", "dias_naturales_desde_anterior", "retorno_previo",
+    "alertas", "rr25_secundaria", "dif_rr25_secundaria", "dias_naturales_desde_anterior", "retorno_previo_referencia",
 ]
 
 
@@ -49,9 +50,9 @@ def _guardar(ruta):
     return ruta
 
 
-def objetivo_en_ingles(r: ResultadoPiloto) -> str:
-    """Nombre del precio objetivo para las gráficas: nunca presenta un nivel implícito como el índice."""
-    if r.dictamen.get("alcance", {}).get("tipo_precio_subyacente") == "implicito":
+def referencia_en_ingles(r: ResultadoPiloto) -> str:
+    """Nombre de la referencia de las opciones en las gráficas: nunca presenta un nivel implícito como el índice."""
+    if r.dictamen.get("alcance", {}).get("tipo_precio_referencia") == "implicito":
         return f"Implied {r.config.subyacente} level (option parity)"
     return r.config.subyacente
 
@@ -105,14 +106,14 @@ def figuras(r: ResultadoPiloto, salida: Path, aviso="") -> dict:
     plt.tight_layout()
     rutas["rr25"] = _guardar(salida / "rr25_30d.png")
 
-    c = p["cambio_rr25"].notna() & p["retorno_previo"].notna()
+    c = p["cambio_rr25"].notna() & p["retorno_previo_referencia"].notna()
     plt.figure()
-    plt.errorbar(p.loc[c, "retorno_previo"] * 100, p.loc[c, "cambio_rr25"] * 100,
+    plt.errorbar(p.loc[c, "retorno_previo_referencia"] * 100, p.loc[c, "cambio_rr25"] * 100,
                  yerr=[(p.loc[c, "cambio_rr25"] - p.loc[c, "cambio_rr25_inferior"]) * 100,
                        (p.loc[c, "cambio_rr25_superior"] - p.loc[c, "cambio_rr25"]) * 100],
                  fmt="o", capsize=3, label="Sessions with both RR25 values identified")
     plt.axhline(0.0, color="k", linestyle="--", linewidth=1)
-    plt.xlabel(f"{objetivo_en_ingles(r)}: move since the previous session at 09:45 (%)")
+    plt.xlabel(f"{referencia_en_ingles(r)}: move since the previous session at 09:45 (%)")
     plt.ylabel("Daily change in RR25 (vol points)")
     plt.title("RR25 change vs the move already observed" + sufijo)
     plt.legend()
@@ -182,7 +183,7 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
     salida = Path(salida)
     salida.mkdir(parents=True, exist_ok=True)
     p, cfg = r.principal, r.config
-    columnas = COLUMNAS_TABLA + [c for c in p.columns if c.startswith(("ret_", "estado_ret_"))]
+    columnas = COLUMNAS_TABLA + [c for c in p.columns if c.startswith(("ret_", "estado_ret_", "div_"))]
     rutas = {
         "tabla_diaria": escribir_csv(p[columnas], salida / "tabla_diaria.csv"),
         "tabla_completa": escribir_csv(r.completa, salida / "tabla_todas_las_horas.csv"),
@@ -206,8 +207,9 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         f"plazo constante de {cfg.objetivo_dias:g} días naturales; etiquetas a {', '.join(map(str, cfg.horizontes))} "
         "sesiones.",
         f"- Sesiones: {len(p)}, del {p['fecha'].min()} al {p['fecha'].max()}.",
-        f"- Fuentes: opciones {', '.join(al['fuentes_opciones']) or 'ninguna'}; precio objetivo "
-        f"{al['fuente_subyacente'] or 'ninguno'} ({al['precio_objetivo']}).",
+        f"- Fuentes: opciones {', '.join(al['fuentes_opciones']) or 'ninguna'}; referencia de las opciones "
+        f"{cfg.subyacente} {al['fuente_referencia'] or 'ninguna'} ({al['referencia_opciones']}); objetivo "
+        f"{al['simbolo_objetivo']} {al['fuente_objetivo'] or 'ninguna'} ({al['precio_objetivo']}).",
         f"- Entradas y hashes: `{manifiesto}`.", "",
         "## Dictamen de datos", "", f"**{d['veredicto'].capitalize()}.**", "",
         "| Criterio | Valor | Umbral | Cumple | Crítico |", "|---|---:|---|---|---|",
@@ -222,7 +224,8 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         "limitaciones». Los umbrales están en la configuración y son provisionales.", "",
         "**Alcance**, aparte de la aptitud de los datos:", "",
         f"- Medición: {al['medicion']}.",
-        f"- Precio objetivo: {al['precio_objetivo']}.",
+        f"- Referencia de las opciones: {al['referencia_opciones']}.",
+        f"- Precio objetivo: {al['precio_objetivo']}; instrumento: {al['instrumento_objetivo']}.",
         f"- Evaluación con precios de mercado: {al['evaluacion_con_precios_de_mercado']}.", "",
         "## Calidad de los datos", "",
         f"- Sesiones procesadas: {int((p['estado_sesion'] == 'procesada').sum())} de {len(p)}.",
@@ -252,8 +255,11 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         "![Estabilidad](estabilidad_0945_1000.png)", "",
         "## Tabla diaria", "",
         "Completa en `tabla_diaria.csv` (hora principal) y `tabla_todas_las_horas.csv`. RR25 y cambios en "
-        "puntos de volatilidad; rendimientos en porcentaje.", "",
-        "| Sesión | RR25 | Banda | Cambio | Asim. log | Válidas/filas | Alertas | Rend. previo | Rend. 1 | Rend. 5 |",
+        "puntos de volatilidad; rendimientos en porcentaje. El movimiento previo es de la referencia de las "
+        f"opciones ({cfg.subyacente}, regla puntual); los rendimientos a 1 y 5 sesiones son totales del objetivo "
+        f"({al['simbolo_objetivo']}, regla histórica).", "",
+        "| Sesión | RR25 | Banda | Cambio | Asim. log | Válidas/filas | Alertas | Mov. previo ref. | Rend. 1 obj. "
+        "| Rend. 5 obj. |",
         "|---|---:|---|---:|---:|---|---:|---:|---:|---:|",
     ]
     for _, f in p.iterrows():
@@ -262,8 +268,8 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         rr = _num(f["rr25"], 100) or f["rr25_estado"]
         lineas.append(f"| {f['fecha']} | {rr} | {banda} | {_num(f['cambio_rr25'], 100)} | "
                       f"{_num(f['asim_log'], 100)} | {f['filas_validas']}/{f['filas']} | {f['n_alertas']} | "
-                      f"{_num(f['retorno_previo'], 100)} | {_num(f.get('ret_1', np.nan), 100)} | "
-                      f"{_num(f.get('ret_5', np.nan), 100)} |")
+                      f"{_num(f['retorno_previo_referencia'], 100)} | "
+                      f"{_num(f.get('ret_1_objetivo', np.nan), 100)} | {_num(f.get('ret_5_objetivo', np.nan), 100)} |")
     normal, problema = _ejemplos(r)
     lineas += ["", "## Ejemplos", ""]
     for nombre, fila in (("Sesión normal", normal), ("Sesión problemática", problema)):
@@ -271,17 +277,23 @@ def escribir_informe(r: ResultadoPiloto, salida, titulo, aviso="", aviso_figuras
         lineas.append("")
         lineas += _detalle_sesion(r, fila) if fila is not None else ["No hay ninguna en la muestra."]
         lineas.append("")
-    if al["tipo_precio_subyacente"] == "implicito":
-        objetivo = (f"- Las etiquetas son rendimientos del nivel de {cfg.subyacente} inferido por paridad de las "
-                    "mismas opciones: comparten fuente y errores de medición con las señales y no sustituyen al "
-                    "índice observado. Antes de evaluar predicción hay que compararlas con una referencia observada.")
-    else:
-        objetivo = (f"- Los rendimientos de {cfg.subyacente} son etiquetas de investigación: el índice no se compra "
-                    "directamente, y una política sobre SPY o futuros necesitará sus propios precios, costos y "
-                    "dividendos.")
+    limites = []
+    if al["tipo_precio_objetivo"] == "implicito":
+        limites.append(f"- El objetivo es el nivel de {al['simbolo_objetivo']} inferido por paridad de las mismas "
+                       "opciones: comparte fuente y errores de medición con las señales y no sustituye a un precio "
+                       "observado.")
+    elif al["simbolo_objetivo"] != cfg.subyacente:
+        limites.append(f"- El objetivo, {al['simbolo_objetivo']}, es otro instrumento que el subyacente de las "
+                       f"opciones ({cfg.subyacente}): tiene sus dividendos, gastos y diferencias de seguimiento. Su "
+                       "precio es el mid de la última cotización válida en el corte: referencia estadística, no "
+                       "precio de ejecución.")
+    if al["tipo_precio_referencia"] == "implicito":
+        limites.append(f"- Las etiquetas auxiliares (`*_referencia`) son rendimientos del nivel de {cfg.subyacente} "
+                       "inferido por paridad: diagnóstico de medición, no confirmación independiente de una "
+                       "predicción del índice publicado.")
     lineas += [
         "## Limitaciones", "",
-        objetivo,
+        *limites,
         "- Las etiquetas a 5 sesiones se solapan: no son observaciones independientes.",
         "- La referencia del forward usa una tasa y un rendimiento de dividendo fijos de la configuración, "
         "no una curva con fuente.",

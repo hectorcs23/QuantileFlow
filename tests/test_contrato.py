@@ -190,3 +190,61 @@ def test_mezcla_de_feeds_en_una_captura_se_rechaza(mercado):
     otro.loc[otro["tipo"] == "P", "proveedor"] = "otro"
     with pytest.raises(ValueError, match="proveedor"):
         ct.captura_desde_tabla(otro, sub, "SPXW", venc, fecha)
+
+
+# --- Revalidación de d815bdd: regla histórica del precio objetivo ------------------------
+
+def _objetivo(corte, cotizaciones, publicado):
+    """Cotizaciones de SPY ``(segundos respecto del corte, bid, ask)`` publicadas en ``publicado``."""
+    filas = []
+    for segundos, bid, ask in cotizaciones:
+        evento = corte + pd.Timedelta(seconds=segundos)
+        filas.append({"precio": 0.5 * (bid + ask), "bid": bid, "ask": ask, "sello_evento_utc": evento,
+                      "sello_snapshot_utc": corte, "disponible_utc": publicado,
+                      "recibido_utc": corte + pd.Timedelta(hours=1)})
+    return _subyacente(filas).assign(subyacente="SPY", proveedor="alpaca", feed="sip")
+
+
+def test_precio_para_etiqueta_usa_la_ultima_cotizacion_valida():
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    publicado = corte + pd.Timedelta(minutes=15)
+    reglas = {"edad_maxima_s": 60.0, "spread_relativo_max": 5e-4}
+    tabla = _objetivo(corte, [(-30, 580.00, 580.02), (-2, 579.50, 580.60), (1, 590.00, 590.02)], publicado)
+    info = ct.precio_para_etiqueta(tabla, "SPY", fecha, corte, **reglas)
+    # La de -2 s tiene spread anormal y se descarta; la de +1 s es posterior al corte y no cuenta.
+    assert info["precio"] == pytest.approx(580.01) and info["descartadas"] == 1
+    assert info["sello_utc"] == corte - pd.Timedelta(seconds=30)
+    assert info["disponible_utc"] == publicado and info["disponibilidad_documentada"] is True
+    assert info["fuente"] == "alpaca/sip" and info["tipo_precio"] == "observado"
+    # Publicado después del corte: vale para la etiqueta, pero la regla puntual no lo admite.
+    with pytest.raises(ct.SinDatos, match="después del corte"):
+        ct.precio_al_corte(tabla, "SPY", fecha, corte)
+    # Si la única cotización de la ventana es anormal, falta el precio.
+    with pytest.raises(ct.SinDatos, match="spread anormal"):
+        ct.precio_para_etiqueta(tabla, "SPY", fecha, corte, edad_maxima_s=10.0, spread_relativo_max=5e-4)
+    raras = _objetivo(corte, [(-5, 580.02, 580.00), (-3, 0.0, 580.00)], publicado)  # cruzada y sin bid
+    with pytest.raises(ct.SinDatos, match="cruzadas, sin bid"):
+        ct.precio_para_etiqueta(raras, "SPY", fecha, corte, **reglas)
+    with pytest.raises(ct.SinDatos, match="sin cotización de SPY en los 60 s previos"):
+        ct.precio_para_etiqueta(_objetivo(corte, [(-61, 580.0, 580.02)], publicado), "SPY", fecha, corte, **reglas)
+    # Sin disponibilidad documentada, la madurez usa la recepción local.
+    sin_doc = ct.precio_para_etiqueta(_objetivo(corte, [(-1, 580.0, 580.02)], pd.NaT), "SPY", fecha, corte, **reglas)
+    assert sin_doc["disponible_utc"] == corte + pd.Timedelta(hours=1)
+    assert sin_doc["disponibilidad_documentada"] is False
+    # Dos fuentes del mismo símbolo: hay que elegir.
+    dos = pd.concat([tabla, tabla.assign(feed="iex")], ignore_index=True)
+    with pytest.raises(ValueError, match="elija una"):
+        ct.precio_para_etiqueta(dos, "SPY", fecha, corte, **reglas)
+    assert ct.precio_para_etiqueta(dos, "SPY", fecha, corte, "alpaca/iex", **reglas)["fuente"] == "alpaca/iex"
+
+
+def test_validacion_de_dividendos():
+    base = {"simbolo": "SPY", "fecha_ex": dt.date(2025, 12, 19), "monto": 1.9, "fecha_pago": dt.date(2026, 1, 30),
+            "clase": "ordinario", "disponible_utc": pd.Timestamp("2025-12-17T21:00:00Z"),
+            "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"), "proveedor": "alpaca",
+            "feed": "corporate_actions"}
+    assert ct.validar(pd.DataFrame([base]), ct.DIVIDENDOS) == []
+    problemas = ct.validar(pd.DataFrame([base, dict(base, clase="extra", monto=-1.0), base]), ct.DIVIDENDOS)
+    assert any("clase" in p for p in problemas) and any("monto" in p for p in problemas)
+    assert any("repetidos" in p for p in problemas)

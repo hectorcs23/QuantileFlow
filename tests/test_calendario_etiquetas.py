@@ -96,3 +96,25 @@ def test_etiqueta_madura_cuando_el_precio_final_esta_disponible():
     uno = e.set_index("sesion")
     assert uno.loc[fechas[0], "label_available_at"] == cal.instante(fechas[1]) + pd.Timedelta(hours=3)
     assert uno.loc[fechas[1], "label_available_at"] == cal.instante(fechas[2]) + pd.Timedelta(seconds=60)
+
+
+def test_dividendo_en_el_rendimiento_total_y_en_la_madurez():
+    fechas = cal.sesiones("2025-11-17", "2025-11-21")
+    precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
+    anuncio = cal.instante(fechas[3]) + pd.Timedelta(hours=1)  # anunciado después del fin de la etiqueta
+    dividendo = pd.DataFrame({"fecha_ex": [fechas[2]], "monto": [1.5], "disponible_utc": [anuncio],
+                              "recibido_utc": [pd.Timestamp("2026-01-05T15:00:00Z")]})
+    e = et.etiquetas_retorno(precios, horizontes=(1, 2), dividendos=dividendo).set_index(["sesion", "horizonte"])
+    cruza = e.loc[(fechas[1], 1)]  # de 09:45 del día anterior a 09:45 del día ex: incluye la apertura ex
+    assert cruza["dividendos"] == 1.5
+    assert cruza["retorno_log"] == pytest.approx(np.log((99.5 + 1.5) / 101.0))
+    assert cruza["retorno_precio_log"] == pytest.approx(np.log(99.5 / 101.0))
+    assert cruza["label_available_at"] == anuncio
+    assert e.loc[(fechas[2], 1), "dividendos"] == 0.0  # empieza a las 09:45 del día ex: ya no lo cobra
+    assert e.loc[(fechas[0], 1), "dividendos"] == 0.0 and e.loc[(fechas[0], 2), "dividendos"] == 1.5
+    assert e.loc[(fechas[2], 1), "retorno_log"] == e.loc[(fechas[2], 1), "retorno_precio_log"]
+    sin_anuncio = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=dividendo.assign(disponible_utc=pd.NaT))
+    assert sin_anuncio.set_index("sesion").loc[fechas[1], "label_available_at"] == pd.Timestamp(
+        "2026-01-05T15:00:00Z")  # sin anuncio documentado, madura con la recepción
+    with pytest.raises(ValueError, match="no es una sesión"):
+        et.etiquetas_retorno(precios, dividendos=dividendo.assign(fecha_ex=[dt.date(2025, 11, 22)]))
