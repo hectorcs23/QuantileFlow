@@ -250,19 +250,24 @@ def test_validacion_de_dividendos():
     assert any("repetidos" in p for p in problemas)
 
 
-def test_dos_capturas_de_la_misma_hora_no_duplican_contratos(mercado):
+def test_dos_capturas_de_la_misma_hora_marcan_la_vieja_como_reemplazada(mercado):
     # Una captura parcial a las 09:44:57 y su repetición a las 09:44:59, a la que le falta un contrato.
     cot, sub, _ = mercado
     fecha = FECHAS[0]
     corte = cal.instante(fecha, "09:45")
     venc = ct.vencimientos(cot, "SPXW", fecha)[0]
     filas = cot[(cot["sello_snapshot_utc"] == corte) & (cot["vencimiento"] == venc)]
-    primera = filas.assign(sello_snapshot_utc=corte - pd.Timedelta(seconds=3), bid=filas["bid"] + 1.0,
-                           ask=filas["ask"] + 1.0)
+    atras = pd.Timedelta(seconds=3)
+    primera = filas.assign(sello_snapshot_utc=corte - atras, sello_evento_utc=filas["sello_evento_utc"] - atras,
+                           bid=filas["bid"] + 1.0, ask=filas["ask"] + 1.0)
     repeticion = filas.iloc[1:].assign(sello_snapshot_utc=corte - pd.Timedelta(seconds=1))
     cap, info = ct.captura_desde_tabla(pd.concat([primera, repeticion], ignore_index=True), sub, "SPXW", venc, fecha)
-    assert info["filas"] == len(filas) == len(cap.strike)  # cada contrato una sola vez
-    bids = {(k, c): b for k, c, b in zip(cap.strike, cap.es_call, cap.bid)}
+    assert info["filas"] == 2 * len(filas) - 1  # todo queda en la captura, para el registro
+    motivos = ca.controlar(cap).motivos
+    vigentes = [i for i, m in enumerate(motivos) if "reemplazada" not in m]
+    assert len(motivos) - len(vigentes) == len(filas) - 1  # las viejas que se repitieron
+    claves = {(cap.strike[i], cap.es_call[i]): cap.bid[i] for i in vigentes}
+    assert len(claves) == len(vigentes) == len(filas)  # cada contrato una sola vez
     for fila in filas.itertuples():
         esperado = fila.bid + 1.0 if fila.Index == filas.index[0] else fila.bid  # el que falta sale de la primera
-        assert bids[(fila.strike, fila.tipo == "C")] == pytest.approx(esperado)
+        assert claves[(fila.strike, fila.tipo == "C")] == pytest.approx(esperado)

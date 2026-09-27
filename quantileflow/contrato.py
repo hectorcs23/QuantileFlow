@@ -332,9 +332,10 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
                         base_dias=365.0, codigo=CALENDARIO, fuente_subyacente=None):
     """``Captura`` de una raíz y un vencimiento a la hora de corte de una sesión.
 
-    De cada contrato toma el snapshot más reciente no posterior al corte: si la
-    misma hora se capturó dos veces (una parcial y su repetición) o hubo una
-    captura anterior en la sesión, un contrato nunca aparece dos veces.
+    Incluye todos los snapshots de la sesión hasta el corte: si un contrato
+    aparece más de una vez (una captura anterior, o una parcial y su
+    repetición), los controles de ``cadenas`` marcan las cotizaciones viejas
+    como ``reemplazada`` y lo dejan registrado.
     ``dividendos`` son pares ``(instante_utc, monto)``. Devuelve la captura y un
     diccionario con el corte, la liquidación, el plazo y la procedencia de las
     cotizaciones y del subyacente.
@@ -344,9 +345,6 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
     filas = cotizaciones[(cotizaciones["raiz"] == raiz)
                          & (cotizaciones["vencimiento"].map(_fecha) == vencimiento)]
     filas = _del_dia_hasta(filas, fecha, corte_utc)
-    if filas["id_contrato"].duplicated().any():
-        ultimas = filas.reset_index(drop=True).groupby("id_contrato")["sello_snapshot_utc"].idxmax()
-        filas = filas.iloc[sorted(ultimas)]
     if filas.empty:
         raise SinDatos(f"sin cotizaciones de {raiz} {vencimiento} al corte {hora} de {fecha}")
     _plazo_de_filas(filas, corte_utc, base_dias, codigo)  # mezclas y vencimientos liquidados, antes del spot
