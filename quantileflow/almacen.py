@@ -23,6 +23,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import uuid
 from importlib import metadata
 from pathlib import Path
 
@@ -75,11 +76,55 @@ def guardar_crudo_bytes(datos: bytes, nombre, directorio) -> dict:
             raise RuntimeError(f"{destino} existe con otro contenido: el crudo no se sobrescribe")
     else:
         destino.parent.mkdir(parents=True, exist_ok=True)
-        temporal = destino.with_name(destino.name + f".{os.getpid()}.tmp")
-        temporal.write_bytes(datos)
+        temporal = destino.with_name(destino.name + f".{uuid.uuid4().hex}.tmp")
+        _escribir_y_sincronizar(temporal, datos)
         os.chmod(temporal, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
         os.replace(temporal, destino)
     return {"ruta": str(destino), "sha256": h, "bytes": len(datos), "nombre": nombre}
+
+
+def _escribir_y_sincronizar(ruta, datos: bytes):
+    with open(ruta, "xb") as f:
+        f.write(datos)
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def escribir_json_nuevo(datos, ruta, solo_lectura=True) -> str:
+    """Como ``escribir_json``, pero atómico y sin sobrescribir (ver ``crear_nuevo``)."""
+    contenido = (json.dumps(datos, sort_keys=True, indent=2, ensure_ascii=False, default=str) + "\n").encode()
+    return crear_nuevo(ruta, contenido, solo_lectura)
+
+
+def crear_nuevo(ruta, contenido: bytes, solo_lectura=True) -> str:
+    """Crea un archivo de forma atómica y sin sobrescribir: aparece completo o no aparece.
+
+    Escribe un temporal en la misma carpeta, lo sincroniza y lo enlaza con el
+    nombre final; si ese nombre ya existe, falla con ``FileExistsError`` y no
+    deja el temporal. Donde no hay enlaces duros, comprueba que no exista y
+    renombra (un solo escritor por archivo). Devuelve el SHA-256.
+    """
+    ruta = Path(ruta)
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    if ruta.exists():
+        raise FileExistsError(f"{ruta} ya existe")
+    temporal = ruta.with_name(f".{ruta.name}.{uuid.uuid4().hex}.tmp")
+    _escribir_y_sincronizar(temporal, contenido)
+    try:
+        try:
+            os.link(temporal, ruta)
+        except FileExistsError:
+            raise
+        except OSError:  # sistema de archivos sin enlaces duros
+            if ruta.exists():
+                raise FileExistsError(f"{ruta} ya existe") from None
+            os.replace(temporal, ruta)
+    finally:
+        if temporal.exists():
+            temporal.unlink()
+    if solo_lectura:
+        os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+    return sha256_bytes(contenido)
 
 
 def escribir_tabla(tabla: pd.DataFrame, ruta) -> str:

@@ -1,4 +1,5 @@
 """Almacenamiento reproducible: crudo inmutable, Parquet determinista y huella del entorno."""
+import json
 import os
 import stat
 
@@ -58,3 +59,13 @@ def test_huellas(tmp_path):
     h = almacen.escribir_json({"z": 1, "a": 2}, tmp_path / "m.json")
     assert (tmp_path / "m.json").read_text().index('"a"') < (tmp_path / "m.json").read_text().index('"z"')
     assert h == almacen.sha256_archivo(tmp_path / "m.json")
+
+
+def test_escritura_atomica_que_no_sobrescribe(tmp_path):
+    ruta = tmp_path / "manifiesto.json"
+    h = almacen.escribir_json_nuevo({"estado": "completa"}, ruta)
+    assert h == almacen.sha256_archivo(ruta) and not os.stat(ruta).st_mode & stat.S_IWUSR
+    with pytest.raises(FileExistsError):
+        almacen.escribir_json_nuevo({"estado": "parcial"}, ruta)
+    assert json.loads(ruta.read_text()) == {"estado": "completa"}
+    assert [p.name for p in tmp_path.iterdir()] == ["manifiesto.json"]  # sin temporales a la vista

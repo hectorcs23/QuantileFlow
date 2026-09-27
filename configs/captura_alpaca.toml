@@ -12,6 +12,8 @@ hilos = 12
 ventana_contratos_dias = 50    # contratos pedidos: desde hoy hasta hoy + ventana (objetivo + margen)
 reintentos = 2                 # en la ráfaga: pocos y cortos, para no pasar del corte
 espera_max_s = 1.0
+plazo_s = 60.0                 # plazo absoluto: el proceso termina a más tardar este tiempo después del último
+                               # corte, aunque una solicitud siga colgada; lo recibido queda en el diario
 
 # Cada bloque es una cadena que se captura. "subyacente" es el de la API de contratos;
 # "raiz" es la raíz OSI con la que la API de datos entrega la cadena.

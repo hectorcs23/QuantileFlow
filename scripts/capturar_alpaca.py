@@ -2,8 +2,10 @@
 
 Uso, desde la raíz del repositorio, una vez por sesión y antes de la primera hora::
 
-    python scripts/capturar_alpaca.py            # espera y captura a las horas de la configuración
-    python scripts/capturar_alpaca.py --ahora    # captura inmediata de prueba (también fuera de sesión)
+    python scripts/capturar_alpaca.py                # espera y captura a las horas de la configuración
+    python scripts/capturar_alpaca.py --horas 09:45  # solo esa hora (un proceso por hora en el workflow)
+    python scripts/capturar_alpaca.py --ahora        # captura inmediata de prueba (también fuera de sesión)
+    python scripts/capturar_alpaca.py --recuperar    # solo convierte diarios sin manifiesto
 
 Cada captura es una ráfaga de solicitudes en paralelo que empieza ``adelanto_s``
 antes del corte, para que las respuestas lleguen antes de él. Guarda el crudo en
@@ -19,6 +21,13 @@ después del corte no se reemplaza con datos posteriores. El código de salida e
 0 solo si todas las horas quedaron completas, y cada ejecución deja un registro
 en ``data/raw/alpaca/ejecuciones/<fecha>/`` con el disparo, el margen hasta cada
 corte y el estado de cada hora.
+
+Recuperación. Cada página queda en el diario de su captura
+(``<etiqueta>.diario.jsonl``) en cuanto llega, y el manifiesto final se escribe
+de forma atómica. Un plazo absoluto (``plazo_s`` después del último corte)
+termina el proceso con código 3 aunque una solicitud siga colgada. Al empezar,
+y con ``--recuperar``, cada diario sin manifiesto se convierte en el manifiesto
+de lo que llegó, ``parcial`` o ``fallida`` y marcado como interrumpido.
 
 Fuera de sesión, ``--ahora`` toma como sesión de referencia la última que ya
 abrió y como corte el menor entre ahora y su cierre: sirve para verificar el
@@ -60,6 +69,25 @@ def sesion_de_referencia(ahora_utc, codigo):
     return fecha, min(ahora_utc, cierre(fecha, codigo))
 
 
+def recuperar(datos) -> int:
+    """Convierte cada diario sin manifiesto y deja constancia en un registro de ejecución."""
+    ahora = pd.Timestamp.now(tz="UTC")
+    recuperadas = alpaca.recuperar(datos, ahora)
+    for m in recuperadas:
+        print(f"recuperada {m['etiqueta']}: {m['estado']} ({m['motivo_interrupcion']})")
+    if recuperadas:
+        alpaca.escribir_ejecucion({"tipo": "recuperacion", "inicio_utc": alpaca.iso(ahora),
+                                   "fecha": str(ahora.tz_convert(NUEVA_YORK).date()),
+                                   "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"),
+                                   "run_id": os.environ.get("GITHUB_RUN_ID"), "codigo": almacen.estado_git(RAIZ),
+                                   "recuperadas": [{"etiqueta": m["etiqueta"], "estado": m["estado"],
+                                                    "motivo": m["motivo_interrupcion"]} for m in recuperadas]},
+                                  datos, sufijo="_recuperacion")
+    else:
+        print("no hay capturas interrumpidas")
+    return 0
+
+
 def main() -> int:
     a = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     a.add_argument("--config", default=str(RAIZ / "configs" / "captura_alpaca.toml"))
@@ -67,12 +95,17 @@ def main() -> int:
     a.add_argument("--datos", default=str(RAIZ / "data"))
     a.add_argument("--ahora", action="store_true", help="captura inmediata de prueba")
     a.add_argument("--horas", nargs="*", help="sustituye las horas de la configuración (HH:MM)")
+    a.add_argument("--plazo-s", type=float, default=None,
+                   help="plazo absoluto después del último corte (por omisión, plazo_s de la configuración)")
+    a.add_argument("--recuperar", action="store_true", help="solo convierte los diarios sin manifiesto")
     args = a.parse_args()
 
     bruto = cargar(args.config)
     cfg = bruto["captura"]
     codigo = cfg["calendario"]
     datos = Path(args.datos)
+    if args.recuperar:
+        return recuperar(datos)
     cliente = alpaca.ClienteAlpaca(alpaca.Credenciales.del_entorno(), reintentos=cfg["reintentos"],
                                    espera_max=cfg["espera_max_s"])
     info_config = {"ruta": Path(args.config).resolve().relative_to(RAIZ).as_posix()
@@ -92,10 +125,14 @@ def main() -> int:
               file=sys.stderr)
 
     ahora = cliente.reloj()
+    recuperadas = alpaca.recuperar(datos, ahora)  # capturas interrumpidas de ejecuciones anteriores
+    for m in recuperadas:
+        print(f"recuperada {m['etiqueta']}: {m['estado']} ({m['motivo_interrupcion']})", file=sys.stderr)
     ejecucion = {"inicio_utc": alpaca.iso(ahora), "modo": "inmediata" if args.ahora else "programada",
                  "evento": os.environ.get("GITHUB_EVENT_NAME", "manual"), "disparo": os.environ.get("DISPARO") or None,
                  "run_id": os.environ.get("GITHUB_RUN_ID"), "intento": os.environ.get("GITHUB_RUN_ATTEMPT"),
-                 "reloj": estado_reloj, "codigo": almacen.estado_git(RAIZ), "config": info_config}
+                 "reloj": estado_reloj, "codigo": almacen.estado_git(RAIZ), "config": info_config,
+                 "recuperadas": [{"etiqueta": m["etiqueta"], "estado": m["estado"]} for m in recuperadas]}
     if args.ahora:
         fecha, corte_inmediato = sesion_de_referencia(ahora, codigo)
         plan = [{"hora": "inmediata", "corte_utc": corte_inmediato, "etiqueta": f"{fecha}Tinmediata-{ahora:%H%M%S}",
@@ -123,6 +160,11 @@ def main() -> int:
     pendientes = [p for p in plan if p["accion"] == "capturar"]
     if not pendientes:
         return terminar()
+    # Plazo absoluto: pase lo que pase, el proceso termina poco después del último corte.
+    plazo = max([ahora] + [p["corte_utc"] for p in pendientes]) + pd.Timedelta(
+        seconds=args.plazo_s if args.plazo_s is not None else float(cfg["plazo_s"]))
+    vigilante = alpaca.Vigilante(plazo, cliente.reloj)
+    ejecucion["plazo_utc"] = alpaca.iso(plazo)
 
     # Contratos del día: metadatos para normalizar y para elegir vencimientos. Cada página se guarda al llegar.
     desde, hasta = fecha, fecha + dt.timedelta(days=int(cfg["ventana_contratos_dias"]))
@@ -160,7 +202,7 @@ def main() -> int:
              "feed_acciones": cfg["feed_acciones"], "adelanto_s": cfg["adelanto_s"], "config": info_config,
              "seleccion": seleccion, "reloj": estado_reloj, "codigo": ejecucion["codigo"]}
         try:
-            manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"])
+            manifiesto, ruta = alpaca.capturar(cliente, solicitudes, datos, m, previas, cfg["hilos"], vigilante)
         except FileExistsError as error:
             print(f"{hora}: {error}", file=sys.stderr)
             paso.update(estado="fallida", motivo=str(error))
@@ -173,6 +215,8 @@ def main() -> int:
                     margen_s=round((corte - pd.Timestamp(manifiesto["inicio_utc"])).total_seconds(), 3))
         print(f"{hora}: {manifiesto['estado']}; {n} respuestas en {duracion:.2f} s; después del corte: "
               f"{paso['despues_del_corte']}; errores: {len(paso['errores'])} -> {paso['manifiesto']}")
+
+    vigilante.cancelar()  # lo que sigue es local y no compite con ningún corte
 
     # Tablas normalizadas del día, reconstruidas desde el crudo (el histórico SIP llega después, con su script).
     piloto = cargar_config(args.config_piloto)

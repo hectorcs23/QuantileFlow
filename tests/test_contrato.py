@@ -248,3 +248,21 @@ def test_validacion_de_dividendos():
     problemas = ct.validar(pd.DataFrame([base, dict(base, clase="extra", monto=-1.0), base]), ct.DIVIDENDOS)
     assert any("clase" in p for p in problemas) and any("monto" in p for p in problemas)
     assert any("repetidos" in p for p in problemas)
+
+
+def test_dos_capturas_de_la_misma_hora_no_duplican_contratos(mercado):
+    # Una captura parcial a las 09:44:57 y su repetición a las 09:44:59, a la que le falta un contrato.
+    cot, sub, _ = mercado
+    fecha = FECHAS[0]
+    corte = cal.instante(fecha, "09:45")
+    venc = ct.vencimientos(cot, "SPXW", fecha)[0]
+    filas = cot[(cot["sello_snapshot_utc"] == corte) & (cot["vencimiento"] == venc)]
+    primera = filas.assign(sello_snapshot_utc=corte - pd.Timedelta(seconds=3), bid=filas["bid"] + 1.0,
+                           ask=filas["ask"] + 1.0)
+    repeticion = filas.iloc[1:].assign(sello_snapshot_utc=corte - pd.Timedelta(seconds=1))
+    cap, info = ct.captura_desde_tabla(pd.concat([primera, repeticion], ignore_index=True), sub, "SPXW", venc, fecha)
+    assert info["filas"] == len(filas) == len(cap.strike)  # cada contrato una sola vez
+    bids = {(k, c): b for k, c, b in zip(cap.strike, cap.es_call, cap.bid)}
+    for fila in filas.itertuples():
+        esperado = fila.bid + 1.0 if fila.Index == filas.index[0] else fila.bid  # el que falta sale de la primera
+        assert bids[(fila.strike, fila.tipo == "C")] == pytest.approx(esperado)

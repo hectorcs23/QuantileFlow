@@ -9,6 +9,9 @@ import http.client
 import json
 import os
 import stat
+import subprocess
+import sys
+import time
 import tomllib
 import urllib.parse
 from pathlib import Path
@@ -634,3 +637,110 @@ def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
     fila = e[(e["serie"] == "objetivo") & (e["horizonte"] == 1)].set_index("sesion").loc[FECHAS[0]]
     assert fila["estado"] == "sin dividendos confirmados" and np.isnan(fila["retorno_log"])
     assert np.isfinite(fila["retorno_precio_log"])
+
+
+# --- Revalidación de d815bdd: recuperación operativa ----------------------------------------
+
+HIJO = """
+import json, sys, time
+sys.path.insert(0, {raiz!r})
+import pandas as pd
+from quantileflow import alpaca as al
+
+datos, config = sys.argv[1], json.load(open(sys.argv[2], encoding="utf-8"))
+
+
+def transporte(url, cabeceras, tiempo_max):
+    if "page_token=p2" in url:
+        time.sleep(600)  # la segunda página no llega nunca
+    return 200, {{}}, json.dumps(config["pagina1"]).encode()
+
+
+cliente = al.ClienteAlpaca(al.Credenciales("clave", "secreto"), transporte, reintentos=0)
+vigilante = None
+if config["plazo_s"]:
+    vigilante = al.Vigilante(pd.Timestamp.now(tz="UTC") + pd.Timedelta(seconds=config["plazo_s"]))
+al.capturar(cliente, [al.pedir_cadena("SPXW", config["vencimiento"], "indicative")], datos, config["meta"],
+            config["previas"], vigilante=vigilante)
+print("terminó sin interrupción")
+"""
+
+
+def lanzar_captura(mercado, tmp_path, plazo_s=None):
+    """Una captura real en otro proceso: la primera página llega y la segunda se cuelga."""
+    cot, _, _ = mercado
+    corte_sintetico = cal.instante(FECHAS[0], "09:45")
+    vencimiento = str(cot.loc[cot["sello_snapshot_utc"] == corte_sintetico, "vencimiento"].iloc[0])
+    datos = tmp_path / "datos"
+    pedidos = [al.pedir_contratos("SPX", FECHAS[0], FECHAS[0] + dt.timedelta(days=60), "SPXW")]
+    resultados, _ = al.ejecutar(cliente(API({"/v2/options/contracts": lambda p: contratos_json(cot)})), pedidos)
+    previas = al.guardar_respuestas(resultados, {p.nombre: p.tipo for p in pedidos}, datos)
+    ahora = pd.Timestamp.now(tz="UTC")
+    fecha = next(f for f in cal.sesiones(ahora.date(), ahora.date() + dt.timedelta(days=15))
+                 if cal.instante(f, "09:45") > ahora + pd.Timedelta(minutes=10))  # todo llega antes del corte
+    corte = cal.instante(fecha, "09:45")
+    meta = {"fecha": str(fecha), "hora": "09:45", "corte_utc": al.iso(corte), "etiqueta": f"{fecha}T0945",
+            "modo": "programada"}
+    config = {"pagina1": dict(cadena_json(cot, vencimiento, corte_sintetico), next_page_token="p2"),
+              "vencimiento": vencimiento, "meta": meta, "previas": previas, "plazo_s": plazo_s}
+    (tmp_path / "config.json").write_text(json.dumps(config), encoding="utf-8")
+    (tmp_path / "hijo.py").write_text(HIJO.format(raiz=str(RAIZ)), encoding="utf-8")
+    proc = subprocess.Popen([sys.executable, str(tmp_path / "hijo.py"), str(datos), str(tmp_path / "config.json")],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return proc, datos, meta, f"cadena_SPXW_{vencimiento}"
+
+
+def test_corte_brusco_tras_una_pagina_se_recupera_como_parcial(mercado, tmp_path):
+    proc, datos, meta, nombre = lanzar_captura(mercado, tmp_path)
+    diario = al.ruta_diario(datos, meta["fecha"], meta["etiqueta"])
+    try:
+        limite = time.monotonic() + 60
+        while not (diario.exists() and b'"evento": "pagina"' in diario.read_bytes()):
+            assert time.monotonic() < limite and proc.poll() is None, "la primera página no llegó al diario"
+            time.sleep(0.05)
+        proc.kill()  # sin limpieza de ningún tipo
+    finally:
+        proc.communicate(timeout=60)
+    assert not al.ruta_manifiesto(datos, meta["fecha"], meta["etiqueta"]).exists()
+    recuperados = al.recuperar(datos)
+    assert len(recuperados) == 1 and al.recuperar(datos) == []  # una sola vez
+    m = recuperados[0]
+    e = m["solicitudes"][nombre]
+    assert (m["estado"], e["estado"], len(e["paginas"])) == ("parcial", "parcial", 1)
+    assert m["interrumpida"] and "sin escribir el manifiesto" in m["motivo_interrupcion"]
+    assert "interrumpida" in e["error"] and m["diario"]["sha256"] == almacen.sha256_archivo(diario)
+    assert (datos / e["paginas"][0]["archivo"]).exists()
+    despues = pd.Timestamp(meta["corte_utc"]) + pd.Timedelta(minutes=1)
+    assert al.planificar(datos, meta["fecha"], ["09:45"], despues, 5.0)[0]["estado"] == "parcial"
+    cot, _, resumenes, _ = al.normalizar(datos)  # el manifiesto recuperado se normaliza como cualquier otro
+    assert len(cot) > 0 and resumenes[0]["estado"] == "parcial"
+    antes = pd.Timestamp(meta["corte_utc"]) - pd.Timedelta(minutes=5)
+    paso = al.planificar(datos, meta["fecha"], ["09:45"], antes, 5.0)[0]  # aún antes del corte: se repite
+    assert (paso["accion"], paso["etiqueta"]) == ("capturar", f"{meta['fecha']}T0945-2")
+
+
+def test_plazo_absoluto_termina_una_solicitud_colgada(mercado, tmp_path):
+    proc, datos, meta, _ = lanzar_captura(mercado, tmp_path, plazo_s=3)
+    salida, errores = proc.communicate(timeout=120)
+    assert proc.returncode == al.CODIGO_PLAZO_VENCIDO, errores.decode()
+    assert b"plazo absoluto vencido" in errores and b"sin interrupci" not in salida
+    eventos, truncada = al.leer_diario(al.ruta_diario(datos, meta["fecha"], meta["etiqueta"]))
+    assert [e["evento"] for e in eventos] == ["inicio", "solicitud", "pagina", "interrumpida"] and not truncada
+    m = al.recuperar(datos)[0]
+    assert m["estado"] == "parcial" and m["motivo_interrupcion"].startswith("plazo absoluto vencido")
+
+
+def test_diario_con_la_ultima_linea_truncada_o_roto_en_medio(tmp_path):
+    ruta = tmp_path / "x.diario.jsonl"
+    lineas = [json.dumps({"evento": "inicio"}), json.dumps({"evento": "solicitud"})]
+    for cola in ('{"evento": "pag', '{"motivo": "sesión'.encode()[:-1].decode("utf-8", "ignore")):
+        ruta.write_bytes(("\n".join(lineas) + "\n").encode() + cola.encode())
+        eventos, truncada = al.leer_diario(ruta)
+        assert [e["evento"] for e in eventos] == ["inicio", "solicitud"] and truncada
+    ruta.write_bytes(("\n".join(lineas) + "\n").encode() + "sesió".encode()[:-1])  # carácter partido
+    assert al.leer_diario(ruta)[1]
+    ruta.write_bytes(b'{"evento": "inicio"}\n{roto\n{"evento": "fin"}\n')
+    with pytest.raises(ValueError, match="línea 2"):
+        al.leer_diario(ruta)
+    with pytest.raises(FileExistsError):  # un diario existente nunca se continúa
+        al.Diario(ruta, {"evento": "inicio"})

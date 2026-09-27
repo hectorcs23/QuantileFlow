@@ -52,6 +52,7 @@ import http.client
 import json
 import os
 import stat
+import sys
 import threading
 import time
 import urllib.error
@@ -83,6 +84,8 @@ EXTRAS_COTIZACIONES = ["bolsa_bid", "bolsa_ask", "condicion", "captura"]
 EXTRAS_SUBYACENTE = ["fuente_precio", "captura"]
 EXTRAS_DIVIDENDOS = ["id_evento", "fecha_registro", "fecha_proceso", "subtipo"]
 FEED_EVENTOS = "corporate_actions"
+SUFIJO_DIARIO = ".diario.jsonl"
+CODIGO_PLAZO_VENCIDO = 3
 
 
 class ErrorAlpaca(RuntimeError):
@@ -382,27 +385,83 @@ def guardar_pagina(respuesta: Respuesta, nombre, numero, raiz_datos) -> dict:
             "bytes_contenido": len(r.cuerpo)}
 
 
+class Diario:
+    """Diario de una captura: una línea JSON por evento, sincronizada en disco al escribirla.
+
+    Se crea de forma atómica con su línea de inicio, que trae lo necesario para
+    rehacer el manifiesto; después registra cada solicitud, cada página ya
+    guardada en el crudo y cada fin. Si el proceso muere, ``recuperar`` lo
+    convierte en el manifiesto de lo que llegó. Nunca continúa un diario
+    existente.
+    """
+
+    def __init__(self, ruta, inicio: dict):
+        self.ruta = Path(ruta)
+        almacen.crear_nuevo(self.ruta, _linea(inicio), solo_lectura=False)
+        self._archivo = open(self.ruta, "ab")
+
+    def escribir(self, evento: dict):
+        self._archivo.write(_linea(evento))
+        self._archivo.flush()
+        os.fsync(self._archivo.fileno())
+
+    def cerrar(self):
+        if not self._archivo.closed:
+            self._archivo.close()
+            os.chmod(self.ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+
+
+def _linea(evento: dict) -> bytes:
+    return (json.dumps(evento, sort_keys=True, ensure_ascii=False, default=str) + "\n").encode("utf-8")
+
+
+def leer_diario(ruta):
+    """Eventos de un diario y si su última línea quedó truncada (se descarta; en otra línea es un error)."""
+    lineas = Path(ruta).read_bytes().split(b"\n")
+    if lineas and lineas[-1] == b"":
+        lineas.pop()
+    eventos, truncada = [], False
+    for i, linea in enumerate(lineas):
+        try:
+            eventos.append(json.loads(linea.decode("utf-8")))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            if i != len(lineas) - 1:
+                raise ValueError(f"{ruta}: línea {i + 1} ilegible en medio del diario") from None
+            truncada = True
+    return eventos, truncada
+
+
 class Registro:
     """Entradas de manifiesto que se escriben a medida que llegan las páginas (seguro entre hilos).
 
     Cada solicitud termina ``completa``, ``parcial`` (algunas páginas y un
-    fallo) o ``fallida`` (ninguna página), con la causa del fallo.
+    fallo) o ``fallida`` (ninguna página), con la causa del fallo. Con
+    ``diario``, cada paso queda además en disco en cuanto ocurre; tras
+    ``interrumpir`` ya no se anota nada.
     """
 
-    def __init__(self, raiz_datos):
+    def __init__(self, raiz_datos, diario: Diario | None = None):
         self.raiz_datos = Path(raiz_datos)
         self.entradas = {}
+        self.diario = diario
+        self.interrumpido = False
         self._candado = threading.Lock()
+
+    def _anotar(self, evento):
+        if self.diario is not None and not self.interrumpido:
+            self.diario.escribir(evento)
 
     def iniciar(self, solicitud):
         with self._candado:
             self.entradas[solicitud.nombre] = {"tipo": solicitud.tipo, "estado": "en curso", "paginas": [],
                                                "error": None}
+            self._anotar({"evento": "solicitud", "nombre": solicitud.nombre, "tipo": solicitud.tipo})
 
     def pagina(self, solicitud, respuesta, numero):
         entrada = guardar_pagina(respuesta, solicitud.nombre, numero, self.raiz_datos)
         with self._candado:
             self.entradas[solicitud.nombre]["paginas"].append(entrada)
+            self._anotar({"evento": "pagina", "nombre": solicitud.nombre, "entrada": entrada})
 
     def terminar(self, solicitud, error=None):
         with self._candado:
@@ -411,6 +470,13 @@ class Registro:
                 e["estado"] = "completa"
             else:
                 e["estado"], e["error"] = ("parcial" if e["paginas"] else "fallida"), str(error)
+            self._anotar({"evento": "fin", "nombre": solicitud.nombre, "estado": e["estado"], "error": e["error"]})
+
+    def interrumpir(self, motivo, instante=None):
+        """Anota la interrupción (p. ej., plazo vencido) y deja de anotar: el proceso va a terminar."""
+        with self._candado:
+            self._anotar({"evento": "interrumpida", "motivo": motivo, "utc": iso(instante)})
+            self.interrumpido = True
 
 
 def guardar_respuestas(resultados, tipos, raiz_datos) -> dict:
@@ -443,9 +509,23 @@ def escribir_manifiesto(manifiesto: dict, raiz_datos, carpeta="capturas") -> Pat
     ruta = ruta_manifiesto(raiz_datos, manifiesto["fecha"], manifiesto["etiqueta"], carpeta)
     if ruta.exists():
         raise FileExistsError(f"{ruta} ya existe: un manifiesto no se sobrescribe")
-    almacen.escribir_json(manifiesto, ruta)
-    os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+    almacen.escribir_json_nuevo(manifiesto, ruta)  # atómico: completo o ausente, en solo lectura
     return ruta
+
+
+def ruta_diario(raiz_datos, fecha, etiqueta) -> Path:
+    return directorio_crudo(raiz_datos) / "capturas" / str(fecha) / f"{etiqueta}{SUFIJO_DIARIO}"
+
+
+def etiqueta_libre(raiz_datos, fecha, base, carpeta="capturas") -> str:
+    """``base``, ``base-2``, ``base-3``... la primera sin manifiesto ni diario."""
+    n = 1
+    while True:
+        etiqueta = base if n == 1 else f"{base}-{n}"
+        if (not ruta_manifiesto(raiz_datos, fecha, etiqueta, carpeta).exists()
+                and not ruta_diario(raiz_datos, fecha, etiqueta).exists()):
+            return etiqueta
+        n += 1
 
 
 def estado_captura(entradas: dict, tardias, modo=None) -> str:
@@ -474,29 +554,134 @@ def estado_manifiesto(manifiesto: dict) -> str:
     return "parcial" if estado == "completa" and manifiesto.get("errores") else estado
 
 
-def capturar(cliente: ClienteAlpaca, solicitudes, raiz_datos, meta: dict, previas=None, hilos=8):
-    """Ejecuta una captura, guarda crudo y manifiesto y devuelve ``(manifiesto, ruta)``.
+def _manifiesto_captura(base: dict, entradas: dict, errores: dict, fin_utc) -> dict:
+    corte = pd.Timestamp(base["corte_utc"])
+    tardias = [p["archivo"] for e in entradas.values() if e["tipo"] in ("cadena", "acciones")
+               for p in e["paginas"] if pd.Timestamp(p["recibido_utc"]) > corte]
+    return {**base, "fin_utc": iso(fin_utc), "solicitudes": entradas, "errores": errores,
+            "respuestas_despues_del_corte": tardias, "estado": estado_captura(entradas, tardias, base.get("modo"))}
+
+
+def capturar(cliente: ClienteAlpaca, solicitudes, raiz_datos, meta: dict, previas=None, hilos=8, vigilante=None):
+    """Ejecuta una captura, guarda crudo, diario y manifiesto y devuelve ``(manifiesto, ruta)``.
 
     ``meta`` trae al menos ``fecha`` (sesión), ``hora``, ``corte_utc`` y
     ``etiqueta``; ``previas`` son entradas ya guardadas (p. ej., los contratos
     del día) que se incluyen para que el manifiesto se normalice por sí solo.
-    Cada página se guarda en cuanto llega; el manifiesto registra el estado de
-    cada solicitud y el de la captura.
+    Cada página se guarda en cuanto llega y queda en el diario
+    (``<etiqueta>.diario.jsonl``); el manifiesto final, atómico, registra el
+    estado de cada solicitud y el de la captura. ``vigilante`` (``Vigilante``)
+    anota en el diario la interrupción si vence el plazo absoluto.
     """
-    registro = Registro(raiz_datos)
+    if ruta_manifiesto(raiz_datos, meta["fecha"], meta["etiqueta"]).exists():
+        raise FileExistsError(f"{meta['etiqueta']}: ya hay un manifiesto; una captura no se sobrescribe")
     inicio = cliente.reloj()
-    _, errores = ejecutar(cliente, solicitudes, hilos, registro)
-    fin = cliente.reloj()
+    base = {"proveedor": PROVEEDOR, "version_adaptador": VERSION_ADAPTADOR, "cuenta": cliente.cuenta, **meta,
+            "inicio_utc": iso(inicio)}
+    diario = Diario(ruta_diario(raiz_datos, meta["fecha"], meta["etiqueta"]),
+                    {"evento": "inicio", "manifiesto": base, "previas": previas or {}})
+    registro = Registro(raiz_datos, diario)
+    if vigilante is not None:
+        vigilante.vigilar(registro)
+    try:
+        _, errores = ejecutar(cliente, solicitudes, hilos, registro)
+    finally:
+        if vigilante is not None:
+            vigilante.vigilar(None)
     entradas = dict(previas or {})
     entradas.update(registro.entradas)
-    corte = pd.Timestamp(meta["corte_utc"])
-    tardias = [p["archivo"] for e in entradas.values() if e["tipo"] in ("cadena", "acciones")
-               for p in e["paginas"] if pd.Timestamp(p["recibido_utc"]) > corte]
-    manifiesto = {"proveedor": PROVEEDOR, "version_adaptador": VERSION_ADAPTADOR, "cuenta": cliente.cuenta,
-                  **meta, "inicio_utc": iso(inicio), "fin_utc": iso(fin), "solicitudes": entradas,
-                  "errores": errores, "respuestas_despues_del_corte": tardias,
-                  "estado": estado_captura(entradas, tardias, meta.get("modo"))}
-    return manifiesto, escribir_manifiesto(manifiesto, raiz_datos)
+    manifiesto = _manifiesto_captura(base, entradas, errores, cliente.reloj())
+    ruta = escribir_manifiesto(manifiesto, raiz_datos)
+    diario.escribir({"evento": "manifiesto", "estado": manifiesto["estado"]})
+    diario.cerrar()
+    return manifiesto, ruta
+
+
+def recuperar(raiz_datos, ahora_utc=None, fecha=None) -> list[dict]:
+    """Convierte cada diario sin manifiesto en el manifiesto de lo que llegó, marcado como interrumpido.
+
+    Una solicitud sin fin en el diario queda ``parcial`` (con páginas) o
+    ``fallida``, y la captura toma el estado de ``estado_captura``: la que se
+    cortó a mitad nunca queda ``completa``. Comprueba el hash de cada página y
+    registra el hash del diario. Devuelve los manifiestos escritos.
+    """
+    base_capturas = directorio_crudo(raiz_datos) / "capturas"
+    escritos = []
+    for ruta in sorted(base_capturas.glob(f"{fecha or '*'}/*{SUFIJO_DIARIO}")):
+        etiqueta = ruta.name[:-len(SUFIJO_DIARIO)]
+        if (ruta.parent / f"{etiqueta}.json").exists():
+            continue
+        eventos, truncada = leer_diario(ruta)
+        if not eventos or eventos[0].get("evento") != "inicio":
+            raise ValueError(f"{ruta}: diario sin línea de inicio")
+        base, previas = eventos[0]["manifiesto"], eventos[0].get("previas") or {}
+        entradas, motivo = {}, None
+        for ev in eventos[1:]:
+            if ev["evento"] == "solicitud":
+                entradas[ev["nombre"]] = {"tipo": ev["tipo"], "estado": "en curso", "paginas": [], "error": None}
+            elif ev["evento"] == "pagina":
+                entradas[ev["nombre"]]["paginas"].append(ev["entrada"])
+            elif ev["evento"] == "fin":
+                entradas[ev["nombre"]].update(estado=ev["estado"], error=ev["error"])
+            elif ev["evento"] == "interrumpida":
+                motivo = ev["motivo"]
+        for e in entradas.values():
+            if e["estado"] == "en curso":
+                e.update(estado="parcial" if e["paginas"] else "fallida",
+                         error="interrumpida: el diario no registra el fin de la solicitud")
+            for p in e["paginas"]:
+                archivo = Path(raiz_datos) / p["archivo"]
+                if not archivo.exists() or almacen.sha256_archivo(archivo) != p["sha256"]:
+                    raise RuntimeError(f"{ruta}: la página {p['archivo']} falta o no coincide con su hash")
+        errores = {n: e["error"] for n, e in entradas.items() if e["estado"] != "completa"}
+        manifiesto = _manifiesto_captura(base, {**previas, **entradas}, errores, None)
+        if manifiesto["estado"] == "completa":  # todo llegó, pero la ejecución no terminó: no se da por buena
+            manifiesto["estado"] = "parcial"
+        manifiesto.update(interrumpida=True, recuperada_utc=iso(ahora_utc or _ahora()),
+                          motivo_interrupcion=motivo or "el proceso terminó sin escribir el manifiesto",
+                          diario={"archivo": ruta.relative_to(Path(raiz_datos)).as_posix(),
+                                  "sha256": almacen.sha256_archivo(ruta), "ultima_linea_truncada": truncada})
+        escribir_manifiesto(manifiesto, raiz_datos)
+        if os.access(ruta, os.W_OK):
+            os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+        escritos.append(manifiesto)
+    return escritos
+
+
+class Vigilante:
+    """Plazo absoluto de una ejecución.
+
+    Al vencer, anota la interrupción en el diario de la captura en curso y
+    termina el proceso de inmediato (``os._exit`` con ``CODIGO_PLAZO_VENCIDO``):
+    una solicitud colgada no puede retrasar la salida ni estirar la captura más
+    allá del corte. Lo que llegó ya está en el crudo y en el diario;
+    ``recuperar`` lo convierte después en su manifiesto.
+    """
+
+    def __init__(self, plazo_utc, reloj=None, salir=None, codigo=CODIGO_PLAZO_VENCIDO):
+        self.plazo_utc = pd.Timestamp(plazo_utc)
+        self.codigo = codigo
+        self._salir = salir or os._exit
+        self._registro = None
+        self._candado = threading.Lock()
+        segundos = max((self.plazo_utc - (reloj or _ahora)()).total_seconds(), 0.0)
+        self._temporizador = threading.Timer(segundos, self._vencer)
+        self._temporizador.daemon = True
+        self._temporizador.start()
+
+    def vigilar(self, registro):
+        with self._candado:
+            self._registro = registro
+
+    def cancelar(self):
+        self._temporizador.cancel()
+
+    def _vencer(self):
+        with self._candado:
+            if self._registro is not None:
+                self._registro.interrumpir(f"plazo absoluto vencido ({iso(self.plazo_utc)})", _ahora())
+        print(f"plazo absoluto vencido ({iso(self.plazo_utc)}): se termina el proceso", file=sys.stderr, flush=True)
+        self._salir(self.codigo)
 
 
 def planificar(raiz_datos, fecha, horas, ahora_utc, adelanto_s, codigo=CALENDARIO) -> list[dict]:
@@ -515,7 +700,7 @@ def planificar(raiz_datos, fecha, horas, ahora_utc, adelanto_s, codigo=CALENDARI
         corte = instante(fecha, hora, codigo)
         estados = previas.get(hora, [])
         paso = {"hora": hora, "corte_utc": corte, "capturas_previas": estados,
-                "etiqueta": f"{_fecha(fecha)}T{hora.replace(':', '')}" + (f"-{len(estados) + 1}" if estados else "")}
+                "etiqueta": etiqueta_libre(raiz_datos, _fecha(fecha), f"{_fecha(fecha)}T{hora.replace(':', '')}")}
         if "completa" in estados:
             paso.update(estado="completa", accion="omitir")
         elif corte - pd.Timedelta(seconds=float(adelanto_s)) < pd.Timestamp(ahora_utc):
@@ -536,8 +721,7 @@ def escribir_ejecucion(registro: dict, raiz_datos, sufijo="") -> Path:
     """Registro de una ejecución de un script (disparo, horas planificadas y su estado), en solo lectura."""
     ruta = (directorio_crudo(raiz_datos) / "ejecuciones" / registro["fecha"]
             / f"{pd.Timestamp(registro['inicio_utc']):%Y%m%dT%H%M%S%fZ}{sufijo}.json")
-    almacen.escribir_json(registro, ruta)
-    os.chmod(ruta, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+    almacen.escribir_json_nuevo(registro, ruta)
     return ruta
 
 
@@ -564,7 +748,8 @@ def planificar_historico(raiz_datos, fecha, horas, ahora_utc, retraso_s, margen_
         estados = previas.get(hora, [])
         consultable = corte + pd.Timedelta(seconds=float(retraso_s) + float(margen_s))
         paso = {"hora": hora, "corte_utc": corte, "consultable_utc": consultable, "intentos_previos": estados,
-                "etiqueta": f"{_fecha(fecha)}T{hora.replace(':', '')}" + (f"-{len(estados) + 1}" if estados else "")}
+                "etiqueta": etiqueta_libre(raiz_datos, _fecha(fecha), f"{_fecha(fecha)}T{hora.replace(':', '')}",
+                                           "historico")}
         if "completa" in estados:
             paso.update(estado="completa", accion="omitir")
         else:
