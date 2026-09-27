@@ -2,7 +2,7 @@ PYTHON ?= python3
 DOC := docs/propuesta
 
 .PHONY: todo test figuras pdf limpiar verificar piloto-sintetico captura captura-prueba \
-	historico-alpaca normalizar-alpaca verificar-alpaca
+	historico-alpaca normalizar-alpaca verificar-alpaca revisar-operacion
 
 todo: test figuras pdf
 
@@ -41,6 +41,12 @@ normalizar-alpaca:
 # make verificar-alpaca FECHA=AAAA-MM-DD
 verificar-alpaca:
 	$(PYTHON) scripts/verificar_alpaca.py --fecha $(FECHA)
+
+# Operación de la captura: estado de cada corte, puntualidad, respaldo, SIP y dividendos.
+# make revisar-operacion DESDE=AAAA-MM-DD HASTA=AAAA-MM-DD DATOS=../QuantileFlow-datos
+DATOS ?= data
+revisar-operacion:
+	$(PYTHON) scripts/revisar_operacion.py --datos $(DATOS) --desde $(DESDE) --hasta $(HASTA)
 
 limpiar:
 	cd $(DOC) && latexmk -C main.tex

@@ -29,6 +29,7 @@ from quantileflow import contrato as ct
 from quantileflow import diagnostico as dg
 from quantileflow import etiquetas as et
 from quantileflow import implicito as im
+from quantileflow import operacion
 from quantileflow import piloto as pl
 from quantileflow import sintetico as sn
 
@@ -906,6 +907,67 @@ def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkey
     assert codigo == 1 and registro["horas"][0]["estado"] == "fallida"
     assert registro["horas"][0]["motivo"] == "error inesperado: ValueError"
     assert registro["error"]["etapa"] == "preparación y captura" and "listo_utc" not in registro
+
+
+def test_revision_de_la_operacion_de_las_sesiones(mercado, tmp_path):
+    # Cierre de b240dc2, pasos 4 y 5: estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.
+    capturar_sesiones(mercado, tmp_path)
+    descargar_historicos(mercado, tmp_path, horas=("09:45",))  # el SIP de las 10:00 aún no se descargó
+    (tmp_path / "raw" / "alpaca" / "capturas" / str(FECHAS[1]) / f"{FECHAS[1]}T1000.json").unlink()  # perdida
+    consulta_eventos(tmp_path, {"corporate_actions": {"cash_dividends": [dividendo_incompleto()]}},
+                     "2025-11-18T20:21:00Z")
+
+    def registro(inicio, fecha, **campos):
+        al.escribir_ejecucion({"inicio_utc": inicio, "fecha": str(fecha), **campos}, tmp_path,
+                              sufijo="_" + campos["tipo"] if "tipo" in campos else "")
+
+    def hora(h, accion="capturar", estado="completa", **campos):
+        return {"hora": h, "accion": accion, "estado": estado, **campos}
+
+    ok = {"margen_s": 5.0, "duracion_s": 1.2, "despues_del_corte": 0, "errores": []}
+    # Primera sesión: sin incidencias; el respaldo encuentra la hora completa y la omite.
+    registro("2025-11-17T14:13:30Z", FECHAS[0], modo="programada", evento="schedule", disparo="11 14 * * 1-5",
+             listo_utc="2025-11-17T14:14:10Z", horas=[hora("09:45", **ok)])
+    registro("2025-11-17T14:28:05Z", FECHAS[0], modo="programada", evento="schedule", disparo="26 14 * * 1-5",
+             horas=[hora("09:45", accion="omitir")])
+    registro("2025-11-17T14:28:40Z", FECHAS[0], modo="programada", evento="schedule", disparo="26 14 * * 1-5",
+             listo_utc="2025-11-17T14:29:30Z", horas=[hora("10:00", **ok)])
+    # Segunda sesión: el titular no está listo a tiempo, se recupera su diario y el respaldo captura; las 10:00
+    # no corrieron.
+    registro("2025-11-18T14:15:00Z", FECHAS[1], modo="programada", evento="schedule", disparo="11 14 * * 1-5",
+             interrupcion={"motivo": "sin preparar a tiempo (2025-11-18T14:39:00+00:00)"},
+             horas=[hora("09:45", estado="fallida", motivo="sin preparar a tiempo")])
+    registro("2025-11-18T14:39:30Z", FECHAS[1], tipo="recuperacion",
+             recuperadas=[{"etiqueta": f"{FECHAS[1]}T0945", "estado": "fallida", "motivo": "sin preparar"}])
+    registro("2025-11-18T14:40:10Z", FECHAS[1], modo="programada", evento="schedule", disparo="26 14 * * 1-5",
+             listo_utc="2025-11-18T14:42:00Z", horas=[hora("09:45", **ok)])
+    registro("2025-11-18T15:21:00Z", FECHAS[1], tipo="historico", eventos={"estado": "completa", "errores": []})
+    registro("2025-11-18T14:00:00Z", FECHAS[1], modo="inmediata", horas=[hora("inmediata", **ok)])  # no cuenta
+
+    revision = operacion.revisar(tmp_path, FECHAS[0], FECHAS[1], ["09:45", "10:00"], 5.0,
+                                 ahora_utc="2025-11-19T00:00:00Z")
+    cortes = {(c["fecha"], c["hora"]): c for c in revision["cortes"]}
+    uno, dos, perdido = (cortes[(str(FECHAS[0]), "09:45")], cortes[(str(FECHAS[1]), "09:45")],
+                         cortes[(str(FECHAS[1]), "10:00")])
+    assert (uno["estado"], len(uno["ejecuciones"]), uno["intentos"], uno["sip"]) == ("completa", 2, 1, "completa")
+    assert (uno["captura"]["retraso_s"], uno["captura"]["margen_listo_s"], uno["captura"]["margen_rafaga_s"]) == (
+        150.0, 1850.0, 5.0)
+    assert (dos["intentos"], dos["captura"]["disparo"], dos["captura"]["retraso_s"],
+            dos["captura"]["margen_listo_s"]) == (2, "26 14 * * 1-5", 850.0, 180.0)
+    assert (perdido["estado"], perdido["ejecuciones"], perdido["sip"]) == ("perdida", [], "sin descargar")
+    r = revision["resumen"]
+    assert r["estados"] == {"completa": 3, "parcial": 0, "fallida": 0, "perdida": 1, "pendiente": 0}
+    assert (r["cortes_con_reintento"], r["sin_preparar_a_tiempo"], r["plazo_absoluto"], r["recuperaciones"],
+            r["retraso_max_s"], r["margen_listo_min_s"], r["sip_completo"]) == (1, 1, 0, 1, 850.0, 180.0, 2)
+    assert revision["dividendos"]["discrepancias_abiertas"] == {"incompleto": 1}
+    assert revision["eventos"] == [{"fecha": str(FECHAS[1]), "inicio_utc": "2025-11-18T15:21:00Z",
+                                    "estado": "completa", "errores": []}]
+    texto = operacion.informe(revision)
+    assert f"| {FECHAS[1]} | 10:00 | perdida | sin descargar | 0 | 0 | — |" in texto
+    assert "sin preparar a tiempo" in texto and f"Recuperada {FECHAS[1]}T0945: fallida" in texto
+    assert "Discrepancias abiertas: incompleto 1;" in texto
+    assert "(sin preparar a tiempo (2025-11-18T14:39:00+00:00));" in texto  # el motivo, una sola vez
+    assert not any(x in texto.lower() for x in ("bid", "ask", "precio", "580"))  # solo agregados, sin precios
 
 
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):
