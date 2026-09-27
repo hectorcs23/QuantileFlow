@@ -16,7 +16,9 @@ sobre `853047b`.
   `8316540` (revisiones después de aceptarse) y `5c15028` (su documentación);
 - revalidación de `5c15028`: `7fb0585` (dividendos incompletos) y `b240dc2` (su documentación);
 - tras el cierre de la revalidación de `b240dc2`: `7a59d04` (registro de la ejecución a prueba de
-  errores), `bbbdc6e` (revisión de la operación) y el de su documentación.
+  errores), `bbbdc6e` (revisión de la operación) y `1a5ba3f` (su documentación);
+- revisión de los cambios operativos: `4ffde8a` (registro también al iniciar, `--resoluciones` explícito
+  y pruebas portables) y el de su documentación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -55,8 +57,14 @@ sobre `853047b`.
 > **La revalidación de `b240dc2` cerró** ese hallazgo sin defectos nuevos y recomendó pasar a la
 > prueba operativa con `7fb0585`. Después agregué dos cosas, sin mover la versión fijada hasta que
 > se revisen: el registro de cada ejecución ya no se pierde si algo falla después de capturar, y
-> `revisar_operacion.py` resume la operación de las sesiones. Hay 202 pruebas; detalle en
+> `revisar_operacion.py` resume la operación de las sesiones. Detalle en
 > [respuesta al cierre de `b240dc2`](respuesta_cierre_b240dc2.md).
+>
+> **La revisión de esos cambios** encontró que un fallo al iniciar (reloj del servidor, recuperación)
+> seguía sin dejar registro y que un `--resoluciones` explícito inexistente se ignoraba, y pidió
+> ajustar las pruebas para Windows. Quedó corregido en `4ffde8a`, propuesto para fijar. Hay 203
+> pruebas, que también pasan con la codificación obligatoria; detalle en
+> [respuesta a la revisión de los cambios operativos](respuesta_cambios_operativos.md).
 
 ---
 
@@ -188,7 +196,9 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/respuesta_revalidacion_5c15028.md`](respuesta_revalidacion_5c15028.md) | Dividendos recibidos sin fecha ex o sin monto: versiones con discrepancia, etiquetas pendientes y cómo se resuelven |
 | [`docs/respuesta_cierre_b240dc2.md`](respuesta_cierre_b240dc2.md) | Tras el cierre de la revalidación: registro de la ejecución a prueba de errores, revisión de la operación y cómo seguir con la prueba de captura |
 | [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado en los workflows: árbol limpio, 200 pruebas pasadas |
-| [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro del commit propuesto (aún no fijado): árbol limpio, 202 pruebas pasadas |
+| [`docs/respuesta_cambios_operativos.md`](respuesta_cambios_operativos.md) | Registro también al iniciar, `--resoluciones` explícito y pruebas portables |
+| [`reports/verificacion/4ffde8acda8c.json`](../reports/verificacion/4ffde8acda8c.json) | Registro del commit propuesto para fijar: árbol limpio, 203 pruebas pasadas |
+| [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro de la propuesta anterior: 202 pruebas pasadas |
 | [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
 | [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado antes: 191 pruebas pasadas |
 | [`reports/verificacion/fcb863782508.json`](../reports/verificacion/fcb863782508.json) | Registro del commit fijado en la entrega anterior: 186 pruebas pasadas |
@@ -277,7 +287,7 @@ caben en menos de 100 MB.
 
 ```bash
 pip install -r requirements-bloqueo.txt
-make test                                                   # 202 pruebas
+make test                                                   # 203 pruebas
 python scripts/capturar_alpaca.py --ahora                   # captura de prueba inmediata
 python scripts/capturar_alpaca.py                           # día hábil: espera y captura 09:45 y 10:00 ET
 python scripts/capturar_alpaca.py --recuperar               # convierte diarios sin manifiesto
