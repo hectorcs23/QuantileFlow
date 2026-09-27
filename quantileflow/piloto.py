@@ -54,6 +54,7 @@ import pandas as pd
 from . import cadenas, contrato
 from .almacen import huella_datos
 from .calendario import _fecha, es_sesion, instante, instante_liquidacion, plazo_anios, sesion_desplazada
+from .etiquetas import _consultas as _consultas_dividendos
 from .etiquetas import etiquetas_retorno, etiquetas_vigentes, movimiento_previo
 
 NAN = float("nan")
@@ -468,17 +469,23 @@ def alcance(fuentes_opciones, fuente_referencia, tipo_referencia, fuente_objetiv
         motivos.append("precio objetivo inferido de las mismas opciones: no es independiente de las señales")
     tipos = {"observado": "observado", "implicito": "inferido por paridad de las opciones"}
     otro = cfg.objetivo_simbolo != cfg.subyacente
-    completas = (cobertura[cobertura["estado"] == "completa"] if cobertura is not None and len(cobertura)
-                 else pd.DataFrame(columns=["recibido_utc"]))
+    # Solo cuentan las consultas que pueden confirmar dividendos (las mismas que usan las etiquetas).
+    validas, descartadas = _consultas_dividendos(cobertura, None) if cobertura is not None else ([], {})
+    no_cuentan = "".join(f"; {n} consultas {razon} no cuentan" for razon, n in sorted(descartadas.items()))
     if cfg.objetivo_rendimiento == "precio":
         dividendos = "no se usan: rendimiento de precio"
-    elif completas.empty:
-        dividendos = "sin consulta completa: el rendimiento total queda ausente"
+    elif not validas:
+        dividendos = ("sin consulta completa que pueda confirmar dividendos: el rendimiento total queda ausente"
+                      + no_cuentan)
     else:
-        dividendos = (f"{len(completas)} consultas completas, la última recibida el "
-                      f"{pd.Timestamp(completas['recibido_utc'].max()).isoformat()}. Cada etiqueta madura con la "
-                      "primera consulta completa posterior a su fin que cubre el periodo (provisional) y se "
-                      f"reconcilia con una recibida {cfg.objetivo_margen_proceso_dias:g} días después del fin")
+        dividendos = (f"{len(validas)} consultas completas que pueden confirmar dividendos, la última recibida el "
+                      f"{validas[-1].recibido.isoformat()}{no_cuentan}. Cada etiqueta madura con la primera "
+                      "posterior a su fin que cubre el periodo (provisional). Queda aceptada bajo la política de "
+                      f"{cfg.objetivo_margen_proceso_dias:g} días (una regla, no una garantía de completitud) con "
+                      "una recibida después de ese margen, del último cambio de valor y de la última discrepancia "
+                      "resuelta, sin discrepancias abiertas. Con una discrepancia sin resolver (un dividendo "
+                      "ausente en una consulta comparable, o uno cancelado por una resolución que el proveedor "
+                      "vuelve a traer con otros valores) queda pendiente: solo la resuelve evidencia fechada")
     return {
         "fuentes_opciones": list(fuentes_opciones), "fuente_referencia": fuente_referencia or "",
         "tipo_precio_referencia": tipo_referencia or "", "simbolo_objetivo": cfg.objetivo_simbolo,
@@ -569,6 +576,7 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
                 principal[f"ret_precio_{h}_{serie}"] = principal["fecha"].map(eh["retorno_precio_log"])
                 principal[f"div_{h}_{serie}"] = principal["fecha"].map(eh["dividendos"])
                 principal[f"estado_div_{h}_{serie}"] = principal["fecha"].map(eh["estado_dividendos"])
+                principal[f"version_{h}_{serie}"] = principal["fecha"].map(eh["version"])
             principal[f"estado_ret_{h}_{serie}"] = principal["fecha"].map(eh["estado"])
         if serie == "referencia":
             principal["retorno_previo_referencia"] = principal["fecha"].map(
@@ -580,5 +588,7 @@ def ejecutar(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, fechas, cfg: 
     h1 = cfg.horizontes[0]
     estados = principal.loc[principal[f"estado_ret_{h1}_objetivo"] == "ok", f"estado_div_{h1}_objetivo"]
     veredicto["alcance"]["estados_rendimiento_objetivo"] = {k: int((estados == k).sum())
-                                                          for k in ("provisional", "reconciliada", "revisada")}
+                                                          for k in ("provisional", "aceptada", "pendiente")}
+    revisadas = principal.loc[principal[f"estado_ret_{h1}_objetivo"] == "ok", f"version_{h1}_objetivo"]
+    veredicto["alcance"]["revisadas_objetivo"] = int((revisadas > 1).sum())
     return ResultadoPiloto(principal, completa, etiquetas, detalles, veredicto, cfg)

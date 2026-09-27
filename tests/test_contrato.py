@@ -242,11 +242,12 @@ def test_precio_para_etiqueta_usa_la_ultima_cotizacion_valida():
 def test_validacion_de_dividendos_y_su_cobertura():
     base = {"simbolo": "SPY", "fecha_ex": dt.date(2025, 12, 19), "monto": 1.9, "fecha_pago": dt.date(2026, 1, 30),
             "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
-            "retirado_utc": pd.NaT, "motivo_retiro": "", "proveedor": "alpaca", "feed": "corporate_actions"}
+            "retirado_utc": pd.NaT, "motivo_retiro": "", "discrepancia": "", "discrepancia_desde_utc": pd.NaT,
+            "proveedor": "alpaca", "feed": "corporate_actions"}
 
     def tabla(*filas):
         t = pd.DataFrame(list(filas))
-        for c in ("disponible_utc", "recibido_utc", "retirado_utc"):
+        for c in ("disponible_utc", "recibido_utc", "retirado_utc", "discrepancia_desde_utc"):
             t[c] = pd.to_datetime(t[c], utc=True)
         return t
 
@@ -259,14 +260,30 @@ def test_validacion_de_dividendos_y_su_cobertura():
     al_reves = dict(base, retirado_utc=pd.Timestamp("2026-01-01T00:00:00Z"), motivo_retiro="otro")
     problemas = ct.validar(tabla(al_reves), ct.DIVIDENDOS)
     assert any("antes de conocerse" in p for p in problemas) and any("motivo_retiro" in p for p in problemas)
+    # Una ausencia abre una discrepancia dentro de la vigencia, con su tipo; sin retirar la versión.
+    ausente = dict(base, discrepancia="ausente", discrepancia_desde_utc=pd.Timestamp("2026-01-07T15:20:00Z"))
+    assert ct.validar(tabla(ausente), ct.DIVIDENDOS) == []
+    for mala, texto in ((dict(ausente, discrepancia="rara"), "discrepancia: solo se admite"),
+                        (dict(ausente, discrepancia=""), "discrepancia: solo se admite"),
+                        (dict(base, discrepancia="ausente"), "discrepancia: solo se admite"),
+                        (dict(ausente, discrepancia_desde_utc=pd.Timestamp("2026-01-01T00:00:00Z")), "fuera de la"),
+                        (dict(corregida, discrepancia="ausente",
+                              discrepancia_desde_utc=pd.Timestamp("2026-01-07T15:20:00Z")), "fuera de la")):
+        assert any(texto in p for p in ct.validar(tabla(mala), ct.DIVIDENDOS)), mala
+    resolucion = pd.DataFrame([{"id_evento": "d1", "simbolo": "SPY", "resolucion": "vigente",
+                                "conocido_utc": pd.Timestamp("2026-01-08T15:20:00Z"), "fuente": "aviso", "nota": ""}])
+    assert ct.validar(resolucion, ct.RESOLUCIONES_DIVIDENDOS) == []
+    assert any("vigente o cancelado" in p for p in ct.validar(resolucion.assign(resolucion="quizas"),
+                                                              ct.RESOLUCIONES_DIVIDENDOS))
+    assert any("repetidas" in p for p in ct.validar(pd.concat([resolucion] * 2), ct.RESOLUCIONES_DIVIDENDOS))
     consulta = {"simbolo": "SPY", "desde": dt.date(2025, 1, 1), "hasta": dt.date(2026, 3, 1),
                 "campo_fecha": "process_date", "recibido_utc": pd.Timestamp("2026-01-05T15:20:00Z"),
                 "estado": "completa", "eventos": 0.0, "calidad": "complete", "tipos": "todos", "consulta": "q1",
                 "proveedor": "alpaca", "feed": "corporate_actions"}
     assert ct.validar(pd.DataFrame([consulta]), ct.COBERTURA_DIVIDENDOS) == []  # vacía, pero consultada
-    mala = dict(consulta, estado="rara", desde=dt.date(2026, 6, 1), eventos=-1.0)
+    mala = dict(consulta, estado="rara", desde=dt.date(2026, 6, 1), eventos=-1.0, campo_fecha="declaration_date")
     problemas = ct.validar(pd.DataFrame([mala]), ct.COBERTURA_DIVIDENDOS)
-    assert len(problemas) == 3
+    assert len(problemas) == 4 and any("campo_fecha" in p for p in problemas)
 
 
 def test_dos_capturas_de_la_misma_hora_marcan_la_vieja_como_reemplazada(mercado):

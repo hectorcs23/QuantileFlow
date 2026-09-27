@@ -20,6 +20,14 @@ manifiestos usados, la configuración, los fallos del nivel implícito, el
 entorno y los hashes de salida. Reprocesar el mismo crudo da los mismos bytes.
 Un evento corporativo distinto de un dividendo en efectivo dentro del rango
 detiene la normalización.
+
+Las **resoluciones** de dividendos (``--resoluciones``; por omisión,
+``<datos>/resoluciones_dividendos.csv`` si existe) son evidencia registrada a
+mano, con su fecha de conocimiento, que resuelve una discrepancia con el
+proveedor (esquema ``contrato.RESOLUCIONES_DIVIDENDOS``). Son una entrada más:
+el manifiesto registra el archivo y su hash, y el resumen de los dividendos
+cuenta versiones, retiros, discrepancias y contradicciones con cada
+normalización, para medir cuánto revisa el proveedor lo ya publicado.
 """
 from __future__ import annotations
 
@@ -43,6 +51,8 @@ def main() -> int:
     a.add_argument("--config", default=str(RAIZ / "configs" / "captura_alpaca.toml"))
     a.add_argument("--config-piloto", default=str(RAIZ / "configs" / "piloto.toml"))
     a.add_argument("--salida", default=None, help="por omisión, data/normalized/alpaca")
+    a.add_argument("--resoluciones", default=None,
+                   help="resoluciones de dividendos (CSV); por omisión, <datos>/resoluciones_dividendos.csv si existe")
     args = a.parse_args()
     entorno = almacen.huella_entorno(RAIZ)
     datos = Path(args.datos)
@@ -50,13 +60,21 @@ def main() -> int:
     with open(args.config, "rb") as f:
         bruto = tomllib.load(f)
     piloto = cargar_config(args.config_piloto)
-    t = alpaca.tablas_para_piloto(datos, args.desde, args.hasta, bruto.get("implicito"), piloto.reglas)
+    ruta_res = Path(args.resoluciones) if args.resoluciones else datos / "resoluciones_dividendos.csv"
+    if args.resoluciones and not ruta_res.is_file():
+        print(f"no existe el archivo de resoluciones {ruta_res}", file=sys.stderr)
+        return 1
+    resoluciones = alpaca.cargar_resoluciones(ruta_res) if ruta_res.is_file() else None
+    t = alpaca.tablas_para_piloto(datos, args.desde, args.hasta, bruto.get("implicito"), piloto.reglas,
+                                  resoluciones=resoluciones)
     if not t.manifiestos:
         print(f"no hay capturas entre {args.desde} y {args.hasta} en {datos}", file=sys.stderr)
         return 1
     tablas = {"cotizaciones": t.cotizaciones, "subyacente": t.subyacente, "dividendos": t.dividendos,
               "cobertura_dividendos": t.cobertura_dividendos}
     salidas = {nombre: almacen.escribir_tabla(tabla, salida / f"{nombre}.parquet") for nombre, tabla in tablas.items()}
+
+    resumen = alpaca.resumen_dividendos(t.dividendos, t.eventos_no_tratados)
 
     def usados(manifiestos, *campos):
         return [{"manifiesto": m["_ruta"], "sha256": almacen.sha256_archivo(datos / m["_ruta"]),
@@ -69,7 +87,12 @@ def main() -> int:
         "capturas": usados(t.manifiestos, "etiqueta", "modo", "feed_opciones"),
         "historico": usados(t.manifiestos_historico, "etiqueta", "feed", "disponible_utc"),
         "eventos": usados(t.manifiestos_eventos, "etiqueta", "simbolos"),
+        "resoluciones": ({"archivo": ruta_res.resolve().relative_to(datos.resolve()).as_posix()
+                          if ruta_res.resolve().is_relative_to(datos.resolve()) else str(ruta_res),
+                          "sha256": almacen.sha256_archivo(ruta_res), "filas": int(len(resoluciones))}
+                         if resoluciones is not None else None),
         "resumenes": t.resumenes, "resumenes_historico": t.resumenes_historico,
+        "dividendos": resumen,
         "implicito_no_identificado": t.fallos_implicito, "eventos_no_tratados": t.eventos_no_tratados,
         "entorno": entorno, "salidas": salidas,
     }, salida / "manifiesto_normalizacion.json")
@@ -83,8 +106,16 @@ def main() -> int:
     for m in t.manifiestos:
         if m.get("modo") == "programada" and (m["fecha"], m["hora"]) not in cortes:
             print(f"  sin histórico SIP del objetivo en {m['etiqueta']}: ejecute scripts/historico_alpaca.py")
+    print(f"  dividendos: {resumen['versiones']} versiones de {resumen['dividendos']} eventos; retiros "
+          f"{resumen['retiros_por_motivo'] or 'ninguno'}; discrepancias abiertas "
+          f"{resumen['discrepancias_abiertas'] or 'ninguna'}"
+          + (f" ({len(resoluciones)} resoluciones de {ruta_res})" if resoluciones is not None else ""))
     for e in t.eventos_no_tratados:
-        print(f"  evento corporativo fuera del rango, no tratado: {e['tipo']} de {e['simbolo']} el {e['fecha']}")
+        if e["tipo"] in alpaca.NO_BLOQUEAN:
+            veces = f", {e['veces']} veces hasta {e['ultima']}" if "veces" in e else ""
+            print(f"  anotación: {e['tipo']} de {e['simbolo']} ({e['id']}) el {e['fecha']}{veces}")
+        else:
+            print(f"  evento corporativo fuera del rango, no tratado: {e['tipo']} de {e['simbolo']} el {e['fecha']}")
     return 0
 
 

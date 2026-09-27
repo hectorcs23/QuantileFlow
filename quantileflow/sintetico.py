@@ -399,7 +399,7 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                       "eventos": float(f - dt.timedelta(days=400) <= pago <= f + dt.timedelta(days=120)),
                       "calidad": "complete", "tipos": "todos", "consulta": f"eventos-sinteticos-{f}",
                       "proveedor": "sintetico", "feed": "dividendos_sinteticos"} for f in todas]
-        # La descarga de la «verdad», meses después, reconcilia las etiquetas de la muestra.
+        # La descarga de la «verdad», meses después, deja aceptadas las etiquetas de la muestra.
         final = recibido_utc.tz_convert("America/New_York").date()
         consultas.append(dict(consultas[-1], desde=final - dt.timedelta(days=400), hasta=final + dt.timedelta(days=120),
                               recibido_utc=recibido_utc, consulta=f"eventos-sinteticos-{final}"))
@@ -407,8 +407,10 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
         verdad["dividendos"] = pd.DataFrame([{
             "simbolo": objetivo, "fecha_ex": ex, "monto": dividendo, "fecha_pago": pago, "clase": "ordinario",
             "disponible_utc": pd.Timestamp(ex - dt.timedelta(days=30), tz="UTC"), "recibido_utc": recibido_utc,
-            "retirado_utc": pd.NaT, "motivo_retiro": "", "proveedor": "sintetico", "feed": "dividendos_sinteticos"}])
-        for tabla, columnas in ((verdad["dividendos"], ("disponible_utc", "recibido_utc", "retirado_utc")),
+            "retirado_utc": pd.NaT, "motivo_retiro": "", "discrepancia": "", "discrepancia_desde_utc": pd.NaT,
+            "proveedor": "sintetico", "feed": "dividendos_sinteticos"}])
+        for tabla, columnas in ((verdad["dividendos"], ("disponible_utc", "recibido_utc", "retirado_utc",
+                                                        "discrepancia_desde_utc")),
                                 (verdad["cobertura"], ("recibido_utc",))):
             for columna in columnas:
                 tabla[columna] = pd.to_datetime(tabla[columna], utc=True).dt.as_unit("us")

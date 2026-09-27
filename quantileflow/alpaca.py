@@ -82,7 +82,9 @@ ESTILO = {"european": "europeo", "american": "americano"}
 TIPO = {"call": "C", "put": "P"}
 EXTRAS_COTIZACIONES = ["bolsa_bid", "bolsa_ask", "condicion", "captura"]
 EXTRAS_SUBYACENTE = ["fuente_precio", "captura"]
-EXTRAS_DIVIDENDOS = ["id_evento", "version", "fecha_registro", "fecha_proceso", "subtipo"]
+EXTRAS_DIVIDENDOS = ["id_evento", "version", "origen", "fecha_registro", "fecha_proceso", "subtipo"]
+# Anotaciones de la normalización de eventos que no son eventos por tratar: no detienen el piloto.
+NO_BLOQUEAN = ("resolucion_sin_efecto", "omitido_tras_confirmar", "listado_tras_cancelar")
 FEED_EVENTOS = "corporate_actions"
 SUFIJO_DIARIO = ".diario.jsonl"
 CODIGO_PLAZO_VENCIDO = 3
@@ -1125,30 +1127,91 @@ def _comparable(consulta, version) -> bool:
             and consulta["desde"] <= fecha <= consulta["hasta"])
 
 
-def normalizar_eventos(raiz_datos):
+def normalizar_eventos(raiz_datos, resoluciones=None):
     """Versiones de dividendos, cobertura de cada consulta y demás eventos corporativos.
 
     **Cobertura** (``contrato.COBERTURA_DIVIDENDOS``): una fila por consulta y
     símbolo pedido, con su intervalo (por ``process_date``), filtros, estado y
     recepción, aunque haya venido vacía o haya fallado.
 
-    **Versiones** (``contrato.DIVIDENDOS``): se recorren las consultas completas
-    en orden de recepción. Un id nuevo, o con otros valores, abre una versión
-    conocida desde esa consulta, y la anterior queda retirada («corregido»). Un
-    id vigente que falta en una consulta **comparable** (completa, con el mismo
-    filtro de calidad, tipos que incluyen dividendos y un intervalo que contiene
-    su fecha de proceso) queda retirado («ausente»). La ausencia no se da por
-    cancelación segura, pero deja de sumarse, y la etiqueta que lo incluía queda
-    revisada. Si reaparece, abre otra versión. Nada se borra.
-    ``disponible_utc`` queda nulo: Alpaca no da la hora del anuncio.
+    **Versiones** (``contrato.DIVIDENDOS``). Se recorren en orden de
+    conocimiento las consultas completas y las ``resoluciones``
+    (``contrato.RESOLUCIONES_DIVIDENDOS``, evidencia registrada a mano):
 
-    Los demás tipos (splits, fusiones, cambios de nombre, etc.) se devuelven
-    aparte: el piloto no los trata. Devuelve
-    ``(dividendos, cobertura, otros_eventos, manifiestos)``.
+    * un id nuevo abre una versión conocida desde esa consulta; con otros
+      valores, la anterior se retira («corregido») y se abre otra;
+    * un id vigente que falta en una consulta **comparable** (completa, con el
+      mismo filtro de calidad, tipos que incluyen dividendos y un intervalo que
+      contiene su fecha de proceso) **no** se retira: abre una discrepancia
+      («ausente»). Repetir la ausencia no la resuelve;
+    * la resuelve evidencia fechada: que el id reaparezca igual (la versión se
+      cierra, «reaparecido», y sigue otra idéntica), que reaparezca con otros
+      valores («corregido») o una resolución;
+    * una resolución actúa sobre el dividendo en su fecha de conocimiento,
+      haya o no una discrepancia abierta. «vigente» cierra la versión
+      («confirmado») y abre otra idéntica, de origen ``resolucion``, que ya no
+      abre discrepancias por ausencia; también devuelve un dividendo cancelado.
+      «cancelado» la cierra («cancelado»). La evidencia fija el estado con esos
+      valores: una omisión posterior de un dividendo confirmado, o un cancelado
+      que el proveedor vuelve a traer igual, no aporta nada nuevo (se cuenta en
+      ``otros_eventos``). Si el proveedor trae un cancelado con **otros**
+      valores, se abre una versión con la discrepancia «reaparece_cancelado»,
+      que solo resuelve otra resolución.
+
+    Nada se borra. ``disponible_utc`` queda nulo: Alpaca no da la hora del
+    anuncio. Los demás tipos (splits, fusiones, cambios de nombre, etc.) y los
+    dividendos sin fecha ex o sin monto se devuelven aparte: el piloto no los
+    trata. Devuelve ``(dividendos, cobertura, otros_eventos, manifiestos)``;
+    en ``otros_eventos`` quedan también, con su tipo, las resoluciones sin
+    dividendo sobre el que actuar (``resolucion_sin_efecto``) y las consultas
+    que contradicen una resolución sin valores nuevos
+    (``omitido_tras_confirmar`` y ``listado_tras_cancelar``, con cuántas veces).
     """
     consultas = _consultas_eventos(raiz_datos)
-    cobertura, versiones, vigentes, otros = [], [], {}, {}
-    for q in consultas:
+    pasos = [(q["recibido"], 0, q["consulta"], q) for q in consultas]
+    if resoluciones is not None and len(resoluciones):
+        problemas = contrato.validar(resoluciones, contrato.RESOLUCIONES_DIVIDENDOS)
+        if problemas:
+            raise ValueError("resoluciones de dividendos: " + "; ".join(problemas))
+        pasos += [(r.conocido_utc, 1, str(r.id_evento), r) for r in resoluciones.itertuples()]
+    cobertura, versiones, vigentes, cancelados, otros = [], [], {}, {}, {}
+
+    def abrir(id_evento, x, desde, calidad, origen="consulta", discrepancia=None):
+        vigentes[id_evento] = len(versiones)
+        versiones.append({"id": id_evento, "datos": x, "recibido": desde, "retirado": None, "motivo": "",
+                          "discrepancia": discrepancia, "calidad": calidad, "origen": origen})
+
+    def cerrar(id_evento, cuando, motivo):
+        v = versiones[vigentes.pop(id_evento)]
+        v.update(retirado=cuando, motivo=motivo)
+        return v
+
+    def anotar(tipo, id_evento, simbolo, cuando):
+        e = otros.setdefault(f"{tipo}-{id_evento}", {"tipo": tipo, "simbolo": simbolo, "fecha": str(cuando.date()),
+                                                     "id": id_evento, "veces": 0})
+        e.update(veces=e["veces"] + 1, ultima=str(cuando.date()))
+
+    for cuando, clase, id_paso, paso in sorted(pasos, key=lambda t: t[:3]):
+        if clase == 1:  # resolución registrada
+            previa = versiones[vigentes[id_paso]] if id_paso in vigentes else cancelados.get(id_paso)
+            if previa is not None and previa["datos"]["symbol"] != paso.simbolo:
+                raise ValueError(f"resolución de {id_paso}: el evento es de {previa['datos']['symbol']}, "
+                                 f"no de {paso.simbolo}")
+            if id_paso in vigentes and not (paso.resolucion == "vigente" and previa["origen"] == "resolucion"):
+                cerrar(id_paso, cuando, "confirmado" if paso.resolucion == "vigente" else "cancelado")
+                if paso.resolucion == "vigente":
+                    abrir(id_paso, previa["datos"], cuando, previa["calidad"], "resolucion")
+                else:
+                    cancelados[id_paso] = previa
+            elif id_paso in cancelados and paso.resolucion == "vigente":
+                del cancelados[id_paso]
+                abrir(id_paso, previa["datos"], cuando, previa["calidad"], "resolucion")
+            else:  # evento desconocido, ya cancelado o ya confirmado
+                otros[f"resolucion-{id_paso}-{iso(cuando)}"] = {
+                    "tipo": "resolucion_sin_efecto", "simbolo": paso.simbolo, "fecha": str(cuando.date()),
+                    "id": id_paso}
+            continue
+        q = paso
         for simbolo in q["simbolos"]:
             cobertura.append({
                 "simbolo": simbolo, "desde": q["desde"], "hasta": q["hasta"], "campo_fecha": "process_date",
@@ -1160,37 +1223,56 @@ def normalizar_eventos(raiz_datos):
             continue
         presentes = {}
         for tipo, x in q["eventos"]:
-            if tipo == "cash_dividends":
+            if tipo == "cash_dividends" and x.get("ex_date") and x.get("rate") is not None:
                 presentes[x["id"]] = x
-            else:
-                otros[x.get("id")] = {"tipo": tipo, "simbolo": x.get("symbol") or x.get("old_symbol")
-                                      or x.get("target_symbol"),
-                                      "fecha": x.get("ex_date") or x.get("effective_date") or x.get("process_date"),
-                                      "id": x.get("id")}
-        for id_evento in sorted(presentes):
-            x, i = presentes[id_evento], vigentes.get(id_evento)
-            if i is not None and _valores_dividendo(versiones[i]["datos"]) == _valores_dividendo(x):
                 continue
-            if i is not None:
-                versiones[i].update(retirado=q["recibido"], motivo="corregido")
-            vigentes[id_evento] = len(versiones)
-            versiones.append({"id": id_evento, "datos": x, "recibido": q["recibido"], "retirado": None, "motivo": "",
-                              "calidad": q["calidad"]})
+            otros[x.get("id")] = {"tipo": tipo if tipo != "cash_dividends" else "cash_dividends_incompleto",
+                                  "simbolo": x.get("symbol") or x.get("old_symbol") or x.get("target_symbol"),
+                                  "fecha": x.get("ex_date") or x.get("effective_date") or x.get("process_date"),
+                                  "id": x.get("id")}
+        recibido = q["recibido"]
+        for id_evento in sorted(presentes):
+            x = presentes[id_evento]
+            if id_evento in vigentes:
+                v = versiones[vigentes[id_evento]]
+                tipo = v["discrepancia"][0] if v["discrepancia"] else None
+                if _valores_dividendo(v["datos"]) != _valores_dividendo(x):
+                    cerrar(id_evento, recibido, "corregido")
+                    # Una corrección responde a una ausencia, no a la resolución que lo canceló.
+                    sigue = ("reaparece_cancelado", recibido) if tipo == "reaparece_cancelado" else None
+                    abrir(id_evento, x, recibido, q["calidad"], discrepancia=sigue)
+                elif tipo == "ausente":
+                    cerrar(id_evento, recibido, "reaparecido")
+                    abrir(id_evento, x, recibido, q["calidad"])
+            elif id_evento in cancelados:
+                if _valores_dividendo(cancelados[id_evento]["datos"]) == _valores_dividendo(x):
+                    anotar("listado_tras_cancelar", id_evento, x["symbol"], recibido)
+                else:
+                    del cancelados[id_evento]
+                    abrir(id_evento, x, recibido, q["calidad"], discrepancia=("reaparece_cancelado", recibido))
+            else:
+                abrir(id_evento, x, recibido, q["calidad"])
         for id_evento, i in sorted(vigentes.items()):
-            if id_evento not in presentes and _comparable(q, versiones[i]):
-                versiones[i].update(retirado=q["recibido"], motivo="ausente")
-                del vigentes[id_evento]
+            v = versiones[i]
+            if id_evento in presentes or v["discrepancia"] is not None or not _comparable(q, v):
+                continue
+            if v["origen"] == "resolucion":
+                anotar("omitido_tras_confirmar", id_evento, v["datos"]["symbol"], recibido)
+            else:
+                v["discrepancia"] = ("ausente", recibido)
     numero, filas = {}, []
     for v in versiones:
-        x = v["datos"]
+        x, (tipo, desde) = v["datos"], v["discrepancia"] or ("", None)
         numero[v["id"]] = numero.get(v["id"], 0) + 1
         filas.append({"simbolo": x["symbol"], "fecha_ex": _fecha(x["ex_date"]), "monto": float(x["rate"]),
                       "fecha_pago": _fecha(x["payable_date"]) if x.get("payable_date") else None,
                       "clase": "especial" if x.get("special") else "ordinario", "disponible_utc": None,
                       "recibido_utc": iso(v["recibido"]),
                       "retirado_utc": iso(v["retirado"]) if v["retirado"] is not None else None,
-                      "motivo_retiro": v["motivo"], "proveedor": PROVEEDOR, "feed": FEED_EVENTOS,
-                      "id_evento": v["id"], "version": numero[v["id"]], "fecha_registro": x.get("record_date"),
+                      "motivo_retiro": v["motivo"], "discrepancia": tipo,
+                      "discrepancia_desde_utc": iso(desde) if desde is not None else None,
+                      "proveedor": PROVEEDOR, "feed": FEED_EVENTOS, "id_evento": v["id"], "version": numero[v["id"]],
+                      "origen": v["origen"], "fecha_registro": x.get("record_date"),
                       "fecha_proceso": x.get("process_date"), "subtipo": x.get("sub_type")})
     filas.sort(key=lambda f: (f["simbolo"], f["fecha_ex"], f["id_evento"], f["version"]))
     tabla = _tabla(filas, contrato.DIVIDENDOS, EXTRAS_DIVIDENDOS)
@@ -1200,8 +1282,52 @@ def normalizar_eventos(raiz_datos):
         problemas = contrato.validar(t, esquema) if len(t) else []
         if problemas:
             raise ValueError(f"{nombre} de Alpaca: " + "; ".join(problemas))
-    return (tabla, cob, sorted(otros.values(), key=lambda e: (str(e["fecha"]), str(e["id"]))),
+    return (tabla, cob, sorted(otros.values(), key=lambda e: (str(e["fecha"]), str(e["id"]), e["tipo"])),
             [q["manifiesto"] for q in consultas])
+
+
+def cargar_resoluciones(ruta) -> pd.DataFrame:
+    """Resoluciones de dividendos registradas a mano (CSV con el esquema ``contrato.RESOLUCIONES_DIVIDENDOS``).
+
+    ``conocido_utc`` se lee como instante UTC (con zona explícita en el
+    archivo). Lanza ``ValueError`` si la tabla no cumple el contrato.
+    """
+    tabla = pd.read_csv(ruta, dtype=str, keep_default_na=False)
+    if "conocido_utc" in tabla:
+        if not tabla["conocido_utc"].str.contains(r"(?:Z|[+-]\d{2}:?\d{2})$", regex=True).all():
+            raise ValueError(f"{ruta}: conocido_utc debe llevar la zona explícita (p. ej., 2026-11-20T15:00:00Z)")
+        tabla["conocido_utc"] = pd.to_datetime(tabla["conocido_utc"], utc=True, format="ISO8601").dt.as_unit("us")
+    for columna, (tipo, obligatoria, _) in contrato.RESOLUCIONES_DIVIDENDOS.items():
+        if columna in tabla and tipo == "texto" and obligatoria:  # una celda vacía es un valor que falta
+            tabla[columna] = tabla[columna].mask(tabla[columna].str.strip() == "")
+    problemas = contrato.validar(tabla, contrato.RESOLUCIONES_DIVIDENDOS)
+    if problemas:
+        raise ValueError(f"{ruta}: " + "; ".join(problemas))
+    return tabla.sort_values(["conocido_utc", "id_evento"], kind="stable").reset_index(drop=True)
+
+
+def resumen_dividendos(dividendos: pd.DataFrame, otros=()) -> dict:
+    """Cuánto revisa el proveedor lo que ya había publicado: versiones, retiros, discrepancias y contradicciones.
+
+    ``otros`` son los demás eventos de ``normalizar_eventos``: de ellos se
+    cuentan las consultas que contradicen una resolución sin valores nuevos.
+    """
+    d = dividendos
+    con = d["discrepancia_desde_utc"].notna() if len(d) else pd.Series(dtype=bool)
+    abiertas = con & d["retirado_utc"].isna() if len(d) else con
+    return {"versiones": int(len(d)),
+            "dividendos": int(d["id_evento"].nunique()) if "id_evento" in d and len(d) else int(len(d)),
+            "retiros_por_motivo": {k: int(n) for k, n in sorted(d.loc[d["retirado_utc"].notna(), "motivo_retiro"]
+                                                                .value_counts().items())} if len(d) else {},
+            "confirmadas_por_resolucion": int((d["origen"] == "resolucion").sum()) if "origen" in d else 0,
+            "discrepancias": {k: int(n) for k, n in sorted(d.loc[con, "discrepancia"].value_counts().items())}
+            if len(d) else {},
+            "discrepancias_abiertas": {k: int(n) for k, n in sorted(d.loc[abiertas, "discrepancia"]
+                                                                    .value_counts().items())} if len(d) else {},
+            "contradicciones_sin_valores_nuevos": {
+                t: int(sum(e.get("veces", 0) for e in otros if e["tipo"] == t))
+                for t in ("omitido_tras_confirmar", "listado_tras_cancelar")},
+            "resoluciones_sin_efecto": int(sum(e["tipo"] == "resolucion_sin_efecto" for e in otros))}
 
 
 @dataclass(frozen=True, eq=False)
@@ -1221,7 +1347,8 @@ class TablasAlpaca:
     eventos_no_tratados: list
 
 
-def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, reglas=None) -> TablasAlpaca:
+def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, reglas=None,
+                       resoluciones=None) -> TablasAlpaca:
     """Cotizaciones, subyacente y dividendos normalizados, con el subyacente implícito si se configura.
 
     ``cfg_implicito`` es la sección ``[implicito]`` de la configuración de
@@ -1248,8 +1375,9 @@ def tablas_para_piloto(raiz_datos, desde=None, hasta=None, cfg_implicito=None, r
     elif partes:
         sub = partes[0]
     sub = sub.sort_values(["sello_snapshot_utc", "subyacente"], kind="stable").reset_index(drop=True)
-    dividendos, cobertura, otros, manifiestos_ev = normalizar_eventos(raiz_datos)
-    en_rango = [e for e in otros if e["fecha"] and (desde is None or _fecha(e["fecha"]) >= _fecha(desde))
+    dividendos, cobertura, otros, manifiestos_ev = normalizar_eventos(raiz_datos, resoluciones)
+    en_rango = [e for e in otros if e["tipo"] not in NO_BLOQUEAN and e["fecha"]
+                and (desde is None or _fecha(e["fecha"]) >= _fecha(desde))
                 and (hasta is None or _fecha(e["fecha"]) <= _fecha(hasta))]
     if en_rango:
         raise ValueError("eventos corporativos no tratados en el rango: "

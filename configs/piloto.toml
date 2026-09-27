@@ -51,10 +51,11 @@ tipo_precio = "observado"
 rendimiento = "total"             # total: dividendos en efectivo sumados en su fecha ex; "precio": sin dividendos.
                                   # Con "total", la etiqueta madura con la primera consulta completa de dividendos
                                   # posterior a su fin que cubre el periodo (provisional).
-margen_proceso_dias = 60.0        # plazo máximo entre la fecha ex y el procesamiento (pago) de un dividendo del
-                                  # objetivo (SPY: unos 42 días). La consulta debe cubrir hasta fin + margen, y una
-                                  # recibida después de ese margen reconcilia la etiqueta: Alpaca siempre devuelve
-                                  # los eventos ya procesados, pero no garantiza cuándo publica los anuncios.
+margen_proceso_dias = 60.0        # regla operativa, no una garantía: plazo supuesto entre la fecha ex y el proceso
+                                  # (pago) de un dividendo del objetivo (SPY: 41-43 días en seis casos). La consulta
+                                  # debe cubrir hasta fin + margen, y una recibida después de ese margen, sin
+                                  # discrepancias abiertas, deja la etiqueta aceptada bajo esta política. Alpaca
+                                  # devuelve los eventos procesados, pero no garantiza cuándo publica los anuncios.
 edad_maxima_s = 60.0              # cotización más vieja respecto del corte: no vale
 spread_relativo_max = 0.0005      # 5 pb: una cotización con spread mayor se descarta como anormal
 retraso_publicacion_s = 900.0     # piso de la madurez de sus etiquetas, también de las ausentes: el SIP

@@ -107,23 +107,32 @@ def _ny(texto):
 
 
 def _dividendos(*versiones):
-    """Versiones ``(fecha_ex, monto, conocida_desde, retirada_en)`` con el esquema de ``contrato.DIVIDENDOS``."""
-    filas = [{"simbolo": "SPY", "fecha_ex": pd.Timestamp(ex).date(), "monto": monto, "fecha_pago": None,
-              "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": desde, "retirado_utc": hasta,
-              "motivo_retiro": "corregido" if hasta is not None else "", "proveedor": "prueba", "feed": "eventos"}
-             for ex, monto, desde, hasta in versiones]
+    """Versiones ``(fecha_ex, monto, conocida_desde, retirada_en[, motivo[, discrepancia_desde[, tipo]]])``.
+
+    Con el esquema ``contrato.DIVIDENDOS``; la discrepancia es «ausente» si no se dice otra cosa.
+    """
+    filas = []
+    for ex, monto, desde, hasta, *resto in versiones:
+        motivo = resto[0] if resto else ("corregido" if hasta is not None else "")
+        discrepancia = resto[1] if len(resto) > 1 else None
+        filas.append({"simbolo": "SPY", "fecha_ex": pd.Timestamp(ex).date(), "monto": monto, "fecha_pago": None,
+                      "clase": "ordinario", "disponible_utc": pd.NaT, "recibido_utc": desde, "retirado_utc": hasta,
+                      "motivo_retiro": motivo,
+                      "discrepancia": (resto[2] if len(resto) > 2 else "ausente") if discrepancia is not None else "",
+                      "discrepancia_desde_utc": discrepancia, "proveedor": "prueba", "feed": "eventos"})
     tabla = pd.DataFrame(filas, columns=list(ct.DIVIDENDOS)).astype({"monto": float})
-    for columna in ("disponible_utc", "recibido_utc", "retirado_utc"):
+    for columna in ("disponible_utc", "recibido_utc", "retirado_utc", "discrepancia_desde_utc"):
         tabla[columna] = pd.to_datetime(tabla[columna], utc=True)
     assert ct.validar(tabla, ct.DIVIDENDOS) == []
     return tabla
 
 
-def _consultas(*recepciones, estado="completa", desde="2025-01-01", hasta="2026-12-31"):
+def _consultas(*recepciones, estado="completa", desde="2025-01-01", hasta="2026-12-31", tipos="todos",
+               calidad="complete"):
     """Consultas de eventos de SPY con el esquema de ``contrato.COBERTURA_DIVIDENDOS``."""
     filas = [{"simbolo": "SPY", "desde": pd.Timestamp(desde).date(), "hasta": pd.Timestamp(hasta).date(),
               "campo_fecha": "process_date", "recibido_utc": r, "estado": estado, "eventos": 0.0,
-              "calidad": "complete", "tipos": "todos", "consulta": f"q{i}", "proveedor": "prueba", "feed": "eventos"}
+              "calidad": calidad, "tipos": tipos, "consulta": f"q{i}", "proveedor": "prueba", "feed": "eventos"}
              for i, r in enumerate(recepciones)]
     tabla = pd.DataFrame(filas, columns=list(ct.COBERTURA_DIVIDENDOS)).astype({"eventos": float})
     tabla["recibido_utc"] = pd.to_datetime(tabla["recibido_utc"], utc=True)
@@ -182,7 +191,8 @@ def test_una_consulta_futura_no_habilita_etiquetas_en_el_pasado():
 
 
 def test_versiones_de_un_dividendo_revisan_la_etiqueta():
-    # Revisión de 8c97b2b, P2: retirada, corrección de importe y cambio de fecha ex, antes y después de conocerlas.
+    # Revisión de 8c97b2b, P2: cancelación, corrección de importe y cambio de fecha ex, antes y después de
+    # conocerlos.
     fechas = cal.sesiones("2025-11-17", "2025-11-21")
     precios = _precios(fechas, [100.0] * len(fechas))
     diarias = _consultas(*[cal.instante(f, "10:21") for f in cal.sesiones("2025-11-17", "2025-11-26")])
@@ -193,12 +203,12 @@ def test_versiones_de_un_dividendo_revisan_la_etiqueta():
         vigentes = e if t is None else et.etiquetas_maduras(e, t)
         return e, vigentes.set_index("sesion")["retorno_log"]
 
-    # Retirada: el dividendo del martes 18 deja de aparecer en la consulta comparable del 24.
-    retirado = _dividendos((fechas[1], 1.8, conocido, revision))
+    # Cancelación registrada el 24: el dividendo del martes 18 deja de sumarse desde entonces.
+    retirado = _dividendos((fechas[1], 1.8, conocido, revision, "cancelado"))
     e, antes = por_sesion(retirado, revision - pd.Timedelta(minutes=1))
     _, despues = por_sesion(retirado, revision)
     lunes = e[e["sesion"] == fechas[0]]
-    assert list(lunes["version"]) == [1, 2] and list(lunes["estado_dividendos"]) == ["provisional", "revisada"]
+    assert list(lunes["version"]) == [1, 2] and list(lunes["estado_dividendos"]) == ["provisional", "provisional"]
     assert lunes.iloc[0]["vigente_hasta_utc"] == lunes.iloc[1]["vigente_desde_utc"] == revision
     assert antes[fechas[0]] == pytest.approx(np.log(101.8 / 100.0)) and despues[fechas[0]] == 0.0
     reconstruida = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=retirado, cobertura=diarias,
@@ -237,19 +247,115 @@ def test_consulta_vacia_distinta_de_fallida_o_inexistente():
     assert corta["motivo"] == "ninguna consulta completa de dividendos cubre el periodo"
 
 
-def test_reconciliacion_despues_del_margen_de_proceso():
+def test_aceptada_despues_del_margen_de_proceso():
     fechas = cal.sesiones("2025-11-17", "2025-11-18")
     precios = _precios(fechas, [100.0, 100.5])
     consultas = _consultas(_ny("2025-11-18 16:00"), _ny("2026-01-20 16:00"))
     e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=consultas,
                              margen_proceso_dias=60)
-    fila = e.iloc[0]
-    assert fila["estado_dividendos"] == "reconciliada" and fila["reconciliada_utc"] == _ny("2026-01-20 16:00")
+    e = e[e["sesion"] == fechas[0]]  # la del 18 no tiene precio final
+    assert list(e["estado_dividendos"]) == ["provisional", "aceptada"] and list(e["version"]) == [1, 1]
+    assert e.iloc[1]["vigente_desde_utc"] == _ny("2026-01-20 16:00")
     assert len(et.etiquetas_maduras(e, _ny("2025-12-01"))) == 1  # provisional ya utilizable
-    assert et.etiquetas_maduras(e, _ny("2025-12-01"), politica="reconciliada").empty
-    assert len(et.etiquetas_maduras(e, _ny("2026-01-21"), politica="reconciliada")) == 1
-    provisional = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=consultas,
-                                       conocido_hasta=_ny("2025-12-01"))
-    assert provisional.iloc[0]["estado_dividendos"] == "provisional"
+    assert et.etiquetas_maduras(e, _ny("2025-12-01"), politica="aceptada").empty
+    assert len(et.etiquetas_maduras(e, _ny("2026-01-21"), politica="aceptada")) == 1
     with pytest.raises(ValueError, match="politica"):
         et.etiquetas_maduras(e, _ny("2026-01-21"), politica="cualquiera")
+
+
+def test_ausencia_sin_resolver_queda_pendiente_y_fuera_de_la_politica_aceptada():
+    # Revalidación de a5e2748, P1: el dividendo del 18 de noviembre falta en la consulta comparable del 20 de enero.
+    fechas = cal.sesiones("2025-11-17", "2025-11-18")
+    precios = _precios(fechas, [100.0, 100.0])
+    conocido, ausente = _ny("2025-11-17 16:00"), _ny("2026-01-20 16:00")
+    diarias = [_ny("2025-11-18 16:00"), ausente, _ny("2026-01-21 16:00"), _ny("2026-03-20 16:00")]
+
+    def etiquetas(dividendos, consultas=diarias, hasta=None):
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=dividendos, cobertura=_consultas(*consultas),
+                                 conocido_hasta=hasta)
+        return e[e["sesion"] == fechas[0]]  # la del 18 no tiene precio final
+
+    sin_resolver = _dividendos((fechas[1], 1.8, conocido, None, "", ausente))
+    e = etiquetas(sin_resolver)
+    assert list(e["estado_dividendos"]) == ["provisional", "pendiente"] and list(e["dividendos"]) == [1.8, 1.8]
+    assert "ausente en una consulta comparable" in e.iloc[1]["motivo"] and "sin resolver" in e.iloc[1]["motivo"]
+    for t in (ausente, _ny("2026-01-21 17:00"), _ny("2026-03-21")):  # ni pasados 60 días, ni repitiendo la ausencia
+        assert et.etiquetas_maduras(e, t, politica="aceptada").empty
+        assert et.etiquetas_maduras(e, t).iloc[0]["estado_dividendos"] == "pendiente"  # valor de diagnóstico, marcado
+    antes = etiquetas(sin_resolver, hasta=ausente - pd.Timedelta(minutes=1))  # antes de la ausencia
+    assert list(antes["estado_dividendos"]) == ["provisional"] and list(antes["dividendos"]) == [1.8]
+    # Reaparece igual el 25 de enero: la discrepancia se resuelve y esa consulta la acepta.
+    resuelta = _ny("2026-01-25 16:00")
+    reaparecido = _dividendos((fechas[1], 1.8, conocido, resuelta, "reaparecido", ausente),
+                              (fechas[1], 1.8, resuelta, None))
+    e = etiquetas(reaparecido, diarias + [resuelta])
+    assert list(e["estado_dividendos"]) == ["provisional", "pendiente", "aceptada"]
+    assert e.iloc[2]["vigente_desde_utc"] == resuelta and e.iloc[2]["dividendos"] == 1.8
+    # Una cancelación registrada el 25 revisa el valor y solo la consulta siguiente lo acepta.
+    cancelado = _dividendos((fechas[1], 1.8, conocido, resuelta, "cancelado", ausente))
+    e = etiquetas(cancelado, diarias + [_ny("2026-01-26 16:00")])
+    assert list(e["estado_dividendos"]) == ["provisional", "pendiente", "provisional", "aceptada"]
+    assert list(e["version"]) == [1, 1, 2, 2] and list(e["dividendos"]) == [1.8, 1.8, 0.0, 0.0]
+    # El 2 de febrero el proveedor lo trae con otro monto: otra discrepancia, que solo resuelve otra resolución.
+    vuelve, confirmado = _ny("2026-02-02 16:00"), _ny("2026-02-05 16:00")
+    conflicto = (fechas[1], 1.9, vuelve, None, "", vuelve, "reaparece_cancelado")
+    e = etiquetas(_dividendos((fechas[1], 1.8, conocido, resuelta, "cancelado", ausente), conflicto),
+                  diarias + [_ny("2026-01-26 16:00"), vuelve])
+    assert list(e["estado_dividendos"]) == ["provisional", "pendiente", "provisional", "aceptada", "pendiente"]
+    assert "cancelado por una resolución y de nuevo en el proveedor" in e.iloc[-1]["motivo"]
+    assert e.iloc[-1]["dividendos"] == 1.9 and e.iloc[-1]["version"] == 3
+    assert et.etiquetas_maduras(e, _ny("2026-03-21"), politica="aceptada").empty
+    confirmada = _dividendos((fechas[1], 1.8, conocido, resuelta, "cancelado", ausente),
+                             conflicto[:3] + (confirmado, "confirmado") + conflicto[5:],
+                             (fechas[1], 1.9, confirmado, None))
+    e = etiquetas(confirmada, diarias + [_ny("2026-01-26 16:00"), vuelve])
+    assert list(e["estado_dividendos"])[-3:] == ["pendiente", "provisional", "aceptada"]
+    assert e.iloc[-1]["vigente_desde_utc"] == _ny("2026-03-20 16:00")  # la primera consulta tras la resolución
+
+
+def test_una_consulta_sin_dividendos_en_sus_tipos_no_confirma_ni_acepta():
+    # Revalidación de a5e2748, P2: una consulta que solo pidió splits no dice nada de los dividendos.
+    fechas = cal.sesiones("2025-11-17", "2025-11-18")
+    precios = _precios(fechas, [100.0, 100.5])
+    tarde = _ny("2026-01-20 16:00")
+
+    def unica(**kw):
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=_dividendos(), cobertura=_consultas(tarde, **kw))
+        return e[e["sesion"] == fechas[0]].iloc[-1]
+
+    splits = unica(tipos="forward_split")
+    assert splits["estado"] == "sin dividendos confirmados"
+    assert "1 consultas sin dividendos en los tipos pedidos no cuentan" in splits["motivo"]
+    assert "con calidad distinta de complete" in unica(calidad="all")["motivo"]
+    for tipos in ("todos", "cash_dividend", "forward_split,cash_dividend"):
+        assert unica(tipos=tipos)["estado_dividendos"] == "aceptada"
+
+
+def test_la_vista_de_un_instante_coincide_con_la_reconstruccion_truncada():
+    # Revalidación de a5e2748, P3: mismos retornos, madurez y estados; nada posterior al instante.
+    fechas = cal.sesiones("2025-11-17", "2025-11-21")
+    precios = _precios(fechas, [100.0, 101.0, 99.5, 100.0, 100.5])
+    conocido, correccion, ausente, reaparece = (_ny("2025-11-10 16:00"), _ny("2025-11-25 16:00"),
+                                                _ny("2026-01-22 16:00"), _ny("2026-01-27 16:00"))
+    dividendos = _dividendos((fechas[2], 1.5, conocido, correccion),
+                             (fechas[2], 1.55, correccion, reaparece, "reaparecido", ausente),
+                             (fechas[2], 1.55, reaparece, None))
+    recepciones = [cal.instante(f, "16:00") for f in fechas] + [correccion, ausente, reaparece,
+                                                               _ny("2026-01-20 16:00"), _ny("2026-01-28 16:00")]
+    cobertura = _consultas(*sorted(recepciones))
+    kw = dict(horizontes=(1, 2), dividendos=dividendos, cobertura=cobertura)
+    historia = et.etiquetas_retorno(precios, **kw)
+    assert {"provisional", "pendiente", "aceptada"} <= set(historia["estado_dividendos"])
+    columnas = ["sesion", "horizonte", "retorno_log", "label_available_at", "estado_dividendos", "version",
+                "tramo", "vigente_desde_utc", "vigente_hasta_utc", "motivo"]
+    instantes = sorted(set(recepciones)) + [_ny("2025-12-01 12:00"), _ny("2026-01-19 12:00"), _ny("2026-03-01")]
+    for t in instantes:
+        truncada = et.etiquetas_retorno(precios, conocido_hasta=t, **kw)
+        for politica in et.POLITICAS:
+            a = et.etiquetas_maduras(historia, t, politica)[columnas].reset_index(drop=True)
+            b = et.etiquetas_maduras(truncada, t, politica)[columnas].reset_index(drop=True)
+            pd.testing.assert_frame_equal(a, b)
+            assert a["vigente_hasta_utc"].isna().all()  # el fin del tramo es futuro: no se expone
+    # El caso de la revisión: el 1 de diciembre, la historia completa ya no dice «aceptada».
+    vista = et.etiquetas_maduras(historia, _ny("2025-12-01 12:00"))
+    assert "aceptada" not in set(vista["estado_dividendos"])

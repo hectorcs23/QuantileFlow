@@ -3,6 +3,7 @@
 Las respuestas tienen la forma de las reales (verificada el 26 de septiembre de
 2026), pero sus precios salen del mercado **sintético**.
 """
+import dataclasses
 import datetime as dt
 import gzip
 import http.client
@@ -593,10 +594,15 @@ def test_versiones_y_cobertura_de_los_eventos_corporativos(tmp_path):
         ("d1", 1), ("d1", 2), ("d2", 1)]
     assert (d.loc[("d1", 1), "monto"], d.loc[("d1", 1), "recibido_utc"], d.loc[("d1", 1), "retirado_utc"],
             d.loc[("d1", 1), "motivo_retiro"]) == (1.8, dia[15], dia[16], "corregido")
-    assert (d.loc[("d1", 2), "monto"], d.loc[("d1", 2), "recibido_utc"], d.loc[("d1", 2), "retirado_utc"],
-            d.loc[("d1", 2), "motivo_retiro"]) == (1.85, dia[16], dia[18], "ausente")
+    # Revalidación de a5e2748, P1: la ausencia del 18 no retira la versión; abre una discrepancia sin resolver,
+    # y la consulta del 20, que tampoco la trae, no la resuelve.
+    assert (d.loc[("d1", 2), "monto"], d.loc[("d1", 2), "recibido_utc"], d.loc[("d1", 2), "motivo_retiro"],
+            d.loc[("d1", 2), "discrepancia"], d.loc[("d1", 2), "discrepancia_desde_utc"]) == (
+        1.85, dia[16], "", "ausente", dia[18])
+    assert pd.isna(d.loc[("d1", 2), "retirado_utc"])
     # La consulta del 20 no llega al 30 de enero (proceso de d2): su ausencia allí no dice nada.
     assert pd.isna(d.loc[("d2", 1), "retirado_utc"]) and d.loc[("d2", 1), "clase"] == "especial"
+    assert pd.isna(d.loc[("d2", 1), "discrepancia_desde_utc"]) and set(tabla["origen"]) == {"consulta"}
     assert d["disponible_utc"].isna().all()  # Alpaca no da la hora del anuncio
     assert list(cobertura["estado"]) == ["completa"] * 5 + ["fallida", "completa"]
     assert list(cobertura["eventos"]) == [0.0, 1.0, 1.0, 2.0, 1.0, 0.0, 0.0]
@@ -606,6 +612,121 @@ def test_versiones_y_cobertura_de_los_eventos_corporativos(tmp_path):
         al.tablas_para_piloto(tmp_path, "2025-06-01", "2025-06-30")
     t = al.tablas_para_piloto(tmp_path, "2025-11-17", "2025-11-18")  # fuera del rango: se informa
     assert t.eventos_no_tratados == otros and len(t.dividendos) == 3 and len(t.cobertura_dividendos) == 7
+
+
+def consulta_eventos(directorio, cuerpo, recibido, tipos=None, etiqueta=None):
+    """Una consulta de eventos recibida en ``recibido``; con ``tipos``, filtrada como en la API."""
+    reloj = Reloj(recibido)
+    fecha = reloj().tz_convert("America/New_York").date()
+    solicitud = al.pedir_eventos(["SPY"], fecha - dt.timedelta(days=400), fecha + dt.timedelta(days=120))
+    if tipos:
+        solicitud = dataclasses.replace(solicitud, params=tuple(sorted(solicitud.params + (("types", tipos),))))
+    api = API({"/v1/corporate-actions": lambda p: dict(cuerpo, next_page_token=None)})
+    etiqueta = etiqueta or f"eventos-{reloj():%Y%m%dT%H%M%S}"
+    m, _ = al.descargar_eventos(cliente(api, reloj), solicitud, directorio,
+                                {"fecha": str(fecha), "etiqueta": etiqueta, "simbolos": ["SPY"]})
+    assert m["estado"] == "completa"
+
+
+def test_una_ausencia_sin_resolver_deja_pendiente_la_etiqueta_despues_de_60_dias(tmp_path):
+    # Revalidación de a5e2748, P1 de punta a punta: del crudo a la vista de la política aceptada.
+    d1 = {"corporate_actions": {"cash_dividends": [dividendo_json("d1", "2025-11-18", 1.8)]}}
+    vacia = {"corporate_actions": {}}
+    consulta_eventos(tmp_path, d1, "2025-11-18T21:00:00Z")  # después del fin: habilita
+    ausencias = [pd.Timestamp(t) for t in ("2025-11-25T21:00:00Z", "2026-01-27T21:00:00Z", "2026-02-27T21:00:00Z")]
+    for t in ausencias:  # la primera abre la discrepancia; repetirla, también pasados 60 días, no la resuelve
+        consulta_eventos(tmp_path, vacia, t)
+    # P2: una consulta que solo pidió splits no dice nada de los dividendos, ni ausencia ni presencia.
+    consulta_eventos(tmp_path, vacia, "2026-03-02T21:00:00Z", tipos="forward_split")
+    tabla, cobertura, otros, _ = al.normalizar_eventos(tmp_path)
+    assert len(tabla) == 1 and pd.isna(tabla.loc[0, "retirado_utc"]) and otros == []
+    assert (tabla.loc[0, "discrepancia"], tabla.loc[0, "discrepancia_desde_utc"]) == ("ausente", ausencias[0])
+    assert list(cobertura["tipos"]) == ["todos"] * 4 + ["forward_split"]
+    precios = pd.Series([100.0, 100.0], index=FECHAS)
+
+    def etiqueta(hasta=None):
+        e = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla, cobertura=cobertura,
+                                 margen_proceso_dias=60, conocido_hasta=hasta)
+        return e[e["sesion"] == FECHAS[0]]
+
+    e = etiqueta()
+    assert list(e["estado_dividendos"]) == ["provisional", "pendiente"] and list(e["dividendos"]) == [1.8, 1.8]
+    for t in ausencias[1:] + [pd.Timestamp("2026-06-01T00:00:00Z")]:
+        assert et.etiquetas_maduras(e, t, politica="aceptada").empty
+        assert et.etiquetas_maduras(e, t).iloc[0]["estado_dividendos"] == "pendiente"
+    antes = etiqueta(ausencias[0] - pd.Timedelta(seconds=1))  # la versión previa se reconstruye intacta
+    assert list(antes["estado_dividendos"]) == ["provisional"] and list(antes["dividendos"]) == [1.8]
+    # Con solo la consulta de splits después del fin, el rendimiento total no se confirma.
+    solo_splits = et.etiquetas_retorno(precios, horizontes=(1,), dividendos=tabla.iloc[:0],
+                                       cobertura=cobertura.iloc[[4]], margen_proceso_dias=60)
+    assert solo_splits.iloc[0]["estado"] == "sin dividendos confirmados"
+    assert "sin dividendos en los tipos pedidos" in solo_splits.iloc[0]["motivo"]
+
+
+def test_resoluciones_registradas_resuelven_y_fijan_el_estado_del_dividendo(tmp_path):
+    # Revalidación de a5e2748, P1: la resolución exige evidencia registrada con su fecha de conocimiento.
+    def cuerpo(*montos):
+        return {"corporate_actions": {"cash_dividends": [dividendo_json("d1", "2025-11-18", m) for m in montos]}}
+
+    dia = {n: pd.Timestamp(f"2025-11-{n}T21:00:00Z") for n in range(14, 25)}
+    for n, c in ((14, cuerpo(1.8)), (15, cuerpo()), (16, cuerpo()), (17, cuerpo(1.8)), (18, cuerpo()),
+                 (19, cuerpo()), (20, cuerpo()), (21, cuerpo(1.8)), (22, cuerpo(1.9)), (23, cuerpo()),
+                 (24, cuerpo(1.9))):
+        consulta_eventos(tmp_path, c, dia[n])
+    hora = {n: pd.Timestamp(f"2025-11-{n}T12:00:00Z") for n in (19, 21, 25, 26)}
+    ruta = tmp_path / "resoluciones_dividendos.csv"
+    ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n"
+                    "d1,SPY,vigente,2025-11-19T12:00:00Z,aviso del emisor,\n"
+                    "d1,SPY,cancelado,2025-11-21T12:00:00Z,aviso del emisor,prueba\n"
+                    "d1,SPY,vigente,2025-11-25T12:00:00Z,aviso del emisor,\n"
+                    "d9,SPY,vigente,2025-11-25T12:00:00Z,aviso del emisor,sin evento\n"
+                    "d1,SPY,vigente,2025-11-26T12:00:00Z,aviso del emisor,ya confirmado\n")
+    resoluciones = al.cargar_resoluciones(ruta)
+    assert ct.validar(resoluciones, ct.RESOLUCIONES_DIVIDENDOS) == []
+    tabla, _, otros, _ = al.normalizar_eventos(tmp_path, resoluciones)
+    assert ct.validar(tabla, ct.DIVIDENDOS) == []
+    columnas = ["monto", "recibido_utc", "retirado_utc", "motivo_retiro", "discrepancia", "discrepancia_desde_utc",
+                "origen"]
+    filas = [tuple(None if pd.isna(x) else x for x in fila) for fila in tabla[columnas].itertuples(index=False)]
+    assert filas == [
+        (1.8, dia[14], dia[17], "reaparecido", "ausente", dia[15], "consulta"),  # el 16 repite la ausencia
+        (1.8, dia[17], hora[19], "confirmado", "ausente", dia[18], "consulta"),
+        # Confirmado: las omisiones del 19 y el 20 ya no abren discrepancias.
+        (1.8, hora[19], hora[21], "cancelado", "", None, "resolucion"),
+        # Cancelado: el 21 lo trae igual (nada nuevo); el 22, con otro monto: discrepancia hasta otra resolución,
+        # que ni la ausencia del 23 ni la reaparición del 24 resuelven.
+        (1.9, dia[22], hora[25], "confirmado", "reaparece_cancelado", dia[22], "consulta"),
+        (1.9, hora[25], None, "", "", None, "resolucion")]
+    anotados = {(e["tipo"], e["id"]): e for e in otros}
+    assert set(anotados) == {("omitido_tras_confirmar", "d1"), ("listado_tras_cancelar", "d1"),
+                             ("resolucion_sin_efecto", "d9"), ("resolucion_sin_efecto", "d1")}
+    assert anotados[("omitido_tras_confirmar", "d1")]["veces"] == 2
+    assert anotados[("listado_tras_cancelar", "d1")]["veces"] == 1
+    # Las anotaciones no detienen el piloto aunque caigan en su rango.
+    t = al.tablas_para_piloto(tmp_path, "2025-11-17", "2025-11-30", resoluciones=resoluciones)
+    assert len(t.dividendos) == 5 and len(t.eventos_no_tratados) == 4
+    assert al.resumen_dividendos(tabla, otros) == {
+        "versiones": 5, "dividendos": 1,
+        "retiros_por_motivo": {"cancelado": 1, "confirmado": 2, "reaparecido": 1},
+        "confirmadas_por_resolucion": 2, "discrepancias": {"ausente": 2, "reaparece_cancelado": 1},
+        "discrepancias_abiertas": {}, "contradicciones_sin_valores_nuevos": {
+            "omitido_tras_confirmar": 2, "listado_tras_cancelar": 1}, "resoluciones_sin_efecto": 2}
+    # Sin las resoluciones decide solo el proveedor: cada reaparición resuelve una ausencia y el 22 corrige.
+    sin, _, _, _ = al.normalizar_eventos(tmp_path)
+    r = al.resumen_dividendos(sin)
+    assert (r["retiros_por_motivo"], r["discrepancias"], r["discrepancias_abiertas"]) == (
+        {"corregido": 1, "reaparecido": 3}, {"ausente": 3}, {})
+    # Una resolución de otro símbolo, sin zona o repetida no se acepta.
+    for linea, error in (("d1,QQQ,vigente,2025-11-19T12:00:00Z,x,", "el evento es de SPY"),
+                         ("d1,SPY,vigente,2025-11-19 12:00,x,", "zona explícita"),
+                         ("d1,SPY,quizas,2025-11-19T12:00:00Z,x,", "resolucion: solo se admite")):
+        ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n" + linea + "\n")
+        with pytest.raises(ValueError, match=error):
+            al.normalizar_eventos(tmp_path, al.cargar_resoluciones(ruta))
+    ruta.write_text("id_evento,simbolo,resolucion,conocido_utc,fuente,nota\n"
+                    + "d1,SPY,vigente,2025-11-19T12:00:00Z,x,\n" * 2)
+    with pytest.raises(ValueError, match="repetidas"):
+        al.cargar_resoluciones(ruta)
 
 
 def test_objetivo_del_sip_historico_de_punta_a_punta(mercado, tmp_path):

@@ -272,9 +272,16 @@ def test_etiqueta_del_objetivo_madura_con_su_publicacion_y_su_consulta(resultado
     assert list(objetivo["label_available_at"]) == esperado
     assert (objetivo["consulta_habilitante_utc"] == objetivo["label_available_at"]).all()
     assert (referencia["label_available_at"] == referencia["label_end_at"]).all()
-    fila = objetivo.iloc[[0]]
-    assert et.etiquetas_maduras(fila, esperado[0] - pd.Timedelta(seconds=1)).empty
-    assert len(et.etiquetas_maduras(fila, esperado[0])) == 1
+    # Todos los tramos de la primera etiqueta: la vista de un instante da el vigente entonces, sin el futuro.
+    primera, todas = objetivo.iloc[0], resultado.etiquetas
+    tramos = todas[(todas["serie"] == "objetivo") & (todas["sesion"] == primera["sesion"])
+                   & (todas["horizonte"] == primera["horizonte"])]
+    assert list(tramos["estado_dividendos"]) == ["provisional", "aceptada"]
+    assert et.etiquetas_maduras(tramos, esperado[0] - pd.Timedelta(seconds=1)).empty
+    vista = et.etiquetas_maduras(tramos, esperado[0])
+    assert len(vista) == 1 and vista.iloc[0]["estado_dividendos"] == "provisional"
+    assert vista["vigente_hasta_utc"].isna().all()
+    assert et.etiquetas_maduras(tramos, esperado[0], politica="aceptada").empty
     # Con la consulta a las 09:50, manda la publicación del SIP: 15 minutos después del corte.
     cot, sub, verdad = mercado
     temprana = verdad["cobertura"].assign(recibido_utc=verdad["cobertura"]["recibido_utc"] - pd.Timedelta(minutes=31))
@@ -381,6 +388,14 @@ def test_rendimiento_total_sin_dividendos_queda_ausente(cfg, mercado, resultado)
     assert sin.dictamen["alcance"]["dividendos_objetivo"].startswith("sin consulta")
     criterio = next(c for c in sin.dictamen["criterios"] if c["criterio"].startswith("Etiqueta del objetivo"))
     assert criterio["valor"] == 0.0 and criterio["critico"]
+    # Revalidación de a5e2748, P2: una consulta que solo pidió splits tampoco habilita, y el alcance lo dice.
+    _, _, verdad = mercado
+    splits = verdad["cobertura"].assign(tipos="forward_split")
+    solo = pl.ejecutar(cot, sub, FECHAS, cfg, dividendos=verdad["dividendos"], cobertura=splits)
+    assert (solo.principal["estado_ret_1_objetivo"] == "sin dividendos confirmados").all()
+    assert solo.dictamen["alcance"]["dividendos_objetivo"] == (
+        "sin consulta completa que pueda confirmar dividendos: el rendimiento total queda ausente; "
+        f"{len(splits)} consultas sin dividendos en los tipos pedidos no cuentan")
     # Con la convención de precio no hacen falta: las dos columnas coinciden.
     datos = dict(cfg.fuente, objetivo=dict(cfg.fuente["objetivo"], rendimiento="precio"))
     precio = pl.ejecutar(cot, sub, FECHAS, pl.config_desde_dict(datos)).principal
