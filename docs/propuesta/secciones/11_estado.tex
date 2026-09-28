@@ -1,0 +1,271 @@
+% ============================================================================
+\clearpage
+\section{Estado del proyecto al 28 de septiembre de 2026}\label{sec:estado}
+% ============================================================================
+
+Las secciones anteriores describen el sistema tal como se propuso el 26 de septiembre. Esta sección cuenta
+qué se construyó desde entonces, qué funciona ya, qué cambió respecto de la propuesta y qué falta. Refleja
+el estado de la mañana del lunes 28 de septiembre de 2026, antes de la primera sesión capturada de forma
+programada. El detalle de cada paso está en los documentos del repositorio: el resumen de la sesión con
+Alpaca, la descripción de la fuente y las respuestas a cada revisión.
+
+\begin{ideaclave}[En pocas palabras]
+\begin{itemize}
+\item \textbf{La idea.} Cada mañana, a las 09:45 de Nueva York, se mide cuánto más cuesta protegerse de una
+caída del S\&P~500 que apostar a una subida (el RR25 de las opciones SPXW). Después se comprueba si su
+cambio de un día a otro anticipa la dirección o el riesgo de la bolsa, medida con SPY.
+\item \textbf{Lo logrado.} Hay fuente de datos, un programa que mide y calcula lo que la bolsa hizo después,
+y un proceso automático que guarda los precios cada día hábil. Está instalado, probado y confirmado por una
+verificación independiente.
+\item \textbf{Lo que falta.} Vigilar las primeras 3--5 sesiones, juntar 20--40 para el piloto y, con bastante
+más historia, hacer la prueba predictiva con reglas fijadas de antemano.
+\item \textbf{Lo que todavía no se sabe.} Si la señal predice algo. No hay ningún resultado sobre eso.
+\end{itemize}
+\end{ideaclave}
+
+\subsection{Qué se construyó}\label{sec:estado_construido}
+
+La \tabref{tab:construido} resume las piezas. Las comprueban 203 pruebas automáticas que no usan la red. La
+batería también pasa en Windows y con Python obligado a declarar la codificación de cada texto.
+
+\begin{table}[H]
+\centering\small
+\caption{Piezas construidas y su estado.}
+\label{tab:construido}
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight}p{3.3cm} Y >{\RaggedRight\arraybackslash}p{3.0cm}@{}}
+\toprule
+\encab{Pieza} & \encab{Qué hace} & \encab{Estado}\\
+\midrule
+Núcleo de referencia & Los métodos de este documento, con filtros causales, cuantiles con mesetas y
+volatilidad implícita robusta. & Corregido\\
+Pipeline del piloto & Ingesta, controles, medidas (RR25, asimetría y paridad), etiquetas, informe y
+manifiesto reproducible. & Listo, con plantilla sintética\\
+Adaptador de Alpaca & Reintentos, crudo inmutable con sus hashes, normalización al contrato y nivel
+implícito de SPX. & Verificado con datos reales\\
+Captura diaria & Ráfaga 5~s antes de las 09:45 y de las 10:00, página a página, con recuperación y un
+estado por hora. & Instalada el 27 de septiembre\\
+Histórico del objetivo & SIP de SPY en cada corte, 15 minutos después, y dividendos de SPY. & Instalado el
+27 de septiembre\\
+Etiquetas y dividendos & Rendimiento total y de precio de SPY, con dividendos versionados y sus
+discrepancias. & Listo\\
+Revisión de la operación & Estado, puntualidad, respaldo, SIP y dividendos de cada corte. & En uso desde el
+28 de septiembre\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Datos: Alpaca y la captura hacia adelante}\label{sec:estado_datos}
+
+Alpaca se verificó el 26 de septiembre con su API y su documentación (\tabref{tab:alpaca}). El hallazgo que
+más condiciona el plan es que \textbf{no guarda cotizaciones pasadas de opciones}: el bid/ask de las 09:45
+de sesiones anteriores no se puede reconstruir. Por eso la muestra se captura hacia adelante, desde el 28 de
+septiembre.
+
+\begin{table}[H]
+\centering\small
+\caption{Qué ofrece Alpaca para este proyecto (verificado el 26 de septiembre de 2026).}
+\label{tab:alpaca}
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight}p{3.6cm} Y@{}}
+\toprule
+\encab{Tema} & \encab{Resultado}\\
+\midrule
+SPXW & Disponible: opciones europeas, liquidación PM y vencimientos todos los días hábiles.\\
+Historia de cotizaciones & \textbf{No hay.} Solo barras y operaciones de opciones desde febrero de 2024.\\
+Nivel de SPX & \textbf{No hay.} Se estima por paridad con el vencimiento SPXW más cercano.\\
+Feed gratuito (\texttt{indicative}) & Según Alpaca, sus cotizaciones están \emph{modificadas}: no son el NBBO
+de OPRA.\\
+Feed OPRA & Requiere el plan Algo Trader Plus (99~USD al mes) y firmar el acuerdo de OPRA.\\
+SPY & Cotización IEX en tiempo real; NBBO consolidado (SIP) consultable 15 minutos después; dividendos en los
+eventos corporativos, sin garantía de cuándo se publican.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La primera verificación con datos reales usó las últimas cotizaciones del viernes 25 al cierre. No es una
+sesión de apertura, pero mostró cómo es el feed gratuito:
+\begin{itemize}
+\item llegaron cotizaciones para los 3\,250 contratos pedidos;
+\item solo el 9--15\,\% de los precios de SPXW cae en la grilla de ticks de la bolsa, cuando en un NBBO real
+caerían todos;
+\item entre el 20 y el 28\,\% de los pares de SPXW viola la banda de la paridad;
+\item en el modo descriptivo del cierre, que no es elegible para el piloto, el RR25 a 30 días fue de
+$-3.08$ puntos en SPXW y de $-3.20$ en SPY, con una sonrisa coherente.
+\end{itemize}
+Con este feed, los residuos de paridad no sirven como señal ni como control fino de calidad, y sin OPRA no se
+puede medir cuánto sesga el RR25. El piloto mide el feed \texttt{indicative}; la decisión sobre OPRA se toma
+con las primeras sesiones reales.
+
+\subsection{La captura diaria}\label{sec:estado_captura}
+
+La captura corre en GitHub Actions, dentro de un repositorio \textbf{privado}: los datos de Alpaca y de OPRA no
+se pueden redistribuir, y el repositorio del código es público. Los workflows descargan el código del
+repositorio público en un commit fijo, hoy \texttt{4ffde8a}, y cada registro guarda el commit usado. Cambiar
+ese commit es cambiar la versión de medición.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d11_jornada}}
+\caption{Jornada de captura en hora de Nueva York (EDT). Cada hora de corte tiene su disparo y su respaldo,
+en máquinas separadas, y una compuerta deja arrancar solo a los que llegan a tiempo. Los horarios son los
+programados: GitHub puede retrasarlos, y los registros miden el arranque real.}
+\label{fig:jornada}
+\end{figure}
+
+Cada corte termina en un estado: \texttt{completa}, \texttt{parcial}, \texttt{fallida} o, si no hubo captura,
+\texttt{perdida}. Cada ejecución deja un registro, también cuando falla al iniciar o después de capturar.
+Tres mecanismos protegen la captura:
+\begin{itemize}
+\item un diario por página permite recuperar una captura interrumpida;
+\item un plazo de preparación deja llegar a tiempo al respaldo;
+\item un plazo absoluto impide que un proceso colgado siga corriendo.
+\end{itemize}
+Solo se guarda el crudo: las tablas se reconstruyen a partir de él, y reprocesarlo da los mismos bytes. Las
+credenciales nunca se escriben en un archivo.
+
+\subsection{Objetivo, etiquetas y dividendos}\label{sec:estado_objetivo}
+
+El piloto separa tres papeles que no se mezclan:
+\begin{itemize}
+\item \textbf{señal}: las opciones SPXW;
+\item \textbf{referencia de las opciones}: el nivel implícito de SPX, que usan los controles y las medidas de
+la cadena;
+\item \textbf{objetivo}: SPY observado en el SIP, con el rendimiento total (con dividendos) y el de precio por
+separado.
+\end{itemize}
+
+Las etiquetas miden 1 y 5 sesiones, con la misma hora inicial y final. Alpaca no garantiza cuándo publica un
+dividendo, así que cada dividendo se guarda en versiones, con la fecha desde la que se conoce cada una. Si
+una consulta ya no trae un dividendo, o lo trae sin fecha ex o sin monto, se abre una discrepancia. Las
+etiquetas que podría afectar quedan \emph{pendientes} hasta que la resuelva evidencia fechada. Una etiqueta
+se acepta cuando una consulta hecha al menos 60 días después de su fin no deja discrepancias abiertas: es
+una regla, no una garantía. El entrenamiento solo usa las etiquetas que ya habrían madurado en la fecha
+simulada.
+
+\subsection{Revisiones externas}\label{sec:estado_revisiones}
+
+Cada entrega pasó por una revisión externa. Cada hallazgo se reprodujo, se convirtió en una prueba de
+regresión y se corrigió (\tabref{tab:revisiones}). Entre tanto, la batería pasó de 142 a 203 pruebas.
+
+\begin{table}[H]
+\centering\small
+\caption{Rondas de revisión y su resultado.}
+\label{tab:revisiones}
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight}p{3.1cm} Y >{\RaggedRight\arraybackslash}p{2.5cm}@{}}
+\toprule
+\encab{Revisión} & \encab{Qué encontró o pidió} & \encab{Corrección}\\
+\midrule
+\texttt{e2b92f0} & Ocho hallazgos, entre ellos la elegibilidad estricta, los estados de captura y la
+separación de fuentes. & \texttt{79c1554}\\
+\texttt{d815bdd} & Separar señal, referencia y objetivo; objetivo SPY observado; dividendos; recuperación de
+capturas. & \texttt{03f2230} y siguientes\\
+\texttt{8c97b2b} & Cobertura de dividendos aparte; versiones de eventos y etiquetas; plazo para el respaldo. &
+\texttt{6f0e748}, \texttt{f2a5663}\\
+\texttt{a5e2748} & Una ausencia no retira un dividendo, sino que abre una discrepancia; estado puntual de las
+etiquetas. & \texttt{c5aaded}, \texttt{8316540}\\
+\texttt{5c15028} & Un dividendo sin fecha ex o sin monto deja pendientes las etiquetas afectadas. &
+\texttt{7fb0585}\\
+Cierre de \texttt{b240dc2} & Sin defectos nuevos. Después: registro de cada ejecución a prueba de errores y
+revisión de la operación. & \texttt{7a59d04}, \texttt{bbbdc6e}\\
+Cambios operativos & Registro también al fallar al iniciar; ruta explícita de resoluciones; pruebas en
+Windows. & \texttt{4ffde8a}\\
+Verificación de \texttt{4ffde8a} & Sin defectos; recomienda fijarlo en los workflows. & \texttt{e1a7832}\\
+Instalación & Verificación independiente del repositorio de datos y de la prueba manual. & Confirmada\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Instalación y aceptación}\label{sec:estado_instalacion}
+
+El repositorio de datos se instaló la noche del 27 de septiembre, con las plantillas revisadas, idénticas
+byte a byte a las del commit \texttt{e1a7832}. La prueba manual salió bien:
+\begin{itemize}
+\item la captura inmediata quedó \texttt{completa}, con 3\,250 cotizaciones, y su registro guarda el commit
+\texttt{4ffde8a} sin cambios locales;
+\item el histórico descargó completo el SIP de SPY en los 10 cortes del 21 al 25 de septiembre, además de los
+dividendos;
+\item no apareció ninguna credencial en los datos guardados.
+\end{itemize}
+Una verificación independiente descargó el repositorio y reprodujo los mismos resultados.
+
+\begin{criterio}[Criterio para aceptar la operación]
+Se revisan 3--5 sesiones reales, desde el 28 de septiembre, y en los dos cortes:
+\begin{itemize}
+\item el estado, el retraso del arranque, la preparación, el margen de la ráfaga y las respuestas tardías;
+\item el comportamiento del respaldo cuando actúe;
+\item el SIP y los dividendos, no solo el código de salida;
+\item que las capturas del horario regular sean elegibles para el piloto y que cada registro conserve el
+commit fijado.
+\end{itemize}
+\end{criterio}
+
+\begin{notatecnica}[Mantenimiento antes del 19 de octubre]
+GitHub pasará la etiqueta \texttt{ubuntu-latest} de Ubuntu 24.04 a 26.04 de forma gradual entre el 19 de
+octubre y el 19 de noviembre \citep{github2026}. Eso cae en medio del piloto, y unas corridas usarían una
+imagen y otras, la otra. Antes de esa fecha, las plantillas se fijarán en \texttt{ubuntu-24.04}, la imagen que
+ya se usa, junto con versiones de las acciones hechas para Node.js 24. El cambio se instalará con una corrida
+manual de prueba.
+\end{notatecnica}
+
+\subsection{Qué falta}\label{sec:estado_falta}
+
+La \figref{fig:ruta} ordena lo que queda. Cada paso exige que el anterior haya superado su criterio.
+
+\begin{figure}[H]
+\centering
+\resizebox{\linewidth}{!}{\input{diagramas/d11_ruta}}
+\caption{Estado y ruta al 28 de septiembre de 2026.}
+\label{fig:ruta}
+\end{figure}
+
+\begin{enumerate}
+\item \textbf{Aceptación de la captura}, del 28 de septiembre al 2 de octubre: revisar 3--5 sesiones con el
+criterio anterior.
+\item \textbf{Mantenimiento de las plantillas}, antes del 19 de octubre.
+\item \textbf{Piloto de medición}, de 20--40 sesiones: la sesión 20 es el 23 de octubre y la 40, el 20 de
+noviembre. Su salida es un informe reproducible con un dictamen de los datos: «apto para ampliar historia»,
+«apto con limitaciones» o «insuficiente». Cualquier relación con los rendimientos que se vea ahí es
+exploratoria.
+\item \textbf{Protocolo predictivo}, escrito antes de mirar el periodo reservado
+(\secref{sec:estado_cambios}).
+\item \textbf{Historia ampliada.} Entre 20 y 40 sesiones no bastan para contrastar la hipótesis. Si el efecto
+es pequeño, hará falta más de un año de datos, salvo que se compre historia (por ejemplo, a Cboe DataShop).
+\item \textbf{Después}, y solo con evidencia: cuantiles y transporte, confianza y la decisión sobre la
+posición.
+\end{enumerate}
+
+\begin{pendiente}
+\begin{itemize}
+\item Contratar OPRA (99~USD al mes) o seguir con el feed gratuito, según las primeras sesiones.
+\item Alargar el piloto de 20 a 40 sesiones.
+\item Comprar historia para la prueba predictiva o acumularla hacia adelante.
+\end{itemize}
+\end{pendiente}
+
+\subsection{Qué cambió respecto de esta propuesta}\label{sec:estado_cambios}
+
+\begin{itemize}
+\item \textbf{Fuente de datos.} La \tabref{tab:fuentes} dejaba a Alpaca para explorar; hoy es la fuente del
+piloto, con captura hacia adelante porque no guarda cotizaciones pasadas. Cboe DataShop sigue como
+candidata para la historia ampliada.
+\item \textbf{Objetivo.} Alpaca no publica el nivel de SPX, así que el objetivo es SPY observado en el SIP, con
+rendimiento total. El SPX implícito queda solo como referencia de las opciones.
+\item \textbf{Primera pregunta.} La hipótesis general de la \secref{sec:hipotesis} se concretó para la primera
+prueba. En la ecuación~\eqref{eq:diferencial}, la señal es el cambio del RR25 respecto de la sesión anterior,
+el objetivo es el signo del rendimiento de SPY a una sesión y la puntuación es la de Brier. El horizonte de
+cinco sesiones y el riesgo de cola quedan como análisis secundarios.
+\item \textbf{Comparación por pasos.} Con la misma familia de modelos, se agrega una fuente de información
+cada vez: primero la base (rendimientos pasados, salto de apertura, volatilidad reciente y calendario);
+luego la volatilidad implícita, el nivel y el cambio de la asimetría y la paridad; y, al final, los
+cuantiles y el transporte.
+\item \textbf{Paridad.} Con el feed gratuito, los residuos de paridad son un diagnóstico de calidad, no una
+señal.
+\end{itemize}
+
+\begin{noconcluirfinal}
+\begin{itemize}
+\item La instalación prueba que la captura funciona, no que la señal sirva.
+\item La primera verificación con datos reales es del cierre de un viernes, no de una apertura.
+\item El piloto evaluará la calidad de los datos, no la capacidad predictiva. Todavía no hay base para
+recomendar posiciones.
+\end{itemize}
+\end{noconcluirfinal}

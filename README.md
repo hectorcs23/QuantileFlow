@@ -52,8 +52,9 @@ usan datos **sintéticos** con semillas fijas.
   de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
   pendientes (dónde corre la captura y qué feed usar).
 - `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
-  y 19 diagramas. El PDF y las figuras PNG son artefactos generados: `make figuras && make pdf` los
-  regenera.
+  y 21 diagramas. Su sección 11 resume el estado del proyecto al 28 de septiembre de 2026: qué se
+  construyó, la captura diaria instalada, las revisiones y lo que falta. El PDF y las figuras PNG son
+  artefactos generados: `make figuras && make pdf` los regenera.
 - Fuente LaTeX en [`docs/propuesta/`](docs/propuesta/): `main.tex`, `preambulo.tex`, una sección por
   archivo en `secciones/` y los diagramas TikZ en `diagramas/`.
 

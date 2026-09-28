@@ -18,7 +18,7 @@
 \vspace*{0.35in}
 
 {\sffamily\small\bfseries\color{qazul}QUANTILEFLOW\hfill
-\color{tinta2}\mdseries Versión de investigación \textperiodcentered{} 26 de septiembre de 2026}
+\color{tinta2}\mdseries Versión de investigación \textperiodcentered{} 28 de septiembre de 2026}
 
 \vspace{0.9in}
 {\sffamily\fontsize{27}{32}\selectfont\bfseries\color{tinta}
@@ -53,9 +53,10 @@ a la decisión sobre la posición\par}
 \textbf{Alcance.} Este documento explica, etapa por etapa, la arquitectura y el programa de
 experimentos de un sistema independiente que mide lo que descuentan las opciones, evalúa si esa
 información mejora los pronósticos de rendimiento y riesgo, y compara mantener o modificar una posición.
-\textbf{No presenta resultados empíricos ni modelos entrenados.} Todas las figuras numéricas se
+\textbf{No presenta resultados predictivos ni modelos entrenados.} Todas las gráficas numéricas se
 construyen con datos \emph{sintéticos} y semillas fijas (apéndice~\ref{ap:reproducibilidad}); sirven para
-explicar el método, no para sugerir su desempeño.
+explicar el método, no para sugerir su desempeño. La sección~\ref{sec:estado} resume el estado del proyecto
+y las primeras cifras reales de calidad de datos y de operación, que no dicen nada sobre la señal.
 \end{tcolorbox}
 \end{titlepage}
 
@@ -82,6 +83,7 @@ explicar el método, no para sugerir su desempeño.
 \input{secciones/08_arquitectura}
 \input{secciones/09_secuencia}
 \input{secciones/10_prioridades}
+\input{secciones/11_estado}
 
 \appendix
 \input{secciones/apendices}

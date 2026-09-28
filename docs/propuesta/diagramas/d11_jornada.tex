@@ -1,0 +1,52 @@
+% Jornada de captura en el repositorio de datos (hora de Nueva York, EDT). t = minutos desde las 09:00.
+\begin{tikzpicture}[x=1mm,y=1cm,
+  disparo/.style={circle,fill=#1,minimum size=2.5mm,inner sep=0pt},
+  respaldo/.style={circle,draw=#1,fill=white,line width=0.8pt,minimum size=2.5mm,inner sep=0pt},
+  ventana/.style={fill=#1!6,draw=#1!30,line width=0.4pt},
+  espera/.style={fill=#1!28,draw=none},
+  carril/.style={titulo,anchor=east,align=right}]
+% Ventanas en que la compuerta deja arrancar
+\filldraw[ventana=qazul] (0,2.42) rectangle (43,2.78);
+\filldraw[ventana=qazuloscuro] (0,1.52) rectangle (58,1.88);
+\filldraw[ventana=qnaranja] (76,0.62) rectangle (135,0.98);
+% Esperas hasta el corte
+\fill[espera=qazul] (11,2.52) rectangle (45,2.68);
+\fill[espera=qazuloscuro] (21,1.62) rectangle (60,1.78);
+% Apertura y cortes
+\draw[tenue,dashed,line width=0.6pt] (30,0) -- (30,3.1);
+\node[nota,anchor=south] at (30,3.1) {apertura};
+\draw[qazul,line width=0.9pt] (45,0) -- (45,3.1);
+\node[nota,anchor=south,text=qazul] at (45,3.1) {\textbf{corte}};
+\draw[qazuloscuro,line width=0.9pt] (60,0) -- (60,3.1);
+\node[nota,anchor=south,text=qazuloscuro] at (60,3.1) {\textbf{corte}};
+% Disparos y respaldos
+\node[disparo=qazul] at (11,2.6) {};
+\node[respaldo=qazul] at (26,2.6) {};
+\node[disparo=qazuloscuro] at (21,1.7) {};
+\node[respaldo=qazuloscuro] at (36,1.7) {};
+\node[disparo=qnaranja] at (81,0.8) {};
+% Carriles
+\node[carril] at (-2,2.6) {captura-0945};
+\node[carril] at (-2,1.7) {captura-1000};
+\node[carril] at (-2,0.8) {historico-alpaca};
+% Notas de cada carril
+\node[nota,anchor=west,align=left] at (64,2.6) {ráfaga en paralelo 5 s antes del corte de las 09:45;\\cada página se guarda al llegar};
+\node[nota,anchor=west,align=left] at (64,1.7) {la misma lógica para el corte de las 10:00,\\en otra máquina y otro proceso};
+\node[nota,anchor=north west,align=left] at (76,0.56) {SIP de SPY en cada corte (consultable 15 min después) y dividendos};
+% Eje
+\draw[guia,line width=0.7pt] (0,0) -- (150,0);
+\foreach \t/\h in {0/09:00,15/09:15,30/09:30,45/09:45,60/10:00,75/10:15,90/10:30,105/10:45,120/11:00,135/11:15,150/11:30}{
+  \draw[guia] (\t,0) -- (\t,-0.1);
+  \node[nota,anchor=north] at (\t,-0.12) {\h};}
+% Leyenda
+\begin{scope}[yshift=-0.85cm]
+\node[disparo=tinta2] at (2,0) {};
+\node[nota,anchor=west] at (4,0) {disparo programado};
+\node[respaldo=tinta2] at (32,0) {};
+\node[nota,anchor=west] at (34,0) {respaldo, 15 min después};
+\fill[espera=tinta2] (68,-0.08) rectangle (76,0.08);
+\node[nota,anchor=west] at (77,0) {espera hasta el corte};
+\filldraw[ventana=tinta2] (104,-0.18) rectangle (112,0.18);
+\node[nota,anchor=west] at (113,0) {la compuerta deja arrancar};
+\end{scope}
+\end{tikzpicture}

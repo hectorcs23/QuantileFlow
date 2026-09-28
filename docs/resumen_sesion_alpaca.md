@@ -21,7 +21,8 @@ sobre `853047b`.
   y pruebas portables) y `56cad99` (su documentación);
 - verificación de `4ffde8a`: el commit que lo fija en los workflows y documenta la instalación;
 - instalación del repositorio de datos: la documentación de su verificación;
-- verificación independiente de la instalación: su respuesta.
+- verificación independiente de la instalación: su respuesta;
+- propuesta técnica en PDF: sección 11 con el estado del proyecto al 28 de septiembre.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó

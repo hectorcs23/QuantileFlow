@@ -80,9 +80,10 @@ deben cotizarse; no se asumen.}
 \toprule
 \encab{Fuente} & \encab{Lo que documenta} & \encab{Uso previsto}\\
 \midrule
-Alpaca & Históricos de opciones desde febrero de 2024; el feed indicativo modifica cotizaciones
-\citep{alpaca}. & Explorar la integración. No se asume suficiente para estudiar cambios diarios pequeños
-de distribución.\\
+Alpaca & Barras y operaciones de opciones desde febrero de 2024, pero no cotizaciones pasadas; no publica
+el nivel de SPX; el feed gratuito modifica las cotizaciones \citep{alpaca}. Verificado el 26 de septiembre
+de 2026. & Fuente del piloto, con captura diaria hacia adelante (\secref{sec:estado}). No se asume
+suficiente para estudiar cambios diarios pequeños de distribución.\\
 Cboe DataShop & Snapshots NBBO por intervalos con historia desde enero de 2012; entrega intradía estándar
 con 15 minutos de retraso \citep{cboe}. & Investigación histórica. Una decisión en apertura exige una
 fuente con latencia adecuada o retrasar explícitamente la decisión.\\

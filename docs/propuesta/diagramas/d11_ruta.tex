@@ -1,0 +1,34 @@
+% Estado y ruta al 28 de septiembre de 2026: qué está hecho, qué sigue y qué queda para después.
+\begin{tikzpicture}[
+  col/.style={cajallena=#1,text width=2.75cm,minimum height=9mm,font=\sffamily\scriptsize\bfseries},
+  item/.style={caja=#1,text width=2.75cm,minimum height=7mm,font=\sffamily\tiny},
+  node distance=1.6mm and 2.4mm]
+\node[col=bueno] (c1) {HECHO};
+\node[col=qazul,right=of c1] (c2) {AHORA};
+\node[col=qvioleta,right=of c2] (c3) {PRÓXIMO};
+\node[col=qnaranja,right=of c3] (c4) {DESPUÉS};
+\node[col=tenue,right=of c4] (c5) {MÁS ADELANTE};
+% Hecho
+\node[item=bueno,below=of c1] (h1) {Propuesta y núcleo de referencia};
+\node[item=bueno,below=of h1] (h2) {Pipeline del piloto con datos sintéticos};
+\node[item=bueno,below=of h2] (h3) {Fuente de datos verificada: Alpaca};
+\node[item=bueno,below=of h3] (h4) {Objetivo SPY, etiquetas y dividendos};
+\node[item=bueno,below=of h4] (h5) {Captura diaria instalada y verificada};
+% Ahora
+\node[item=qazul,below=of c2] (a1) {Aceptación: 3--5 sesiones, del 28 de septiembre al 2 de octubre};
+\node[item=qazul,below=of a1] (a2) {Mantenimiento de las plantillas antes del 19 de octubre};
+\node[item=qazul,below=of a2] (a3) {Decisión sobre OPRA};
+% Próximo
+\node[item=qvioleta,below=of c3] (p1) {Piloto de 20--40 sesiones (hasta el 23 de octubre o el 20 de noviembre)};
+\node[item=qvioleta,below=of p1] (p2) {Informe y dictamen de los datos};
+\node[item=qvioleta,below=of p2] (p3) {Umbrales congelados en una versión nueva};
+% Después
+\node[item=qnaranja,below=of c4] (d1) {Protocolo predictivo fijado antes de mirar};
+\node[item=qnaranja,below=of d1] (d2) {Historia ampliada: más de un año o comprada};
+\node[item=qnaranja,below=of d2] (d3) {Prueba predictiva con periodo reservado};
+% Más adelante
+\node[item=tenue,below=of c5] (m1) {Cuantiles y transporte (variante F)};
+\node[item=tenue,below=of m1] (m2) {Confianza, conformal y régimen};
+\node[item=tenue,below=of m2] (m3) {Decisión sobre la posición};
+\node[nota,text width=2.75cm,below=2mm of m3] {cada bloque entra solo si el anterior superó su criterio};
+\end{tikzpicture}
