@@ -62,6 +62,9 @@ aceptación»:
 | 4. Prueba manual de captura inmediata e histórico: el commit usado en el registro y el crudo guardado en el repositorio | Tú o Claude | Pendiente |
 | 5. Revisar 3–5 sesiones en ambos horarios: puntualidad, completitud, respaldo, recuperación, SIP y dividendos (`revisar_operacion.py`, y no solo su código de salida) | Claude, con acceso de lectura | Pendiente |
 
+**Actualización del 28 de septiembre:** los pasos 2 a 4 quedaron hechos y verificados. Ver
+[instalación del repositorio de datos](instalacion_repo_datos.md).
+
 ## 4. Alcance
 
 Coincido con la sección 6 de la revisión:

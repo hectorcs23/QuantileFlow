@@ -42,6 +42,9 @@
 > ejecución deja su registro también si falla al iniciar o después de capturar, y
 > `scripts/revisar_operacion.py` resume la operación de las sesiones. Detalle en
 > [respuesta a la verificación de `4ffde8a`](respuesta_verificacion_4ffde8a.md).
+>
+> **Actualización del 28 de septiembre:** el repositorio de datos quedó instalado y la prueba manual
+> salió bien. Detalle en [instalación del repositorio de datos](instalacion_repo_datos.md).
 
 ---
 
@@ -165,6 +168,9 @@ junto con `edad_maxima_s`, sin tocar ninguno antes de ver datos.
 3. En **Settings → Secrets and variables → Actions**, crear `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`.
 4. Probar con **Actions → captura-0945 → Run workflow** y la opción «ahora», y con
    **Actions → historico-alpaca → Run workflow**.
+
+Se hizo el 27 de septiembre por la noche, con la plantilla de `e1a7832` y el código de `4ffde8a`, y
+la prueba manual salió bien. Ver [instalación del repositorio de datos](instalacion_repo_datos.md).
 
 ## 5. Cómo operar
 

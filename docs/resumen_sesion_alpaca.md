@@ -1,6 +1,6 @@
 # QuantileFlow: resumen de la sesión con Alpaca y mapa de archivos
 
-**Fecha:** 26 de septiembre de 2026 (sábado; el mercado reabre el lunes 28); actualizado el 27.
+**Fecha:** 26 de septiembre de 2026 (sábado; el mercado reabre el lunes 28); actualizado el 28.
 **Rama:** [`claude/lucid-hamilton-hz8l80`](https://github.com/hectorcs23/QuantileFlow/tree/claude/lucid-hamilton-hz8l80),
 sobre `853047b`.
 **Commits de la sesión:**
@@ -19,12 +19,13 @@ sobre `853047b`.
   errores), `bbbdc6e` (revisión de la operación) y `1a5ba3f` (su documentación);
 - revisión de los cambios operativos: `4ffde8a` (registro también al iniciar, `--resoluciones` explícito
   y pruebas portables) y `56cad99` (su documentación);
-- verificación de `4ffde8a`: el commit que lo fija en los workflows y documenta la instalación.
+- verificación de `4ffde8a`: el commit que lo fija en los workflows y documenta la instalación;
+- instalación del repositorio de datos: la documentación de su verificación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
-> la captura diaria hacia adelante, que empieza el lunes 28 a las 09:45. Falta que crees el repositorio
-> privado de datos y le pongas las claves.
+> la captura diaria hacia adelante, que empieza el lunes 28 a las 09:45. El repositorio privado de
+> datos quedó instalado y probado el 27 por la noche.
 >
 > **Después hubo una revisión externa del commit `e2b92f0`** con ocho hallazgos. Los ocho se
 > reprodujeron, se convirtieron en pruebas de regresión y se corrigieron en `79c1554` (153 → 167
@@ -70,6 +71,11 @@ sobre `853047b`.
 > toman ahora el código de `4ffde8a`. Hay 203 pruebas. La captura diaria todavía no está desplegada
 > ni acreditada: falta el repositorio de datos, que no existe o al que esta sesión no tiene acceso.
 > Detalle en [respuesta a la verificación de `4ffde8a`](respuesta_verificacion_4ffde8a.md).
+>
+> **El repositorio de datos quedó instalado** el 27 por la noche, y la prueba manual salió bien. La
+> captura inmediata y el histórico terminaron en verde, con el código de `4ffde8a` y el crudo guardado
+> sin credenciales. Lo verifiqué desde esta sesión. Falta la aceptación con 3–5 sesiones, desde el
+> lunes 28. Detalle en [instalación del repositorio de datos](instalacion_repo_datos.md).
 
 ---
 
@@ -203,6 +209,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado antes: árbol limpio, 200 pruebas pasadas |
 | [`docs/respuesta_cambios_operativos.md`](respuesta_cambios_operativos.md) | Registro también al iniciar, `--resoluciones` explícito y pruebas portables |
 | [`docs/respuesta_verificacion_4ffde8a.md`](respuesta_verificacion_4ffde8a.md) | Verificación de `4ffde8a`: el commit queda fijado, correcciones a lo dicho y qué falta para acreditar la captura |
+| [`docs/instalacion_repo_datos.md`](instalacion_repo_datos.md) | Instalación del repositorio de datos: qué se comprobó, observaciones y estado de la aceptación |
 | [`reports/verificacion/4ffde8acda8c.json`](../reports/verificacion/4ffde8acda8c.json) | Registro del commit fijado en los workflows: árbol limpio, 203 pruebas pasadas |
 | [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro de la propuesta anterior: 202 pruebas pasadas |
 | [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
@@ -229,7 +236,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`ops/repo_datos/README.md`](../ops/repo_datos/README.md) | Configuración de secretos, qué hace el workflow, estructura y uso de los datos |
 | [`ops/repo_datos/.gitignore`](../ops/repo_datos/.gitignore) | Solo el crudo va a Git; las tablas se reconstruyen |
 
-Una vez creado, el repositorio `hectorcs23/QuantileFlow-datos` guardará:
+El repositorio `hectorcs23/QuantileFlow-datos` guarda:
 
 ```
 raw/alpaca/<hash[:2]>/<sha256>_<nombre>.json.gz          respuestas de la API, inmutables
@@ -260,17 +267,16 @@ caben en menos de 100 MB.
 
 ### Tu parte (instalación y aceptación, detalle en `ops/repo_datos/README.md`)
 
-- [ ] Crear en GitHub el repositorio privado vacío `QuantileFlow-datos`, o confirmar que existe. Hoy
-      esta sesión no lo ve: no existe o no tiene acceso.
-- [ ] Copiar el contenido de `ops/repo_datos/` en la raíz de su rama predeterminada, con
-      `.github/workflows/`. Otra opción es dar acceso a la app de GitHub de Claude a ese repositorio
-      para que lo suba Claude. Si lo subes tú, GitHub te avisará por correo cuando falle una corrida
-      programada: esos avisos le llegan a quien modificó el cron por última vez.
-- [ ] Agregarle los secretos de Actions `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`, y permiso de escritura
-      para los workflows si el paso «Guardar el crudo» lo pide.
-- [ ] Probar en **Actions → captura-0945 → Run workflow** con la opción «ahora», y en
-      **Actions → historico-alpaca → Run workflow**. Comprobar que el registro muestra el commit
-      `4ffde8a` y que el crudo quedó guardado en el repositorio.
+- [x] Crear en GitHub el repositorio privado vacío `QuantileFlow-datos`. Se hizo el 27 por la noche.
+- [x] Copiar el contenido de `ops/repo_datos/` en la raíz de su rama predeterminada, con
+      `.github/workflows/`: quedó idéntico al de `e1a7832`. Lo subiste tú, así que GitHub te avisará
+      por correo cuando falle una corrida programada: esos avisos le llegan a quien modificó el cron
+      por última vez.
+- [x] Agregarle los secretos de Actions `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`, y permiso de
+      escritura para los workflows.
+- [x] Probar en **Actions → captura-0945 → Run workflow** con la opción «ahora», y en
+      **Actions → historico-alpaca → Run workflow**. Las dos corridas quedaron en verde, con el commit
+      `4ffde8a` en el registro y el crudo guardado ([instalación del repositorio de datos](instalacion_repo_datos.md)).
 - [ ] Dejar correr 3–5 sesiones y revisarlas con
       `python scripts/revisar_operacion.py --datos ../QuantileFlow-datos --desde … --hasta …`:
       estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.

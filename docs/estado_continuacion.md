@@ -119,7 +119,8 @@ cierre anticipado, y seis días degradados a propósito:
       Instrumento, sellos, cobertura y costo confirmados.
 - [x] Decidir dónde corre la captura diaria: GitHub Actions en el repositorio privado
       `QuantileFlow-datos` (plantilla en `ops/repo_datos/`).
-- [ ] Crear ese repositorio, subir la plantilla y agregar las dos claves como secretos.
+- [x] Crear ese repositorio, subir la plantilla y agregar las dos claves como secretos
+      ([instalación del repositorio de datos](instalacion_repo_datos.md)).
 - [x] Decidir el feed: `indicative` por ahora; OPRA se decide tras 3–5 sesiones reales.
 - [x] Corregir los ocho hallazgos de la revisión de `e2b92f0` (commit `79c1554`;
       [respuesta](respuesta_revision_e2b92f0.md)).
@@ -144,8 +145,9 @@ cierre anticipado, y seis días degradados a propósito:
       portables (`4ffde8a`; [respuesta](respuesta_cambios_operativos.md)).
 - [x] Verificación de `4ffde8a`, también en Windows: queda fijado en los workflows
       ([respuesta](respuesta_verificacion_4ffde8a.md)).
-- [ ] Instalar el repositorio de datos y acreditar la captura: prueba manual, commit usado y crudo
-      guardado (`ops/repo_datos/README.md`, «Instalación y aceptación»).
+- [x] Instalar el repositorio de datos y acreditar la captura: prueba manual, commit usado y crudo
+      guardado (`ops/repo_datos/README.md`, «Instalación y aceptación»). Se hizo el 27 por la noche y
+      quedó verificado ([instalación del repositorio de datos](instalacion_repo_datos.md)).
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
       `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
       operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará
