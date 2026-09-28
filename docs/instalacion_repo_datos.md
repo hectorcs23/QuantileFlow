@@ -60,7 +60,7 @@ Claude.
 | 3. Secretos | Hecho |
 | 4. Permiso de escritura | Hecho |
 | 5. Prueba manual | Hecho: las dos corridas en verde, con el commit `4ffde8a` y el crudo guardado |
-| 6. Aceptación: revisar 3–5 sesiones con `revisar_operacion.py` | Pendiente; empieza el lunes 28 |
+| 6. Aceptación: revisar 3–5 sesiones con `revisar_operacion.py` | En curso. El lunes 28 GitHub no disparó los workflows programados y la sesión se perdió; ver la [aceptación de la operación](aceptacion_operacion.md) |
 
 Disparos programados de hoy, en hora de Nueva York (EDT):
 - 09:11 y 09:26 para las 09:45;

@@ -153,7 +153,8 @@ cierre anticipado, y seis días degradados a propósito:
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
       `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
       operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará
-      aceptada al terminarla.
+      aceptada al terminarla. En curso: el lunes 28 GitHub no disparó los workflows programados y la
+      sesión se perdió ([aceptación de la operación](aceptacion_operacion.md)).
 - [ ] Mantenimiento de las plantillas antes del lunes 19 de octubre, cuando `ubuntu-latest` empieza a
       pasar a Ubuntu 26.04: `runs-on: ubuntu-24.04` y acciones para Node.js 24. Se instala con una
       corrida manual de prueba ([respuesta](respuesta_verificacion_instalacion.md)).

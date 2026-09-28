@@ -23,6 +23,8 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/aceptacion_operacion.md`](docs/aceptacion_operacion.md): la aceptación de la operación, sesión
+  por sesión. El lunes 28 GitHub no disparó los workflows programados, y la sesión se perdió.
 - [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): la
   verificación independiente de la instalación y el mantenimiento de las plantillas antes del 19 de
   octubre (`ubuntu-24.04`).
