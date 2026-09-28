@@ -8,7 +8,9 @@ Claude.
 
 > La instalación está hecha y la prueba manual salió bien: se cumplen los pasos 1 a 5 de «Instalación
 > y aceptación» (`ops/repo_datos/README.md`). La hiciste tú, con Cowork, el domingo 27 por la noche.
-> La verificación es mía, desde esta sesión y con acceso de lectura: no es independiente.
+> La verificación es mía, desde esta sesión y con acceso de lectura: no es independiente. La
+> verificación independiente del mismo día llegó a lo mismo; ver la
+> [respuesta a la verificación de la instalación](respuesta_verificacion_instalacion.md).
 >
 > Falta el paso 6, la aceptación con 3–5 sesiones programadas, que empieza hoy. El primer disparo
 > está programado para las 09:11 de Nueva York, sin garantía de hora.
@@ -43,7 +45,9 @@ Claude.
 3. **GitHub avisa de que `actions/checkout@v4` y `actions/setup-python@v5` están hechos para
    Node.js 20** y de que los fuerza a correr en Node.js 24. Las corridas funcionan. Actualizarlos
    implica cambiar las plantillas y reinstalarlas, así que queda para el próximo cambio que haya en
-   ellas.
+   ellas. La verificación independiente señaló además que `ubuntu-latest` pasa a Ubuntu 26.04 desde
+   el 19 de octubre. Los dos cambios irán en un mantenimiento con esa fecha límite
+   ([respuesta a la verificación de la instalación](respuesta_verificacion_instalacion.md)).
 4. **La prueba no se mezcla con los cortes.** Su registro queda en `ejecuciones/2026-09-25/`, y la
    revisión de la operación no la cuenta como captura de las 09:45 ni de las 10:00.
 

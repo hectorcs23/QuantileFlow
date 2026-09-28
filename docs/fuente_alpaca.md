@@ -44,7 +44,9 @@
 > [respuesta a la verificación de `4ffde8a`](respuesta_verificacion_4ffde8a.md).
 >
 > **Actualización del 28 de septiembre:** el repositorio de datos quedó instalado y la prueba manual
-> salió bien. Detalle en [instalación del repositorio de datos](instalacion_repo_datos.md).
+> salió bien. Detalle en [instalación del repositorio de datos](instalacion_repo_datos.md). Una
+> verificación independiente lo confirmó. Las plantillas se fijarán en `ubuntu-24.04` antes del 19 de
+> octubre ([respuesta a la verificación de la instalación](respuesta_verificacion_instalacion.md)).
 
 ---
 
@@ -197,6 +199,10 @@ mezcla, y el informe dice de qué fuente sale cada serie.
 `data/` sigue fuera de Git. Con el repositorio de datos, se pasa `--datos ../QuantileFlow-datos` a los
 scripts. Una captura ocupa unos 0.3 MB comprimida (1.6 MB sin comprimir), y los contratos del día,
 unos 0.7 MB comprimidos: cuarenta sesiones caben en menos de 100 MB.
+
+Las figuras del diagnóstico solo se escriben en archivos. En un entorno sin interfaz gráfica utilizable
+(por ejemplo, Tk sin Tcl), se corre con `MPLBACKEND=Agg`. Si matplotlib no puede crear su caché, además
+hay que apuntar `MPLCONFIGDIR` a una carpeta escribible.
 
 ## 6. Limitaciones conocidas
 

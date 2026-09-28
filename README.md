@@ -23,6 +23,9 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): la
+  verificación independiente de la instalación y el mantenimiento de las plantillas antes del 19 de
+  octubre (`ubuntu-24.04`).
 - [`docs/instalacion_repo_datos.md`](docs/instalacion_repo_datos.md): la instalación del repositorio de
   datos y su prueba manual, verificadas, y lo que falta para la aceptación.
 - [`docs/respuesta_verificacion_4ffde8a.md`](docs/respuesta_verificacion_4ffde8a.md): la verificación de

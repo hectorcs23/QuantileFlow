@@ -20,7 +20,8 @@ sobre `853047b`.
 - revisión de los cambios operativos: `4ffde8a` (registro también al iniciar, `--resoluciones` explícito
   y pruebas portables) y `56cad99` (su documentación);
 - verificación de `4ffde8a`: el commit que lo fija en los workflows y documenta la instalación;
-- instalación del repositorio de datos: la documentación de su verificación.
+- instalación del repositorio de datos: la documentación de su verificación;
+- verificación independiente de la instalación: su respuesta.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -76,6 +77,10 @@ sobre `853047b`.
 > captura inmediata y el histórico terminaron en verde, con el código de `4ffde8a` y el crudo guardado
 > sin credenciales. Lo verifiqué desde esta sesión. Falta la aceptación con 3–5 sesiones, desde el
 > lunes 28. Detalle en [instalación del repositorio de datos](instalacion_repo_datos.md).
+>
+> **Una verificación independiente** lo confirmó el mismo día. También señaló que `ubuntu-latest`
+> pasa a Ubuntu 26.04 desde el 19 de octubre, así que las plantillas se fijarán en `ubuntu-24.04`
+> antes de esa fecha. Detalle en la [respuesta a la verificación de la instalación](respuesta_verificacion_instalacion.md).
 
 ---
 
@@ -210,6 +215,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/respuesta_cambios_operativos.md`](respuesta_cambios_operativos.md) | Registro también al iniciar, `--resoluciones` explícito y pruebas portables |
 | [`docs/respuesta_verificacion_4ffde8a.md`](respuesta_verificacion_4ffde8a.md) | Verificación de `4ffde8a`: el commit queda fijado, correcciones a lo dicho y qué falta para acreditar la captura |
 | [`docs/instalacion_repo_datos.md`](instalacion_repo_datos.md) | Instalación del repositorio de datos: qué se comprobó, observaciones y estado de la aceptación |
+| [`docs/respuesta_verificacion_instalacion.md`](respuesta_verificacion_instalacion.md) | Verificación independiente de la instalación: coincidencias, cambio de imagen de los runners y mantenimiento antes del 19 de octubre |
 | [`reports/verificacion/4ffde8acda8c.json`](../reports/verificacion/4ffde8acda8c.json) | Registro del commit fijado en los workflows: árbol limpio, 203 pruebas pasadas |
 | [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro de la propuesta anterior: 202 pruebas pasadas |
 | [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
@@ -285,6 +291,8 @@ caben en menos de 100 MB.
 
 - [ ] Diagnosticar la primera sesión real (`verificar_alpaca.py --fecha 2026-09-28`) y revisar con
       ella `desfase_spot_max_s` (hoy 2 s, avisará en casi todas las capturas) y `edad_maxima_s`.
+- [ ] Mantenimiento de las plantillas antes del 19 de octubre: `runs-on: ubuntu-24.04` y acciones
+      para Node.js 24 ([respuesta](respuesta_verificacion_instalacion.md)).
 - [ ] Decidir OPRA con 3–5 sesiones reales.
 - [ ] Piloto de 20–40 sesiones en `reports/piloto/` y congelar los umbrales en una versión nueva de
       `configs/piloto.toml`.

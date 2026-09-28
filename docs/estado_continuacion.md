@@ -148,10 +148,15 @@ cierre anticipado, y seis días degradados a propósito:
 - [x] Instalar el repositorio de datos y acreditar la captura: prueba manual, commit usado y crudo
       guardado (`ops/repo_datos/README.md`, «Instalación y aceptación»). Se hizo el 27 por la noche y
       quedó verificado ([instalación del repositorio de datos](instalacion_repo_datos.md)).
+- [x] Verificación independiente de la instalación: confirmada, sin defectos que bloqueen la prueba
+      programada ([respuesta](respuesta_verificacion_instalacion.md)).
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
       `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
       operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará
       aceptada al terminarla.
+- [ ] Mantenimiento de las plantillas antes del lunes 19 de octubre, cuando `ubuntu-latest` empieza a
+      pasar a Ubuntu 26.04: `runs-on: ubuntu-24.04` y acciones para Node.js 24. Se instala con una
+      corrida manual de prueba ([respuesta](respuesta_verificacion_instalacion.md)).
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.
