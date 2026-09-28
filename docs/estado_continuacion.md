@@ -141,7 +141,11 @@ cierre anticipado, y seis días degradados a propósito:
       `7fb0585`. Después: registro de la ejecución a prueba de errores y revisión de la operación
       (`7a59d04`, `bbbdc6e`, sin fijar hasta revisarlos; [respuesta](respuesta_cierre_b240dc2.md)).
 - [x] Revisión de esos cambios: registro también al iniciar, `--resoluciones` explícito y pruebas
-      portables (`4ffde8a`, propuesto para fijar; [respuesta](respuesta_cambios_operativos.md)).
+      portables (`4ffde8a`; [respuesta](respuesta_cambios_operativos.md)).
+- [x] Verificación de `4ffde8a`, también en Windows: queda fijado en los workflows
+      ([respuesta](respuesta_verificacion_4ffde8a.md)).
+- [ ] Instalar el repositorio de datos y acreditar la captura: prueba manual, commit usado y crudo
+      guardado (`ops/repo_datos/README.md`, «Instalación y aceptación»).
 - [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
       `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
       operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará

@@ -5,17 +5,40 @@ datos de mercado de Alpaca y OPRA no se pueden redistribuir. El código, los doc
 agregados están en el repositorio público
 [hectorcs23/QuantileFlow](https://github.com/hectorcs23/QuantileFlow); ver `docs/fuente_alpaca.md`.
 
-## Configuración (una sola vez)
+## Instalación y aceptación (una sola vez)
 
-1. En **Settings → Secrets and variables → Actions → New repository secret**, crear:
+1. **Crear** el repositorio privado `QuantileFlow-datos`, vacío.
+2. **Copiar** el contenido de `ops/repo_datos/` en la **raíz de la rama predeterminada** (normalmente
+   `main`): `README.md`, `.gitignore` y `.github/workflows/`. GitHub solo ejecuta los workflows
+   programados que están en la rama predeterminada.
+3. **Secretos**, en **Settings → Secrets and variables → Actions → New repository secret**:
    - `APCA_API_KEY_ID`
    - `APCA_API_SECRET_KEY`
 
    Deben ser las claves de la cuenta *paper* de Alpaca. Los workflows las pasan a los scripts como
    variables de entorno y nunca se escriben en ningún archivo.
-2. Para probar, ir a **Actions → captura-0945 → Run workflow** y marcar «ahora». Fuera de sesión,
-   la prueba usa las últimas cotizaciones de la sesión anterior. **Actions → historico-alpaca → Run
-   workflow** descarga el precio del objetivo de la última semana y los dividendos.
+4. **Permisos.** Los workflows piden `contents: write` para guardar el crudo. Si el paso «Guardar el
+   crudo» falla por permisos, hay que elegir «Read and write permissions» en
+   **Settings → Actions → General → Workflow permissions**.
+5. **Prueba manual.** Correr **Actions → captura-0945 → Run workflow** con «ahora», y
+   **Actions → historico-alpaca → Run workflow**. Después, comprobar tres cosas:
+   - hay un commit de `github-actions[bot]` con `raw/`: respuestas, diario, manifiesto y registro de la
+     ejecución;
+   - el registro (`raw/alpaca/ejecuciones/<fecha>/…json`) dice `"codigo": {"commit": …}` con el
+     `REF_CODIGO` de los workflows;
+   - ninguna credencial aparece en el crudo.
+
+   Una captura inmediata fuera de sesión prueba la instalación, no una captura válida al corte.
+6. **Aceptación.** Dejar correr 3–5 sesiones y revisarlas con `scripts/revisar_operacion.py` (sección
+   «Usar los datos»). En ambos horarios hay que mirar puntualidad, completitud, respaldo, recuperación,
+   SIP y dividendos. Su código 0 solo dice que ningún corte quedó parcial, fallido o perdido: el SIP y
+   los dividendos se leen en el informe.
+
+El código se toma del repositorio público **por commit** (`REF_CODIGO`), así que no depende de su rama
+predeterminada. La rama que contiene ese commit no debe borrarse mientras los workflows lo fijen.
+
+Los horarios de los disparos son los programados. GitHub puede retrasarlos, a veces muchos minutos, o
+descartarlos con carga: por eso hay un respaldo por hora, y los registros miden lo que pasó de verdad.
 
 ## Qué hacen los workflows
 

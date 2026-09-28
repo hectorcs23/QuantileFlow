@@ -37,6 +37,11 @@
 > fecha ex y el monto. Detalle en
 > [respuesta a la revalidación de `5c15028`](respuesta_revalidacion_5c15028.md). La captura queda
 > fijada en `7fb0585`, sin cambios de comportamiento.
+>
+> **Actualización tras la verificación de `4ffde8a`:** la captura queda fijada en `4ffde8a`. Cada
+> ejecución deja su registro también si falla al iniciar o después de capturar, y
+> `scripts/revisar_operacion.py` resume la operación de las sesiones. Detalle en
+> [respuesta a la verificación de `4ffde8a`](respuesta_verificacion_4ffde8a.md).
 
 ---
 

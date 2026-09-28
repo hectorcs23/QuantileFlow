@@ -18,7 +18,8 @@ sobre `853047b`.
 - tras el cierre de la revalidación de `b240dc2`: `7a59d04` (registro de la ejecución a prueba de
   errores), `bbbdc6e` (revisión de la operación) y `1a5ba3f` (su documentación);
 - revisión de los cambios operativos: `4ffde8a` (registro también al iniciar, `--resoluciones` explícito
-  y pruebas portables) y el de su documentación.
+  y pruebas portables) y `56cad99` (su documentación);
+- verificación de `4ffde8a`: el commit que lo fija en los workflows y documenta la instalación.
 
 > En una frase: Alpaca ya funciona desde el entorno y ofrece SPXW, pero no guarda cotizaciones
 > pasadas de opciones, no da el nivel de SPX y su feed gratuito modifica las cotizaciones. Se construyó
@@ -62,9 +63,13 @@ sobre `853047b`.
 >
 > **La revisión de esos cambios** encontró que un fallo al iniciar (reloj del servidor, recuperación)
 > seguía sin dejar registro y que un `--resoluciones` explícito inexistente se ignoraba, y pidió
-> ajustar las pruebas para Windows. Quedó corregido en `4ffde8a`, propuesto para fijar. Hay 203
-> pruebas, que también pasan con la codificación obligatoria; detalle en
+> ajustar las pruebas para Windows. Quedó corregido en `4ffde8a`. Detalle en
 > [respuesta a la revisión de los cambios operativos](respuesta_cambios_operativos.md).
+>
+> **La verificación de `4ffde8a`** lo cerró, también en Windows, y recomendó fijarlo: los workflows
+> toman ahora el código de `4ffde8a`. Hay 203 pruebas. La captura diaria todavía no está desplegada
+> ni acreditada: falta el repositorio de datos, que no existe o al que esta sesión no tiene acceso.
+> Detalle en [respuesta a la verificación de `4ffde8a`](respuesta_verificacion_4ffde8a.md).
 
 ---
 
@@ -195,9 +200,10 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 | [`docs/respuesta_revalidacion_a5e2748.md`](respuesta_revalidacion_a5e2748.md) | Discrepancias y resoluciones de dividendos, cobertura con filtros, tramos con estado puntual, la política de 60 días y el respaldo como escenario favorable |
 | [`docs/respuesta_revalidacion_5c15028.md`](respuesta_revalidacion_5c15028.md) | Dividendos recibidos sin fecha ex o sin monto: versiones con discrepancia, etiquetas pendientes y cómo se resuelven |
 | [`docs/respuesta_cierre_b240dc2.md`](respuesta_cierre_b240dc2.md) | Tras el cierre de la revalidación: registro de la ejecución a prueba de errores, revisión de la operación y cómo seguir con la prueba de captura |
-| [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado en los workflows: árbol limpio, 200 pruebas pasadas |
+| [`reports/verificacion/7fb058525d93.json`](../reports/verificacion/7fb058525d93.json) | Registro del commit fijado antes: árbol limpio, 200 pruebas pasadas |
 | [`docs/respuesta_cambios_operativos.md`](respuesta_cambios_operativos.md) | Registro también al iniciar, `--resoluciones` explícito y pruebas portables |
-| [`reports/verificacion/4ffde8acda8c.json`](../reports/verificacion/4ffde8acda8c.json) | Registro del commit propuesto para fijar: árbol limpio, 203 pruebas pasadas |
+| [`docs/respuesta_verificacion_4ffde8a.md`](respuesta_verificacion_4ffde8a.md) | Verificación de `4ffde8a`: el commit queda fijado, correcciones a lo dicho y qué falta para acreditar la captura |
+| [`reports/verificacion/4ffde8acda8c.json`](../reports/verificacion/4ffde8acda8c.json) | Registro del commit fijado en los workflows: árbol limpio, 203 pruebas pasadas |
 | [`reports/verificacion/bbbdc6e95080.json`](../reports/verificacion/bbbdc6e95080.json) | Registro de la propuesta anterior: 202 pruebas pasadas |
 | [`reports/verificacion/8316540a70dd.json`](../reports/verificacion/8316540a70dd.json) | Registro del commit fijado en la entrega anterior: 197 pruebas pasadas |
 | [`reports/verificacion/f2a566353d8d.json`](../reports/verificacion/f2a566353d8d.json) | Registro del commit fijado antes: 191 pruebas pasadas |
@@ -217,7 +223,7 @@ explícito (el piloto no cambia) y `almacen.guardar_crudo_bytes` guarda crudo re
 
 | Archivo | Qué es |
 |---|---|
-| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `7fb0585` (`REF_CODIGO`). |
+| [`ops/repo_datos/.github/workflows/captura-hora.yml`](../ops/repo_datos/.github/workflows/captura-hora.yml) | Workflow reutilizable de una hora de corte: compuerta, captura con plazo absoluto, recuperación y commit del crudo. Toma el código del commit `4ffde8a` (`REF_CODIGO`). |
 | [`ops/repo_datos/.github/workflows/captura-0945.yml`](../ops/repo_datos/.github/workflows/captura-0945.yml), [`captura-1000.yml`](../ops/repo_datos/.github/workflows/captura-1000.yml) | Disparos y respaldos de cada hora, cada una en su máquina y con su concurrencia |
 | [`ops/repo_datos/.github/workflows/historico.yml`](../ops/repo_datos/.github/workflows/historico.yml) | SIP de SPY y eventos corporativos hacia las 10:21 de Nueva York |
 | [`ops/repo_datos/README.md`](../ops/repo_datos/README.md) | Configuración de secretos, qué hace el workflow, estructura y uso de los datos |
@@ -252,15 +258,19 @@ caben en menos de 100 MB.
 
 ## 6. Qué falta
 
-### Tu parte, antes del lunes 28 hacia las 09:15 ET
+### Tu parte (instalación y aceptación, detalle en `ops/repo_datos/README.md`)
 
-- [ ] Crear en GitHub el repositorio privado vacío `QuantileFlow-datos`.
-- [ ] Agregarle los secretos de Actions `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`.
-- [ ] Copiar ahí el contenido de `ops/repo_datos/`, o dar acceso a la app de GitHub de Claude a ese
-      repositorio para que lo suba Claude. Si lo subes tú, GitHub te avisará por correo cuando falle una
-      corrida programada: esos avisos le llegan a quien modificó el cron por última vez.
+- [ ] Crear en GitHub el repositorio privado vacío `QuantileFlow-datos`, o confirmar que existe. Hoy
+      esta sesión no lo ve: no existe o no tiene acceso.
+- [ ] Copiar el contenido de `ops/repo_datos/` en la raíz de su rama predeterminada, con
+      `.github/workflows/`. Otra opción es dar acceso a la app de GitHub de Claude a ese repositorio
+      para que lo suba Claude. Si lo subes tú, GitHub te avisará por correo cuando falle una corrida
+      programada: esos avisos le llegan a quien modificó el cron por última vez.
+- [ ] Agregarle los secretos de Actions `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY`, y permiso de escritura
+      para los workflows si el paso «Guardar el crudo» lo pide.
 - [ ] Probar en **Actions → captura-0945 → Run workflow** con la opción «ahora», y en
-      **Actions → historico-alpaca → Run workflow**.
+      **Actions → historico-alpaca → Run workflow**. Comprobar que el registro muestra el commit
+      `4ffde8a` y que el crudo quedó guardado en el repositorio.
 - [ ] Dejar correr 3–5 sesiones y revisarlas con
       `python scripts/revisar_operacion.py --datos ../QuantileFlow-datos --desde … --hasta …`:
       estado de cada corte, puntualidad, respaldo, recuperaciones, SIP y dividendos.
@@ -278,7 +288,7 @@ caben en menos de 100 MB.
 - [ ] B4: pérdida robusta en el ajuste de superficie.
 - [x] Precio objetivo independiente: SPY observado en el SIP histórico
       ([respuesta a la revalidación](respuesta_revalidacion_d815bdd.md)).
-- [ ] Los workflows están fijados al commit `7fb0585` (`REF_CODIGO`): actualizarlo es cambiar la
+- [ ] Los workflows están fijados al commit `4ffde8a` (`REF_CODIGO`): actualizarlo es cambiar la
       versión de medición.
 
 ---

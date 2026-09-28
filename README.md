@@ -23,6 +23,8 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/respuesta_verificacion_4ffde8a.md`](docs/respuesta_verificacion_4ffde8a.md): la verificación de
+  `4ffde8a` (queda fijado en los workflows) y la secuencia para acreditar la captura diaria.
 - [`docs/respuesta_cambios_operativos.md`](docs/respuesta_cambios_operativos.md): el registro de la
   captura también cuando falla al iniciar, `--resoluciones` explícito y pruebas portables a Windows.
 - [`docs/respuesta_cierre_b240dc2.md`](docs/respuesta_cierre_b240dc2.md): después del cierre de la

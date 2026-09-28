@@ -96,4 +96,6 @@ captura: el SIP y los dividendos se revisan en el informe.
 
 La prueba operativa puede prepararse con `7fb0585`, como dice la revisión. Si se confirma `4ffde8a`,
 fijarla es cambiar `REF_CODIGO` en los dos workflows, con este registro de verificación. Para la
-prueba solo falta el repositorio privado de datos, que todavía no existe.
+prueba solo falta el repositorio privado de datos: no existe o esta sesión no tiene acceso (GitHub
+responde igual en los dos casos). Corregido tras la verificación de `4ffde8a`, que además fijó ese
+commit; ver [respuesta a la verificación](respuesta_verificacion_4ffde8a.md).

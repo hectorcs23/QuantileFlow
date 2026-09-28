@@ -25,7 +25,7 @@
   },
   "config": {
     "huella": "8d6dc48abb9fb1ccd512a89f4ef77f297dbdf5d2781006c27afd4b2d5ed6efc2",
-    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_7fb0585/configs/piloto.toml",
+    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/configs/piloto.toml",
     "version": "piloto-0.3"
   },
   "cortes": [
@@ -58,7 +58,7 @@
   "entorno": {
     "git": {
       "cambios_sin_registrar": false,
-      "commit": "7fb058525d93ebe1366165d16055d3dd103d1579"
+      "commit": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -74,19 +74,19 @@
   },
   "entradas": {
     "cobertura_dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_7fb0585/data/normalized/sintetico/cobertura_dividendos.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/cobertura_dividendos.parquet",
       "sha256": "d85348525881c2783392ec672beff899c42f178414ff669bdd78a0a7f1dead8c"
     },
     "cotizaciones": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_7fb0585/data/normalized/sintetico/cotizaciones.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/cotizaciones.parquet",
       "sha256": "b7527536bf16f0520ea91a807354fce9029cf338b2a28093177313036cc5f411"
     },
     "dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_7fb0585/data/normalized/sintetico/dividendos.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/dividendos.parquet",
       "sha256": "eaab3829885341eeb205e8017afc4c9856914aacec7d3b8dba88a2408a77e7c8"
     },
     "subyacente": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_7fb0585/data/normalized/sintetico/subyacente.parquet",
+      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/subyacente.parquet",
       "sha256": "303ffdf08fc97ded46f649332334262c1b7a06b264fca314dcb3ffda01a615af"
     }
   },
@@ -95,7 +95,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-27T19:14:27+00:00",
+  "fecha_corrida_utc": "2026-09-28T00:01:30+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
