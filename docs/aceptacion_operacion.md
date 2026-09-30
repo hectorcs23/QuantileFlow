@@ -17,6 +17,7 @@ nunca cotizaciones.
 |---|---|---|---|---|---|
 | Lunes 28 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó a tiempo: los cron llegaron unas 6–7 horas tarde | Secciones 1 y 2 |
 | Martes 29 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:32 de Nueva York no había corridas programadas ni manuales | Sección 2 |
+| Miércoles 30 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 3 |
 
 ---
 
@@ -108,3 +109,16 @@ de que alguien esté disponible cada mañana, y el martes no funcionó.
   desde el repositorio de datos;
 - que el histórico acepte disparos tardíos del mismo día, porque el SIP es histórico y sigue disponible;
 - fijar `ubuntu-24.04` y actualizar las acciones a Node.js 24.
+
+## 3. Miércoles 30 de septiembre: sigue igual
+
+- **Los cron del martes** llegaron entre las 14:37 y las 16:01 de Nueva York, unas 5 horas y media tarde. La
+  compuerta los descartó.
+- **El miércoles** no había ninguna corrida a las 11:31 de Nueva York, ni programada ni manual. El aviso de
+  las 09:18 no tuvo respuesta.
+- **`revisar_operacion.py` del 28 al 30** da 6 cortes `perdida`, 0 ejecuciones y el SIP `sin descargar` en
+  los 6.
+
+Van tres sesiones perdidas de las cinco previstas para la aceptación. La operación no puede aceptarse
+mientras dependa de los cron de GitHub. La decisión pendiente sigue siendo el disparador externo de la
+sección 2.
