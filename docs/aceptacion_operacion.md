@@ -141,3 +141,26 @@ sección 2.
 
 El retraso baja poco a poco, pero ningún día llegó a menos de cinco horas. La decisión pendiente sigue
 siendo el disparador externo de la sección 2.
+
+## 5. Decisión del 1 de octubre: Claude lanza la captura cada mañana
+
+El usuario eligió que Claude lance los workflows con tareas programadas, en lugar del despertador externo.
+Claude ya tenía acceso al repositorio de datos con la app de GitHub. La primera prueba funcionó: a las 11:40
+de Nueva York del jueves 1 lanzó `historico-alpaca`, para bajar el SIP de lunes a jueves.
+
+**Calendario, de lunes a viernes, en hora de Nueva York:**
+
+| Hora | Qué hace Claude |
+|---|---|
+| 09:14 | Lanza `captura-0945` y `captura-1000` y comprueba que quedaron en cola. Si falla, reintenta una vez y, si no, avisa al usuario para que las lance a mano. |
+| 10:27 | Lanza `historico-alpaca` y revisa las capturas del día: `revisar_operacion.py` y, si están completas, la elegibilidad con `verificar_alpaca.py`. Actualiza este documento y avisa solo si algo falló. |
+
+- **Margen.** Una corrida lanzada a las 09:14 espera hasta el corte. La preparación tiene que estar lista 6
+  minutos antes, y el job tiene un límite de 60 minutos; las dos condiciones se cumplen con margen.
+- **Los cron de GitHub siguen activos como respaldo.** Si llegan tarde, la compuerta los descarta. Si alguna
+  vez llegan a tiempo, esperan a la corrida en curso y no repiten lo ya capturado.
+- **Minutos de Actions.** Al lanzar a las 09:14, las capturas esperan unos 30 y 45 minutos. Con los disparos
+  tardíos descartados, la sesión gasta unos 80 minutos: unos 1 650 al mes, por debajo del límite gratuito de
+  2 000 para repositorios privados. Si hiciera falta bajar el gasto, se puede lanzar `captura-1000` más
+  tarde.
+- **La aceptación empieza de nuevo** el viernes 2 de octubre, con 3 a 5 sesiones lanzadas así.
