@@ -18,6 +18,7 @@ nunca cotizaciones.
 | Lunes 28 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó a tiempo: los cron llegaron unas 6–7 horas tarde | Secciones 1 y 2 |
 | Martes 29 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:32 de Nueva York no había corridas programadas ni manuales | Sección 2 |
 | Miércoles 30 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 3 |
+| Jueves 1 de octubre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 4 |
 
 ---
 
@@ -122,3 +123,21 @@ de que alguien esté disponible cada mañana, y el martes no funcionó.
 Van tres sesiones perdidas de las cinco previstas para la aceptación. La operación no puede aceptarse
 mientras dependa de los cron de GitHub. La decisión pendiente sigue siendo el disparador externo de la
 sección 2.
+
+## 4. Jueves 1 de octubre: cuarta sesión perdida
+
+- **Los cron del miércoles** llegaron entre las 14:26 y las 16:04 de Nueva York, unas 5 horas tarde. La
+  compuerta los descartó.
+- **El jueves** no había ninguna corrida a las 11:31 de Nueva York, ni programada ni manual.
+- **`revisar_operacion.py` del 28 de septiembre al 1 de octubre** da 8 cortes `perdida`, 0 ejecuciones y el
+  SIP `sin descargar` en los 8.
+
+| Día de los cron | Hora programada del primer disparo | Llegada de las corridas (Nueva York) | Retraso aproximado |
+|---|---|---|---|
+| Lunes 28 | 09:11 | 16:06–17:15 | 6–7 h |
+| Martes 29 | 09:11 | 14:37–16:01 | 5 h 30 min |
+| Miércoles 30 | 09:11 | 14:26–16:04 | 5 h 15 min |
+| Jueves 1 | 09:11 | Ninguna hasta las 11:31 | Más de 2 h 20 min |
+
+El retraso baja poco a poco, pero ningún día llegó a menos de cinco horas. La decisión pendiente sigue
+siendo el disparador externo de la sección 2.
