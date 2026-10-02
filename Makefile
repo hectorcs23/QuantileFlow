@@ -1,7 +1,7 @@
 PYTHON ?= python3
 DOC := docs/propuesta
 
-.PHONY: todo test figuras pdf limpiar verificar piloto-sintetico
+.PHONY: todo test figuras pdf limpiar verificar piloto-sintetico estrategias-sinteticas
 
 todo: test figuras pdf
 
@@ -21,6 +21,10 @@ verificar:
 piloto-sintetico:
 	$(PYTHON) scripts/piloto_sintetico.py
 
+estrategias-sinteticas:
+	$(PYTHON) scripts/estrategias_sintetico.py
+
 limpiar:
 	cd $(DOC) && latexmk -C main.tex
-	rm -rf .pytest_cache $(DOC)/figuras_src/__pycache__ quantileflow/__pycache__ tests/__pycache__
+	rm -rf .pytest_cache $(DOC)/figuras_src/__pycache__ quantileflow/__pycache__ \
+		estrategias/__pycache__ tests/__pycache__

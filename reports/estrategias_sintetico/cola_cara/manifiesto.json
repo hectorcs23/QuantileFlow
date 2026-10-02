@@ -1,0 +1,96 @@
+{
+  "candidatas": {
+    "aptas": 0,
+    "n": 35
+  },
+  "config": {
+    "huella": "fac52320d5a9203480f7b763b23d80deee2d8db29c42d3085e153193c16c6674",
+    "version": "estrategias-0.1"
+  },
+  "diagnostico": {
+    "asimetria_p": -2.0991117983802186,
+    "asimetria_q": -1.995003311315832,
+    "factor_vol": 0.9149585175864496,
+    "kl_p_sobre_q": 0.012606163756512224,
+    "prob_caida_10_p": 0.05155330619131969,
+    "prob_caida_10_q": 0.0644416327391496,
+    "prob_caida_5_p": 0.12565803412214102,
+    "prob_caida_5_q": 0.15707254265267617,
+    "retorno_vista": 1.2255519850068453e-06,
+    "sd_log_p": 0.05745170261011598,
+    "sd_log_q": 0.06279159273981803
+  },
+  "dictamen": {
+    "accion": "abstenerse",
+    "estructura": null,
+    "texto": "Abstenerse: ninguna de las 35 candidatas evaluables pasa los filtros."
+  },
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": true,
+      "commit": "853047b72f66bb8bd268fe5d4c6fa38270816619"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Linux-6.18.44-fc-v51-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "escenarios": [
+    "base",
+    "ejecución al mid",
+    "convicción a la mitad",
+    "otra estimación de Q"
+  ],
+  "fecha_corrida_utc": "2026-10-02T04:38:32+00:00",
+  "mercado": {
+    "T": 0.0821917808219178,
+    "descuento": 0.9967177272404354,
+    "forward": 100.22216422803665,
+    "n_cotizaciones": 78,
+    "n_fiables": 62,
+    "rango_fiable": [
+      78.0,
+      108.0
+    ]
+  },
+  "motivos_globales": [],
+  "q": {
+    "alternativa": "Q implícita (ajuste convexo no paramétrico)",
+    "origen": "Q implícita (ajuste SSVI de la rebanada)"
+  },
+  "salidas": {
+    "candidatas.csv": "4527b89dda1ae35d7279cec000507e96fcb29fb50dcc988c29c7d0a7af9f4581",
+    "distribuciones.png": "ca3b2944d6455ffcf863a97b95debafcaadb53e1e63c739db18e922e845fa06f",
+    "informe.md": "1015a6662475de68682e6e968c9088f28c909f3ec5aa2c346a1fbc72f93913aa",
+    "perfiles.png": "19b7eb70677b08845c77aca95eb46527c5ff267149b07f96f3dc52c86402bca4",
+    "ventaja_por_strike.png": "99f9330b09be5883d6cbc5c2118305505cda52a5fcd1668619f95e30bfbf2a71",
+    "ventaja_riesgo.png": "7839098ac778aed50ef75126accbef3c3ac45776086eaf5c56c37b2b40ee1356"
+  },
+  "vista": {
+    "detalle": {
+      "cambio_media": 2.220446049250313e-16,
+      "factor": 0.8,
+      "kl_sobre_q": 0.012606163756512224,
+      "lambda_compensacion": -4.336430022204135,
+      "masa_zona_p": 0.12851534337155135,
+      "masa_zona_q": 0.16064417921443916,
+      "preservar_media": true,
+      "suma_antes_de_normalizar": 1.0,
+      "umbral_log": -0.05
+    },
+    "especificacion": {
+      "factor": 0.8,
+      "preservar_media": true,
+      "tipo": "reponderar_cola",
+      "umbral_log": -0.05
+    },
+    "origen": "cola izquierda reponderada x0.80 más allá de -0.050 en log, con la media de Q"
+  }
+}

@@ -1,0 +1,44 @@
+# Configuración del recomendador de estrategias con puts (propuesta de trabajo).
+# Los umbrales son provisionales: salen de razonar sobre órdenes de magnitud, no
+# de ninguna medición. Se revisan con datos y se congelan, con una versión
+# nueva, antes de usarlos para decidir nada.
+
+[estrategias]
+version = "estrategias-0.1"
+descripcion = "Vender o comprar puts a partir del desacuerdo entre la vista P y la Q implícita"
+
+[ejecucion]
+# "adverso": comprar al ask y vender al bid. "medio": al mid, solo como referencia.
+modo = "adverso"
+comision = 0.01          # por pata y unidad de subyacente
+coste_forward = 0.0005   # fracción de D*F por montar la pata lineal de referencia
+
+[reglas]
+alfa = 0.95                        # nivel del CVaR
+lambda_riesgo = 0.25               # peso del CVaR en la puntuación (mismo papel que en decision.py)
+factor_sobre_coste = 1.0           # la ventaja debe superar el coste de ejecución por este factor
+# Rendimiento esperado mínimo sobre el capital inmovilizado, al plazo de la
+# estructura. No es rentabilidad total: es la parte que no está ya en el precio.
+# A 30 días, 0.003 equivale a cerca de un 3.7 % anual de ventaja pura, que ya es
+# exigente; por encima de eso el umbral descartaría casi todo por construcción.
+ventaja_minima_sobre_capital = 0.003
+# Entropía relativa máxima de la vista sobre Q, en nats. Referencia para
+# calibrarla: un desplazamiento de media de d desviaciones típicas del horizonte
+# cuesta aproximadamente d^2/2 nats, de modo que 0.02 admite hasta unas 0.2
+# desviaciones típicas de opinión direccional. Por encima de ese umbral la
+# recomendación la produce la opinión y no el dato, y conviene decirlo.
+kl_max = 0.02
+cvar_max_sobre_capital = 1.0       # presupuesto de riesgo: CVaR en valor presente / capital
+fraccion_no_fiable_max = 0.35      # parte de la ventaja que puede venir de la zona sin cotizaciones
+exigir_signo_estable = true        # la ventaja debe mantener el signo en todos los escenarios
+permitir_perdida_no_acotada = false
+
+[catalogo]
+distancias = [0.03, 0.05, 0.08]    # separación relativa del forward para elegir strikes
+anchuras = [0.03, 0.05]            # anchura relativa de los spreads
+
+[vista]
+# Vista por omisión del guion de demostración. No es una opinión sobre nada:
+# es el valor que hace que el ejemplo tenga algo que decidir.
+tipo = "tilt_media"
+retorno = 0.01

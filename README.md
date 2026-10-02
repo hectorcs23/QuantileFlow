@@ -4,9 +4,19 @@ Seguimiento de distribuciones implícitas en opciones y gestión diaria de posic
 **Versión de investigación (26 de septiembre de 2026).**
 
 Este repositorio contiene, por ahora, la propuesta técnica del sistema, un núcleo matemático de
-referencia con el que se generan sus figuras y el pipeline del piloto de medición (ingesta, controles,
-etiquetas, informe y manifiesto). No hay datos de mercado, modelos entrenados ni resultados empíricos:
-todas las figuras y la plantilla del informe usan datos **sintéticos** con semillas fijas.
+referencia con el que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles,
+etiquetas, informe y manifiesto) y un segundo subproyecto, `estrategias/`, que convierte la
+distribución implícita en una decisión sobre puts. No hay datos de mercado, modelos entrenados ni
+resultados empíricos: todas las figuras y las plantillas de informe usan datos **sintéticos** con
+semillas fijas.
+
+## Subproyectos
+
+1. **Medición** (`quantileflow/`): reconstruir `Q` a partir de la cadena y medir su dinámica con
+   controles y abstención. Es la base.
+2. **Estrategias con puts** (`estrategias/`): dada `Q` y una vista `P` declarada explícitamente,
+   decidir si vender puts, comprarlos o no operar, con las mismas reglas de identificación y
+   abstención. Ver [`docs/estrategias_con_puts.md`](docs/estrategias_con_puts.md).
 
 ## Documentos
 
@@ -17,6 +27,10 @@ todas las figuras y la plantilla del informe usan datos **sintéticos** con semi
   informe reproducible de sesiones reales de apertura (SPXW PM, 09:45, plazo constante de 30 días).
 - [`docs/estado_continuacion.md`](docs/estado_continuacion.md): qué se construyó de ese plan sin datos,
   el problema de acceso a datos y lo que falta.
+- [`docs/estrategias_con_puts.md`](docs/estrategias_con_puts.md): el subproyecto de decisión. Por qué
+  bajo `Q` ninguna estructura tiene ventaja, por qué la ventaja de vender un put de strike `K` es
+  exactamente `D * int_0^K (F_Q - F_P) ds`, y qué hace falta para que una vista alcista justifique
+  vender puts en vez de comprar el subyacente o una call.
 - `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
   y 19 diagramas. El PDF y las figuras PNG son artefactos generados: `make figuras && make pdf` los
   regenera.
@@ -56,9 +70,23 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   decision.py          programa lineal con CVaR, costos y presupuesto de riesgo
   evidencia.py         Sharpe deflactado, bootstrap por bloques, walk-forward con purga
   sintetico.py         generadores del mundo sintético de las figuras
+estrategias/           subproyecto de decisión sobre puts (usa el núcleo anterior)
+  distribucion.py      distribución discreta sobre malla logarítmica común, CDF, cuantiles, KL
+  vista.py             construcción de P deformando Q: tilt de media y momentos (mínima entropía),
+                       desplazamiento, reponderación de cola, mezcla de escenarios, desde cuantiles
+  estructuras.py       patas y pagos: put corto y largo, spreads, call, reversal, collar, forward
+  precios.py           cotización por pata, paridad para la pata que falta, ejecución adversa
+  evaluacion.py        ventaja como D*(E_P - E_Q), identidad por tramos de CDF, CVaR, equilibrio,
+                       capital, y la parte de la ventaja que depende de la cola no identificada
+  robustez.py          perturbaciones de vista, de Q y de ejecución; ventaja de peor caso
+  recomendacion.py     puertas globales, zona de no operación, puntuación y dictamen
+  informe.py           tabla de candidatas, gráficas e informe Markdown
+  corrida.py           corrida reproducible con manifiesto (la vista entra en el manifiesto)
+  sintetico.py         mundo sintético y dos reconstrucciones independientes de Q
 tests/                 pruebas de propiedades del núcleo, cuantiles, conformal, cadenas, contrato,
-                       calendario, etiquetas, almacenamiento y piloto
+                       calendario, etiquetas, almacenamiento, piloto y estrategias
 configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
+configs/estrategias.toml  reglas de decisión versionadas (umbrales provisionales)
 scripts/               piloto con datos normalizados, plantilla sintética y registro del entorno
 reports/               informes generados (no se editan a mano) y registros de verificación
 docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
@@ -73,6 +101,7 @@ make figuras            # regenera las figuras PNG (matplotlib, estilo por defec
 make pdf                # compila el documento y lo copia a docs/QuantileFlow_propuesta_tecnica.pdf
 make verificar          # registra commit, entorno y resultado de las pruebas en reports/verificacion/
 make piloto-sintetico   # plantilla del informe piloto con datos sintéticos en reports/piloto_sintetico/
+make estrategias-sinteticas  # informes de decisión sobre puts en reports/estrategias_sintetico/
 ```
 
 Con datos reales normalizados (esquemas de `quantileflow/contrato.py`):
@@ -96,3 +125,10 @@ Las pruebas usan datos sintéticos. Comprueban propiedades matemáticas y que el
 bid/ask separa efectos de los datos (cotizaciones desfasadas, dividendos, ejercicio anticipado, strikes
 ausentes, ventanas de apertura) de una posible señal. No demuestran validez predictiva ni la calidad de
 datos reales: eso exige la muestra histórica de la fase 0 del plan de trabajo.
+
+En `estrategias/` comprueban además el invariante que sostiene el subproyecto —con `P = Q` la ventaja
+de toda estructura es exactamente cero—, la identidad entre la ventaja de un put y la integral de la
+diferencia de distribuciones acumuladas, y que las reglas de abstención se activan cuando la vista se
+aparta demasiado de `Q`, cuando la ventaja no cubre la ejecución o cuando procede de strikes sin
+cotizaciones utilizables. Que una vista acierte no es comprobable con datos generados por el propio
+código, y las pruebas no lo intentan.

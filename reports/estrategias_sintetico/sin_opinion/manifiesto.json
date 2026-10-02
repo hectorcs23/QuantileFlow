@@ -1,0 +1,91 @@
+{
+  "candidatas": {
+    "aptas": 0,
+    "n": 35
+  },
+  "config": {
+    "huella": "fac52320d5a9203480f7b763b23d80deee2d8db29c42d3085e153193c16c6674",
+    "version": "estrategias-0.1"
+  },
+  "diagnostico": {
+    "asimetria_p": -1.995003311315832,
+    "asimetria_q": -1.995003311315832,
+    "factor_vol": 1.0,
+    "kl_p_sobre_q": 0.0,
+    "prob_caida_10_p": 0.0644416327391496,
+    "prob_caida_10_q": 0.0644416327391496,
+    "prob_caida_5_p": 0.15707254265267617,
+    "prob_caida_5_q": 0.15707254265267617,
+    "retorno_vista": 1.2255519847848007e-06,
+    "sd_log_p": 0.06279159273981803,
+    "sd_log_q": 0.06279159273981803
+  },
+  "dictamen": {
+    "accion": "abstenerse",
+    "estructura": null,
+    "texto": "Abstenerse: ninguna de las 35 candidatas evaluables pasa los filtros."
+  },
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": true,
+      "commit": "853047b72f66bb8bd268fe5d4c6fa38270816619"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Linux-6.18.44-fc-v51-x86_64-with-glibc2.39",
+    "python": "3.11.15"
+  },
+  "escenarios": [
+    "base",
+    "ejecución al mid",
+    "convicción a la mitad",
+    "otra estimación de Q"
+  ],
+  "fecha_corrida_utc": "2026-10-02T04:38:34+00:00",
+  "mercado": {
+    "T": 0.0821917808219178,
+    "descuento": 0.9967177272404354,
+    "forward": 100.22216422803665,
+    "n_cotizaciones": 78,
+    "n_fiables": 62,
+    "rango_fiable": [
+      78.0,
+      108.0
+    ]
+  },
+  "motivos_globales": [],
+  "q": {
+    "alternativa": "Q implícita (ajuste convexo no paramétrico)",
+    "origen": "Q implícita (ajuste SSVI de la rebanada)"
+  },
+  "salidas": {
+    "candidatas.csv": "ce41549082ed146a3457bdb7d9b28cf9ba3ce24449fb12b37868d5dc9dc2499e",
+    "distribuciones.png": "85dcb4586b5ae3aed68def992e6606d14c904f9c23ead90891418bf2d05c961b",
+    "informe.md": "78cb0dc37d3f3f0f1007c1c2eb5680fb65e3de4eec1da71621e019bb9d2ef4c5",
+    "perfiles.png": "19b7eb70677b08845c77aca95eb46527c5ff267149b07f96f3dc52c86402bca4",
+    "ventaja_por_strike.png": "9414d9886873e622c9f6f583427360bb8a5063f15158015cccc5aa7b017dfb4e",
+    "ventaja_riesgo.png": "1f318d521f0eac67c967bd46805da88bed6de79171feebb76eecce929da5e8f9"
+  },
+  "vista": {
+    "detalle": {
+      "forward": 100.22216422803665,
+      "masa_fuera_malla_derecha": 0.0,
+      "masa_fuera_malla_izquierda": 3.017437769461244e-05,
+      "phi": 15.179814819897196,
+      "rho": -0.6978499828987251,
+      "suma_antes_de_normalizar": 1.0,
+      "theta": 0.0029618305205062635
+    },
+    "especificacion": {
+      "tipo": "neutral"
+    },
+    "origen": "vista neutral (P = Q)"
+  }
+}
