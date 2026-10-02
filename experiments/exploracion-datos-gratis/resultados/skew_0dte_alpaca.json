@@ -1,0 +1,419 @@
+{
+  "periodo": [
+    "2024-02-01",
+    "2026-10-01"
+  ],
+  "sesiones": 669,
+  "rr25_medio_por_hora": {
+    "09:40": 3.9773351289663537,
+    "10:10": 3.725297651597474,
+    "10:40": 3.539935777638255,
+    "11:10": 3.4460266111856646,
+    "11:40": 3.3866407337901596,
+    "12:10": 3.2878410122271413,
+    "12:40": 3.1837412718738887,
+    "13:10": 3.319227379675998,
+    "13:40": 3.108477250724162,
+    "14:10": 3.004012885606809,
+    "14:40": 2.8497858362593567,
+    "15:10": 2.4043410299285046,
+    "15:40": 3.7480671449074823
+  },
+  "persistencia": {
+    "pendiente": {
+      "5_min": {
+        "beta": 0.929281692736673,
+        "cov": 5.172148475585606,
+        "n": 20949
+      },
+      "10_min": {
+        "beta": 0.9095101488712031,
+        "cov": 5.098164026596493,
+        "n": 20369
+      },
+      "30_min": {
+        "beta": 0.8542433891294392,
+        "cov": 4.916480129177919,
+        "n": 18478
+      }
+    },
+    "persistencia_cada_5_min_sin_ruido": 0.9856956061222243,
+    "parte_de_la_varianza_que_es_ruido": 0.013853171574527368
+  },
+  "todo": {
+    "sesiones_con_base": 632,
+    "cobertura_rr": 0.5637552742616033,
+    "senales": 442,
+    "convergencia_ingenua": {
+      "sesiones_activas": 149,
+      "senales_validas": 393,
+      "media_puntos_vol": 1.2736374147323812,
+      "ic95": [
+        1.062970564735946,
+        1.5147427610670638
+      ]
+    },
+    "convergencia_operable": {
+      "sesiones_activas": 148,
+      "senales_validas": 383,
+      "media_puntos_vol": 0.6339045901330511,
+      "ic95": [
+        0.43162532608988374,
+        0.8783505468986719
+      ]
+    },
+    "operable_otros_horizontes": {
+      "10_min": {
+        "sesiones_activas": 150,
+        "senales_validas": 407,
+        "media_puntos_vol": 0.299272921038879,
+        "ic95": [
+          0.1303442127114739,
+          0.5109871518911124
+        ]
+      },
+      "20_min": {
+        "sesiones_activas": 150,
+        "senales_validas": 395,
+        "media_puntos_vol": 0.5803601210510994,
+        "ic95": [
+          0.41980883845771866,
+          0.7662318348372998
+        ]
+      },
+      "45_min": {
+        "sesiones_activas": 145,
+        "senales_validas": 363,
+        "media_puntos_vol": 0.7765401498339319,
+        "ic95": [
+          0.557389210781593,
+          0.9974753317248068
+        ]
+      }
+    },
+    "por_tamano_de_z": {
+      "2<=|z|<3": {
+        "ingenua": {
+          "sesiones_activas": 144,
+          "senales_validas": 316,
+          "media_puntos_vol": 1.1455175542291423,
+          "ic95": [
+            0.9381218307533112,
+            1.3757088146013157
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 142,
+          "senales_validas": 309,
+          "media_puntos_vol": 0.5595971519409859,
+          "ic95": [
+            0.3364917572708619,
+            0.8221472274542176
+          ]
+        }
+      },
+      "|z|>=3": {
+        "ingenua": {
+          "sesiones_activas": 39,
+          "senales_validas": 77,
+          "media_puntos_vol": 2.428005608295341,
+          "ic95": [
+            1.4165024721153048,
+            3.5603128023706163
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 37,
+          "senales_validas": 74,
+          "media_puntos_vol": 1.1712098869002616,
+          "ic95": [
+            0.4706641273423737,
+            1.8572036754060937
+          ]
+        }
+      }
+    }
+  },
+  "2024": {
+    "sesiones_con_base": 197,
+    "cobertura_rr": 0.48209813874788493,
+    "senales": 111,
+    "convergencia_ingenua": {
+      "sesiones_activas": 39,
+      "senales_validas": 95,
+      "media_puntos_vol": 0.8225294879334706,
+      "ic95": [
+        0.49939802092375596,
+        1.103201204422635
+      ]
+    },
+    "convergencia_operable": {
+      "sesiones_activas": 38,
+      "senales_validas": 93,
+      "media_puntos_vol": 0.4244895014750379,
+      "ic95": [
+        0.18174350681266907,
+        0.6990583933810838
+      ]
+    },
+    "operable_otros_horizontes": {
+      "10_min": {
+        "sesiones_activas": 39,
+        "senales_validas": 99,
+        "media_puntos_vol": 0.24791827222446983,
+        "ic95": [
+          0.05522831140385767,
+          0.521171619727331
+        ]
+      },
+      "20_min": {
+        "sesiones_activas": 38,
+        "senales_validas": 96,
+        "media_puntos_vol": 0.4790325641124918,
+        "ic95": [
+          0.2689751672794326,
+          0.7385054560039185
+        ]
+      },
+      "45_min": {
+        "sesiones_activas": 38,
+        "senales_validas": 88,
+        "media_puntos_vol": 0.38669060136197453,
+        "ic95": [
+          0.07288225787682572,
+          0.7994751129465889
+        ]
+      }
+    },
+    "por_tamano_de_z": {
+      "2<=|z|<3": {
+        "ingenua": {
+          "sesiones_activas": 39,
+          "senales_validas": 79,
+          "media_puntos_vol": 0.8090725362119594,
+          "ic95": [
+            0.4567704709554162,
+            1.1353041135039936
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 38,
+          "senales_validas": 77,
+          "media_puntos_vol": 0.3161507290466858,
+          "ic95": [
+            0.007575987414028265,
+            0.6847278313588052
+          ]
+        }
+      },
+      "|z|>=3": {
+        "ingenua": {
+          "sesiones_activas": 9,
+          "senales_validas": 16,
+          "media_puntos_vol": 1.2163925532301105,
+          "ic95": [
+            0.2792070560220301,
+            1.975982878469431
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 8,
+          "senales_validas": 16,
+          "media_puntos_vol": 1.034360249522775,
+          "ic95": [
+            -0.2894592555844731,
+            2.1668293231250315
+          ]
+        }
+      }
+    }
+  },
+  "2025": {
+    "sesiones_con_base": 247,
+    "cobertura_rr": 0.5785155195681512,
+    "senales": 191,
+    "convergencia_ingenua": {
+      "sesiones_activas": 57,
+      "senales_validas": 171,
+      "media_puntos_vol": 1.4699813320622583,
+      "ic95": [
+        1.0527134744462683,
+        2.049499471924524
+      ]
+    },
+    "convergencia_operable": {
+      "sesiones_activas": 57,
+      "senales_validas": 166,
+      "media_puntos_vol": 0.962466013619039,
+      "ic95": [
+        0.5262948099653011,
+        1.5071725870077977
+      ]
+    },
+    "operable_otros_horizontes": {
+      "10_min": {
+        "sesiones_activas": 57,
+        "senales_validas": 176,
+        "media_puntos_vol": 0.48167404380960066,
+        "ic95": [
+          0.13592226187211476,
+          0.9429263176607018
+        ]
+      },
+      "20_min": {
+        "sesiones_activas": 58,
+        "senales_validas": 172,
+        "media_puntos_vol": 0.8197475989277965,
+        "ic95": [
+          0.5199254100716525,
+          1.2056688792533894
+        ]
+      },
+      "45_min": {
+        "sesiones_activas": 55,
+        "senales_validas": 154,
+        "media_puntos_vol": 1.0833719149388708,
+        "ic95": [
+          0.735209209458594,
+          1.397299211355891
+        ]
+      }
+    },
+    "por_tamano_de_z": {
+      "2<=|z|<3": {
+        "ingenua": {
+          "sesiones_activas": 55,
+          "senales_validas": 123,
+          "media_puntos_vol": 1.2379122256975188,
+          "ic95": [
+            0.8277181481046179,
+            1.8006572449737757
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 55,
+          "senales_validas": 119,
+          "media_puntos_vol": 0.9355093687568796,
+          "ic95": [
+            0.5063068834903363,
+            1.4769092151369543
+          ]
+        }
+      },
+      "|z|>=3": {
+        "ingenua": {
+          "sesiones_activas": 20,
+          "senales_validas": 48,
+          "media_puntos_vol": 3.034802956599503,
+          "ic95": [
+            1.2283164076128483,
+            4.970145066381016
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 20,
+          "senales_validas": 47,
+          "media_puntos_vol": 1.0044867522487415,
+          "ic95": [
+            -0.21719487754777073,
+            2.2286595129624938
+          ]
+        }
+      }
+    }
+  },
+  "2026": {
+    "sesiones_con_base": 188,
+    "cobertura_rr": 0.6299290780141844,
+    "senales": 140,
+    "convergencia_ingenua": {
+      "sesiones_activas": 53,
+      "senales_validas": 127,
+      "media_puntos_vol": 1.394422430908882,
+      "ic95": [
+        1.2159236205609396,
+        1.5934166933916254
+      ]
+    },
+    "convergencia_operable": {
+      "sesiones_activas": 53,
+      "senales_validas": 124,
+      "media_puntos_vol": 0.43069274542179065,
+      "ic95": [
+        0.23022925933251426,
+        0.6325924187029588
+      ]
+    },
+    "operable_otros_horizontes": {
+      "10_min": {
+        "sesiones_activas": 54,
+        "senales_validas": 132,
+        "media_puntos_vol": 0.14382787114685724,
+        "ic95": [
+          -0.026956729679395088,
+          0.33965856200842864
+        ]
+      },
+      "20_min": {
+        "sesiones_activas": 54,
+        "senales_validas": 127,
+        "media_puntos_vol": 0.39454481451070395,
+        "ic95": [
+          0.21121319960289894,
+          0.5940072531653585
+        ]
+      },
+      "45_min": {
+        "sesiones_activas": 52,
+        "senales_validas": 121,
+        "media_puntos_vol": 0.7368966067793696,
+        "ic95": [
+          0.47225213747493827,
+          1.011520984538691
+        ]
+      }
+    },
+    "por_tamano_de_z": {
+      "2<=|z|<3": {
+        "ingenua": {
+          "sesiones_activas": 50,
+          "senales_validas": 114,
+          "media_puntos_vol": 1.3063105296673305,
+          "ic95": [
+            1.1176763879260705,
+            1.5261593076137603
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 49,
+          "senales_validas": 113,
+          "media_puntos_vol": 0.32645005286158285,
+          "ic95": [
+            0.08464650332052254,
+            0.5762689169304713
+          ]
+        }
+      },
+      "|z|>=3": {
+        "ingenua": {
+          "sesiones_activas": 10,
+          "senales_validas": 13,
+          "media_puntos_vol": 2.304862661245724,
+          "ic95": [
+            0.8643828346590232,
+            3.053699292080693
+          ]
+        },
+        "operable": {
+          "sesiones_activas": 9,
+          "senales_validas": 11,
+          "media_puntos_vol": 1.663349863794739,
+          "ic95": [
+            0.8637863125976653,
+            2.2049280952086057
+          ]
+        }
+      }
+    }
+  }
+}
