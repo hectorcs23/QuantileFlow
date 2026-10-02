@@ -1,6 +1,7 @@
 # QuantileFlow: aceptación de la operación
 
-**Periodo previsto:** del 28 de septiembre al 2 de octubre de 2026, de 3 a 5 sesiones.
+**Periodo previsto:** de 3 a 5 sesiones. Empezó el 28 de septiembre de 2026; las cuatro primeras sesiones se
+perdieron, y la aceptación se reinició el 2 de octubre con las capturas lanzadas por Claude (sección 5).
 **Repositorio de datos:** `hectorcs23/QuantileFlow-datos`, privado. **Código de la captura:** `4ffde8a`.
 **Herramienta:** `scripts/revisar_operacion.py`. Solo se publican agregados: estados, tiempos y conteos,
 nunca cotizaciones.
@@ -19,6 +20,7 @@ nunca cotizaciones.
 | Martes 29 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:32 de Nueva York no había corridas programadas ni manuales | Sección 2 |
 | Miércoles 30 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 3 |
 | Jueves 1 de octubre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 4 |
+| Viernes 2 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 6. Elegibles con controles estrictos |
 
 ---
 
@@ -137,7 +139,7 @@ sección 2.
 | Lunes 28 | 09:11 | 16:06–17:15 | 6–7 h |
 | Martes 29 | 09:11 | 14:37–16:01 | 5 h 30 min |
 | Miércoles 30 | 09:11 | 14:26–16:04 | 5 h 15 min |
-| Jueves 1 | 09:11 | Ninguna hasta las 11:31 | Más de 2 h 20 min |
+| Jueves 1 | 09:11 | 14:51–16:21 (visto el viernes) | 5 h 40 min |
 
 El retraso baja poco a poco, pero ningún día llegó a menos de cinco horas. La decisión pendiente sigue
 siendo el disparador externo de la sección 2.
@@ -164,3 +166,51 @@ de Nueva York del jueves 1 lanzó `historico-alpaca`, para bajar el SIP de lunes
   2 000 para repositorios privados. Si hiciera falta bajar el gasto, se puede lanzar `captura-1000` más
   tarde.
 - **La aceptación empieza de nuevo** el viernes 2 de octubre, con 3 a 5 sesiones lanzadas así.
+
+## 6. Viernes 2 de octubre: primera sesión completa
+
+**Cómo se lanzó.** Claude lanzó `captura-0945` y `captura-1000` a las 09:16 de Nueva York y
+`historico-alpaca` a las 10:28, todas con `workflow_dispatch`. Las tres corridas terminaron con éxito:
+
+| Workflow | Corrida (Nueva York) | Duración |
+|---|---|---|
+| `captura-0945` | 09:16–09:45 | 29 min |
+| `captura-1000` | 09:16–10:00 | 44 min |
+| `historico-alpaca` | 10:28 | 46 s |
+
+**`revisar_operacion.py` del 2**, después del histórico:
+- **Estado:** 2 cortes `completa`, con 1 ejecución y 1 intento cada uno. No hubo errores ni recuperaciones.
+- **Puntualidad:**
+  - la preparación quedó lista 1 699 s antes del corte de las 09:45 y 2 600 s antes del de las 10:00;
+  - la ráfaga empezó 5.0 s antes del corte en los dos;
+  - no llegó ninguna respuesta después del corte.
+- **Retraso respecto del cron:** no aplica, porque las corridas se lanzaron a mano.
+- **SIP del objetivo:** completo en los 2 cortes.
+- **Dividendos:** 5 versiones de 5 eventos, sin discrepancias.
+
+**Elegibilidad** (`verificar_alpaca.py`, sobre una copia de los datos):
+- **Las dos capturas son elegibles** con los controles estrictos: 3 528 filas válidas de 3 808 a las 09:45 y
+  3 532 de 3 808 a las 10:00.
+- **Cobertura:** los 3 808 contratos tienen cotización y metadatos.
+- **Solicitudes:** cada captura recibió 10 respuestas, con 1.8 MB en total, en 0.88 y 0.80 s, sin errores.
+- **Medidas:**
+  - el nivel implícito de SPX quedó identificado, con 115 y 111 pares del vencimiento del día;
+  - la RR25 a 30 días quedó identificada en SPXW y en SPY, en los dos cortes.
+- **Feed:** de opciones `indicative`, con cuenta paper.
+  - El desfase del reloj fue de 0.09 s.
+  - Entre el 8 y el 15 % de los precios de SPXW caen en la grilla de ticks, como en la primera
+    verificación, la del cierre del 25 de septiembre. Es lo esperable de ese feed (`docs/fuente_alpaca.md`).
+- **Commit fijado:** las capturas y sus registros conservan `4ffde8a`.
+
+**Observaciones.**
+- **Los cron del jueves** llegaron entre las 14:51 y las 16:21 de Nueva York, unas 5 horas y 40 minutos tarde.
+  La compuerta los descartó. Los del viernes aún no habían llegado a las 10:28.
+- **Nombre de los manifiestos del histórico.** Los de hoy se llaman `2026-10-02T0945-2.json` y
+  `2026-10-02T1000-2.json`.
+  - La causa: `etiqueta_libre` también comprueba el diario de la captura en vivo, que tiene el mismo nombre
+    base, y por eso pasa al número siguiente.
+  - Solo afecta al nombre: la revisión lee los manifiestos por carpeta.
+  - Se puede corregir en el mantenimiento de las plantillas, junto con el nuevo commit fijado.
+
+**Cuenta:** 1 sesión completa de las 3 a 5 que pide la aceptación. Es también la primera sesión real a las
+09:45 que sirve para decidir entre `indicative` y OPRA.
