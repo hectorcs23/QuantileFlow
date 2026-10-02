@@ -1,0 +1,22 @@
+{
+  "status": "unfilled_template_not_market_evidence",
+  "provider": null,
+  "dataset_and_entitlement": null,
+  "retrieved_at_utc": null,
+  "history_start": null,
+  "history_end": null,
+  "evaluation_start_fixed_before_results": null,
+  "previously_examined_dates_or_outcomes": [],
+  "quote_timestamp_convention": null,
+  "calendar_official_source": null,
+  "raw_files_sha256": {},
+  "normalization_script_sha256": null,
+  "iv_delta_model_and_version": null,
+  "greeks_computed_with_inputs_as_of_snapshot": null,
+  "dividend_and_rate_sources": null,
+  "volatility_day_count_and_expiry_clock": null,
+  "broker_cost_assumptions_checked": null,
+  "config_sha256_before_analysis": null,
+  "known_gaps_or_regime_exclusions": [],
+  "validation_type": "set_retrospective_or_prospective"
+}

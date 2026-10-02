@@ -113,6 +113,14 @@ reports/               informes generados (no se editan a mano) y registros de v
 docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
 ```
 
+## Experimentos adicionales
+
+- [Reversión del skew SPY 0DTE](experiments/0dte-skew-reversion/README.md): protocolo previo a
+  resultados, contrato CSV, normalización por hora, diagnóstico OU y replay de contratos fijos con
+  cobertura delta, demora de ejecución y costos. Las 16 pruebas se ejecutan con la suite habitual.
+  Pendiente de cotizaciones históricas reales; todavía no hay evidencia de rentabilidad. Esta tesis
+  intradía tiene su propio horizonte y no modifica el piloto de opciones a 30 días.
+
 ## Reproducir
 
 ```bash
