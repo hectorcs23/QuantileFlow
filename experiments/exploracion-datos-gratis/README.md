@@ -48,6 +48,9 @@ CSV de Cboe son públicos.
    `descargar_0dte_alpaca.py --desde 2024-02-01 --hasta 2026-10-01`. Tarda cerca de una hora y ocupa unos
    141 MB en `data/exploracion/0dte/`. Después corre `skew_0dte_alpaca.py`, que tarda unos 5 minutos y
    reescribe `resultados/skew_0dte_alpaca.json`.
+   - **Sin descargar.** Con acceso al repo privado `QuantileFlow-datos`, se puede usar la copia de la rama
+     `exploracion`. Tiene los mismos 669 archivos y la huella SHA-256 de cada uno. Su README dice cómo
+     copiarla a `data/exploracion/0dte/`.
 4. Comprueba que los dos JSON no cambiaron: `git diff experiments/exploracion-datos-gratis/resultados/`.
    - **SKEW.** La muestra está fija: SPY llega hasta el 1 de octubre de 2026, y que Cboe agregue días nuevos
      no la cambia. Los dividendos futuros de SPY reescalan todos los precios por igual, así que no cambian
