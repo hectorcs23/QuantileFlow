@@ -14,10 +14,11 @@ Diferencias con el experimento, todas por los datos:
   minuto. No hay griegas del proveedor.
 - **Convergencia:** se mide de dos maneras.
   - *Ingenua*, como en el experimento: ``d * (residuo[t+30] - residuo[t])``.
-  - *Operable*: ``d * (residuo[t+35] - residuo[t+5])``, el intervalo entre la entrada y la salida.
+  - *Retrasada*: ``d * (residuo[t+35] - residuo[t+5])``, una medida estadística, no un P&L.
 
-  Si la medida tiene ruido, la ingenua revierte por construcción y la operable no. Aquí ``d = -signo
-  del residuo en t``.
+  El retraso reduce el efecto de un error aislado en t, pero no elimina ruido autocorrelacionado.
+  Aquí ``d = -signo del residuo en t``. Las claves históricas ``operable`` se conservan para leer los
+  resultados anteriores; no significan que exista una operación ejecutable.
 - **Sin ganancia:** no se mide la ganancia después de costos, porque hacen falta compra y venta.
 
 RR25 = 100 * (IV put 25 delta - IV call 25 delta), en puntos de volatilidad, con el convenio del
@@ -96,8 +97,10 @@ def interpolar(deltas, ivs):
     return float(v[j] + (v[i] - v[j]) * (DELTA - d[j]) / (d[i] - d[j]))
 
 
-def rr_de_la_sesion(registro):
+def rr_de_la_sesion(registro, antiguedad_maxima=5):
     """RR25 en cada punto de la cuadrícula de una sesión: una serie indexada por minuto del día en Nueva York."""
+    if antiguedad_maxima not in (1, 5):
+        raise ValueError('Antigüedad máxima admitida: 1 o 5 minutos')
     cierre = pd.Timestamp(registro["cierre_utc"])
     spy = pd.DataFrame(registro["spy"])
     if spy.empty:
@@ -107,7 +110,7 @@ def rr_de_la_sesion(registro):
     filas = []
     for simbolo, barras in registro["opciones"].items():
         m = SIMBOLO.match(simbolo)
-        if not m or not barras:
+        if not m or not barras or m.group(1) != pd.Timestamp(registro['fecha']).strftime('%y%m%d'):
             continue
         b = pd.DataFrame(barras)
         b["t"] = pd.to_datetime(b["t"])
@@ -116,6 +119,10 @@ def rr_de_la_sesion(registro):
     if not filas:
         return pd.Series(dtype=float)
     op = pd.concat(filas)
+    if antiguedad_maxima == 1:
+        # Only these completed minutes can appear at a grid point. Avoid unused IV inversions.
+        minuto = op['t'].dt.tz_convert(NY).dt.hour * 60 + op['t'].dt.tz_convert(NY).dt.minute
+        op = op[minuto % PASO == (PRIMER_MINUTO - 1) % PASO]
     op = op[op["vw"] >= PRECIO_MINIMO]
     op["S"] = op["t"].map(spy)
     op = op.dropna(subset=["S"])
@@ -131,7 +138,7 @@ def rr_de_la_sesion(registro):
     fin = cierre.tz_convert(NY).hour * 60 + cierre.tz_convert(NY).minute
     salida = {}
     for punto in range(PRIMER_MINUTO, fin - 10 + 1, PASO):
-        ventana = op[(op["minuto"] > punto - PASO - 1) & (op["minuto"] <= punto - 1)]
+        ventana = op[(op["minuto"] >= punto - antiguedad_maxima) & (op["minuto"] <= punto - 1)]
         if ventana.empty:
             continue
         ultimo = ventana.sort_values("t").groupby(["K", "call"]).tail(1)
@@ -207,28 +214,27 @@ def convergencia(senales, sesiones, columna):
 
 
 def persistencia(residuo):
-    """Pendiente del residuo a 5, 10 y 30 minutos, y parte de su varianza que es ruido de medida.
+    """Momentos descriptivos en una cohorte común; no identifica ruido ni vida media latente.
 
-    Con un proceso AR(1) más ruido blanco de medida, cov(5)/cov(10) estima la persistencia real cada
-    5 minutos sin el ruido, y la varianza de la señal es cov(5)/rho.
+    Todos los rezagos usan los mismos orígenes con x(t), x(t+5), x(t+10), x(t+30) observados.
+    La heterogeneidad por hora y el ruido correlacionado aún impiden interpretar cov(10)/cov(5)
+    como persistencia económica. No se publican estimaciones latentes sin identificar el modelo.
     """
+    partes = []
+    for punto in residuo.columns:
+        cols = [punto + k for k in (0, 5, 10, 30)]
+        if all(c in residuo.columns for c in cols):
+            partes.append(residuo[cols].dropna().to_numpy())
+    datos = np.concatenate(partes) if partes else np.empty((0, 4))
     pares = {}
-    for rezago in (5, 10, 30):
-        a, b = [], []
-        for punto in residuo.columns:
-            if punto + rezago in residuo.columns:
-                x, y = residuo[punto].to_numpy(), residuo[punto + rezago].to_numpy()
-                ok = np.isfinite(x) & np.isfinite(y)
-                a.append(x[ok])
-                b.append(y[ok])
-        x, y = np.concatenate(a), np.concatenate(b)
-        pares[rezago] = {"beta": float(np.polyfit(x, y, 1)[0]), "cov": float(np.cov(x, y)[0, 1]), "n": int(len(x))}
-    varianza = float(np.nanvar(residuo.to_numpy()))
-    rho = pares[10]["cov"] / pares[5]["cov"] if pares[5]["cov"] > 0 else np.nan
-    senal = pares[5]["cov"] / rho if np.isfinite(rho) and rho > 0 else np.nan
-    return {"pendiente": {f"{k}_min": v for k, v in pares.items()},
-            "persistencia_cada_5_min_sin_ruido": float(rho),
-            "parte_de_la_varianza_que_es_ruido": float(1 - senal / varianza) if np.isfinite(senal) else None}
+    for i, rezago in enumerate((5, 10, 30), 1):
+        x, y = datos[:, 0], datos[:, i]
+        var = float(np.var(x, ddof=1)) if len(x) > 1 else 0.0
+        cov = float(np.cov(x, y)[0, 1]) if len(x) > 1 else None
+        pares[f"{rezago}_min"] = {"beta": cov / var if var > 0 else None,
+                                  "cov": cov, "n": len(x)}
+    return {"pendiente": pares, "cohorte_comun": True,
+            "ruido_identificado": False, "vida_media_identificada": False}
 
 
 def resumir(tabla, z, senales, filtro_fechas=None):
@@ -251,32 +257,9 @@ def resumir(tabla, z, senales, filtro_fechas=None):
 
 
 def main() -> int:
-    archivos = sorted(DATOS.glob("*.json.gz"))
-    filas, cierres = {}, {}
-    for i, ruta in enumerate(archivos, 1):
-        with gzip.open(ruta, "rt", encoding="utf-8") as f:
-            registro = json.load(f)
-        fecha = pd.Timestamp(registro["fecha"])
-        filas[fecha] = rr_de_la_sesion(registro)
-        c = pd.Timestamp(registro["cierre_utc"]).tz_convert(NY)
-        cierres[fecha] = c.hour * 60 + c.minute
-        if i % 100 == 0:
-            print(f"{i} sesiones procesadas", flush=True)
-    tabla = pd.DataFrame(filas).T.sort_index()
-    tabla = tabla.reindex(columns=sorted(tabla.columns))
-    residuo, z, senales = senales_y_residuos(tabla, cierres)
-    resultado = {"periodo": [str(tabla.index[0].date()), str(tabla.index[-1].date())],
-                 "sesiones": len(tabla),
-                 "rr25_medio_por_hora": {f"{m // 60:02d}:{m % 60:02d}": float(tabla[m].mean())
-                                         for m in tabla.columns if m % 30 == 10},
-                 "persistencia": persistencia(residuo),
-                 "todo": resumir(tabla, z, senales)}
-    for anio in sorted({f.year for f in tabla.index}):
-        resultado[str(anio)] = resumir(tabla, z, senales, lambda f, a=anio: f.year == a)
-    SALIDA.mkdir(exist_ok=True)
-    (SALIDA / "skew_0dte_alpaca.json").write_text(json.dumps(resultado, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(json.dumps({k: v for k, v in resultado.items() if k in ("periodo", "sesiones", "persistencia", "todo")},
-                     indent=1, ensure_ascii=False))
+    # Preserve historical bt2 aggregates; the default command now runs corrected validation.
+    from validar_0dte import main as validar
+    validar()
     return 0
 
 
