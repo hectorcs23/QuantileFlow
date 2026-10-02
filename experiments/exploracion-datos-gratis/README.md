@@ -33,6 +33,43 @@ python -m pytest -q tests/test_exploracion_datos_gratis.py
 
 Necesita las claves de Alpaca en el entorno (`APCA_API_KEY_ID`, `APCA_API_SECRET_KEY`).
 
+## Cómo validar
+
+**Versión.** Rama `claude/lucid-hamilton-hz8l80`, carpeta `experiments/exploracion-datos-gratis/`. Requiere
+Python 3.11 o superior, las dependencias de `requirements-bloqueo.txt` y las claves gratuitas de Alpaca. Los
+CSV de Cboe son públicos.
+
+**Pasos.**
+1. Corre las pruebas de las piezas de cálculo, sin red:
+   `python -m pytest -q tests/test_exploracion_datos_gratis.py`. Deben dar 6 pruebas pasadas.
+2. Corre `python experiments/exploracion-datos-gratis/skew_cboe.py`. Descarga los datos a `data/exploracion/`
+   y reescribe `resultados/skew_cboe.json`.
+3. Comprueba que el JSON no cambió: `git diff experiments/exploracion-datos-gratis/resultados/`.
+   - La muestra está fija: SPY llega hasta el 1 de octubre de 2026.
+   - Que Cboe agregue días nuevos no la cambia.
+   - Los dividendos futuros de SPY reescalan todos los precios por igual, así que no cambian los
+     rendimientos.
+4. Revisa las cifras de la tabla siguiente y los puntos débiles de la sección 1.
+
+**Cifras que se deben reproducir** (`resultados/skew_cboe.json`):
+
+| Cifra | Valor |
+|---|---|
+| Sesiones y período | 2 698; del 4 de enero de 2016 al 1 de octubre de 2026 |
+| t del cambio del SKEW sobre el día siguiente (solo / con controles / apertura a cierre) | −0.94 / −0.39 / 0.02 |
+| t del cambio del SKEW por período (2016–2020 / 2021–2026) | −1.51 / +1.59 |
+| R² fuera de muestra (con SKEW / referencia sin SKEW) | −3.5 % / −2.9 % |
+| Acierto del signo (modelo / siempre sube) | 50.0 % / 54.1 % |
+| t del nivel del SKEW sobre la volatilidad de 5 días (completo / 2016–2020 / 2021–2026) | −2.88 / −2.29 / −2.63 |
+
+**Qué conviene mirar con ojo crítico.**
+- **Hora.** El SKEW de cierre usa opciones de SPX, que cierran a las 16:15, y SPY cierra a las 16:00. Por
+  eso se incluye la prueba de apertura a cierre del día siguiente.
+- **Ventanas solapadas.** Los objetivos a 5 días se solapan; se usan errores de Newey-West con 5 rezagos.
+- **Varias pruebas.** Se hicieron unas ocho regresiones. Un t de −2.9 resiste una corrección de Bonferroni
+  simple, pero sigue siendo exploratorio.
+- **SKEW no es RR25.** El SKEW mide la cola de toda la distribución; el RR25 compara puts y calls a 25 delta.
+
 ## 1. SKEW de Cboe frente a SPY (2016–2026)
 
 Son 2 698 sesiones, del 4 de enero de 2016 al 1 de octubre de 2026. Todas las señales se conocen al cierre
