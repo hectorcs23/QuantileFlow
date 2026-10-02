@@ -1,0 +1,64 @@
+{
+  "procedencia": {
+    "generado_utc": "2026-10-02T04:56:42.121194+00:00",
+    "commit_base": "9ba0fb1ada58e167e1e7fb36571ef6ad47a518cb",
+    "codigo_sha256": {
+      "comparar_antiguedad.py": "575a4c566073e8cd1c197c373d99ca9b8dfd914bd2c02351280fdaa4de4c2309",
+      "descargar_0dte_alpaca.py": "082e4960bdd6b16a773fa9f7a335e92c699cec81d1dbac2d28c87c9f9446e63e",
+      "skew_0dte_alpaca.py": "ab7a0d45280ee43923398f3c4e4edce9e01e92df6e566071cf25eac491e4172a",
+      "skew_cboe.py": "fe41502e71276fcbfb5505d7313fb087dc7609dc01a584a4c0b2751441c2f3b0",
+      "validacion_comun.py": "b178cd7f4c7f67d2fd63f50cd89e8be8510c151ab608a0b3e44dfedcec520109",
+      "validar_0dte.py": "8646bc596f79007b8651f81c44778885045771553050ae347b34bbd4c6e495eb",
+      "validar_cboe.py": "9a377ea9fe3a4b617bd04cefc6ea47304b017e3f963d3e21caed6625556e598a",
+      "validar_ruido.py": "f52a93b3d74b7e70e86f012ec4479ab586591f70bc25d6217e0ff8e6471750f8"
+    },
+    "archivos_sha256": {
+      "rr_validacion_edad5.csv": "49233643047e9da6a2cf84fb75ddd67ed0805876b96bd3e8b75cc296eab3765c",
+      "rr_validacion_edad1.csv": "5a4a502259b89f24196f6da8c8495fe177f96ce5bdaeb67fbdfcfc23b33cd105",
+      "senales_validacion_edad5.csv": "f35f023bb811d92b4d3aabf7d98162b2077644ba30dab95f41fe82296a84d4ab"
+    },
+    "parametros": {
+      "seleccion": "señales y dirección de edad5 congeladas; base horaria propia para cada ventana"
+    },
+    "python": "3.12.14",
+    "dependencias": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "scipy": "1.17.1",
+      "exchange_calendars": "4.13.2"
+    },
+    "diseno": "Validación retrospectiva; la historia ya fue examinada, no es un holdout nuevo."
+  },
+  "senales_originales": 442,
+  "senales_observables_ambas": 382,
+  "comparacion": {
+    "edad5": {
+      "sesiones_activas": 147,
+      "senales_validas": 382,
+      "media_puntos_vol": 0.6342900054759345,
+      "ic95": [
+        0.4303659374870552,
+        0.8804114614355324
+      ]
+    },
+    "edad1": {
+      "sesiones_activas": 147,
+      "senales_validas": 382,
+      "media_puntos_vol": 0.6330456037147508,
+      "ic95": [
+        0.4295340216984447,
+        0.8785035619349307
+      ]
+    },
+    "diferencia_5_menos_1": {
+      "sesiones_activas": 147,
+      "senales_validas": 382,
+      "media_puntos_vol": 0.001244401761183589,
+      "ic95": [
+        -0.0011943066553407715,
+        0.0038943964644033544
+      ]
+    }
+  },
+  "limitacion": "Controla reselección de señales; no identifica ruido correlacionado ni resuelve selección por disponibilidad de ambas salidas."
+}
