@@ -21,6 +21,7 @@ nunca cotizaciones.
 | Miércoles 30 de septiembre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 3 |
 | Jueves 1 de octubre | `perdida` | `perdida` | Sin descargar | No se lanzó: a las 11:31 de Nueva York no había corridas programadas ni manuales | Sección 4 |
 | Viernes 2 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 6. Elegibles con controles estrictos |
+| Lunes 5 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 7. Elegibles con controles estrictos |
 
 ---
 
@@ -140,6 +141,7 @@ sección 2.
 | Martes 29 | 09:11 | 14:37–16:01 | 5 h 30 min |
 | Miércoles 30 | 09:11 | 14:26–16:04 | 5 h 15 min |
 | Jueves 1 | 09:11 | 14:51–16:21 (visto el viernes) | 5 h 40 min |
+| Viernes 2 | 09:11 | 14:22–15:58 (visto el lunes) | 5 h 10 min |
 
 El retraso baja poco a poco, pero ningún día llegó a menos de cinco horas. La decisión pendiente sigue
 siendo el disparador externo de la sección 2.
@@ -214,3 +216,49 @@ de Nueva York del jueves 1 lanzó `historico-alpaca`, para bajar el SIP de lunes
 
 **Cuenta:** 1 sesión completa de las 3 a 5 que pide la aceptación. Es también la primera sesión real a las
 09:45 que sirve para decidir entre `indicative` y OPRA.
+
+## 7. Lunes 5 de octubre: segunda sesión completa
+
+**Cómo se lanzó.** Igual que el viernes: Claude lanzó `captura-0945` y `captura-1000` a las 09:16 de Nueva
+York y `historico-alpaca` a las 10:28. Las tres corridas terminaron con éxito:
+
+| Workflow | Corrida (Nueva York) | Duración |
+|---|---|---|
+| `captura-0945` | 09:16–09:45 | 29 min |
+| `captura-1000` | 09:16–10:00 | 44 min |
+| `historico-alpaca` | 10:28 | 37 s |
+
+**`revisar_operacion.py` del 2 al 5 de octubre**, después del histórico:
+- **Estado:** los 4 cortes de las dos sesiones están `completa`, con 1 ejecución y 1 intento cada uno. No
+  hubo errores ni recuperaciones.
+- **Puntualidad del lunes:**
+  - la preparación quedó lista 1 696 s antes del corte de las 09:45 y 2 596 s antes del de las 10:00;
+  - la ráfaga empezó 5.0 s antes del corte en los dos;
+  - no llegó ninguna respuesta después del corte.
+- **SIP del objetivo:** completo en los 4 cortes.
+- **Dividendos:** 5 versiones de 5 eventos, sin discrepancias. Las 2 consultas de eventos del histórico
+  quedaron completas.
+
+**Elegibilidad del lunes** (`verificar_alpaca.py`, sobre una copia de los datos):
+- **Las dos capturas son elegibles** con los controles estrictos: 2 716 filas válidas de 2 948 a las 09:45 y
+  2 717 de 2 948 a las 10:00.
+- **Cobertura:** los 2 948 contratos tienen cotización y metadatos.
+- **Solicitudes:** cada captura recibió 10 respuestas, con 1.4 MB en total, en 0.45 y 0.59 s, sin errores.
+- **Medidas:**
+  - el nivel implícito de SPX quedó identificado, con 94 y 96 pares del vencimiento del día;
+  - la RR25 a 30 días quedó identificada en SPXW y en SPY, en los dos cortes.
+- **Feed:** de opciones `indicative`, con cuenta paper.
+  - El desfase del reloj fue de 0.04 y 0.06 s.
+  - Entre el 11 y el 17 % de los precios de SPXW caen en la grilla de ticks, como el viernes.
+- **Commit fijado:** las capturas, el histórico y sus registros conservan `4ffde8a`.
+
+**Observaciones.**
+- **Menos contratos que el viernes** (2 948 frente a 3 808). Es por diseño: la captura pide los vencimientos
+  que rodean los 30 días.
+  - El viernes, uno de ellos era el de fin de mes de SPXW, el 30 de octubre, con 974 filas.
+  - El lunes, los cuatro vencimientos de SPXW cercanos a 30 días tienen unas 240 filas cada uno.
+- **Los cron del viernes** llegaron entre las 14:22 y las 15:58 de Nueva York, unas 5 horas y 10 minutos
+  tarde. La compuerta los descartó. Los del lunes aún no habían llegado a las 10:28.
+- **Los manifiestos del histórico** vuelven a llevar el sufijo `-2`, como se explica en la sección 6.
+
+**Cuenta:** 2 sesiones completas de las 3 a 5 que pide la aceptación.
