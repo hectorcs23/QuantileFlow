@@ -159,6 +159,7 @@ de Nueva York del jueves 1 lanzó `historico-alpaca`, para bajar el SIP de lunes
 | Hora | Qué hace Claude |
 |---|---|
 | 09:14 | Lanza `captura-0945` y `captura-1000` y comprueba que quedaron en cola. Si falla, reintenta una vez y, si no, avisa al usuario para que las lance a mano. |
+| 09:32 | Desde el miércoles 7 de octubre (sección 8): comprueba que las dos corridas tienen máquina. Si alguna sigue en cola sin máquina, terminó sin éxito o no existe, la relanza una vez, cancelando antes la atascada. Avisa al usuario si no puede relanzarla o si el script falló. |
 | 10:27 | Lanza `historico-alpaca` y revisa las capturas del día: `revisar_operacion.py` y, si están completas, la elegibilidad con `verificar_alpaca.py`. Actualiza este documento y avisa solo si algo falló. |
 
 - **Margen.** Una corrida lanzada a las 09:14 espera hasta el corte. La preparación tiene que estar lista 6
@@ -314,15 +315,16 @@ de Nueva York y `historico-alpaca` a las 10:28. Las tres corridas terminaron con
   - La compuerta descartó las demás. No se escribió nada en el repositorio de datos.
 - **Riesgo que muestra ese fallo.** Si le pasara a la corrida de las 09:16, la captura podría perderse: la
   comprobación de las 09:14 solo confirma que la corrida quedó en cola.
-  - **Propuesta, pendiente de decisión:** una segunda comprobación hacia las 09:32 de Nueva York. Si alguna
-    corrida sigue sin máquina, se vuelve a lanzar.
+  - **Aprobado el 6 de octubre:** desde el miércoles 7 hay una segunda comprobación a las 09:32 de Nueva York
+    (sección 5). Si alguna corrida sigue sin máquina, se cancela y se vuelve a lanzar.
   - Es seguro por la concurrencia: la nueva espera a la anterior y no repite lo ya capturado.
   - A esa hora GitHub ya habría cancelado la corrida atascada, si tarda los mismos 15 minutos. La nueva
-    tendría tiempo de quedar lista antes del límite de las 09:39.
+    tendría tiempo de quedar lista antes del límite de las 09:39: desde que se lanza, la preparación tarda
+    menos de un minuto.
 - **Los manifiestos del histórico** vuelven a llevar el sufijo `-2`, como se explica en la sección 6.
 
 **Cuenta:** 3 sesiones completas: se alcanza el mínimo de la aceptación, que pide de 3 a 5.
-- **Recomendación:** seguir el miércoles 7 y el jueves 8 para llegar a 5, y cerrar la aceptación el jueves
-  con un resumen.
+- **Aprobado el 6 de octubre:** se sigue el miércoles 7 y el jueves 8 para llegar a 5. La aceptación se
+  cierra el jueves a las 10:50 de Nueva York, después de la revisión del día, con un resumen y un veredicto.
 - Cuesta poco, porque las capturas ya se lanzan solas. Además, las variaciones del feed y de GitHub de esta
   semana justifican mirar dos sesiones más.
