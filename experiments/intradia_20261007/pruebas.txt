@@ -1,0 +1,4 @@
+Verificacion de la version publicada
+Comando: python -m pytest --rootdir=. -q -p no:cacheprovider test_exploracion.py
+Resultado observado: 9 passed in 2.15s
+Controles originales: 5. Seleccion de fechas: 4.

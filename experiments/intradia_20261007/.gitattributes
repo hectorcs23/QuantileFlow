@@ -1,0 +1,2 @@
+# Preserve artifact bytes so SHA-256 checks do not depend on checkout line endings.
+* -text
