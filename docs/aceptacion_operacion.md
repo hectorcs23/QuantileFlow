@@ -23,6 +23,7 @@ nunca cotizaciones.
 | Viernes 2 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 6. Elegibles con controles estrictos |
 | Lunes 5 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 7. Elegibles con controles estrictos |
 | Martes 6 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 8. Elegibles con controles estrictos |
+| Miércoles 7 de octubre | `completa` | `completa` | Completo en los 2 cortes | Claude, a las 09:16 de Nueva York (`workflow_dispatch`) | Sección 9. Elegibles con controles estrictos |
 
 ---
 
@@ -144,6 +145,7 @@ sección 2.
 | Jueves 1 | 09:11 | 14:51–16:21 (visto el viernes) | 5 h 40 min |
 | Viernes 2 | 09:11 | 14:22–15:58 (visto el lunes) | 5 h 10 min |
 | Lunes 5 | 09:11 | 17:05–18:02 (visto el martes) | 7 h 55 min |
+| Martes 6 | 09:11 | 14:53–16:21 (visto el miércoles) | 5 h 40 min |
 
 El retraso baja poco a poco, pero ningún día llegó a menos de cinco horas. La decisión pendiente sigue
 siendo el disparador externo de la sección 2.
@@ -328,3 +330,56 @@ de Nueva York y `historico-alpaca` a las 10:28. Las tres corridas terminaron con
   cierra el jueves a las 10:50 de Nueva York, después de la revisión del día, con un resumen y un veredicto.
 - Cuesta poco, porque las capturas ya se lanzan solas. Además, las variaciones del feed y de GitHub de esta
   semana justifican mirar dos sesiones más.
+
+## 9. Miércoles 7 de octubre: cuarta sesión completa
+
+**Cómo se lanzó.** Igual que los días anteriores: Claude lanzó `captura-0945` y `captura-1000` a las 09:16
+de Nueva York y `historico-alpaca` a las 10:28. Las tres corridas terminaron con éxito:
+
+| Workflow | Corrida (Nueva York) | Duración |
+|---|---|---|
+| `captura-0945` | 09:16–09:45 | 29 min |
+| `captura-1000` | 09:16–10:00 | 44 min |
+| `historico-alpaca` | 10:28 | 44 s |
+
+**Primera comprobación de las 09:32.** Las dos corridas tenían máquina y estaban en el paso «Capturar»,
+esperando su corte. No hizo falta relanzar nada.
+
+**`revisar_operacion.py` del 2 al 7 de octubre**, después del histórico:
+- **Estado:** los 8 cortes de las cuatro sesiones están `completa`, con 1 ejecución y 1 intento cada uno.
+  No hubo errores ni recuperaciones.
+- **Puntualidad del miércoles:**
+  - la preparación quedó lista 1 703 s antes del corte de las 09:45 y 2 591 s antes del de las 10:00;
+  - la ráfaga empezó 5.0 s antes del corte en los dos;
+  - no llegó ninguna respuesta después del corte.
+- **SIP del objetivo:** completo en los 8 cortes.
+- **Dividendos:** 5 versiones de 5 eventos, sin discrepancias. Las 4 consultas de eventos del histórico
+  quedaron completas.
+
+**Elegibilidad del miércoles** (`verificar_alpaca.py`, sobre una copia de los datos):
+- **Las dos capturas son elegibles** con los controles estrictos: 2 981 filas válidas de 3 242 a las 09:45 y
+  2 875 de 3 242 a las 10:00.
+- **Cobertura:** los 3 242 contratos tienen cotización y metadatos.
+- **Solicitudes:** cada captura recibió 10 respuestas, con 1.5 MB en total, en 0.47 y 0.73 s, sin errores.
+- **Medidas:**
+  - el nivel implícito de SPX quedó identificado, con 107 y 103 pares del vencimiento del día;
+  - la RR25 a 30 días quedó identificada en SPXW y en SPY, en los dos cortes.
+- **Feed:** de opciones `indicative`, con cuenta paper.
+  - El desfase del reloj fue de 0.09 y 0.08 s.
+  - Entre el 11 y el 18 % de los precios de SPXW caen en la grilla de ticks, como los días anteriores.
+- **Commit fijado:** las capturas, el histórico y sus registros conservan `4ffde8a`.
+
+**Observaciones.**
+- **Cotizaciones desfasadas en SPXW.** A las 09:45 volvieron a lo normal: se excluyeron 63. A las 10:00 se
+  excluyeron 215, con una edad mediana de 10 a 12 s en todos los vencimientos de SPXW (de 6 a 7 s a las
+  09:45).
+  - El martes y el miércoles, la frescura del feed `indicative` cambió de un corte a otro.
+  - Las capturas siguen siendo elegibles.
+- **Error del forward a las 09:45.** Fue de 0.98 puntos, frente a 0.13–0.38 en los demás cortes de la
+  semana. El nivel implícito quedó identificado igual.
+- **Los cron del martes** llegaron entre las 14:53 y las 16:21 de Nueva York, unas 5 horas y 40 minutos tarde.
+  La compuerta los descartó. Esta vez GitHub les asignó máquina sin demora.
+- **Los manifiestos del histórico** vuelven a llevar el sufijo `-2`, como se explica en la sección 6.
+
+**Cuenta:** 4 sesiones completas. La quinta es el jueves 8, y la aceptación se cierra ese día a las 10:50
+de Nueva York.
