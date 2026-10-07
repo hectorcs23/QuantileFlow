@@ -72,6 +72,19 @@ El repositorio de Claude contiene un núcleo matemático y pruebas sobre datos s
 
 Quedan por fijar el proveedor y presupuesto de datos, el instrumento exacto tras la auditoría de la muestra, las posiciones actuales, la moneda del capital de referencia, los costos y límites de riesgo. Hasta entonces, las salidas de posición serán simulaciones bajo supuestos declarados.
 
+## Experimento adicional: skew intradía 0DTE
+
+Añadido el 1 de octubre de 2026: [reversión del skew SPY 0DTE](../experiments/0dte-skew-reversion/README.md).
+La hipótesis es que desviaciones de la diferencia de IV put/call a delta comparable, normalizadas por
+hora, predicen convergencia y beneficio neto en un risk reversal con cobertura delta. El experimento
+incluye una regla congelada de señal, selección de contratos antes de observar fills, demora de cinco
+minutos, costos, estrés y evaluación con bloques por sesión. Está pendiente de datos históricos reales.
+
+Esta prueba intradía añade una pregunta distinta a la señal de apertura a 30 días y sus objetivos de
+1/5 sesiones. Su CSV, parámetros y resultados tienen identidad propia; las capturas de apertura
+existentes no se presentan como un histórico 0DTE completo. Superar las pruebas sintéticas verifica
+la implementación, no la hipótesis ni una autorización para operar.
+
 ## Referencias para este enfoque
 
 - [Documento técnico de QuantileFlow](QuantileFlow_propuesta_tecnica.pdf) y [repositorio de referencia](https://github.com/hectorcs23/QuantileFlow).
