@@ -20,7 +20,9 @@ de Git.
   - con los pares recientes, la fracción fuera de banda pasa de 37.0 % a 36.8 %, igual que antes.
 - **Observaciones menores.** Falta documentar el comando exacto que generó las tablas de entrada, y los CSV
   usan finales de línea de Windows (sección 3). Ninguna cambia los resultados.
-- **Siguiente paso.** El jueves 8, después del cierre de la aceptación, se repite con las cinco sesiones.
+- **Réplica con cinco sesiones** (sección 6). Hecha el jueves 8: las conclusiones no cambian. Persiste el
+  19.3 % de los residuos fuera de banda. Recalcular la referencia con pares recientes explica una parte de
+  ellos algunos días, como el 8 de octubre.
 
 ## 1. Qué se comprobó
 
@@ -133,7 +135,7 @@ viejas no los elimina. Sigue sin haber base para entrenar un predictor con esos 
 
 ## 4. Sobre la siguiente prueba que propone
 
-1. **Repetir sin cambiar reglas.** Hecho con cuatro sesiones. Con cinco se hace el jueves 8.
+1. **Repetir sin cambiar reglas.** Hecho con cuatro y con cinco sesiones (secciones 2 y 6).
 2. **Una curva de tasas documentada.** Una opción gratuita es la tasa de las letras del Tesoro a un mes
    publicada por la Fed de San Luis (FRED). Tiene fuente y fecha, a diferencia de las tasas fijas del 3, 4 y
    5 %.
@@ -168,3 +170,59 @@ QF_CODE=RUTA_QUANTILEFLOW python -m pytest --rootdir=. -q -p no:cacheprovider te
 
 Para la reproducción exacta de las tres sesiones originales, usar el snapshot de datos `66ccade` y omitir
 `--fechas`.
+
+## 6. Réplica con cinco sesiones: 2, 5, 6, 7 y 8 de octubre
+
+Hecha el 8 de octubre, después del cierre de la aceptación. Mismo código (la rama sigue en `ff4ff96`), mismas
+reglas y `--fechas` con los cinco días, sobre el snapshot de datos `66c969f`. Las 9 pruebas pasan. Las filas
+de los cuatro primeros días salen idénticas a las de la réplica de cuatro sesiones.
+
+**¿Persisten los residuos?** Vencimientos de un mes, pares válidos y cerca del forward en los dos cortes:
+
+| Sesión | Pares comunes | Fuera a las 09:45 | Persisten, mismo signo | Vuelven a banda | Cambian de signo |
+|---|---:|---:|---:|---:|---:|
+| 2 de octubre | 319 | 132 | 35 (26.5 %) | 72 | 25 |
+| 5 de octubre | 216 | 62 | 8 (12.9 %) | 47 | 7 |
+| 6 de octubre | 270 | 98 | 13 (13.3 %) | 68 | 17 |
+| 7 de octubre | 288 | 95 | 18 (18.9 %) | 59 | 18 |
+| 8 de octubre | 280 | 101 | 20 (19.8 %) | 60 | 21 |
+| Total de cinco sesiones | 1 373 | 488 | **94 (19.3 %)** | **306 (62.7 %)** | **88 (18.0 %)** |
+
+En 0DTE, de 223 pares fuera a las 09:45, persisten 66 (29.6 %), vuelven 113 y cambian de signo 44. El 8 de
+octubre fueron 37 fuera, de los que persistieron 4.
+
+**¿Los explica la antigüedad?** Cohorte fija de pares recientes (edad de hasta 10 s y desfase entre patas de
+hasta 2 s):
+
+| Segmento | Todos, referencia base | Recientes, referencia base | Mismos recientes, referencia recalculada |
+|---|---:|---:|---:|
+| 0DTE | 435/989 = 44.0 % | 394/798 = 49.4 % | 399/798 = 50.0 % |
+| Un mes | 1 001/2 772 = 36.1 % | 749/1 993 = 37.6 % | 722/1 993 = 36.2 % |
+
+**Un matiz nuevo.** El 8 de octubre, en vencimientos de un mes, recalcular la referencia solo con pares
+recientes bajó la fracción fuera de banda de 39.7 % (172/433) a 34.2 % (148/433). En los otros días el efecto
+fue casi nulo. La antigüedad explica una parte de los residuos algunos días, pero la mayoría sigue ahí.
+
+Con tasa fija al 3, 4 y 5 %, la fracción fuera de banda en un mes es 38.1, 37.9 y 37.6 %. Las medianas de las
+50 correlaciones por cadena son 0.205 (edad), 0.180 (ancho) y −0.579 (residuo relativo y ancho). Las tasas
+implícitas mensuales siguen entre −9.85 % y 15.99 %.
+
+**RR25 a 30 días, de 09:45 a 10:00**, en puntos de volatilidad, con la banda bid–ask del cambio:
+
+| Sesión | SPXW | SPY |
+|---|---|---|
+| 2 de octubre | +0.004 [−0.185, +0.193] | +0.109 [−0.017, +0.235] |
+| 5 de octubre | +0.052 [−0.352, +0.456] | +0.307 [+0.043, +0.571], excluye cero |
+| 6 de octubre | +0.057 [−0.195, +0.308] | +0.170 [−0.035, +0.374] |
+| 7 de octubre | −0.139 [−0.486, +0.209] | −0.167 [−0.406, +0.072] |
+| 8 de octubre | −0.023 [−0.247, +0.201] | +0.024 [−0.157, +0.204] |
+
+El 8 de octubre la RR25 casi no se movió en ninguna de las dos raíces. Sigue habiendo un solo caso fuera de
+banda de 10: el de SPY del 5.
+
+**¿Cambian las conclusiones?** No.
+- La medida agregada se mueve poco en 15 minutos frente a su banda, y no tiene una dirección que se repita.
+- Los residuos de paridad por par cambian mucho: solo el 19.3 % de los que estaban fuera sigue fuera con el
+  mismo signo, un porcentaje muy parecido al de tres (19.2 %) y cuatro sesiones (19.1 %).
+- Quitar las cotizaciones viejas no elimina los residuos, aunque algunos días, como el 8, explica una parte.
+- Sigue sin haber base para entrenar un predictor con esos residuos.
