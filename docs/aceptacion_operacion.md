@@ -2,6 +2,7 @@
 
 **Periodo previsto:** de 3 a 5 sesiones. Empezó el 28 de septiembre de 2026; las cuatro primeras sesiones se
 perdieron, y la aceptación se reinició el 2 de octubre con las capturas lanzadas por Claude (sección 5).
+**Resultado:** aceptada con observaciones el 8 de octubre, con cinco sesiones completas (sección 11).
 **Repositorio de datos:** `hectorcs23/QuantileFlow-datos`, privado. **Código de la captura:** `4ffde8a`.
 **Herramienta:** `scripts/revisar_operacion.py`. Solo se publican agregados: estados, tiempos y conteos,
 nunca cotizaciones.
@@ -432,3 +433,105 @@ relanzar nada.
 - **Los manifiestos del histórico** vuelven a llevar el sufijo `-2`, como se explica en la sección 6.
 
 **Cuenta:** 5 sesiones completas de las 5 previstas. La aceptación se cierra hoy a las 10:50 de Nueva York.
+
+## 11. Cierre de la aceptación (jueves 8 de octubre)
+
+**Veredicto: aceptada con observaciones.** En las cinco sesiones, del 2 al 8 de octubre, la operación cumple
+todos los puntos del criterio del encabezado:
+- los 10 cortes quedaron completos y elegibles;
+- el SIP del objetivo quedó completo en todos;
+- no hubo errores y la preparación fue puntual;
+- todos los registros conservan el commit fijado.
+
+Las observaciones no impiden operar, pero hay que atenderlas:
+1. **Depende de que Claude lance las corridas.** Los cron de GitHub llegaron de 5 a 8 horas tarde todos los
+   días, así que el disparo programado todavía no sirve.
+2. **El respaldo no se probó en producción.** Ningún corte necesitó un segundo intento, y la comprobación de
+   las 09:32 no tuvo que relanzar nada.
+3. **La calidad del feed `indicative` varía de un día a otro**, aunque las capturas siempre fueron elegibles.
+4. **Hay mantenimiento pendiente antes del 19 de octubre**, cuando cambia la imagen de las máquinas de GitHub.
+
+**Las cinco sesiones:**
+
+| Sesión | Corte | Estado | SIP | Elegible | Filas válidas | Cotizaciones desfasadas de SPXW |
+|---|---|---|---|---|---|---:|
+| Viernes 2 | 09:45 | `completa` | Completo | Sí | 3 528 de 3 808 (92.6 %) | 87 |
+| Viernes 2 | 10:00 | `completa` | Completo | Sí | 3 532 de 3 808 (92.8 %) | 20 |
+| Lunes 5 | 09:45 | `completa` | Completo | Sí | 2 716 de 2 948 (92.1 %) | 24 |
+| Lunes 5 | 10:00 | `completa` | Completo | Sí | 2 717 de 2 948 (92.2 %) | 20 |
+| Martes 6 | 09:45 | `completa` | Completo | Sí | 2 750 de 3 188 (86.3 %) | 267 |
+| Martes 6 | 10:00 | `completa` | Completo | Sí | 2 834 de 3 188 (88.9 %) | 232 |
+| Miércoles 7 | 09:45 | `completa` | Completo | Sí | 2 981 de 3 242 (91.9 %) | 63 |
+| Miércoles 7 | 10:00 | `completa` | Completo | Sí | 2 875 de 3 242 (88.7 %) | 215 |
+| Jueves 8 | 09:45 | `completa` | Completo | Sí | 2 989 de 3 314 (90.2 %) | 87 |
+| Jueves 8 | 10:00 | `completa` | Completo | Sí | 3 043 de 3 314 (91.8 %) | 86 |
+
+El número de contratos cambia de un día a otro porque la captura pide los vencimientos que rodean los 30 días
+(sección 7).
+
+**Cómo se cumple cada punto del criterio:**
+- **Estado:** 10 de 10 cortes `completa`, con 1 ejecución y 1 intento cada uno. No hubo errores, plazos
+  vencidos ni recuperaciones.
+- **Retraso del arranque:** no se pudo medir frente al cron, porque todas las corridas las lanzó Claude a
+  las 09:16 con `workflow_dispatch`. Los cron de GitHub llegaron horas tarde (tabla de la sección 4) y la
+  compuerta los descartó todos.
+- **Preparación:** quedó lista entre 1 658 y 1 703 s antes del corte de las 09:45, y entre 2 550 y 2 601 s
+  antes del de las 10:00.
+- **Margen de la ráfaga:** empezó 5.0 s antes del corte en los 10 cortes.
+- **Respuestas tardías:** ninguna.
+- **Respaldo:** no actuó en ningún corte, porque no hizo falta. Queda sin probar en producción.
+- **SIP del objetivo:** completo en los 10 cortes. Lo descargó el histórico de las 10:28 del mismo día.
+- **Dividendos:** 5 versiones de 5 eventos, sin discrepancias. Las 5 consultas de eventos quedaron completas.
+- **Elegibilidad:** las 10 capturas son elegibles con los controles estrictos, con entre el 86 y el 93 % de
+  filas válidas. El nivel implícito de SPX y la RR25 a 30 días de SPXW y de SPY quedaron identificados en
+  los 10 cortes.
+- **Commit fijado:** `4ffde8a` en todas las capturas, los históricos y sus registros.
+
+**Incidencias de GitHub:**
+- **Cron tardíos:** todos los días, con retrasos de 5 a 8 horas (sección 4). La compuerta los descartó y no
+  escribieron nada.
+- **Corrida sin máquina:** el lunes 5, una corrida tardía de `captura-0945` nunca consiguió máquina y GitHub la
+  canceló a los 15 minutos (sección 8). Por eso se agregó la comprobación de las 09:32.
+- **Relanzamientos de la comprobación de las 09:32:** ninguno. El miércoles 7 y el jueves 8 encontró las dos
+  corridas con máquina.
+- **Aviso de GitHub:** `ubuntu-latest` pasa a Ubuntu 26 a partir del 19 de octubre. Aparece en cada corrida.
+
+**Calidad del feed `indicative`:**
+- **Cotizaciones desfasadas de SPXW:** de 20 a 267 por corte, según el día. Las más altas fueron las del
+  martes 6 y la de las 10:00 del miércoles 7.
+- **Grilla de ticks:** solo entre el 8 y el 18 % de los precios de SPXW caen en ella, cuando en un NBBO real
+  caerían todos. Es lo mismo que mostró la primera verificación (`docs/fuente_alpaca.md`).
+- **Error del forward del nivel implícito:** entre 0.09 y 0.38 puntos, salvo una vez, con 0.98 (miércoles 7 a
+  las 09:45).
+- **Experimento intradía** (`docs/respuesta_experimento_intradia.md`): los residuos de paridad por par son
+  grandes, cambian mucho en 15 minutos y no desaparecen al quitar las cotizaciones viejas. Las medidas
+  agregadas, como la RR25, sí son estables. Es otra señal de que el feed gratuito es ruidoso precio por
+  precio.
+
+**Lo que sigue.**
+- **Mantenimiento de las plantillas, antes del lunes 19 de octubre:**
+  - fijar `runs-on: ubuntu-24.04` y actualizar las acciones a versiones con Node.js 24;
+  - que la compuerta deje un registro también cuando descarta un disparo, para medir los retrasos desde el
+    repositorio de datos;
+  - que el histórico acepte disparos tardíos del mismo día;
+  - corregir el sufijo `-2` de los manifiestos del histórico (sección 6);
+  - opcional: las fotos cada 30–60 s entre las 09:45 y las 10:00 dentro de la corrida de las 10:00, que
+    propone el experimento intradía, sin más minutos de Actions;
+  - un nuevo commit fijado, con su verificación, y la reinstalación con comprobación de huellas, que hace el
+    usuario.
+- **Decisiones del usuario:**
+  - **`indicative` u OPRA.** Con `indicative` la operación funciona y las medidas agregadas siempre se
+    identifican. OPRA daría el NBBO real y permitiría separar el ruido del feed. Si se contrata, sus sesiones
+    se cuentan aparte (`docs/fuente_alpaca.md`).
+  - **Cuándo hacer el mantenimiento y la reinstalación**, antes del 19 de octubre.
+- **Operación diaria:** sigue igual, con las tres tareas programadas de lunes a viernes: 09:14, 09:32 y 10:27
+  de Nueva York. Desde el viernes 9, cada sesión se anota con una fila en la sección 12, y con una sección
+  propia solo si algo falla.
+
+## 12. Operación diaria después de la aceptación
+
+Una fila por sesión, con la revisión de las 10:27. El SIP del día se confirma con la revisión del día
+siguiente.
+
+| Sesión | 09:45 | 10:00 | SIP | Filas válidas (09:45 / 10:00) | Observaciones |
+|---|---|---|---|---|---|

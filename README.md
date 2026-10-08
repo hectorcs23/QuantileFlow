@@ -24,7 +24,10 @@ usan datos **sintéticos** con semillas fijas.
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
 - [`docs/aceptacion_operacion.md`](docs/aceptacion_operacion.md): la aceptación de la operación, sesión
-  por sesión. El lunes 28 GitHub no disparó los workflows programados, y la sesión se perdió.
+  por sesión. Se cerró el 8 de octubre: aceptada con observaciones, con cinco sesiones completas lanzadas
+  por Claude. Desde entonces registra también la operación diaria.
+- [`docs/respuesta_experimento_intradia.md`](docs/respuesta_experimento_intradia.md): la revisión y
+  reproducción del experimento intradía de calls y puts de la rama `codex/intradia-20261007`.
 - [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): la
   verificación independiente de la instalación y el mantenimiento de las plantillas antes del 19 de
   octubre (`ubuntu-24.04`).

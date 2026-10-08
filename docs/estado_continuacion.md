@@ -150,14 +150,21 @@ cierre anticipado, y seis días degradados a propósito:
       quedó verificado ([instalación del repositorio de datos](instalacion_repo_datos.md)).
 - [x] Verificación independiente de la instalación: confirmada, sin defectos que bloqueen la prueba
       programada ([respuesta](respuesta_verificacion_instalacion.md)).
-- [ ] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
+- [x] Prueba operativa de 3–5 sesiones con el repositorio de datos, revisada con
       `scripts/revisar_operacion.py`: puntualidad, estados, respaldo, recuperación y dividendos. Valida la
       operación, no la capacidad predictiva: con 60 días de política, ninguna etiqueta nueva estará
-      aceptada al terminarla. En curso: el lunes 28 GitHub no disparó los workflows programados y la
-      sesión se perdió ([aceptación de la operación](aceptacion_operacion.md)).
+      aceptada al terminarla. Se cerró el 8 de octubre: **aceptada con observaciones**. Fueron cinco
+      sesiones completas, del 2 al 8 de octubre, lanzadas por Claude con `workflow_dispatch`, porque los
+      cron de GitHub llegan de 5 a 8 horas tarde. El respaldo no hizo falta
+      ([aceptación de la operación](aceptacion_operacion.md), sección 11).
 - [ ] Mantenimiento de las plantillas antes del lunes 19 de octubre, cuando `ubuntu-latest` empieza a
-      pasar a Ubuntu 26.04: `runs-on: ubuntu-24.04` y acciones para Node.js 24. Se instala con una
-      corrida manual de prueba ([respuesta](respuesta_verificacion_instalacion.md)).
+      pasar a Ubuntu 26.04: `runs-on: ubuntu-24.04` y acciones para Node.js 24. Además: que la compuerta
+      registre los disparos descartados, que el histórico acepte disparos tardíos del mismo día y corregir
+      el sufijo `-2` de los manifiestos del histórico. Lleva un nuevo commit fijado y se instala con una
+      corrida manual de prueba y comprobación de huellas ([respuesta](respuesta_verificacion_instalacion.md);
+      [aceptación](aceptacion_operacion.md), sección 11).
+- [ ] Decidir entre `indicative` y OPRA con la evidencia de la aceptación y del experimento intradía
+      ([aceptación](aceptacion_operacion.md), sección 11; [revisión del experimento](respuesta_experimento_intradia.md)).
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.
