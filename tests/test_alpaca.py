@@ -891,6 +891,32 @@ def correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora",), fallos_
     return codigo, (json.loads(registros[0].read_text(encoding="utf-8")) if registros else None)
 
 
+def test_captura_multiplazo_de_punta_a_punta(mercado, tmp_path, monkeypatch):
+    texto = (RAIZ / "configs" / "captura_alpaca.toml").read_text(encoding="utf-8")
+    texto = texto[:texto.index('[[captura.opciones]]\nsubyacente = "SPY"')] + texto[texto.index("[captura.acciones]"):]
+    texto = texto.replace("objetivo_dias = 30.0", "objetivos_dias = [7.0, 14.0, 30.0]")
+    ruta = tmp_path / "multi.toml"
+    ruta.write_text(texto, encoding="utf-8")
+    datos = tmp_path / "datos"
+    codigo, registro = correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora", "--config", str(ruta)))
+    assert codigo == 0
+    assert registro["horas"][0]["estado"] == "completa"
+    ms = sorted((datos / "raw" / "alpaca" / "capturas").rglob("*.json"))
+    m = json.loads(ms[0].read_text(encoding="utf-8"))
+    seleccion = m["seleccion"]["SPXW"]["vencimientos"]
+    assert len(seleccion) == len(set(seleccion))
+    cot = mercado[0]
+    corte = pd.Timestamp("2025-11-17T14:45:00Z")
+    fecha = corte.date()
+    fechas = sorted({str(v) for v in cot["vencimiento"] if fecha <= v <= fecha + dt.timedelta(days=50)})
+    esperado = set()
+    for objetivo in (7, 14, 30):
+        elegido, _ = al.elegir_vencimientos(fechas, "PM", corte, objetivo, 2, True)
+        esperado.update(str(v) for v in elegido)
+    assert set(seleccion) == esperado
+    assert len([s for s in m["solicitudes"].values() if s["tipo"] == "cadena"]) == len(esperado)
+
+
 def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkeypatch):
     # Cierre de b240dc2 (operación): el registro de la ejecución mide la puntualidad; un error no puede perderlo.
     # 1. Un evento que la normalización del piloto rechaza no toca el resumen del día: no lee los eventos.

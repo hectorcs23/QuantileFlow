@@ -1,0 +1,68 @@
+# Propuesta experimental. No desplegada. Medir paginación y tiempo antes de activar.
+# Captura diaria hacia adelante en Alpaca (Alpaca no da historia de cotizaciones de opciones).
+# Se versiona como la configuración del piloto: cambiarla exige una versión nueva.
+
+[captura]
+version = "captura-expiraciones-0.1"
+feed_opciones = "indicative"   # gratuito y con cotizaciones modificadas; "opra" exige suscripción y el acuerdo OPRA
+feed_acciones = "iex"          # plan básico: IEX en tiempo real
+calendario = "XNYS"
+horas = ["09:45", "10:00"]     # America/New_York: la principal y la de diagnóstico del piloto
+adelanto_s = 5.0               # la ráfaga de solicitudes empieza este tiempo antes del corte
+hilos = 12
+ventana_contratos_dias = 120    # contratos pedidos: desde hoy hasta hoy + ventana (objetivo + margen)
+reintentos = 2                 # en la ráfaga: pocos y cortos, para no pasar del corte
+espera_max_s = 1.0
+plazo_s = 60.0                 # plazo absoluto: el proceso termina a más tardar este tiempo después del último
+                               # corte, aunque una solicitud siga colgada; lo recibido queda en el diario
+preparacion_s = 360.0          # lista (contratos y vencimientos) a más tardar 6 min antes del corte; si no, termina
+                               # (código 4) para que el respaldo de esa hora, en cola, arranque y llegue al corte
+preparacion_minima_s = 120.0   # una ejecución que arranca tarde (el respaldo) tiene al menos este tiempo
+
+# Cada bloque es una cadena que se captura. "subyacente" es el de la API de contratos;
+# "raiz" es la raíz OSI con la que la API de datos entrega la cadena.
+[[captura.opciones]]
+subyacente = "SPX"
+raiz = "SPXW"                  # liquidación PM, europeas: instrumento principal del piloto
+objetivos_dias = [7.0, 14.0, 30.0, 60.0, 90.0]
+vencimientos_por_lado = 2
+cercano = true                 # el vencimiento más cercano estima el nivel implícito de SPX
+
+[[captura.opciones]]
+subyacente = "SPY"
+raiz = "SPY"                   # americanas con dividendos: serie secundaria, nunca mezclada con SPXW
+objetivos_dias = [7.0, 14.0, 30.0, 60.0, 90.0]
+vencimientos_por_lado = 2
+cercano = false
+
+[captura.acciones]
+simbolos = ["SPY"]             # IEX en vivo: diagnóstico; el objetivo del piloto sale del histórico SIP
+
+[historico]
+# Precio del objetivo en cada corte: NBBO consolidado (SIP) descargado después del corte. Sin suscripción, Alpaca
+# solo deja consultar una ventana que terminó hace 15 minutos; esa es la disponibilidad documentada que fija la
+# madurez de las etiquetas (scripts/historico_alpaca.py).
+simbolos = ["SPY"]
+feed = "sip"
+ventana_s = 120.0              # la consulta pide [corte - ventana, corte]; el piloto usa hasta 60 s
+limite = 1000                  # una página, en orden descendente: las cotizaciones más recientes
+retraso_s = 900.0              # SIP sin suscripción: 15 minutos
+margen_s = 60.0                # se descarga pasados retraso + margen
+dias_atras = 7                 # sin fechas explícitas, completa lo que falte de la última semana
+
+[eventos]
+# Dividendos y demás eventos corporativos del objetivo. El filtro de Alpaca es por process_date (el pago, unas
+# seis semanas después de la fecha ex): la ventana cubre las fechas ex del último año y los ya anunciados.
+simbolos = ["SPY"]
+dias_atras = 400
+dias_adelante = 120
+
+[implicito]
+# Nivel implícito de SPX por paridad del vencimiento SPXW más cercano (ver quantileflow/implicito.py).
+# Tasa y dividendo de referencia provisionales, los mismos de configs/piloto.toml.
+raiz = "SPXW"
+subyacente = "SPX"
+tasa = 0.04
+rendimiento_dividendo = 0.013
+minimo_pares = 5
+dias_max = 7.0
