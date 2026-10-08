@@ -1,0 +1,42 @@
+{
+  "tipo": "verificacion_analitica_sintetica_no_solver_pde",
+  "casos_call": 225,
+  "error_precio_max_usd_por_accion": 3.197442310920451e-14,
+  "error_delta_max": 2.6756374893466273e-14,
+  "error_masa_max": 1.5543122344752192e-15,
+  "error_integral_derivada_masa_max": 1.7211693763649341e-15,
+  "error_kernel_spot_vs_fd_max": 3.853066043307818e-11,
+  "delta_ejemplo": 0.27457709582809253,
+  "precio_ejemplo_spot_100": 1.1676993366674253,
+  "precio_ejemplo_spot_105": 3.172197943923161,
+  "diferencias_finitas": [
+    {
+      "paso_spot_dolares": 0.1,
+      "delta_fd": 0.27458280040614125,
+      "error_absoluto": 5.70457804871527e-06
+    },
+    {
+      "paso_spot_dolares": 0.01,
+      "delta_fd": 0.2745771528754881,
+      "error_absoluto": 5.7047395585207994e-08
+    },
+    {
+      "paso_spot_dolares": 0.001,
+      "delta_fd": 0.27457709639922,
+      "error_absoluto": 5.711274786435183e-10
+    },
+    {
+      "paso_spot_dolares": 0.0001,
+      "delta_fd": 0.27457709590006374,
+      "error_absoluto": 7.197120677204794e-11
+    }
+  ],
+  "distribucion": "Q, neutral al riesgo",
+  "mantenido_fijo": [
+    "plazo",
+    "tasa",
+    "dividendo continuo",
+    "IV constante"
+  ],
+  "colas_cuadratura": "10 desviaciones en log-precio; cotas fijas al evaluar integrales"
+}
