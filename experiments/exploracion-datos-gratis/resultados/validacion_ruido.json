@@ -1,0 +1,30 @@
+{
+  "tipo": "SIMULACIÓN: no datos de mercado",
+  "semilla": 1729,
+  "dias": 800,
+  "skew_economico_verdadero": 4.0,
+  "rho_error_medicion": 0.9,
+  "retrasada": {
+    "sesiones_activas": 547,
+    "senales_validas": 994,
+    "media_puntos_vol": 1.0294957477263829,
+    "ic95": [
+      0.9763943385169471,
+      1.0830352814666246
+    ]
+  },
+  "ingenua": {
+    "sesiones_activas": 547,
+    "senales_validas": 994,
+    "media_puntos_vol": 1.1287934685690837,
+    "ic95": [
+      1.0713306031543381,
+      1.1875931120374688
+    ]
+  },
+  "conclusion": "Convergencia retrasada positiva puede originarse enteramente en ruido autocorrelacionado. No identifica reversión económica.",
+  "modelos_observacionalmente_equivalentes": [
+    "Skew fijo + error AR(.90)",
+    "Skew AR(.90) + error cero"
+  ]
+}
