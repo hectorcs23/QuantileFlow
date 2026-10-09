@@ -1,5 +1,5 @@
 # Propuesta experimental. No desplegada. Medir paginación y tiempo antes de activar.
-# Captura diaria hacia adelante en Alpaca (Alpaca no da historia de cotizaciones de opciones).
+# Captura hacia adelante; no se ha confirmado acceso gratuito a cadenas bid/ask históricas completas.
 # Se versiona como la configuración del piloto: cambiarla exige una versión nueva.
 
 [captura]

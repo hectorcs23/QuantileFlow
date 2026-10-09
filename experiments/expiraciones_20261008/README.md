@@ -1,5 +1,10 @@
 # Comparación de expiraciones y evaluación de datos
 
+**Actualización 9 de octubre:** presupuesto vigente **US$0**. La mención histórica
+de US$250 queda suspendida. Avanzamos con indicative/IEX, simulaciones y revisión
+del crudo existente. La captura ampliada sigue sin desplegarse; usar el plan y
+runner aislado de `experiments/pde_gratis_20261009/` para su prueba manual.
+
 Plan y criterios: [PLAN_DATOS_Y_EXPIRACIONES.md](PLAN_DATOS_Y_EXPIRACIONES.md).
 Cobertura actual: [resultados/COBERTURA.md](resultados/COBERTURA.md).
 

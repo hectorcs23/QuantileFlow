@@ -850,7 +850,8 @@ def borrar(ruta):
     ruta.unlink()
 
 
-def correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora",), fallos_api=None, **fallos):
+def correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora",), fallos_api=None,
+                  api_factory=None, reloj_inicio="2025-11-17T14:45:00Z", **fallos):
     """``scripts/capturar_alpaca.py`` (por omisión, ``--ahora``) de punta a punta, con la API sintética y solo SPXW.
 
     ``fallos_api`` inyecta estados HTTP por ruta; ``fallos`` sustituye funciones
@@ -865,8 +866,8 @@ def correr_captura(mercado, datos, monkeypatch, argumentos=("--ahora",), fallos_
     config = datos / "captura.toml"
     config.parent.mkdir(parents=True, exist_ok=True)
     config.write_text(texto, encoding="utf-8")
-    reloj = Reloj("2025-11-17T14:45:00Z")  # el corte inmediato: la cadena sintética tiene cotizaciones
-    api, vigilantes = api_sintetica(mercado, reloj), []
+    reloj = Reloj(reloj_inicio)  # el corte inmediato: la cadena sintética tiene cotizaciones
+    api, vigilantes = (api_factory or api_sintetica)(mercado, reloj), []
     api.fallos = dict(fallos_api or {})
 
     class Vigilante(VIGILANTE_REAL):  # para cancelarlos siempre, pase lo que pase
@@ -915,6 +916,77 @@ def test_captura_multiplazo_de_punta_a_punta(mercado, tmp_path, monkeypatch):
         esperado.update(str(v) for v in elegido)
     assert set(seleccion) == esperado
     assert len([s for s in m["solicitudes"].values() if s["tipo"] == "cadena"]) == len(esperado)
+
+
+@pytest.mark.parametrize("hora", ["14:45", "15:00"])
+def test_captura_cinco_plazos_dos_raices_con_paginacion(tmp_path, monkeypatch, hora):
+    """120 días de metadatos, dos raíces y páginas: prueba de integración sin red.
+
+    El SPY sintético solo prueba transporte/esquema, no valoración americana.
+    """
+    mx = sn.mercado_sintetico(FECHAS[:1], dias_vencimiento=(0, 120),
+                             rango_k=(-.01, .01), sesiones_extra=0)
+    my = sn.mercado_sintetico(FECHAS[:1], dias_vencimiento=(0, 120), S0=580,
+                             raiz="SPY", subyacente="SPY", paso_strike=1,
+                             rango_k=(-.01, .01), sesiones_extra=0)
+    mercado = (pd.concat([mx[0], my[0]], ignore_index=True), mx[1], mx[2])
+    vistas = []
+
+    def fabrica(mercado, reloj):
+        cot = mercado[0]
+
+        def contratos(p):
+            cuerpo = contratos_json(cot[cot.raiz == p["root_symbol"]])
+            for c in cuerpo["option_contracts"]:
+                c["style"] = "american" if c["root_symbol"] == "SPY" else "european"
+            inicio = int(p.get("page_token", "0"))
+            todos = cuerpo["option_contracts"]
+            return {"option_contracts": todos[inicio:inicio+75],
+                    "next_page_token": str(inicio+75) if inicio+75 < len(todos) else None}
+
+        def cadena(p, raiz):
+            cuerpo = cadena_json(cot[cot.raiz == raiz], p["expiration_date"], reloj())
+            todos = list(cuerpo["snapshots"].items())
+            inicio = int(p.get("page_token", "0"))
+            return {"snapshots": dict(todos[inicio:inicio+8]),
+                    "next_page_token": str(inicio+8) if inicio+8 < len(todos) else None}
+
+        api = API({"/v2/options/contracts": contratos,
+                   "/v1beta1/options/snapshots/SPXW": lambda p: cadena(p, "SPXW"),
+                   "/v1beta1/options/snapshots/SPY": lambda p: cadena(p, "SPY"),
+                   "/v2/stocks/snapshots": lambda p: acciones_json(580, reloj()),
+                   "/v2/clock": lambda p: {"timestamp": al.iso(reloj()), "is_open": True,
+                       "next_open": "2025-11-18T09:30:00-05:00", "next_close": "2025-11-17T16:00:00-05:00"}})
+        vistas.append(api)
+        return api
+
+    ruta = RAIZ / "experiments/expiraciones_20261008/captura_propuesta.toml"
+    datos = tmp_path / "datos"
+    codigo, registro = correr_captura(mercado, datos, monkeypatch,
+        argumentos=("--ahora", "--config", str(ruta)), api_factory=fabrica,
+        reloj_inicio=f"2025-11-17T{hora}:00Z")
+    assert codigo == 0
+    assert registro["horas"][0]["estado"] == "completa"
+    m = al.leer_manifiestos(datos)[0]
+    corte = pd.Timestamp(f"2025-11-17T{hora}:00Z")
+    for raiz in ("SPXW", "SPY"):
+        disponibles = sorted(set(mercado[0].loc[mercado[0].raiz == raiz, "vencimiento"].map(str)))
+        esperados, _ = al.elegir_vencimientos_multiples(disponibles, "PM", corte,
+            [7, 14, 30, 60, 90], 2, raiz == "SPXW")
+        assert m["seleccion"][raiz]["vencimientos"] == [str(v) for v in esperados]
+        assert len(esperados) == len(set(esperados))
+        plazos = list(m["seleccion"][raiz]["dias"].values())
+        for objetivo in (7, 14, 30, 60, 90):
+            assert any(0 < d < objetivo for d in plazos)
+            assert any(d >= objetivo for d in plazos)
+    cadenas = [s for s in m["solicitudes"].values() if s["tipo"] == "cadena"]
+    assert all(len(s["paginas"]) >= 2 for s in cadenas)
+    assert all(s["estado"] == "completa" for s in cadenas)
+    assert any(p.get("page_token") for _, p, _ in vistas[0].vistas)
+    # El lector verifica huellas de todas las páginas al reconstruir el crudo.
+    for solicitud in m["solicitudes"].values():
+        for pagina in solicitud["paginas"]:
+            al.leer_crudo(datos, pagina)
 
 
 def test_cada_ejecucion_de_la_captura_deja_su_registro(mercado, tmp_path, monkeypatch):

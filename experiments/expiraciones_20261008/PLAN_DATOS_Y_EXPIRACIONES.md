@@ -1,6 +1,11 @@
 # QuantileFlow: expiraciones y decisión de comprar datos
 
-Fecha: 8 de octubre de 2026. Presupuesto autorizado para evaluar alternativas: hasta US$250 mensuales. No se ha contratado una suscripción.
+> Actualización 2026-10-09: presupuesto vigente **US$0**, por instrucción del usuario.
+> Las opciones de compra y el límite anterior de US$250 quedan como referencia
+> histórica suspendida. El trabajo actual usa datos existentes, indicative/IEX y
+> benchmarks sintéticos; no se autoriza ninguna contratación.
+
+Fecha original: 8 de octubre de 2026. El presupuesto inicial de evaluación era hasta US$250 mensuales; ahora queda suspendido y reemplazado por US$0. No se ha contratado una suscripción.
 
 Queremos saber si podemos medir bien la forma de la distribución y sus cambios en distintos vencimientos. Después investigaremos si esas medidas aportan información sobre retornos de SPY a 1 y 5 sesiones. Son dos preguntas distintas: mejorar la medición no demuestra rentabilidad.
 

@@ -1,0 +1,126 @@
+{
+  "naturaleza": "sintético europeo, Q; no calibrado ni predictivo",
+  "presupuesto_datos_usd": 0,
+  "casos": 90,
+  "malla": {
+    "nodos": 1601,
+    "pasos": 2400,
+    "semiancho": 1.5
+  },
+  "maximos": {
+    "error_precio": 0.00046478565421637086,
+    "error_delta": 3.532224724596758e-05,
+    "error_vega": 0.0017676690529260242,
+    "error_masa": 8.117950756059145e-13,
+    "error_dualidad": 3.907985046680551e-14,
+    "masa_fronteras": 2.7236157334087865e-12,
+    "residual_estado": 2.220446049250313e-16,
+    "residual_adjunto": 9.094947017729282e-13
+  },
+  "adjunto_espacial": {
+    "derivada": 12.673545552098826,
+    "diferencias_centrales": 12.673545549968244,
+    "error_absoluto": 2.130581933101894e-09,
+    "taylor": [
+      {
+        "h": 0.002,
+        "resto": 3.5530052668972245e-05
+      },
+      {
+        "h": 0.001,
+        "resto": 8.909311261566522e-06
+      },
+      {
+        "h": 0.0005,
+        "resto": 2.23068932511325e-06
+      },
+      {
+        "h": 0.00025,
+        "resto": 5.580932658632437e-07
+      }
+    ],
+    "ratios": [
+      3.9879685001290444,
+      3.9939722494140706,
+      3.996983052040378
+    ]
+  },
+  "refinamiento_conjunto": [
+    {
+      "nodos": 201,
+      "pasos": 100,
+      "error_precio": 0.005494757385114291
+    },
+    {
+      "nodos": 401,
+      "pasos": 400,
+      "error_precio": 0.0013727852232756632
+    },
+    {
+      "nodos": 801,
+      "pasos": 1600,
+      "error_precio": 0.000343142317015932
+    },
+    {
+      "nodos": 1601,
+      "pasos": 6400,
+      "error_precio": 8.578224148703129e-05
+    }
+  ],
+  "refinamiento_espacio": [
+    {
+      "nodos": 201,
+      "error_precio": 0.00044930293405087696
+    },
+    {
+      "nodos": 401,
+      "error_precio": 4.307521029645045e-05
+    },
+    {
+      "nodos": 801,
+      "error_precio": 5.9938698568906545e-05
+    },
+    {
+      "nodos": 1601,
+      "error_precio": 8.578224148703129e-05
+    }
+  ],
+  "refinamiento_tiempo": [
+    {
+      "pasos": 100,
+      "error_precio": 0.006029592785324667
+    },
+    {
+      "pasos": 400,
+      "error_precio": 0.0015016351693653007
+    },
+    {
+      "pasos": 1600,
+      "error_precio": 0.0003689856278121795
+    },
+    {
+      "pasos": 6400,
+      "error_precio": 8.578224148703129e-05
+    }
+  ],
+  "refinamiento_dominio": [
+    {
+      "semiancho": 0.5,
+      "precio": 8.916432555712127
+    },
+    {
+      "semiancho": 1.0,
+      "precio": 9.17221395785135
+    },
+    {
+      "semiancho": 1.5,
+      "precio": 9.172277967877408
+    }
+  ],
+  "segundos_benchmark": 23.188795399968512,
+  "sha256_fuentes": {
+    "experiments\\pde_gratis_20261009\\benchmark.py": "0b7abcffa45f9bc769d4ee592bcb5069c162acd6c0943fad9d05f1b38008562b",
+    "quantileflow\\pde.py": "a20b183090b654a645aa50c3a5f48ee689fcc674251f07827f5605c5b1a7f77f",
+    "quantileflow\\opciones.py": "d4a1e92a8a32d0523f6ec330a47f5c95e20454b3ca163cdf4f6bdfced23c8c2a"
+  }
+}
