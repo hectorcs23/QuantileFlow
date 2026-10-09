@@ -1,0 +1,81 @@
+{
+  "naturaleza": "modelo sintético europeo Q; no calibrado ni predictivo",
+  "presupuesto_datos_usd": 0,
+  "casos_distribucion": 15,
+  "cuantiles": 75,
+  "malla": {
+    "nodos": 3201,
+    "pasos": 2400,
+    "semiancho": 1.5
+  },
+  "maximos": {
+    "masa_fronteras": 1.375470279819526e-12,
+    "error_masa": 4.392486374626969e-12,
+    "error_masa_tangentes": 4.314173958916914e-15,
+    "error_pdf": 3.203080156818916e-05,
+    "error_cdf": 3.099741610712581e-05,
+    "error_pdf_spot": 0.00048522012762845963,
+    "error_pdf_sigma": 0.0005383480042531752,
+    "error_pdf_plazo": 0.002133220876347819,
+    "error_cdf_spot": 3.207244161021472e-05,
+    "error_cdf_sigma": 0.0006390628674419752,
+    "error_cdf_plazo": 0.002270206387905205,
+    "error_cuantil": 0.008362118075183389,
+    "error_cuantil_sigma": 0.019423581515809474,
+    "error_cuantil_plazo": 0.048022217741731765
+  },
+  "adjunto": {
+    "cdf": -0.6747563722288357,
+    "cdf_fd": -0.6747563724096572,
+    "error_cdf": 1.808215799314894e-10,
+    "cuantil": -46.51962794126602,
+    "cuantil_fd": -46.51962797268538,
+    "error_cuantil": 3.1419354229456076e-08,
+    "error_vs_tangente_paralela": 5.551115123125783e-16,
+    "taylor": [
+      {
+        "h": 0.002,
+        "resto": 5.269332240610261e-06
+      },
+      {
+        "h": 0.001,
+        "resto": 1.3184470913145353e-06
+      },
+      {
+        "h": 0.0005,
+        "resto": 3.2975008320022597e-07
+      }
+    ],
+    "ratios": [
+      3.996620171808762,
+      3.9983222400400953
+    ]
+  },
+  "ejemplo_base": {
+    "cola_sobre_105": {
+      "probabilidad": 0.24644843289987217,
+      "sensibilidad_spot": 0.04400452338713537,
+      "sensibilidad_sigma": 0.7745428676131668,
+      "sensibilidad_plazo": 1.2967392176353507
+    },
+    "cuantil_05": {
+      "probabilidad": 0.05,
+      "precio": 88.84786409173053,
+      "sensibilidad_spot": 0.8884786409173053,
+      "sensibilidad_sigma": -43.724172717083505,
+      "sensibilidad_plazo": -64.09680997992767,
+      "densidad_y": 1.4382065940557838,
+      "condicion_inversa_cdf": 61.77684378513174
+    }
+  },
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "sha256_fuentes_lf": {
+    "experiments/distribucion_sensibilidad_20261009/benchmark.py": "4068527f20d9b382de94f656b22781f192c3810fae690b89cdf45239eb111569",
+    "quantileflow/pde.py": "635e485d8361ebef4d40542e69cb2a34aa173566fcd33700a1d13e9868334536",
+    "quantileflow/distribucion_pde.py": "903b8604d951a4d587ef578c9ef494911f3f81fc2a1f32eb8dfea913dedd8759"
+  }
+}

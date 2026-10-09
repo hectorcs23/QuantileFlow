@@ -48,26 +48,16 @@ def _payoff_celdas(y, h, spot, strike, es_call):
     return call-spot*promedio_exp+strike, delta_call-promedio_exp
 
 
-def resolver_europea(spot, strike, plazo, tasa, q, volatilidad, es_call=True,
-                     nodos=801, pasos=800, semiancho=1.5):
-    """Resuelve precio, masas terminales Q y gradiente espacial por un adjunto.
-
-    ``plazo`` en años, ``q`` rendimiento continuo. Para sigma escalar,
-    ``vega_paralela`` converge a vega BS. Para un vector de longitud ``nodos``
-    es la sensibilidad a sumar el mismo incremento de sigma en todos los nodos.
-    El dominio reflectante conserva masa pero puede sesgar precios si es corto:
-    inspeccionar fronteras y comprobar refinamiento de dominio/malla/tiempo.
-    """
-    if not all(math.isfinite(x) for x in (spot,strike,plazo,tasa,q,semiancho)):
+def _operador_log(plazo, tasa, q, volatilidad, nodos, pasos, semiancho):
+    """Operador común de valoración y distribución; no duplicar discretizaciones."""
+    if not all(math.isfinite(x) for x in (plazo,tasa,q,semiancho)):
         raise ValueError("parámetros no finitos")
-    if min(spot,strike,plazo,semiancho) <= 0:
-        raise ValueError("spot, strike, plazo y dominio deben ser positivos")
+    if min(plazo,semiancho) <= 0:
+        raise ValueError("plazo y dominio deben ser positivos")
     if (isinstance(nodos,bool) or not isinstance(nodos,int) or nodos < 5 or nodos%2 != 1
             or isinstance(pasos,bool) or not isinstance(pasos,int) or pasos < 1):
         raise ValueError("nodos debe ser impar >=5 y pasos un entero positivo")
-    if not isinstance(es_call,(bool,np.bool_)):
-        raise ValueError("es_call debe ser booleano")
-    sigma = np.asarray(volatilidad,dtype=float)
+    sigma = np.asarray(volatilidad,dtype=float).copy()
     if sigma.ndim == 0:
         sigma = np.full(nodos,float(sigma))
     elif sigma.shape != (nodos,):
@@ -98,10 +88,46 @@ def resolver_europea(spot, strike, plazo, tasa, q, volatilidad, es_call=True,
         return out
 
     def resolver(b, transpuesta=False):
-        x, flag = dgttrs(*lu,np.asfortranarray(b[:,None]),trans="T" if transpuesta else "N")
+        vector = b.ndim == 1
+        x, flag = dgttrs(*lu,np.asfortranarray(b[:,None] if vector else b),trans="T" if transpuesta else "N")
         if flag != 0:
             raise RuntimeError(f"solución tridiagonal falló: {flag}")
-        return x[:,0]
+        return x[:,0] if vector else x
+
+    return y, h, dt, sigma, arriba, abajo, aplicar, resolver
+
+
+def _adjunto_log(historia, terminal, sigma, h, dt, aplicar, resolver):
+    """Gradientes sigma nodal y deriva, sin descuento explícito del funcional."""
+    dual = terminal.copy()
+    grad_sigma, grad_mu = np.zeros(len(sigma)), 0.
+    error_adjunto = 0.
+    ds_arriba, ds_abajo = sigma/h**2-sigma/(2*h), sigma/h**2+sigma/(2*h)
+    # R_k = A m_(k+1) - m_k; contribución = -lambda_k^T A_theta m_(k+1).
+    for k in range(len(historia)-2,-1,-1):
+        siguiente = resolver(dual,transpuesta=True)
+        error_adjunto = max(error_adjunto,float(np.max(np.abs(aplicar(siguiente,True)-dual))))
+        diferencias = np.diff(siguiente)
+        m = historia[k+1]
+        grad_sigma[:-1] += dt*m[:-1]*ds_arriba[:-1]*diferencias
+        grad_sigma[1:] -= dt*m[1:]*ds_abajo[1:]*diferencias
+        grad_mu += float(dt/(2*h)*np.dot(m[:-1]+m[1:],diferencias))
+        dual = siguiente
+    return grad_sigma, grad_mu, dual, error_adjunto
+
+
+def resolver_europea(spot, strike, plazo, tasa, q, volatilidad, es_call=True,
+                     nodos=801, pasos=800, semiancho=1.5):
+    """Precio europeo, masas Q y adjunto; sigma fija en log-precio relativo.
+
+    Plazo en años y q continuo. Con sigma espacial, la vega paralela corresponde
+    a sumar sigma en todos los nodos. Comprobar dominio, malla y tiempo.
+    """
+    if not all(math.isfinite(x) and x > 0 for x in (spot,strike)):
+        raise ValueError("spot y strike deben ser finitos y positivos")
+    if not isinstance(es_call,(bool,np.bool_)):
+        raise ValueError("es_call debe ser booleano")
+    y,h,dt,sigma,_,_,aplicar,resolver = _operador_log(plazo,tasa,q,volatilidad,nodos,pasos,semiancho)
 
     historia = np.empty((pasos+1,nodos))
     historia[0] = 0.
@@ -118,22 +144,8 @@ def resolver_europea(spot, strike, plazo, tasa, q, volatilidad, es_call=True,
     descuento = math.exp(-tasa*plazo)
     precio = float(descuento*(payoff@masas))
     delta = float(descuento*(derivada_payoff@masas))
-    dual = descuento*payoff
-    grad_sigma, grad_mu = np.zeros(nodos), 0.
-    error_adjunto = 0.
-    ds_arriba, ds_abajo = sigma/h**2-sigma/(2*h), sigma/h**2+sigma/(2*h)
-    # R_k = A m_(k+1) - m_k. Con el adjunto positivo de J, la contribución
-    # es -lambda_k^T A_theta m_(k+1) = dt lambda_k^T G_theta m_(k+1).
-    for k in range(pasos-1,-1,-1):
-        siguiente = resolver(dual,transpuesta=True)  # A^T lambda_k = lambda_(k+1)
-        error_adjunto = max(error_adjunto,float(np.max(np.abs(aplicar(siguiente,True)-dual))))
-        # El multiplicador de R_k es lambda_k: A^T lambda_k = lambda_(k+1).
-        diferencias = np.diff(siguiente)
-        m = historia[k+1]
-        grad_sigma[:-1] += dt*m[:-1]*ds_arriba[:-1]*diferencias
-        grad_sigma[1:] -= dt*m[1:]*ds_abajo[1:]*diferencias
-        grad_mu += float(dt/(2*h)*np.dot(m[:-1]+m[1:],diferencias))
-        dual = siguiente
+    grad_sigma,grad_mu,dual,error_adjunto = _adjunto_log(
+        historia,descuento*payoff,sigma,h,dt,aplicar,resolver)
     dualidad = abs(precio-float(dual[nodos//2]))
     return ResultadoPDE(precio,delta,float(grad_sigma.sum()),grad_mu-plazo*precio,-grad_mu,
                         y,masas.copy(),grad_sigma,float(masas[0]+masas[-1]),dualidad,error_masa,

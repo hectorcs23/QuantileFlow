@@ -1,15 +1,21 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación (27 de septiembre de 2026).**
+**Versión de investigación; avances experimentales al 9 de octubre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
 y manifiesto) y la captura diaria de cadenas de opciones en Alpaca. Los datos de mercado no están en
-Git. Todavía no hay modelos entrenados ni resultados empíricos: las figuras y la plantilla del informe
-usan datos **sintéticos** con semillas fijas.
+Git. Hay revisiones operativas y experimentos descriptivos de capturas reales, pero aún no hay un
+predictor validado. Las figuras de la propuesta, la plantilla del informe y los benchmarks PDE
+usan datos **sintéticos**.
 
 ## Documentos
+
+- [`docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md`](docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md):
+  PDF, CDF, cuantiles y colas; tangentes y adjuntos, verificación y gráficos con presupuesto de datos US$0.
+- [`docs/AVANCE_PDE_GRATIS_2026-10-09.md`](docs/AVANCE_PDE_GRATIS_2026-10-09.md): primer benchmark
+  europeo de precios y sensibilidades, integridad del crudo y prueba aislada de captura ampliada.
 
 - [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): plan de investigación vigente (26 de septiembre
   de 2026). Pregunta inicial, fases con criterios de salida y correcciones previas del núcleo.
@@ -91,6 +97,8 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
   operacion.py         revisión de la operación: estado de cada corte, puntualidad, respaldo, SIP y dividendos
   opciones.py          Black, griegas, árbol binomial con dividendos
+  pde.py               difusión europea de referencia y adjunto discreto de precios
+  distribucion_pde.py  PDF/CDF reconstruidas, cuantiles, colas y sensibilidades de distribuciones Q
   superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
   distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
   transporte.py        Wasserstein en 1-D, cambios firmados, PCA funcional, reordenamiento
