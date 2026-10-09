@@ -28,6 +28,9 @@ usan datos **sintéticos** con semillas fijas.
   por Claude. Desde entonces registra también la operación diaria.
 - [`docs/respuesta_experimento_intradia.md`](docs/respuesta_experimento_intradia.md): la revisión y
   reproducción del experimento intradía de calls y puts de la rama `codex/intradia-20261007`.
+- [`docs/respuesta_pde_captura_gratis.md`](docs/respuesta_pde_captura_gratis.md): la revisión del PDE con
+  adjunto de la rama `codex/pde-captura-gratis-20261009`, la primera prueba real de la captura ampliada
+  y los minutos de Actions medidos.
 - [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): la
   verificación independiente de la instalación y el mantenimiento de las plantillas antes del 19 de
   octubre (`ubuntu-24.04`).

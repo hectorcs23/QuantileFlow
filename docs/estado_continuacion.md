@@ -165,6 +165,14 @@ cierre anticipado, y seis días degradados a propósito:
       [aceptación](aceptacion_operacion.md), sección 11).
 - [ ] Decidir entre `indicative` y OPRA con la evidencia de la aceptación y del experimento intradía
       ([aceptación](aceptacion_operacion.md), sección 11; [revisión del experimento](respuesta_experimento_intradia.md)).
+      Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
+      ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
+- [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
+      de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
+      ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6).
+- [ ] Captura ampliada (7 a 90 días): falta medir a la hora del corte que las respuestas llegan antes
+      de él. Propuesta: el lunes 12 a las 09:50 y 10:05, aislada y sin tocar el piloto
+      ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.
