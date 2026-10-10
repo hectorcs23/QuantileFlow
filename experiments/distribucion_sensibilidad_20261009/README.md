@@ -1,5 +1,9 @@
 # Sensibilidad de distribuciones Q sin datos comprados
 
+Actualización 10 de octubre: la conexión entre PDF y primas ya está implementada
+en `valor_europeo`; ver [el nuevo informe](../../docs/VALORACION_CONSISTENTE_2026-10-10.md).
+Los resultados de este directorio conservan la procedencia del commit `8d05af5`.
+
 [Informe y límites](../../docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md).
 Presupuesto: US$0. Datos exclusivamente sintéticos; no hay llamadas de red.
 

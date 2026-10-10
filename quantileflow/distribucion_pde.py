@@ -11,6 +11,8 @@ import numpy as np
 
 from .pde import _adjunto_log, _operador_log
 
+_GAUSS_X, _GAUSS_W = np.polynomial.legendre.leggauss(8)
+
 
 @dataclass(frozen=True)
 class MedidasDistribucion:
@@ -45,6 +47,50 @@ class ColaPDE:
     sensibilidad_plazo: float
 
 
+@dataclass(frozen=True)
+class ValorEuropeoPDF:
+    precio: float
+    delta: float
+    gamma: float
+    vega_paralela: float
+    sensibilidad_plazo: float  # por año de plazo restante
+    rho: float
+    sensibilidad_q: float
+    sensibilidad_strike: float
+    curvatura_strike: float
+    media_terminal: float
+    error_media_financiera: float  # media de PDF menos S0 exp((r-q)T); no forzarla
+    sensibilidad_vol_nodos: np.ndarray
+    error_dualidad: float
+    error_residual_adjunto: float
+
+
+def _payoff_triangular(y, h, spot, strike, es_call):
+    """Integra cada mitad de la base, dividida en el strike, con Gauss de 8 puntos.
+
+    Se integra el payoff directamente para calls y puts: evita cancelación
+    al obtener un put OTM a partir de la paridad de dos números grandes.
+    La misma base triangular genera la PDF y la CDF.
+    """
+    z = math.log(strike)-math.log(spot)
+    payoff, delta = np.zeros_like(y),np.zeros_like(y)
+    for izquierda in (True,False):
+        a,b = (y-h,y) if izquierda else (y,y+h)
+        if es_call:
+            a = np.clip(z,a,b)
+        else:
+            b = np.clip(z,a,b)
+        largo = b-a
+        puntos = a[:,None]+largo[:,None]*(1+_GAUSS_X)/2
+        base = (puntos-(y-h)[:,None]) if izquierda else ((y+h)[:,None]-puntos)
+        pesos = largo[:,None]/2*_GAUSS_W*np.maximum(base,0)/h**2
+        exp_y = np.exp(puntos)
+        intrinseco = spot*exp_y-strike
+        payoff += np.sum(pesos*np.maximum(intrinseco if es_call else -intrinseco,0),axis=1)
+        delta += (1 if es_call else -1)*np.sum(pesos*exp_y,axis=1)
+    return payoff,delta
+
+
 def _generador(m, arriba, abajo):
     flujo = arriba[:-1]*m[:-1]-abajo[1:]*m[1:]
     out = np.zeros_like(m)
@@ -62,8 +108,9 @@ class DistribucionPDE:
     un indicador. Las de CDF y cuantiles siguen bien definidas si pdf>0.
     """
 
-    def __init__(self, spot, historia, tangentes, operador, plazo):
+    def __init__(self, spot, historia, tangentes, operador, plazo, tasa, q):
         self.spot, self.plazo = float(spot), float(plazo)
+        self.tasa, self.q = float(tasa),float(q)
         self.y, self.h, self.dt, self.sigma, _, _, self._aplicar, self._resolver = operador
         self._historia = historia
         self._normalizacion = float(historia[-1].sum())
@@ -183,6 +230,43 @@ class DistribucionPDE:
         c = self.cuantil(probabilidad,densidad_minima)
         return -c.precio/c.densidad_y*self.gradiente_vol_cdf(c.precio)
 
+    def valor_europeo(self, strike, es_call=True):
+        """Descuenta el payoff integrado contra esta misma PDF triangular.
+
+        Delta/gamma mantienen sigma(y) fija. Incluye tangentes, gradiente
+        espacial adjunto y valoración backward independiente para dualidad.
+        Paridad exacta con la media terminal de esta distribución; la paridad
+        BS se recupera por convergencia del momento, sin forzar el forward.
+        """
+        if not math.isfinite(strike) or strike <= 0:
+            raise ValueError("strike debe ser finito y positivo")
+        if not isinstance(es_call,(bool,np.bool_)):
+            raise ValueError("es_call debe ser booleano")
+        g,gs = _payoff_triangular(self.y,self.h,self.spot,strike,es_call)
+        descuento = math.exp(-self.tasa*self.plazo)
+        media_payoff = float(g@self.pesos)
+        precio = descuento*media_payoff
+        ds,dt = g@self._tangentes
+        m = self.evaluar([strike])
+        gamma = descuento*(strike/self.spot)**2*m.pdf[0]
+        dk = descuento*(m.cdf[0]-1 if es_call else m.cdf[0])
+        # Incluir la normalización de la masa en el terminal del adjunto.
+        terminal = descuento*(g-media_payoff)/self._normalizacion
+        grad,grad_mu,_,residual = _adjunto_log(self._historia,terminal,self.sigma,
+            self.h,self.dt,self._aplicar,self._resolver)
+        # El valor backward propaga el payoff sin centrar; es otro cálculo de J.
+        backward = descuento*g/self._normalizacion
+        for _ in range(len(self._historia)-1):
+            siguiente = self._resolver(backward,transpuesta=True)
+            residual = max(residual,float(np.max(abs(self._aplicar(siguiente,True)-backward))))
+            backward = siguiente
+        media = float(self.spot*(np.exp(self.y)@self.pesos)*(np.sinh(self.h/2)/(self.h/2))**2)
+        return ValorEuropeoPDF(precio,float(descuento*(gs@self.pesos)),float(gamma),
+            float(descuento*ds),float(descuento*dt-self.tasa*precio),
+            float(grad_mu-self.plazo*precio),float(-grad_mu),float(dk),
+            float(descuento*m.pdf[0]),media,media-self.spot*math.exp((self.tasa-self.q)*self.plazo),grad,
+            abs(precio-float(backward[len(self.y)//2])),residual)
+
 
 def resolver_distribucion(spot, plazo, tasa, q, volatilidad,
                           nodos=801, pasos=800, semiancho=1.5):
@@ -210,4 +294,4 @@ def resolver_distribucion(spot, plazo, tasa, q, volatilidad,
         raise RuntimeError("estado o sensibilidades no finitos")
     if float(historia.min()) < -1e-12:
         raise RuntimeError("distribución perdió positividad")
-    return DistribucionPDE(spot,historia,tangentes,op,plazo)
+    return DistribucionPDE(spot,historia,tangentes,op,plazo,tasa,q)

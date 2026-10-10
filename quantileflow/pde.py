@@ -2,7 +2,7 @@
 
 Malla fija de y=log(S/S0), tasas constantes y dividendo continuo. Volatilidad
 escalar o espacial estática en esas coordenadas; no es una IV calibrada.
-Euler implícito, fronteras reflectantes lejanas y payoff promediado por celda.
+Euler implícito, fronteras reflectantes lejanas y PDF triangular para el payoff.
 El delta mantiene fija esa volatilidad en coordenadas relativas al spot.
 No implementa ejercicio americano, dividendos en efectivo ni predicción.
 """
@@ -30,22 +30,6 @@ class ResultadoPDE:
     error_masa: float
     error_residual_estado: float
     error_residual_adjunto: float
-
-
-def _payoff_celdas(y, h, spot, strike, es_call):
-    """Promedio uniforme en log-precio; derivada analítica con límites móviles."""
-    a, b = y-h/2, y+h/2
-    log_strike = math.log(strike/spot)
-    # La identidad put = call - S + K vale también para el promedio por celda.
-    inicio = np.clip(log_strike, a, b)
-    largo = b-inicio
-    integral_exp = np.exp(inicio)*np.expm1(largo)
-    call = (spot*integral_exp-strike*largo)/h
-    delta_call = integral_exp/h
-    if es_call:
-        return call, delta_call
-    promedio_exp = np.exp(a)*np.expm1(h)/h
-    return call-spot*promedio_exp+strike, delta_call-promedio_exp
 
 
 def _operador_log(plazo, tasa, q, volatilidad, nodos, pasos, semiancho):
@@ -127,26 +111,12 @@ def resolver_europea(spot, strike, plazo, tasa, q, volatilidad, es_call=True,
         raise ValueError("spot y strike deben ser finitos y positivos")
     if not isinstance(es_call,(bool,np.bool_)):
         raise ValueError("es_call debe ser booleano")
-    y,h,dt,sigma,_,_,aplicar,resolver = _operador_log(plazo,tasa,q,volatilidad,nodos,pasos,semiancho)
-
-    historia = np.empty((pasos+1,nodos))
-    historia[0] = 0.
-    historia[0,nodos//2] = 1.
-    error_estado, error_masa = 0., 0.
-    for k in range(pasos):
-        historia[k+1] = resolver(historia[k])
-        error_estado = max(error_estado,float(np.max(np.abs(aplicar(historia[k+1])-historia[k]))))
-        error_masa = max(error_masa,abs(float(historia[k+1].sum())-1))
-    masas = historia[-1]
-    if float(np.min(masas)) < -1e-12:
-        raise RuntimeError("el estado perdió positividad")
-    payoff, derivada_payoff = _payoff_celdas(y,h,spot,strike,es_call)
-    descuento = math.exp(-tasa*plazo)
-    precio = float(descuento*(payoff@masas))
-    delta = float(descuento*(derivada_payoff@masas))
-    grad_sigma,grad_mu,dual,error_adjunto = _adjunto_log(
-        historia,descuento*payoff,sigma,h,dt,aplicar,resolver)
-    dualidad = abs(precio-float(dual[nodos//2]))
-    return ResultadoPDE(precio,delta,float(grad_sigma.sum()),grad_mu-plazo*precio,-grad_mu,
-                        y,masas.copy(),grad_sigma,float(masas[0]+masas[-1]),dualidad,error_masa,
-                        error_estado,error_adjunto)
+    # Importación local: distribucion_pde comparte los helpers de este módulo.
+    from .distribucion_pde import resolver_distribucion
+    d = resolver_distribucion(spot,plazo,tasa,q,volatilidad,nodos,pasos,semiancho)
+    v = d.valor_europeo(strike,es_call)
+    error_estado = max(float(np.max(abs(d._aplicar(d._historia[k+1])-d._historia[k])))
+                       for k in range(pasos))
+    return ResultadoPDE(v.precio,v.delta,v.vega_paralela,v.rho,v.sensibilidad_q,
+        d.y,d.pesos.copy(),v.sensibilidad_vol_nodos,d.masa_fronteras,v.error_dualidad,
+        d.error_masa_pre_normalizacion,error_estado,v.error_residual_adjunto)

@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; avances experimentales al 9 de octubre de 2026.**
+**Versión de investigación; avances experimentales al 10 de octubre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -11,6 +11,9 @@ predictor validado. Las figuras de la propuesta, la plantilla del informe y los 
 usan datos **sintéticos**.
 
 ## Documentos
+
+- [`docs/VALORACION_CONSISTENTE_2026-10-10.md`](docs/VALORACION_CONSISTENTE_2026-10-10.md):
+  valoración de calls/puts desde la misma PDF, identidades por strike, sensibilidades y convergencia.
 
 - [`docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md`](docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md):
   PDF, CDF, cuantiles y colas; tangentes y adjuntos, verificación y gráficos con presupuesto de datos US$0.
