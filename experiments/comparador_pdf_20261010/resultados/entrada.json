@@ -1,0 +1,311 @@
+{
+  "spot": 100.0,
+  "tasa": 0.04,
+  "q": 0.013,
+  "presupuesto_operacion_ficticio": 500,
+  "presupuesto_datos": 0,
+  "contratos": [
+    {
+      "identificador": "C95-7d",
+      "strike": 95.0,
+      "dte": 7.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 5.107542527266256,
+      "ask": 5.187542527266256,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P95-7d",
+      "strike": 95.0,
+      "dte": 7.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 0.059622159710128804,
+      "ask": 0.1396221597101288,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C100-7d",
+      "strike": 100.0,
+      "dte": 7.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.3664485425997763,
+      "ask": 1.4464485425997764,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P100-7d",
+      "strike": 100.0,
+      "dte": 7.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.3146940294245173,
+      "ask": 1.3946940294245174,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C105-7d",
+      "strike": 105.0,
+      "dte": 7.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 0.09164578307272228,
+      "ask": 0.1716457830727223,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P105-7d",
+      "strike": 105.0,
+      "dte": 7.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 5.036057124278328,
+      "ask": 5.116057124278328,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C95-14d",
+      "strike": 95.0,
+      "dte": 14.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 5.403568517751932,
+      "ask": 5.483568517751932,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P95-14d",
+      "strike": 95.0,
+      "dte": 14.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 0.30777743094480375,
+      "ask": 0.3877774309448037,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C100-14d",
+      "strike": 100.0,
+      "dte": 14.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.9632797411757172,
+      "ask": 2.0432797411757173,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P100-14d",
+      "strike": 100.0,
+      "dte": 14.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.8598233032648361,
+      "ask": 1.9398233032648362,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C105-14d",
+      "strike": 105.0,
+      "dte": 14.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 0.3974732168226449,
+      "ask": 0.4774732168226449,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P105-14d",
+      "strike": 105.0,
+      "dte": 14.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 5.286351427808025,
+      "ask": 5.366351427808025,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C95-30d",
+      "strike": 95.0,
+      "dte": 30.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 6.084343196928241,
+      "ask": 6.164343196928241,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P95-30d",
+      "strike": 95.0,
+      "dte": 30.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 0.8793195362832342,
+      "ask": 0.9593195362832343,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C100-30d",
+      "strike": 100.0,
+      "dte": 30.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 2.9245841802537447,
+      "ask": 3.0045841802537447,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P100-30d",
+      "strike": 100.0,
+      "dte": 30.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 2.7031491558109324,
+      "ask": 2.7831491558109325,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C105-30d",
+      "strike": 105.0,
+      "dte": 30.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.0986412002267916,
+      "ask": 1.1786412002267916,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P105-30d",
+      "strike": 105.0,
+      "dte": 30.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 5.860794811986156,
+      "ask": 5.940794811986156,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C95-60d",
+      "strike": 95.0,
+      "dte": 60.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 7.1665639000350945,
+      "ask": 7.2465639000350945,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P95-60d",
+      "strike": 95.0,
+      "dte": 60.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 1.75742599776978,
+      "ask": 1.83742599776978,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C100-60d",
+      "strike": 100.0,
+      "dte": 60.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 4.209221096844275,
+      "ask": 4.289221096844275,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P100-60d",
+      "strike": 100.0,
+      "dte": 60.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 3.767314333555649,
+      "ask": 3.8473143335556492,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "C105-60d",
+      "strike": 105.0,
+      "dte": 60.0,
+      "es_call": true,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 2.2104173992085046,
+      "ask": 2.2904173992085046,
+      "multiplicador": 100
+    },
+    {
+      "identificador": "P105-60d",
+      "strike": 105.0,
+      "dte": 60.0,
+      "es_call": false,
+      "ejercicio": "europeo",
+      "iv": 0.25,
+      "bid": 6.7357417748965585,
+      "ask": 6.8157417748965585,
+      "multiplicador": 100
+    }
+  ],
+  "escenarios": [
+    {
+      "nombre": "objetivo",
+      "dias": 7,
+      "retorno_spot": 0.03,
+      "cambio_iv": 0
+    },
+    {
+      "nombre": "sin_movimiento",
+      "dias": 7,
+      "retorno_spot": 0,
+      "cambio_iv": 0
+    },
+    {
+      "nombre": "contrario",
+      "dias": 7,
+      "retorno_spot": -0.03,
+      "cambio_iv": 0
+    },
+    {
+      "nombre": "sube_pero_cae_iv",
+      "dias": 7,
+      "retorno_spot": 0.03,
+      "cambio_iv": -0.05
+    },
+    {
+      "nombre": "llega_tarde",
+      "dias": 14,
+      "retorno_spot": 0.03,
+      "cambio_iv": 0
+    },
+    {
+      "nombre": "sube_iv",
+      "dias": 7,
+      "retorno_spot": 0.03,
+      "cambio_iv": 0.05
+    }
+  ]
+}

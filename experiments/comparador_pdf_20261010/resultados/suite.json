@@ -1,0 +1,14 @@
+{
+  "naturaleza": "registro del resultado observado de pytest",
+  "comando": "python -X utf8 -m pytest tests experiments/expiraciones_20261008/test_expiraciones.py experiments/intradia_20261007/test_exploracion.py -q",
+  "codigo_salida": 0,
+  "pruebas_pasadas": 319,
+  "nuevas_comparador": 17,
+  "duracion_reportada_segundos": 5180.0,
+  "nota": "Después de la suite solo se editaron documentos y el título de la gráfica; se regeneró la demo.",
+  "sha256_fuentes_lf": {
+    "quantileflow/comparador.py": "7d64a546067651d721cc0549ba372a6d082ad32a89cb481f6c895684ca0d39bc",
+    "quantileflow/escenarios.py": "e37e021f6ca1f5088fc6cb02e129c23b1b0eef003c7e2ff61883b8e64e234c42",
+    "tests/test_comparador_pdf.py": "dc61bb0d3b9eec58aa3d930b7a1481819118a558082019ec3b87d2dcfe9c1f4f"
+  }
+}

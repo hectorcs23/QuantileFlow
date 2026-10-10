@@ -2,9 +2,13 @@
 
 8 de octubre de 2026. Primera versión experimental de QuantileFlow.
 
+Actualización del 10 de octubre: presupuesto de datos **US$0**. La integración
+PDE y los rankings separados están en `../comparador_pdf_20261010/`.
+Esta carpeta conserva el prototipo Black–Scholes/CRR anterior.
+
 La entrada que buscamos es: «Espero que el subyacente se mueva X% en H días, tengo un presupuesto B y quiero comparar strikes y vencimientos». La salida debe mostrar cantidades enteras, desembolso, ganancia/pérdida condicional, costos, sensibilidad y resultados si el movimiento no llega, llega tarde o cambia la volatilidad.
 
-La ganancia del escenario esperado no es ganancia esperada estadística. Hace falta asignar y validar probabilidades para calcular esta última. Un contrato con más retorno si aciertas puede perder mucho más si no aciertas. El presupuesto de operaciones es distinto del presupuesto mensual de datos de US$250.
+La ganancia del escenario esperado no es ganancia esperada estadística. Hace falta asignar y validar probabilidades para calcular esta última. Un contrato con más retorno si aciertas puede perder mucho más si no aciertas. El capital ficticio de las demos es distinto del presupuesto de datos, actualmente US$0.
 
 ## Sensibilidad del contrato
 

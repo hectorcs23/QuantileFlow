@@ -1,0 +1,83 @@
+{
+  "cotizaciones": "sintéticas, no contratos reales",
+  "presupuesto_datos": 0,
+  "candidatos": 24,
+  "evaluables": 12,
+  "excluidos": [
+    {
+      "contrato": "C95-7d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "P95-7d",
+      "motivo": "vence antes de un escenario"
+    },
+    {
+      "contrato": "C100-7d",
+      "motivo": "vence antes de un escenario"
+    },
+    {
+      "contrato": "P100-7d",
+      "motivo": "vence antes de un escenario"
+    },
+    {
+      "contrato": "C105-7d",
+      "motivo": "vence antes de un escenario"
+    },
+    {
+      "contrato": "P105-7d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "C95-14d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "P105-14d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "C95-30d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "P105-30d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "C95-60d",
+      "motivo": "no cabe en presupuesto"
+    },
+    {
+      "contrato": "P105-60d",
+      "motivo": "no cabe en presupuesto"
+    }
+  ],
+  "primero_ganancia": "C100-14d",
+  "primero_retorno": [
+    "C100-14d"
+  ],
+  "alternativa_robusta": "efectivo",
+  "sensibilidad_celdas": 25,
+  "sensibilidad_variaciones": 16,
+  "cambios_contrato_mejor": 7,
+  "refinamiento": {
+    "nodos": 801,
+    "pasos": 1200,
+    "max_cambio_pnl": 3.183005690815321,
+    "mismos_candidatos": true,
+    "rankings_iguales": true,
+    "misma_alternativa_robusta": true
+  },
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6"
+  },
+  "sha256_fuentes_lf": {
+    "experiments/comparador_pdf_20261010/demo.py": "8ba142a2413da149d18a3afb68e3eca1919c6b41316a18b91e1a38546407e8b6",
+    "quantileflow/comparador.py": "7d64a546067651d721cc0549ba372a6d082ad32a89cb481f6c895684ca0d39bc",
+    "quantileflow/escenarios.py": "e37e021f6ca1f5088fc6cb02e129c23b1b0eef003c7e2ff61883b8e64e234c42",
+    "quantileflow/distribucion_pde.py": "d08defd8471e78bd143a63c40e22b09f6251444434eeab81b34b0f7287ec5845",
+    "quantileflow/pde.py": "48f9aea807f1c914c6f14c46b719529a4338652208a3d5deda1ee47496b91315"
+  }
+}

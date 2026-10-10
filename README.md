@@ -12,6 +12,10 @@ usan datos **sintéticos**.
 
 ## Documentos
 
+- [`docs/COMPARADOR_PDF_2026-10-10.md`](docs/COMPARADOR_PDF_2026-10-10.md):
+  comparador PDE, costos y límite de pérdida; rankings de ganancia, retorno y robustez,
+  barridos de spot/IV/plazo y comprobación con una malla más fina. Datos sintéticos, US$0.
+
 - [`docs/VALORACION_CONSISTENTE_2026-10-10.md`](docs/VALORACION_CONSISTENTE_2026-10-10.md):
   valoración de calls/puts desde la misma PDF, identidades por strike, sensibilidades y convergencia.
 
