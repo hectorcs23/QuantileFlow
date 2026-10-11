@@ -52,7 +52,7 @@ class Escenario:
             raise ValueError("plazo negativo o spot no positivo")
 
 
-def _valor_pde(contrato, spot, escenario, tasa, q, pasos, nodos, semiancho, cache):
+def _estado_pde(contrato, spot, escenario, tasa, q, pasos, nodos, semiancho, cache):
     restante = contrato.dte-escenario.dias
     sigma = contrato.iv+escenario.cambio_iv
     if sigma <= 0 or not math.isfinite(sigma):
@@ -62,7 +62,11 @@ def _valor_pde(contrato, spot, escenario, tasa, q, pasos, nodos, semiancho, cach
     if clave not in cache:
         cache[clave] = resolver_distribucion(s, restante/365, tasa, q, sigma,
                                             nodos=nodos, pasos=pasos, semiancho=semiancho)
-    d = cache[clave]
+    return cache[clave]
+
+
+def _valor_pde(contrato, spot, escenario, tasa, q, pasos, nodos, semiancho, cache):
+    d = _estado_pde(contrato, spot, escenario, tasa, q, pasos, nodos, semiancho, cache)
     return d, d.valor_europeo(contrato.strike, contrato.es_call)
 
 
@@ -129,7 +133,8 @@ def sensibilidad_europea(spot, strike, dte, iv, tasa=.04, q=0., es_call=True):
 
 def comparar_contratos(contratos, spot, escenarios, presupuesto, comision=.65,
                        semispread_salida=.04, tasa=.04, q=0., dividendos=(), pasos=500,
-                       *, motor="clasico", nodos=801, semiancho=1.5):
+                       *, motor="clasico", nodos=801, semiancho=1.5, diagnosticos_pde=True,
+                       limites_cantidad=None):
     """Compra a ask, contratos enteros; salida teórica menos semispread asumido.
 
     Presenta PnL condicional y peor caso de la lista, sin inventar probabilidades.
@@ -141,6 +146,10 @@ def comparar_contratos(contratos, spot, escenarios, presupuesto, comision=.65,
     _validar_motor(motor, contratos, dividendos)
     if len({c.identificador for c in contratos}) != len(contratos):
         raise ValueError("identificadores de contrato deben ser únicos")
+    limites = {} if limites_cantidad is None else dict(limites_cantidad)
+    if (set(limites)-{c.identificador for c in contratos} or any(
+        isinstance(n, bool) or not isinstance(n, int) or n < 0 for n in limites.values())):
+        raise ValueError("límites de cantidad deben ser enteros no negativos de contratos conocidos")
     if not math.isfinite(spot) or spot <= 0 or not all(math.isfinite(x) for x in (tasa, q)):
         raise ValueError("referencia inválida")
     if not escenarios or len({e.nombre for e in escenarios}) != len(escenarios):
@@ -152,16 +161,22 @@ def comparar_contratos(contratos, spot, escenarios, presupuesto, comision=.65,
     for c in contratos:
         unitario = c.ask*c.multiplicador + comision
         n = math.floor(presupuesto/(unitario + comision))  # reservar también el cierre
+        n = min(n, limites.get(c.identificador, n))
         if n == 0 or any(e.dias > c.dte for e in escenarios):
             excluidos.append({"contrato": c.identificador,
-                              "motivo": "no cabe en presupuesto" if n == 0 else "vence antes de un escenario"})
+                              "motivo": ("cantidad permitida cero" if limites.get(c.identificador) == 0 else
+                                         "no cabe en presupuesto") if n == 0 else "vence antes de un escenario"})
             continue
         valores = {}
         desembolso = n*unitario
         for e in escenarios:
             al_vencer = e.dias == c.dte
             diagnostico = {}
-            if motor == "pde" and not al_vencer:
+            if motor == "pde" and not al_vencer and not diagnosticos_pde:
+                d = _estado_pde(c, spot, e, tasa, q, pasos, nodos, semiancho, cache)
+                teorico = d.precio_europeo(c.strike, c.es_call)
+                diagnostico = {"solo_precio": True, "masa_fronteras": d.masa_fronteras}
+            elif motor == "pde" and not al_vencer:
                 d, v = _valor_pde(c, spot, e, tasa, q, pasos, nodos, semiancho, cache)
                 teorico = v.precio
                 diagnostico = {"delta": v.delta, "gamma": v.gamma,

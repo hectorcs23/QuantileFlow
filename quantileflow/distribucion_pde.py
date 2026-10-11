@@ -267,6 +267,18 @@ class DistribucionPDE:
             float(descuento*m.pdf[0]),media,media-self.spot*math.exp((self.tasa-self.q)*self.plazo),grad,
             abs(precio-float(backward[len(self.y)//2])),residual)
 
+    def precio_europeo(self, strike, es_call=True):
+        """La misma integral de payoff, sin adjuntos ni cálculo de griegas.
+
+        Útil para barridos de cotizaciones; no cambia la PDF ni la cuadratura.
+        """
+        if not math.isfinite(strike) or strike <= 0:
+            raise ValueError("strike debe ser finito y positivo")
+        if not isinstance(es_call, (bool, np.bool_)):
+            raise ValueError("es_call debe ser booleano")
+        g, _ = _payoff_triangular(self.y, self.h, self.spot, strike, es_call)
+        return float(math.exp(-self.tasa*self.plazo)*(g@self.pesos))
+
 
 def resolver_distribucion(spot, plazo, tasa, q, volatilidad,
                           nodos=801, pasos=800, semiancho=1.5):

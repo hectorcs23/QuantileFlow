@@ -12,6 +12,10 @@ usan datos **sintéticos**.
 
 ## Documentos
 
+- [`docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md`](docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md):
+  prueba del comparador con doce cortes privados; IV plana, holdout por strike,
+  bandas y límites de sincronía. Solo resultados agregados públicos; datos US$0.
+
 - [`docs/COMPARADOR_PDF_2026-10-10.md`](docs/COMPARADOR_PDF_2026-10-10.md):
   comparador PDE, costos y límite de pérdida; rankings de ganancia, retorno y robustez,
   barridos de spot/IV/plazo y comprobación con una malla más fina. Datos sintéticos, US$0.

@@ -12,7 +12,8 @@ def comparar_con_pdf(contratos, spot, escenarios, presupuesto, escenario_objetiv
                     *, limite_perdida=None, comision=.65, semispread_salida=.04,
                     tasa=.04, q=0., nodos=801, pasos=800, semiancho=1.5,
                     fuente_cotizaciones="no especificada",
-                    tolerancia_fronteras=1e-6, tolerancia_momento_relativo=1e-3):
+                    tolerancia_fronteras=1e-6, tolerancia_momento_relativo=1e-3,
+                    limites_cantidad=None):
     """Tres rankings independientes, usando compra a ask y repricing PDE europeo.
 
     limite_perdida limita prima y ambas comisiones, no solo pérdida en escenarios.
@@ -32,7 +33,8 @@ def comparar_con_pdf(contratos, spot, escenarios, presupuesto, escenario_objetiv
     # Presupuesto positivo para el motor base incluso con límite de riesgo cero:
     # evaluar validación de entradas, luego excluir todos sin comprar.
     resultado = comparar_contratos(contratos, spot, escenarios, min(presupuesto, limite) if limite else presupuesto,
-        comision, semispread_salida, tasa, q, pasos=pasos, motor="pde", nodos=nodos, semiancho=semiancho)
+        comision, semispread_salida, tasa, q, pasos=pasos, motor="pde", nodos=nodos, semiancho=semiancho,
+        limites_cantidad=limites_cantidad)
     if limite == 0:
         resultado["excluidos"].extend({"contrato": f["contrato"], "motivo": "límite de pérdida cero"}
                                       for f in resultado["contratos"])

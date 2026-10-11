@@ -1,0 +1,29 @@
+{
+  "naturaleza": "registro de resultados observados",
+  "suite": {
+    "comando": "python -X utf8 -m pytest tests experiments/expiraciones_20261008/test_expiraciones.py experiments/intradia_20261007/test_exploracion.py -q",
+    "pasadas": 336,
+    "codigo_salida": 0,
+    "duracion_segundos": 147.42
+  },
+  "auditor": {
+    "comando": "python -X utf8 -m pytest experiments/cadena_comparador_20261010/test_evaluar_cadena.py -q",
+    "pasadas": 5,
+    "codigo_salida": 0,
+    "duracion_segundos": 9.01
+  },
+  "total_distintas": 341,
+  "fuentes_sha256_lf": {
+    "quantileflow/adaptador_comparador.py": "edb1f339afb56d5473b9a1244411510d0338bd21ba97cc4b503316bb286216b9",
+    "quantileflow/distribucion_pde.py": "7b2b7ef428620e24fbf0459a92e7485a02e90bfd9479a60a96affbd0cf6391c8",
+    "quantileflow/escenarios.py": "b4ded79e9bd791753ecd22c91d8c46c88307e10e9783666640344cf4a674e708",
+    "quantileflow/comparador.py": "271025528c3f8ea05709f157fb744baa669897bf2c14a6f592e761af4c84a24d",
+    "tests/test_adaptador_comparador.py": "786ced61e640724aa45ddc394d1463aabfde50a795f2b8b64c53a652e0d92654",
+    "experiments/cadena_comparador_20261010/test_evaluar_cadena.py": "b48a541b756ff743a339f87a7ba68dc52a60016d51a05ade41d3aff7c737d083"
+  },
+  "publicacion": {
+    "solo_agregados": true,
+    "identificadores_individuales_en_salidas_publicas": 0,
+    "precios_individuales_en_salidas_publicas": false
+  }
+}
