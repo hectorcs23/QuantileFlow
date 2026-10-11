@@ -12,6 +12,10 @@ usan datos **sintéticos**.
 
 ## Documentos
 
+- [`docs/SKEW_BANDAS_2026-10-10.md`](docs/SKEW_BANDAS_2026-10-10.md):
+  contraste justo de IV plana y SSVI, sensibilidad del ranking y control independiente
+  de forward; seis sesiones del feed gratuito, datos US$0.
+
 - [`docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md`](docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md):
   prueba del comparador con doce cortes privados; IV plana, holdout por strike,
   bandas y límites de sincronía. Solo resultados agregados públicos; datos US$0.

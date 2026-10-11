@@ -1,0 +1,18 @@
+{
+  "suite": {
+    "pasadas": 358,
+    "segundos": 133.32,
+    "comando": "python -X utf8 -m pytest tests experiments/expiraciones_20261008/test_expiraciones.py experiments/intradia_20261007/test_exploracion.py experiments/cadena_comparador_20261010/test_evaluar_cadena.py -q"
+  },
+  "control_forward": {
+    "pasadas": 5,
+    "segundos": 2.51,
+    "comando": "python -X utf8 -m pytest experiments/skew_bandas_20261010/test_control_forward.py -q"
+  },
+  "total_pasadas": 363,
+  "sistema": "Windows, Python 3.12.14",
+  "fuentes_pruebas_sha256_lf": {
+    "tests/test_ajuste_bandas.py": "19cdc9d78f6e71d51a02f592a8741a1d173e9fdd73b3255e4e490bdf5257847e",
+    "experiments/skew_bandas_20261010/test_control_forward.py": "9fb6f44c199d915a0cf81671ec5892268e1b23801822de821f15e8ea7b44f14c"
+  }
+}

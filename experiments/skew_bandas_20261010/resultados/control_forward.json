@@ -1,0 +1,95 @@
+{
+  "naturaleza": "control posterior descriptivo, no ajuste seleccionado ni predictor",
+  "descuento": "fijo a tasa continua 0.04; no se optimiza descuento",
+  "resumen_sha256": "4b1ca1e331af1f5cb1fc704260dce2c88010c1d07a04444dc7cf9d7b09e65504",
+  "codigo_sha256_lf": "e03e218ff997655994374761fe39b75931ccad172f64df5c51bb434a50d8d294",
+  "pares": 1588,
+  "incompatibles_actual": 1337,
+  "minimo_incompatibles_forward_libre": 394,
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "pares": 136,
+      "incompatibles_forward_actual": 120,
+      "minimo_incompatibles_cualquier_forward": 45
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "pares": 138,
+      "incompatibles_forward_actual": 118,
+      "minimo_incompatibles_cualquier_forward": 48
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "pares": 108,
+      "incompatibles_forward_actual": 86,
+      "minimo_incompatibles_cualquier_forward": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "pares": 108,
+      "incompatibles_forward_actual": 87,
+      "minimo_incompatibles_cualquier_forward": 16
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "pares": 127,
+      "incompatibles_forward_actual": 117,
+      "minimo_incompatibles_cualquier_forward": 38
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "pares": 125,
+      "incompatibles_forward_actual": 89,
+      "minimo_incompatibles_cualquier_forward": 26
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "pares": 143,
+      "incompatibles_forward_actual": 128,
+      "minimo_incompatibles_cualquier_forward": 39
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "pares": 143,
+      "incompatibles_forward_actual": 133,
+      "minimo_incompatibles_cualquier_forward": 43
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "pares": 138,
+      "incompatibles_forward_actual": 132,
+      "minimo_incompatibles_cualquier_forward": 38
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "pares": 139,
+      "incompatibles_forward_actual": 133,
+      "minimo_incompatibles_cualquier_forward": 34
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "pares": 142,
+      "incompatibles_forward_actual": 103,
+      "minimo_incompatibles_cualquier_forward": 27
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "pares": 141,
+      "incompatibles_forward_actual": 91,
+      "minimo_incompatibles_cualquier_forward": 16
+    }
+  ]
+}

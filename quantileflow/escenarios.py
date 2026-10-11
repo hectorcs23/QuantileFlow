@@ -134,16 +134,23 @@ def sensibilidad_europea(spot, strike, dte, iv, tasa=.04, q=0., es_call=True):
 def comparar_contratos(contratos, spot, escenarios, presupuesto, comision=.65,
                        semispread_salida=.04, tasa=.04, q=0., dividendos=(), pasos=500,
                        *, motor="clasico", nodos=801, semiancho=1.5, diagnosticos_pde=True,
-                       limites_cantidad=None):
+                       limites_cantidad=None, valorador=None):
     """Compra a ask, contratos enteros; salida teórica menos semispread asumido.
 
     Presenta PnL condicional y peor caso de la lista, sin inventar probabilidades.
     El peor caso de la lista no es la pérdida máxima: en opciones largas puede
     perderse todo el desembolso de entrada. No ejecuta órdenes.
+
+    ``valorador(c, spot, escenario, tasa, q)`` permite un precio externo europeo,
+    manteniendo idénticos presupuesto, cantidades y costos. Solo motor clásico
+    sin dividendos discretos; al vencer prevalece el payoff, sin invocar callback.
     """
     escenarios = list(escenarios)
     contratos, dividendos = list(contratos), tuple(dividendos)
     _validar_motor(motor, contratos, dividendos)
+    if valorador is not None and (not callable(valorador) or motor != "clasico" or dividendos
+                                 or any(c.ejercicio != "europeo" for c in contratos)):
+        raise ValueError("valorador externo requiere europeos, motor clásico y q continuo")
     if len({c.identificador for c in contratos}) != len(contratos):
         raise ValueError("identificadores de contrato deben ser únicos")
     limites = {} if limites_cantidad is None else dict(limites_cantidad)
@@ -172,7 +179,18 @@ def comparar_contratos(contratos, spot, escenarios, presupuesto, comision=.65,
         for e in escenarios:
             al_vencer = e.dias == c.dte
             diagnostico = {}
-            if motor == "pde" and not al_vencer and not diagnosticos_pde:
+            if valorador is not None and not al_vencer:
+                teorico = float(valorador(c, spot, e, tasa, q))
+                if not math.isfinite(teorico) or teorico < 0:
+                    raise ValueError("valorador externo produjo precio inválido")
+                T = (c.dte-e.dias)/365
+                sub_desc = spot*(1+e.retorno_spot)*math.exp(-q*T)
+                k_desc = c.strike*math.exp(-tasa*T)
+                inferior = max(sub_desc-k_desc if c.es_call else k_desc-sub_desc, 0.)
+                superior = sub_desc if c.es_call else k_desc
+                if not inferior-1e-8 <= teorico <= superior+1e-8:
+                    raise ValueError("valorador externo viola cotas europeas de no arbitraje")
+            elif motor == "pde" and not al_vencer and not diagnosticos_pde:
                 d = _estado_pde(c, spot, e, tasa, q, pasos, nodos, semiancho, cache)
                 teorico = d.precio_europeo(c.strike, c.es_call)
                 diagnostico = {"solo_precio": True, "masa_fronteras": d.masa_fronteras}

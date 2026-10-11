@@ -1,0 +1,13 @@
+{
+  "cortes": 12,
+  "filas_recalculadas": 4818,
+  "precios_recalculados": 9636,
+  "max_error_precio_independiente": 2.7284841053187847e-12,
+  "conteos_train_y_holdout_reproducidos": true,
+  "fuentes_y_salidas_privadas_sha256_correctas": true,
+  "split_por_strike_verificado": true,
+  "privacidad_json": "sin identificadores ni campos individuales de mercado",
+  "resumen_sha256": "4b1ca1e331af1f5cb1fc704260dce2c88010c1d07a04444dc7cf9d7b09e65504",
+  "control_sha256": "0ab2dea61e80a959e85475b63c0fdcf91db30e18f1224c4e519cdbde0dc8a9ca",
+  "codigo_sha256_lf": "5ed32d89194c7232dcd18c89220ddf31ab8b5ac33177f2b5f5c274314dd03f8b"
+}
