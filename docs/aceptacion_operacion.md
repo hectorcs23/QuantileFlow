@@ -536,3 +536,4 @@ siguiente.
 | Sesión | 09:45 | 10:00 | SIP | Filas válidas (09:45 / 10:00) | Observaciones |
 |---|---|---|---|---|---|
 | Viernes 9 de octubre | `completa` | `completa` | Completo | 3 112 / 3 114 de 3 440 | Elegibles. 0 y 21 cotizaciones desfasadas de SPXW. Los cron del jueves llegaron entre las 15:15 y las 16:03 y se descartaron. |
+| Lunes 12 de octubre | `completa` | `completa` | Completo | 2 565 / 2 485 de 3 068 | Elegibles, pero con la fracción válida más baja hasta ahora: 84 % y 81 %, frente a 86–93 % antes. La causa principal son las cotizaciones desfasadas de SPXW: 338 y 399, el máximo hasta ahora (antes, de 0 a 267). Fue el día de Colón: la bolsa abre y el mercado de bonos cierra, y puede haber menos actividad. Los cron del viernes llegaron entre las 14:47 y las 16:08 y se descartaron. |
