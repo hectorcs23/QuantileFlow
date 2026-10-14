@@ -1,0 +1,11 @@
+version = "ventana-superficie-0.1"
+fecha = "2026-10-14"
+anchos_log_moneyness = [0.03, 0.06, 0.10]
+minimo_dias = 1.0
+maximo_dias = 90.0
+peso_mid = 0.02
+cuantiles = [0.05, 0.25, 0.50, 0.75, 0.95]
+seleccion = "Mismos filtros e inversión de IV declarada del adaptador anterior; sin refiltrar con forward estimado"
+split = "Conservar todo strike histórico; extras ordenados por vencimiento/strike, cada tercero reservado, ambos lados juntos; anclar extras en ventana 0.10 para anidamiento"
+alcance = "Seis sesiones conocidas; contraste descriptivo de ventanas, no pronóstico ni probabilidad física"
+presupuesto_datos = 0
