@@ -1,0 +1,22 @@
+version = "ml-superficie-0.3"
+fecha = "2026-10-14"
+alcance = "Exploratorio sobre seis sesiones conocidas; no predicción física ni test temporal"
+origen = "forward_superficies_20261014; conservar datos, F, D y split"
+peso_mid = 0.02
+red = "1 entrada k/0.03, 4 tanh, 1 salida; 13 parámetros; multiplicador exp(0.25*tanh(salida))"
+correccion = "Común a todos los vencimientos: preserva monotonía de w en T; no añade un tiempo aprendido"
+semillas = [0, 1, 2]
+regularizacion_red = 0.001
+penalizacion_g = 1000.0
+max_nfev_red = 1000
+convexo = "Masas no negativas en soporte común, suma=1, media=1, calls normalizados no decrecientes en T en todos los nudos"
+soporte = "log X: 61 nodos [-0.06,0.06] y 10 por ala hasta +/-0.30"
+regularizacion_convexo = 0.1
+solver_convexo = "Clarabel 0.11.1; mismo problema cuadrático que SLSQP/OSQP, variables auxiliares proyectadas a bandas"
+maxiter_convexo = 300
+revision_numerica = "0.1 agotó evaluaciones/iteraciones; 0.2 resolvió convergencia de red, pero OSQP no convergió 11/12. No se cambian arquitectura, pérdidas, datos ni regularización"
+seleccion = "Costo total solo training entre inicios convergentes; coherencia sin holdout; arquitectura/penalizaciones prefijadas"
+control = "SSVI ya ajustada solo con training; misma pérdida de bandas, regularizaciones específicas reportadas aparte"
+validez = "Red: g >= -1e-8 en malla independiente y condiciones de alas; no certificado global. Convexo: igualdades/inequidades <=1e-8"
+etiquetas = "Todas las fotos siguen descriptivas/indicative; una mejora no hace ejecutables los precios"
+figura = "Primera foto cronológica, no seleccionada por resultado"

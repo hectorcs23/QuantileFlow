@@ -1,0 +1,1569 @@
+{
+  "naturaleza": "Exploratorio sobre seis sesiones conocidas; no predicción física ni test temporal",
+  "protocolo": {
+    "version": "ml-superficie-0.3",
+    "fecha": "2026-10-14",
+    "alcance": "Exploratorio sobre seis sesiones conocidas; no predicción física ni test temporal",
+    "origen": "forward_superficies_20261014; conservar datos, F, D y split",
+    "peso_mid": 0.02,
+    "red": "1 entrada k/0.03, 4 tanh, 1 salida; 13 parámetros; multiplicador exp(0.25*tanh(salida))",
+    "correccion": "Común a todos los vencimientos: preserva monotonía de w en T; no añade un tiempo aprendido",
+    "semillas": [
+      0,
+      1,
+      2
+    ],
+    "regularizacion_red": 0.001,
+    "penalizacion_g": 1000.0,
+    "max_nfev_red": 1000,
+    "convexo": "Masas no negativas en soporte común, suma=1, media=1, calls normalizados no decrecientes en T en todos los nudos",
+    "soporte": "log X: 61 nodos [-0.06,0.06] y 10 por ala hasta +/-0.30",
+    "regularizacion_convexo": 0.1,
+    "solver_convexo": "Clarabel 0.11.1; mismo problema cuadrático que SLSQP/OSQP, variables auxiliares proyectadas a bandas",
+    "maxiter_convexo": 300,
+    "revision_numerica": "0.1 agotó evaluaciones/iteraciones; 0.2 resolvió convergencia de red, pero OSQP no convergió 11/12. No se cambian arquitectura, pérdidas, datos ni regularización",
+    "seleccion": "Costo total solo training entre inicios convergentes; coherencia sin holdout; arquitectura/penalizaciones prefijadas",
+    "control": "SSVI ya ajustada solo con training; misma pérdida de bandas, regularizaciones específicas reportadas aparte",
+    "validez": "Red: g >= -1e-8 en malla independiente y condiciones de alas; no certificado global. Convexo: igualdades/inequidades <=1e-8",
+    "etiquetas": "Todas las fotos siguen descriptivas/indicative; una mejora no hace ejecutables los precios",
+    "figura": "Primera foto cronológica, no seleccionada por resultado"
+  },
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 272,
+            "dentro": 111,
+            "mediana_error_semispreads": 1.4517960725512382
+          },
+          "holdout": {
+            "filas": 138,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.4236294788556738,
+            "media_distancia_fuera_semispreads": 4.037146760734705
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 272,
+            "dentro": 96,
+            "mediana_error_semispreads": 1.476711365948582
+          },
+          "holdout": {
+            "filas": 138,
+            "dentro": 46,
+            "mediana_error_semispreads": 1.5861435403672335,
+            "media_distancia_fuera_semispreads": 4.955245788091246
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 272,
+            "dentro": 115,
+            "mediana_error_semispreads": 1.2248433441045088
+          },
+          "holdout": {
+            "filas": 138,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.4060193138805452,
+            "media_distancia_fuera_semispreads": 4.5950458044337985
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 13.111377357094613,
+          "convergencia": true,
+          "nfev": 317,
+          "g_min_malla": 0.25743149338245375,
+          "ala_max": 0.024014179490067736,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 13.326349538023063,
+            "convergencia": true,
+            "nfev": 231,
+            "g_min_malla": 0.2574303678159293,
+            "ala_max": 0.02402373850991206,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 13.112601058501726,
+            "convergencia": true,
+            "nfev": 164,
+            "g_min_malla": 0.25743150497485023,
+            "ala_max": 0.02401408103968906,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 13.111377357094613,
+            "convergencia": true,
+            "nfev": 317,
+            "g_min_malla": 0.25743149338245375,
+            "ala_max": 0.024014179490067736,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 23,
+        "residual_primal": 1.184117461925025e-16,
+        "residual_dual": 8.172249648535202e-11,
+        "brecha_dual_objetivo": 1.5736247860331787e-05,
+        "costo": 4.534837156326547,
+        "error_masa": 1.5543122344752192e-15,
+        "error_media": 1.887379141862766e-15,
+        "masa_minima": 3.234121774158934e-10,
+        "calendario_minimo": -2.275957200481571e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 17.421930800017435,
+        "convexo": 0.20288070000242442
+      }
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 276,
+            "dentro": 110,
+            "mediana_error_semispreads": 1.5745147967956021
+          },
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9496244811160666,
+            "media_distancia_fuera_semispreads": 2.313960730296996
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 276,
+            "dentro": 112,
+            "mediana_error_semispreads": 1.4776522703756092
+          },
+          "holdout": {
+            "filas": 144,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.801705504327195,
+            "media_distancia_fuera_semispreads": 2.4858383425415633
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 276,
+            "dentro": 113,
+            "mediana_error_semispreads": 1.211299341056391
+          },
+          "holdout": {
+            "filas": 144,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.7788784337445223,
+            "media_distancia_fuera_semispreads": 3.24871177191955
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 1,
+          "costo": 36.60371076963973,
+          "convergencia": true,
+          "nfev": 344,
+          "g_min_malla": 0.2577070385514476,
+          "ala_max": 0.02457697194479492,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 36.747566138701885,
+            "convergencia": true,
+            "nfev": 341,
+            "g_min_malla": 0.25793688189142844,
+            "ala_max": 0.02258813021875506,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 36.60371076963973,
+            "convergencia": true,
+            "nfev": 344,
+            "g_min_malla": 0.2577070385514476,
+            "ala_max": 0.02457697194479492,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 36.60891325851987,
+            "convergencia": true,
+            "nfev": 307,
+            "g_min_malla": 0.25771098637367007,
+            "ala_max": 0.024542842118385384,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 26,
+        "residual_primal": 1.3562068906552368e-16,
+        "residual_dual": 5.049130883524556e-11,
+        "brecha_dual_objetivo": 2.4256650021925452e-05,
+        "costo": 11.90284342572872,
+        "error_masa": 3.1086244689504383e-15,
+        "error_media": 3.552713678800501e-15,
+        "masa_minima": 1.343789310518413e-10,
+        "calendario_minimo": -5.10702591327572e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 19.813188900006935,
+        "convexo": 0.19930700003169477
+      }
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 216,
+            "dentro": 114,
+            "mediana_error_semispreads": 0.9270393012398657
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.1618015668663766,
+            "media_distancia_fuera_semispreads": 1.6379876361002825
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 216,
+            "dentro": 117,
+            "mediana_error_semispreads": 0.88725260003946
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.1897489643298544,
+            "media_distancia_fuera_semispreads": 1.5398976554361943
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 216,
+            "dentro": 124,
+            "mediana_error_semispreads": 0.7967244955778598
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.202184251803076,
+            "media_distancia_fuera_semispreads": 1.5726558389254106
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 1,
+          "costo": 2.623880074694498,
+          "convergencia": true,
+          "nfev": 117,
+          "g_min_malla": 0.25685667082612745,
+          "ala_max": 0.025109039193075014,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 2.623883267674448,
+            "convergencia": true,
+            "nfev": 214,
+            "g_min_malla": 0.25685667435011705,
+            "ala_max": 0.025109008520906063,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 2.623880074694498,
+            "convergencia": true,
+            "nfev": 117,
+            "g_min_malla": 0.25685667082612745,
+            "ala_max": 0.025109039193075014,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 2.626520154858541,
+            "convergencia": true,
+            "nfev": 144,
+            "g_min_malla": 0.2568698084180153,
+            "ala_max": 0.024994685994606445,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 23,
+        "residual_primal": 1.0856912173024641e-16,
+        "residual_dual": 1.4207151531487656e-11,
+        "brecha_dual_objetivo": 1.8663914858052522e-06,
+        "costo": 0.88317256205169,
+        "error_masa": 7.771561172376096e-16,
+        "error_media": 1.1102230246251565e-15,
+        "masa_minima": 4.227065912265739e-10,
+        "calendario_minimo": -1.27675647831893e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 10.762601499969605,
+        "convexo": 0.1841547000221908
+      }
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 216,
+            "dentro": 126,
+            "mediana_error_semispreads": 0.816432253339602
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0534928494214284,
+            "media_distancia_fuera_semispreads": 0.7669703523580191
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 216,
+            "dentro": 128,
+            "mediana_error_semispreads": 0.7043473172883283
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 60,
+            "mediana_error_semispreads": 0.8198479041063869,
+            "media_distancia_fuera_semispreads": 0.84499215013831
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 216,
+            "dentro": 143,
+            "mediana_error_semispreads": 0.6099499126461272
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 68,
+            "mediana_error_semispreads": 0.7174752220095995,
+            "media_distancia_fuera_semispreads": 0.9001930467974377
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 1.359534460608929,
+          "convergencia": true,
+          "nfev": 139,
+          "g_min_malla": 0.2560436197798389,
+          "ala_max": 0.026468721125858925,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 1.4184055182496917,
+            "convergencia": true,
+            "nfev": 193,
+            "g_min_malla": 0.2561780338754572,
+            "ala_max": 0.025291037149001733,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 1.4184068351647816,
+            "convergencia": true,
+            "nfev": 152,
+            "g_min_malla": 0.25617806110442776,
+            "ala_max": 0.025290798452333438,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 1.359534460608929,
+            "convergencia": true,
+            "nfev": 139,
+            "g_min_malla": 0.2560436197798389,
+            "ala_max": 0.026468721125858925,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 25,
+        "residual_primal": 1.0903864979693769e-16,
+        "residual_dual": 3.215135474649231e-11,
+        "brecha_dual_objetivo": 1.1755219020415097e-05,
+        "costo": 0.7092649222049301,
+        "error_masa": 4.440892098500626e-16,
+        "error_media": 6.661338147750939e-16,
+        "masa_minima": 1.6900539547787866e-08,
+        "calendario_minimo": -1.1657341758564144e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 11.438504199963063,
+        "convexo": 0.16561890003504232
+      }
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 254,
+            "dentro": 111,
+            "mediana_error_semispreads": 1.2561119119273192
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.3876099860196092,
+            "media_distancia_fuera_semispreads": 1.3913211408752624
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 254,
+            "dentro": 110,
+            "mediana_error_semispreads": 1.1604550587288869
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 47,
+            "mediana_error_semispreads": 1.2911210210477981,
+            "media_distancia_fuera_semispreads": 1.3445734276806256
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 254,
+            "dentro": 112,
+            "mediana_error_semispreads": 1.0978963567452213
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 55,
+            "mediana_error_semispreads": 1.3535530680729695,
+            "media_distancia_fuera_semispreads": 1.9772766897598357
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 1,
+          "costo": 8.725338389367696,
+          "convergencia": true,
+          "nfev": 543,
+          "g_min_malla": -0.09880091314518202,
+          "ala_max": 0.026186410936380255,
+          "pasa_malla_y_alas": false,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 8.7254951603891,
+            "convergencia": true,
+            "nfev": 325,
+            "g_min_malla": -0.0986344580240831,
+            "ala_max": 0.026183402432639318,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 8.725338389367696,
+            "convergencia": true,
+            "nfev": 543,
+            "g_min_malla": -0.09880091314518202,
+            "ala_max": 0.026186410936380255,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 8.727253647300484,
+            "convergencia": true,
+            "nfev": 438,
+            "g_min_malla": -0.09993219646549378,
+            "ala_max": 0.02619186213965716,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 26,
+        "residual_primal": 1.2675898593410072e-16,
+        "residual_dual": 8.791043054798193e-11,
+        "brecha_dual_objetivo": 0.00043186560105823446,
+        "costo": 2.495444725477814,
+        "error_masa": 1.1102230246251565e-15,
+        "error_media": 1.1102230246251565e-15,
+        "masa_minima": 7.992003638100818e-08,
+        "calendario_minimo": 0.0,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 27.256925599998794,
+        "convexo": 0.17618749995017424
+      }
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 250,
+            "dentro": 125,
+            "mediana_error_semispreads": 1.0150096713202084
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0327679585534926,
+            "media_distancia_fuera_semispreads": 1.8727228588872418
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 250,
+            "dentro": 118,
+            "mediana_error_semispreads": 1.1034624247250828
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 59,
+            "mediana_error_semispreads": 1.1152732075227507,
+            "media_distancia_fuera_semispreads": 1.8762483946795279
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 250,
+            "dentro": 133,
+            "mediana_error_semispreads": 0.910078731735156
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 65,
+            "mediana_error_semispreads": 1.0163804508159884,
+            "media_distancia_fuera_semispreads": 1.7607174679275546
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 0,
+          "costo": 3.1918071627862523,
+          "convergencia": true,
+          "nfev": 408,
+          "g_min_malla": 0.2573959680552014,
+          "ala_max": 0.022961150751322847,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 3.1918071627862523,
+            "convergencia": true,
+            "nfev": 408,
+            "g_min_malla": 0.2573959680552014,
+            "ala_max": 0.022961150751322847,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 3.19180773012729,
+            "convergencia": true,
+            "nfev": 395,
+            "g_min_malla": 0.25739595508519353,
+            "ala_max": 0.022961266304731918,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 3.2249079087601262,
+            "convergencia": true,
+            "nfev": 681,
+            "g_min_malla": 0.2571510609973855,
+            "ala_max": 0.025140964631234684,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 27,
+        "residual_primal": 3.1766214251895507e-16,
+        "residual_dual": 6.588723557638857e-11,
+        "brecha_dual_objetivo": 2.1688677520614874e-05,
+        "costo": 1.4066500558286437,
+        "error_masa": 7.105427357601002e-15,
+        "error_media": 7.105427357601002e-15,
+        "masa_minima": 1.869555158363318e-09,
+        "calendario_minimo": -1.482147737874584e-14,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 20.542035399994347,
+        "convexo": 0.08692179998615757
+      }
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 286,
+            "dentro": 119,
+            "mediana_error_semispreads": 1.4456658313527684
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.3529631648611022,
+            "media_distancia_fuera_semispreads": 1.7478267701961125
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 286,
+            "dentro": 120,
+            "mediana_error_semispreads": 1.3010404252421468
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4602417027682244,
+            "media_distancia_fuera_semispreads": 1.689533600671745
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 286,
+            "dentro": 131,
+            "mediana_error_semispreads": 1.072429272360976
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 65,
+            "mediana_error_semispreads": 1.251962936605688,
+            "media_distancia_fuera_semispreads": 1.3671829952416763
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 0,
+          "costo": 11.690816155431882,
+          "convergencia": true,
+          "nfev": 105,
+          "g_min_malla": 0.25593946095939957,
+          "ala_max": 0.026953099620299088,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 11.690816155431882,
+            "convergencia": true,
+            "nfev": 105,
+            "g_min_malla": 0.25593946095939957,
+            "ala_max": 0.026953099620299088,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 12.112461963699419,
+            "convergencia": true,
+            "nfev": 171,
+            "g_min_malla": 0.255940355209412,
+            "ala_max": 0.026945222484856746,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 12.112460755976311,
+            "convergencia": true,
+            "nfev": 195,
+            "g_min_malla": 0.25594035404721144,
+            "ala_max": 0.026945232722310992,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 22,
+        "residual_primal": 1.181747575560614e-16,
+        "residual_dual": 6.286666486965968e-11,
+        "brecha_dual_objetivo": 5.681073389496305e-05,
+        "costo": 2.487492473757622,
+        "error_masa": 1.6653345369377348e-15,
+        "error_media": 9.992007221626409e-16,
+        "masa_minima": 1.701416320022935e-08,
+        "calendario_minimo": -1.942890293094024e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 4.202414700004738,
+        "convexo": 0.0695193000137806
+      }
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 286,
+            "dentro": 118,
+            "mediana_error_semispreads": 1.3165818937017881
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2865161613822271,
+            "media_distancia_fuera_semispreads": 3.05420968103906
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 286,
+            "dentro": 114,
+            "mediana_error_semispreads": 1.3037624860124426
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.4567314302954681,
+            "media_distancia_fuera_semispreads": 3.1145022194670373
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 286,
+            "dentro": 127,
+            "mediana_error_semispreads": 1.1312123006922472
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.3026877404334387,
+            "media_distancia_fuera_semispreads": 1.8332339811104865
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 10.674702823257782,
+          "convergencia": true,
+          "nfev": 231,
+          "g_min_malla": 0.10633652001499161,
+          "ala_max": 0.022786789991383394,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 10.674897418060098,
+            "convergencia": true,
+            "nfev": 279,
+            "g_min_malla": 0.10634747303067804,
+            "ala_max": 0.02278660153543122,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 10.674897350844692,
+            "convergencia": true,
+            "nfev": 234,
+            "g_min_malla": 0.10636114641471361,
+            "ala_max": 0.02278668417708921,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 10.674702823257782,
+            "convergencia": true,
+            "nfev": 231,
+            "g_min_malla": 0.10633652001499161,
+            "ala_max": 0.022786789991383394,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": false,
+        "mensaje": "AlmostSolved",
+        "iteraciones": 30,
+        "residual_primal": 1.1469386817206787e-16,
+        "residual_dual": 1.137381294027407e-10,
+        "brecha_dual_objetivo": 2.3664483705942985e-05,
+        "costo": 4.132483146678628,
+        "error_masa": 1.4432899320127035e-15,
+        "error_media": 1.9984014443252818e-15,
+        "masa_minima": 2.973553303535397e-10,
+        "calendario_minimo": -3.497202527569243e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 6.32750189997023,
+        "convexo": 0.08661170001141727
+      }
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 276,
+            "dentro": 122,
+            "mediana_error_semispreads": 1.2171367694793647
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4297995004270332,
+            "media_distancia_fuera_semispreads": 2.363979630178322
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 276,
+            "dentro": 119,
+            "mediana_error_semispreads": 1.172511467360472
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2287695754188974,
+            "media_distancia_fuera_semispreads": 2.437443896379162
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 276,
+            "dentro": 134,
+            "mediana_error_semispreads": 1.017707000898697
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.2416980178089934,
+            "media_distancia_fuera_semispreads": 2.0643379298767885
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 0,
+          "costo": 8.901831396321297,
+          "convergencia": true,
+          "nfev": 316,
+          "g_min_malla": -0.1346711830429479,
+          "ala_max": 0.031929293100841555,
+          "pasa_malla_y_alas": false,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 8.901831396321297,
+            "convergencia": true,
+            "nfev": 316,
+            "g_min_malla": -0.1346711830429479,
+            "ala_max": 0.031929293100841555,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 8.90183155954936,
+            "convergencia": true,
+            "nfev": 309,
+            "g_min_malla": -0.13472699130550392,
+            "ala_max": 0.03192601221518661,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 8.901831516651892,
+            "convergencia": true,
+            "nfev": 312,
+            "g_min_malla": -0.13473209817621035,
+            "ala_max": 0.03192692575820137,
+            "pasa_malla_y_alas": false,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 22,
+        "residual_primal": 1.830521200251191e-16,
+        "residual_dual": 2.9059207296018562e-11,
+        "brecha_dual_objetivo": 2.157957368353891e-05,
+        "costo": 2.3549691653531317,
+        "error_masa": 3.6637359812630166e-15,
+        "error_media": 3.774758283725532e-15,
+        "masa_minima": 3.737808892473676e-10,
+        "calendario_minimo": -9.547918011776346e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 12.874238400021568,
+        "convexo": 0.13246679998701438
+      }
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 278,
+            "dentro": 115,
+            "mediana_error_semispreads": 1.1872426162765617
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1179196191593537,
+            "media_distancia_fuera_semispreads": 3.155992195667358
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 278,
+            "dentro": 131,
+            "mediana_error_semispreads": 1.0823993868333153
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 67,
+            "mediana_error_semispreads": 1.0892348746670693,
+            "media_distancia_fuera_semispreads": 3.008366153879742
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 278,
+            "dentro": 153,
+            "mediana_error_semispreads": 0.8320554851768485
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 65,
+            "mediana_error_semispreads": 1.0952792333041965,
+            "media_distancia_fuera_semispreads": 1.9284248045815782
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 4.542027482157751,
+          "convergencia": true,
+          "nfev": 259,
+          "g_min_malla": 0.25663017381397935,
+          "ala_max": 0.025639959460292388,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 4.60388273563953,
+            "convergencia": true,
+            "nfev": 296,
+            "g_min_malla": 0.25665302224020825,
+            "ala_max": 0.02543413648933719,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 4.555080775103822,
+            "convergencia": true,
+            "nfev": 140,
+            "g_min_malla": 0.2566255674882481,
+            "ala_max": 0.02568144959458466,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 4.542027482157751,
+            "convergencia": true,
+            "nfev": 259,
+            "g_min_malla": 0.25663017381397935,
+            "ala_max": 0.025639959460292388,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 27,
+        "residual_primal": 1.2886146748840995e-16,
+        "residual_dual": 3.592927080972424e-11,
+        "brecha_dual_objetivo": 1.2808456517632294e-05,
+        "costo": 1.078084315950643,
+        "error_masa": 1.1102230246251565e-15,
+        "error_media": 1.1102230246251565e-15,
+        "masa_minima": 4.4185849604783945e-10,
+        "calendario_minimo": -2.1094237467877974e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 13.830434900010005,
+        "convexo": 0.1801153999986127
+      }
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 284,
+            "dentro": 172,
+            "mediana_error_semispreads": 0.7023733484475743
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6148105889432016,
+            "media_distancia_fuera_semispreads": 0.601860070122458
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 284,
+            "dentro": 169,
+            "mediana_error_semispreads": 0.7338643942905714
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.7110524028781255,
+            "media_distancia_fuera_semispreads": 0.6727675471980287
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 284,
+            "dentro": 173,
+            "mediana_error_semispreads": 0.7458986705784163
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 85,
+            "mediana_error_semispreads": 0.7755554644422136,
+            "media_distancia_fuera_semispreads": 0.7856362626889993
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 2.2971088445229433,
+          "convergencia": true,
+          "nfev": 169,
+          "g_min_malla": 0.25619392463754054,
+          "ala_max": 0.025638961156122464,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 2.3107624925147343,
+            "convergencia": true,
+            "nfev": 64,
+            "g_min_malla": 0.25583943875312637,
+            "ala_max": 0.028795774363695945,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 2.3039872745438523,
+            "convergencia": true,
+            "nfev": 120,
+            "g_min_malla": 0.2560391608849902,
+            "ala_max": 0.02701827120615141,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 2.2971088445229433,
+            "convergencia": true,
+            "nfev": 169,
+            "g_min_malla": 0.25619392463754054,
+            "ala_max": 0.025638961156122464,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 21,
+        "residual_primal": 1.868344567694942e-16,
+        "residual_dual": 3.141976136128967e-11,
+        "brecha_dual_objetivo": 4.262794561782357e-06,
+        "costo": 0.6195166911427505,
+        "error_masa": 4.6629367034256575e-15,
+        "error_media": 5.10702591327572e-15,
+        "masa_minima": 1.4657018640755013e-09,
+        "calendario_minimo": -8.215650382226158e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 6.752299099985976,
+        "convexo": 0.13125780003610998
+      }
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "ssvi": {
+          "train": {
+            "filas": 282,
+            "dentro": 169,
+            "mediana_error_semispreads": 0.7029852383465783
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6749179146557434,
+            "media_distancia_fuera_semispreads": 1.215726719762832
+          }
+        },
+        "red": {
+          "train": {
+            "filas": 282,
+            "dentro": 173,
+            "mediana_error_semispreads": 0.7202388568893231
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 97,
+            "mediana_error_semispreads": 0.6823331299726374,
+            "media_distancia_fuera_semispreads": 1.3687931926929473
+          }
+        },
+        "convexo": {
+          "train": {
+            "filas": 282,
+            "dentro": 184,
+            "mediana_error_semispreads": 0.6256738447594126
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 100,
+            "mediana_error_semispreads": 0.5311615498461963,
+            "media_distancia_fuera_semispreads": 1.047995055062343
+          }
+        }
+      },
+      "red": {
+        "elegido": {
+          "semilla": 2,
+          "costo": 0.9950244572230619,
+          "convergencia": true,
+          "nfev": 326,
+          "g_min_malla": 0.255771660928459,
+          "ala_max": 0.02495428483605709,
+          "pasa_malla_y_alas": true,
+          "certificado_global": false,
+          "calendario_preservado_por_factor_independiente_T": true
+        },
+        "inicios": [
+          {
+            "semilla": 0,
+            "costo": 0.998322464724717,
+            "convergencia": true,
+            "nfev": 325,
+            "g_min_malla": 0.25579766251446123,
+            "ala_max": 0.02472637483442569,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 1,
+            "costo": 0.99502479648095,
+            "convergencia": true,
+            "nfev": 287,
+            "g_min_malla": 0.25577170500906204,
+            "ala_max": 0.024953898498928522,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          },
+          {
+            "semilla": 2,
+            "costo": 0.9950244572230619,
+            "convergencia": true,
+            "nfev": 326,
+            "g_min_malla": 0.255771660928459,
+            "ala_max": 0.02495428483605709,
+            "pasa_malla_y_alas": true,
+            "certificado_global": false,
+            "calendario_preservado_por_factor_independiente_T": true
+          }
+        ]
+      },
+      "convexo": {
+        "convergencia": true,
+        "mensaje": "Solved",
+        "iteraciones": 26,
+        "residual_primal": 1.7763469947389425e-16,
+        "residual_dual": 8.580845369393633e-11,
+        "brecha_dual_objetivo": 2.364728857173759e-05,
+        "costo": 0.2587255739082074,
+        "error_masa": 3.774758283725532e-15,
+        "error_media": 3.6637359812630166e-15,
+        "masa_minima": 1.5848975298240814e-08,
+        "calendario_minimo": -9.381384558082573e-15,
+        "pasa_restricciones": true,
+        "naturaleza": "distribución discreta con átomos; calendario global en strike normalizado sobre soporte común"
+      },
+      "tiempos_seg": {
+        "red": 19.009980599978007,
+        "convexo": 0.08793460001470521
+      }
+    }
+  ],
+  "total": {
+    "ssvi": {
+      "filas": 1642,
+      "dentro": 744,
+      "train_filas": 3176,
+      "train_dentro": 1512,
+      "medianas_error_por_corte": [
+        1.4236294788556738,
+        1.9496244811160666,
+        1.1618015668663766,
+        1.0534928494214284,
+        1.3876099860196092,
+        1.0327679585534926,
+        1.3529631648611022,
+        1.2865161613822271,
+        1.4297995004270332,
+        1.1179196191593537,
+        0.6148105889432016,
+        0.6749179146557434
+      ]
+    },
+    "red": {
+      "filas": 1642,
+      "dentro": 741,
+      "train_filas": 3176,
+      "train_dentro": 1507,
+      "medianas_error_por_corte": [
+        1.5861435403672335,
+        1.801705504327195,
+        1.1897489643298544,
+        0.8198479041063869,
+        1.2911210210477981,
+        1.1152732075227507,
+        1.4602417027682244,
+        1.4567314302954681,
+        1.2287695754188974,
+        1.0892348746670693,
+        0.7110524028781255,
+        0.6823331299726374
+      ],
+      "cortes_convergentes": 12,
+      "cortes_pasan_malla": 10
+    },
+    "convexo": {
+      "filas": 1642,
+      "dentro": 778,
+      "train_filas": 3176,
+      "train_dentro": 1642,
+      "medianas_error_por_corte": [
+        1.4060193138805452,
+        1.7788784337445223,
+        1.202184251803076,
+        0.7174752220095995,
+        1.3535530680729695,
+        1.0163804508159884,
+        1.251962936605688,
+        1.3026877404334387,
+        1.2416980178089934,
+        1.0952792333041965,
+        0.7755554644422136,
+        0.5311615498461963
+      ],
+      "cortes_convergentes": 11,
+      "cortes_pasan_restricciones": 12
+    }
+  },
+  "origen_resumen_sha256": "22c7b73ec60e56e5513503863291bd6ccb2bd0232d1e2d8ec33a9a6d86914bb9",
+  "integridad_origen": {
+    "manifiestos": 32,
+    "paginas_unicas": 163,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "76dacfbdf6281fc77ee8174d906bf0fbf73965b6fb61b2091f39099ddc887e66",
+      "subyacente": "c434779dfccfaf95b57272755f1d77a31a946831d6cbe95514f3646a956c775b"
+    },
+    "manifiesto_normalizacion_sha256": "0e3e6e6b915e1df30ca8447da5f981d3e259fd44b45ff6ec49820c1d644d5a34"
+  },
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.0.6",
+    "clarabel": "0.11.1"
+  },
+  "codigo_sha256_lf": {
+    "experiments/ml_superficie_20261014/evaluar.py": "74475f15d9cb491683877e219ebfed0604109e323f77225518a66b7cb2fc3ba2",
+    "experiments/ml_superficie_20261014/modelos.py": "4a1aa091bb61c8e2b6422b965e876eabefaefecc87ef63225eab6bda0c5cde2a",
+    "experiments/ml_superficie_20261014/protocolo.toml": "7b8d761a393f9131f4cd7217f37e33dbd85509df3faa8c9ad9fe8b443a9709e0",
+    "experiments/ml_superficie_20261014/graficas.py": "fc2ac85d0abfc7f6d180bfb7f199605834521b51fed54283e8941c549dc39b61",
+    "experiments/ml_superficie_20261014/verificar.py": "3c874546b608ebfb9550c1215ada7422e3d0db1212a6a2bbfc1e70743590ddd5",
+    "experiments/ml_superficie_20261014/requirements.txt": "5408bee0f691aa4e2914660d0e03c5c6ea076ddac1478bee839fc54b7bc5926f",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "quantileflow/opciones.py": "697647ff2abaad624138fbfac7d2b836d351a104a343941d16c9bfd9efe81ff4"
+  },
+  "privados_sha256": {
+    "2026-10-02_0945_evaluacion.parquet": "6119136c8f7676359e0ce98f6d70cb16cbfc9e50fdcd50c813ba64f2c1a4e958",
+    "2026-10-02_0945_modelos.json": "d91a1dcfc7443012b42665bea80b6006da03b2799f164539808ef165dc546847",
+    "2026-10-02_1000_evaluacion.parquet": "1fc945627be7330b40230080d23908d03dfa0fe56453409bec08343996b1c500",
+    "2026-10-02_1000_modelos.json": "08b228ec3b5b61acf68bd60090bc7248a9704f435523c8bb4fa8b206fd83faf6",
+    "2026-10-05_0945_evaluacion.parquet": "e0583a1e95968b51561e1560b8c5bc5b6630f40c3e937fbe26b79e254d613c33",
+    "2026-10-05_0945_modelos.json": "b7ff39c871896a41744c0f73dbfb392730a1172eaa1260259bbe253e7f53c3e9",
+    "2026-10-05_1000_evaluacion.parquet": "3ffc3cba77321b091e46653cffa170bdcdcb9216b7baaac2b065d33720ad82e5",
+    "2026-10-05_1000_modelos.json": "f9989af550be7762feb31a99d773f0ca88c5dd3bd4b33ff558f3cef26fb9d31c",
+    "2026-10-06_0945_evaluacion.parquet": "cfda1790fd43f223f6c043ed9cdf0659208890317e14f2c3b3f5cf9d95f3eb64",
+    "2026-10-06_0945_modelos.json": "7b59d9418e6d92213cb0465dc2bfcb1ebd074d39c09f645d08cb8fb78ad0d79c",
+    "2026-10-06_1000_evaluacion.parquet": "1b8fb1a2ce57ddc9b2db21e78811dce6fc97dafa6fa86a2e73d52450d1fb4f27",
+    "2026-10-06_1000_modelos.json": "9a6650e880abee5217842e287e5b8a4036a8192ddc442628878b9499ceefa48c",
+    "2026-10-07_0945_evaluacion.parquet": "a2d55755ebf95614971faf34dd4341d78447b73ae7b7aff9881fc72c7540d43a",
+    "2026-10-07_0945_modelos.json": "aff99ecb139a5a8c1fd738ce174a5bf906811a2fb9d290d89407294c521359a6",
+    "2026-10-07_1000_evaluacion.parquet": "e1fdc3b0ec412c6c4a5144e45765bc2dc0240d1f06c6676b92deebafc6bb60bb",
+    "2026-10-07_1000_modelos.json": "0ea75d543188e2141658a0bd64d2cca90dd93a776924bdeaf925579130afea80",
+    "2026-10-08_0945_evaluacion.parquet": "865bcc3bda8e1572f4a5c4bd1ae3b295d9e9767e5915ca63fdfd4ff9d2e2bf5b",
+    "2026-10-08_0945_modelos.json": "8f8b03254e670b2ee413cd5c2511304b83ae0fca70fc105ee894fa94404df72b",
+    "2026-10-08_1000_evaluacion.parquet": "f45facd7e82ec086a5219cd6bdff4584e716ac00a9f45a15b4f3f94e83f44c8a",
+    "2026-10-08_1000_modelos.json": "4168ea2f3e7f4cfa082d4dc781ed87fd1b45cb64991dcfb7040b8ceeaaa2d5f4",
+    "2026-10-09_0945_evaluacion.parquet": "39cc3d87c02689a5e8c213bae46f00ea2520e4392e577edf40e00350636ed64a",
+    "2026-10-09_0945_modelos.json": "16b02a4c23bd990f8ef05a70e01f112ce9550930d16aeb232e8d605f1109b578",
+    "2026-10-09_1000_evaluacion.parquet": "02fc571ef55654fedd1f436e125cf175c41b1e3fbbdc0bef0141565ca2712916",
+    "2026-10-09_1000_modelos.json": "758fcd70116b9f82c83c301c49fbe734e28896ba71fa2885060f44dbfd07ea0c"
+  }
+}

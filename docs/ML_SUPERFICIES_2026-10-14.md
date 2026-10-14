@@ -1,6 +1,11 @@
 # QuantileFlow: dónde aportaría machine learning y cómo decidir si funciona
 
-Fecha: 14 de octubre de 2026. **Propuesta; no hay un modelo ML nuevo entrenado en esta entrega.**
+Fecha: 14 de octubre de 2026. **Diseño inicial; el primer contraste ya se ejecutó.**
+
+Actualización posterior del mismo día: ejecutamos el primer contraste. La red pequeña
+no superó a SSVI y falló el control de densidad en dos fotos. Véase
+[el resultado y sus límites](RESULTADO_ML_SUPERFICIE_2026-10-14.md).
+Este documento conserva el diseño previo; el informe enlazado contiene el estado posterior.
 
 Sí conviene investigarlo, distinguiendo tres problemas. Una superficie más flexible,
 la dinámica de esa superficie y una predicción física de precio requieren objetivos y
