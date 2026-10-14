@@ -1,0 +1,3748 @@
+{
+  "protocolo": {
+    "version": "estabilidad-superficie-0.1",
+    "fecha": "2026-10-14",
+    "alcance": "Sensibilidad descriptiva: seis sesiones conocidas; no intervalos de confianza ni predicción física",
+    "amplitud_semispread": 0.1,
+    "perturbacion": "Trasladar bid y ask del training por igual, preservar ancho; limitar magnitud a 0.1*min(semispread,bid)",
+    "casos_precio": [
+      "paralelo_arriba",
+      "paralelo_abajo",
+      "paridad_arriba",
+      "paridad_abajo",
+      "jitter_17",
+      "jitter_29"
+    ],
+    "semillas_jitter": [
+      17,
+      29
+    ],
+    "peso_mid_nominal": 0.02,
+    "pesos_mid_control": [
+      0.01,
+      0.04
+    ],
+    "forward": "Reestimar solo con pares de training en shocks de precio; congelarlo en controles de regularización",
+    "universo": "Filas/split del contraste forward anterior; no refiltrar strikes ni invertir IV de nuevo",
+    "cuantiles": [
+      0.05,
+      0.25,
+      0.5,
+      0.75,
+      0.95
+    ],
+    "eje_comun": "S_T/F_nominal: separar movimiento de F de cambio de forma",
+    "malla_cdf_global": "S_T/F_nominal entre 0.85 y 1.15; diagnóstico del modelo, incluye extrapolación",
+    "malla_cdf_observada": "Intervalo entre mínimo y máximo strike de training por vencimiento; no garantiza identificación estadística",
+    "cuantiles_extrapolados": "Solo diagnóstico separado; no reemplazan los cuantiles identificados del contrato operativo",
+    "comparacion_modelos": "SSVI nominal vs convexo nominal del ensayo ML, sin reentrenar el convexo ni la red rechazada",
+    "prohibido": "No interpretar el rango de shocks como intervalo probabilístico; no seleccionar reglas con holdout"
+  },
+  "naturaleza": "Sensibilidad descriptiva: seis sesiones conocidas; no intervalos de confianza ni predicción física",
+  "presupuesto_datos": 0,
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.4236294788556738
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.007187896876392763,
+          "cdf_global_max_pp": 0.0071878524168123015,
+          "cdf_forma_max_pp": 0.0042794412061675224,
+          "forward_mov_max_bp": 0.025802596888002682,
+          "cuantiles_mov_max_bp": [
+            0.1817376196877607,
+            0.053817115825971484,
+            0.05476718118346824,
+            0.03632440751966115,
+            0.0633875989408672
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.4567268831037352
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.007123750394277817,
+          "cdf_global_max_pp": 0.007123653506957428,
+          "cdf_forma_max_pp": 0.004468916545341539,
+          "forward_mov_max_bp": 0.023635828819701388,
+          "cuantiles_mov_max_bp": [
+            0.18389844229971253,
+            0.05384315972301046,
+            0.054135140472588716,
+            0.03390720537677083,
+            0.06279332027236961
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 54,
+            "mediana_error_semispreads": 1.4488639010973932
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.026015111410870873,
+          "cdf_global_max_pp": 0.02601501855439281,
+          "cdf_forma_max_pp": 0.01523026981224973,
+          "forward_mov_max_bp": 0.13065990044580644,
+          "cuantiles_mov_max_bp": [
+            0.6284950929524857,
+            0.08192732148470938,
+            0.092092315668868,
+            0.20482495819207358,
+            0.19025168118025348
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 54,
+            "mediana_error_semispreads": 1.5054745584716918
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.026108026477056345,
+          "cdf_global_max_pp": 0.026107723328150367,
+          "cdf_forma_max_pp": 0.015287039786660017,
+          "forward_mov_max_bp": 0.13076678446966028,
+          "cuantiles_mov_max_bp": [
+            0.6220060137362982,
+            0.08186884774552539,
+            0.09422763509459031,
+            0.20529965924831473,
+            0.19235136208495263
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.446397014951184
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.0035315151312442783,
+          "cdf_global_max_pp": 0.0035314998760804794,
+          "cdf_forma_max_pp": 0.003897514831074922,
+          "forward_mov_max_bp": 0.02140872966016616,
+          "cuantiles_mov_max_bp": [
+            0.0836307221641075,
+            0.0471373415211751,
+            0.01358766645198628,
+            0.027516213030320813,
+            0.033935296730458475
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.4285767285433009
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 272,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.004053787892077665,
+          "cdf_global_max_pp": 0.004053797526137881,
+          "cdf_forma_max_pp": 0.0026238776731579705,
+          "forward_mov_max_bp": 0.013176040709605985,
+          "cuantiles_mov_max_bp": [
+            0.043940209539794495,
+            0.014287931138223797,
+            0.024012927071215273,
+            0.028341091746764135,
+            0.018827430836587666
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.4322470100096707
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 9.423232374405899e-05,
+          "cdf_global_max_pp": 9.423036436695398e-05,
+          "cdf_forma_max_pp": 9.423036436695398e-05,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.002262924410079137,
+            0.0007352972009044834,
+            0.00018987830641137293,
+            0.000699127227221652,
+            0.0024201601522833016
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.4237774050075076
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.00017292062300944266,
+          "cdf_global_max_pp": 0.00017291615601600085,
+          "cdf_forma_max_pp": 0.00017291615601600085,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.004396719303079166,
+            0.0014092307543123184,
+            0.0003136388837532422,
+            0.0012862500020638379,
+            0.004551678103315027
+          ],
+          "holdout": {
+            "filas": 138,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.4257786451568877
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 11.539623392649306,
+        "cuantiles_diferencia_max_bp": [
+          154.23780356711325,
+          62.438103823183596,
+          40.55370893189858,
+          19.830835184979634,
+          49.84195018037374
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9496244811160666
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.012581635923858414,
+          "cdf_global_max_pp": 0.012588643229172192,
+          "cdf_forma_max_pp": 0.012529950028827841,
+          "forward_mov_max_bp": 0.03352081319962785,
+          "cuantiles_mov_max_bp": [
+            0.3332171192982347,
+            0.15021995055097825,
+            0.03732980933479624,
+            0.1047856161240368,
+            0.17099781838947337
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9766716777527842
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.011077723205077383,
+          "cdf_global_max_pp": 0.011077692034344722,
+          "cdf_forma_max_pp": 0.010880811934743662,
+          "forward_mov_max_bp": 0.03442564818545435,
+          "cuantiles_mov_max_bp": [
+            0.3089799214051059,
+            0.11236835810279899,
+            0.02676391445355364,
+            0.09091941795436043,
+            0.16905826811575153
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.9223944843656846
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02854829206392351,
+          "cdf_global_max_pp": 0.028548480568424406,
+          "cdf_forma_max_pp": 0.021994240550715638,
+          "forward_mov_max_bp": 0.11562461652347977,
+          "cuantiles_mov_max_bp": [
+            0.4453257595071758,
+            0.22940095340096,
+            0.20637189712013893,
+            0.17375046966305874,
+            0.4947891346596123
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.926520331496544
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.028648915586049206,
+          "cdf_global_max_pp": 0.02864888395348597,
+          "cdf_forma_max_pp": 0.02094327105136573,
+          "forward_mov_max_bp": 0.11369114983117434,
+          "cuantiles_mov_max_bp": [
+            0.4604518364181853,
+            0.203123162167973,
+            0.19473728340102525,
+            0.17416399139325023,
+            0.47570799903251526
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.9722556624682723
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09955273618459531
+          },
+          "cdf_observada_max_pp": 0.005667408969028953,
+          "cdf_global_max_pp": 0.005667328305525299,
+          "cdf_forma_max_pp": 0.004900792085654748,
+          "forward_mov_max_bp": 0.018914646039425165,
+          "cuantiles_mov_max_bp": [
+            0.1254765026492688,
+            0.06558461407180083,
+            0.0349583670278264,
+            0.021423508242968126,
+            0.08336634137906529
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9492824016249957
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.0030379455945417355,
+          "cdf_global_max_pp": 0.003037946855627416,
+          "cdf_forma_max_pp": 0.003907678589365471,
+          "forward_mov_max_bp": 0.025822025564448126,
+          "cuantiles_mov_max_bp": [
+            0.1436921149100545,
+            0.04013090028065491,
+            0.010779851600251078,
+            0.019809718123653397,
+            0.017360550514933237
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9509898906388612
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0013517702012189048,
+          "cdf_global_max_pp": 0.0013516857248152547,
+          "cdf_forma_max_pp": 0.0013516857248152547,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.010982557838712381,
+            0.013069887764283195,
+            0.007550419265367481,
+            0.010444053581970536,
+            0.021177691080787042
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9499790442338503
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0020956158283569337,
+          "cdf_global_max_pp": 0.0020955639343123167,
+          "cdf_forma_max_pp": 0.0020955639343123167,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.010468429567644932,
+            0.011647361305433535,
+            0.007436477342803727,
+            0.0156519497207519,
+            0.02941695588898341
+          ],
+          "holdout": {
+            "filas": 144,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.9490561262550168
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 13.290067691144303,
+        "cuantiles_diferencia_max_bp": [
+          159.7312233707926,
+          62.68041401593871,
+          43.49373600758266,
+          27.920202586293463,
+          61.08516629860006
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.1618015668663766
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.012172774049101776,
+          "cdf_global_max_pp": 0.012209190520739988,
+          "cdf_forma_max_pp": 0.0111223442702868,
+          "forward_mov_max_bp": 0.037124481154782174,
+          "cuantiles_mov_max_bp": [
+            0.24994413528989234,
+            0.07136995718637351,
+            0.03726793434077891,
+            0.10122716367577667,
+            0.22743060497543155
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.1752433248639735
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.011420428859121312,
+          "cdf_global_max_pp": 0.011630482896596295,
+          "cdf_forma_max_pp": 0.011463142926437797,
+          "forward_mov_max_bp": 0.04232339449128375,
+          "cuantiles_mov_max_bp": [
+            0.25806020460428236,
+            0.08299533767130995,
+            0.04846615653919528,
+            0.09257943144769243,
+            0.23606512463025808
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.1648943392489777
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.04131742361883628,
+          "cdf_global_max_pp": 0.04131690332093152,
+          "cdf_forma_max_pp": 0.017761048957642966,
+          "forward_mov_max_bp": 0.2004919450726561,
+          "cuantiles_mov_max_bp": [
+            0.22437624347948493,
+            0.19069891717404808,
+            0.28290933319796707,
+            0.2859702728708058,
+            0.17819570223620573
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.207922572956119
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.039782167930457746,
+          "cdf_global_max_pp": 0.039781348008327555,
+          "cdf_forma_max_pp": 0.016607095664189497,
+          "forward_mov_max_bp": 0.1966867764113811,
+          "cuantiles_mov_max_bp": [
+            0.221125250144949,
+            0.18557701319199538,
+            0.2722940325217138,
+            0.2767886823229482,
+            0.15997853121785255
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.1772087936853066
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09955273618459531
+          },
+          "cdf_observada_max_pp": 0.009892015189882919,
+          "cdf_global_max_pp": 0.009892009358236642,
+          "cdf_forma_max_pp": 0.007243537454804105,
+          "forward_mov_max_bp": 0.020749002107578463,
+          "cuantiles_mov_max_bp": [
+            0.05164955744652033,
+            0.05602839463159093,
+            0.04223464974195679,
+            0.08210710855660608,
+            0.10157118601084036
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.171403589453978
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09987160834232015
+          },
+          "cdf_observada_max_pp": 0.008042372779126783,
+          "cdf_global_max_pp": 0.008042375562400395,
+          "cdf_forma_max_pp": 0.007420580571337876,
+          "forward_mov_max_bp": 0.01903358555099821,
+          "cuantiles_mov_max_bp": [
+            0.032497154291988295,
+            0.024132751554883924,
+            0.044982572122709286,
+            0.05869959958104687,
+            0.13700822537598967
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.16410934655149
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0011262669980083295,
+          "cdf_global_max_pp": 0.0011262717393323296,
+          "cdf_forma_max_pp": 0.0011262717393323296,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.019499788159738074,
+            0.013822611204528101,
+            0.0022419904244230793,
+            0.008563682971640674,
+            0.006670107293160754
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.1610633981219656
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.002159828904441108,
+          "cdf_global_max_pp": 0.0021597864695022118,
+          "cdf_forma_max_pp": 0.0021597864695022118,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.03763453577443343,
+            0.026487947492048747,
+            0.004383932168394722,
+            0.01632618332969571,
+            0.012650754321885671
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.1632485545024727
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 8.933134408704824,
+        "cuantiles_diferencia_max_bp": [
+          173.3282955845361,
+          50.04988575105895,
+          58.39056209619331,
+          13.190910007343515,
+          48.000685820530634
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0534928494214284
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.019314037776629878,
+          "cdf_global_max_pp": 0.019313648916641224,
+          "cdf_forma_max_pp": 0.018970097710258038,
+          "forward_mov_max_bp": 0.02607443071900306,
+          "cuantiles_mov_max_bp": [
+            0.483765660644897,
+            0.23893684684916927,
+            0.06444686734052851,
+            0.15724718167797747,
+            0.30389913259210033
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 55,
+            "mediana_error_semispreads": 1.0304602695422802
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.018649724323832606,
+          "cdf_global_max_pp": 0.018649590674962857,
+          "cdf_forma_max_pp": 0.01785715135158017,
+          "forward_mov_max_bp": 0.029726840766741702,
+          "cuantiles_mov_max_bp": [
+            0.46588140624415075,
+            0.22534231821413897,
+            0.06271762456711016,
+            0.15554874738921143,
+            0.31538052899238167
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.1026692747440445
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.023346424694448142,
+          "cdf_global_max_pp": 0.02396546006919742,
+          "cdf_forma_max_pp": 0.02695458539436757,
+          "forward_mov_max_bp": 0.1481099340994163,
+          "cuantiles_mov_max_bp": [
+            0.52573849113835,
+            0.17307488092366263,
+            0.14188788139080089,
+            0.16810326110228146,
+            0.5127678246763523
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.0734097499065365
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02701942560185966,
+          "cdf_global_max_pp": 0.02730998052296041,
+          "cdf_forma_max_pp": 0.03103740276810263,
+          "forward_mov_max_bp": 0.150502257842966,
+          "cuantiles_mov_max_bp": [
+            0.6083576536641822,
+            0.24191964847930514,
+            0.1569747107210695,
+            0.19860887468858834,
+            0.5146051271021079
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 55,
+            "mediana_error_semispreads": 1.0235212392236952
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09955273618459531
+          },
+          "cdf_observada_max_pp": 0.006365358778920305,
+          "cdf_global_max_pp": 0.0063653605289648585,
+          "cdf_forma_max_pp": 0.0064164840444635995,
+          "forward_mov_max_bp": 0.027035617671256063,
+          "cuantiles_mov_max_bp": [
+            0.12837378758789875,
+            0.06193809343635337,
+            0.04250380155168543,
+            0.033830342145435566,
+            0.09171536851315665
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0706763011784632
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 216,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09987160834232015
+          },
+          "cdf_observada_max_pp": 0.007599421615134272,
+          "cdf_global_max_pp": 0.007599418476345043,
+          "cdf_forma_max_pp": 0.0011920934550047058,
+          "forward_mov_max_bp": 0.050538511282560705,
+          "cuantiles_mov_max_bp": [
+            0.06927388495170383,
+            0.038800672348404674,
+            0.047368689399807096,
+            0.05623120672204607,
+            0.047276708892152186
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0409593971175326
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0020463520201741137,
+          "cdf_global_max_pp": 0.0020463409840132396,
+          "cdf_forma_max_pp": 0.0020463409840132396,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.03228701201396511,
+            0.01950358841429356,
+            0.01383957248579648,
+            0.0028247211369958336,
+            0.02926310547879396
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0558137450790641
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.003967264026982775,
+          "cdf_global_max_pp": 0.003967223910544826,
+          "cdf_forma_max_pp": 0.003967223910544826,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.062232401784045877,
+            0.03855733442414966,
+            0.02634621466990339,
+            0.004773279018710497,
+            0.054939375069285035
+          ],
+          "holdout": {
+            "filas": 112,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.0498870122083892
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 7.545769034763322,
+        "cuantiles_diferencia_max_bp": [
+          175.84744233686834,
+          13.044405065593123,
+          32.7268834051675,
+          32.26240070758557,
+          18.220675491642524
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.3876099860196092
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.012363085857869383,
+          "cdf_global_max_pp": 0.012498396281102053,
+          "cdf_forma_max_pp": 0.011116216751938524,
+          "forward_mov_max_bp": 0.022102187160477627,
+          "cuantiles_mov_max_bp": [
+            0.27593648230683776,
+            0.05731052413637805,
+            0.025674738470815583,
+            0.09886236036482643,
+            0.26494205298321916
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.3499857675811615
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.012756512094513894,
+          "cdf_global_max_pp": 0.012860340380826951,
+          "cdf_forma_max_pp": 0.011274447250164688,
+          "forward_mov_max_bp": 0.023582675212630022,
+          "cuantiles_mov_max_bp": [
+            0.2748060965407362,
+            0.05700017255194645,
+            0.026921097331378263,
+            0.10237856130856926,
+            0.2676604196594212
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 48,
+            "mediana_error_semispreads": 1.411282474993733
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.018343332999959383,
+          "cdf_global_max_pp": 0.01834329101041421,
+          "cdf_forma_max_pp": 0.020569001270154263,
+          "forward_mov_max_bp": 0.18860296740363935,
+          "cuantiles_mov_max_bp": [
+            0.33995238336470557,
+            0.1898579924930477,
+            0.13190216819669587,
+            0.13547720754125692,
+            0.43760237526502266
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.4103866307885475
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.017987135300473467,
+          "cdf_global_max_pp": 0.017987137235125905,
+          "cdf_forma_max_pp": 0.020279175030735175,
+          "forward_mov_max_bp": 0.18604237357000564,
+          "cuantiles_mov_max_bp": [
+            0.3344590364218192,
+            0.18731857613141223,
+            0.12909581258879754,
+            0.13243628999015655,
+            0.4308412696696351
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 50,
+            "mediana_error_semispreads": 1.3256271074699253
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09955273618459531
+          },
+          "cdf_observada_max_pp": 0.008668101853770427,
+          "cdf_global_max_pp": 0.008667929775740824,
+          "cdf_forma_max_pp": 0.007795229659923741,
+          "forward_mov_max_bp": 0.03651047737252,
+          "cuantiles_mov_max_bp": [
+            0.126443256651676,
+            0.08365389912667887,
+            0.04278372866872715,
+            0.0689705795364759,
+            0.06052142326629095
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.365170346491396
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 254,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780878
+          },
+          "cdf_observada_max_pp": 0.002454914021710053,
+          "cdf_global_max_pp": 0.0031355635472962717,
+          "cdf_forma_max_pp": 0.003153194864002895,
+          "forward_mov_max_bp": 0.019610342707476747,
+          "cuantiles_mov_max_bp": [
+            0.050830379899613476,
+            0.023747165822651795,
+            0.01529562227320369,
+            0.020311211730295042,
+            0.09700065926931956
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.381679220409814
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0006163984072604656,
+          "cdf_global_max_pp": 0.0006164009502485079,
+          "cdf_forma_max_pp": 0.0006164009502485079,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.012686899210079261,
+            0.0038536531521415895,
+            0.0013179443625332965,
+            0.0051607495632488565,
+            0.008281119243669366
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.3879420631402124
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0012080549197768242,
+          "cdf_global_max_pp": 0.0012080346642018291,
+          "cdf_forma_max_pp": 0.0012080346642018291,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.024265200494477668,
+            0.0076122057390826114,
+            0.0025652571378209643,
+            0.010122848093097048,
+            0.015755242757098387
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 49,
+            "mediana_error_semispreads": 1.3869277275465288
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 10.567471803572904,
+        "cuantiles_diferencia_max_bp": [
+          211.31603589411242,
+          39.95313662318423,
+          29.438252933786657,
+          14.681635114504044,
+          38.941616569645454
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0327679585534926
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.019017707002166873,
+          "cdf_global_max_pp": 0.01901734989857573,
+          "cdf_forma_max_pp": 0.0173897700802228,
+          "forward_mov_max_bp": 0.030783639425324694,
+          "cuantiles_mov_max_bp": [
+            0.21020841305952054,
+            0.13479629143886562,
+            0.05308029173312079,
+            0.15103612467148864,
+            0.2626809847416922
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.018216219531451
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.017188870560724823,
+          "cdf_global_max_pp": 0.01718847956945213,
+          "cdf_forma_max_pp": 0.01620706860886445,
+          "forward_mov_max_bp": 0.025681369677510446,
+          "cuantiles_mov_max_bp": [
+            0.2551501016878621,
+            0.11514623009967195,
+            0.03041307430562412,
+            0.1372579384861794,
+            0.24525157370725026
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 65,
+            "mediana_error_semispreads": 1.011189298332851
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.04471180075950598,
+          "cdf_global_max_pp": 0.04471146742988097,
+          "cdf_forma_max_pp": 0.02475848929006652,
+          "forward_mov_max_bp": 0.16847871951108928,
+          "cuantiles_mov_max_bp": [
+            0.34519120127862735,
+            0.39944720978679626,
+            0.33129813506116434,
+            0.1411463316780548,
+            0.1808038569883763
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0755894332614
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.04796796108050283,
+          "cdf_global_max_pp": 0.047967872964138625,
+          "cdf_forma_max_pp": 0.026649917634141707,
+          "forward_mov_max_bp": 0.18053656043681698,
+          "cuantiles_mov_max_bp": [
+            0.3757122368375221,
+            0.4299082451242331,
+            0.35524774475437226,
+            0.14976339632211122,
+            0.2026214183126207
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.0455194287806053
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.00523555537921272,
+          "cdf_global_max_pp": 0.005235485670795903,
+          "cdf_forma_max_pp": 0.003274095268879229,
+          "forward_mov_max_bp": 0.014680269307953964,
+          "cuantiles_mov_max_bp": [
+            0.062224935769572554,
+            0.03299991886973608,
+            0.03638733373279024,
+            0.034749615314133564,
+            0.02596857952008591
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0268069339282109
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 250,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780878
+          },
+          "cdf_observada_max_pp": 0.006358094543257309,
+          "cdf_global_max_pp": 0.0063580767611093325,
+          "cdf_forma_max_pp": 0.003747969494760639,
+          "forward_mov_max_bp": 0.023073702730691537,
+          "cuantiles_mov_max_bp": [
+            0.05524420817470954,
+            0.060345917550774786,
+            0.045672330886148416,
+            0.020285416599818973,
+            0.05282892294511399
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0317389574186775
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0005695419850848538,
+          "cdf_global_max_pp": 0.0005695378590742095,
+          "cdf_forma_max_pp": 0.0005695378590742095,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.012290486390842403,
+            0.00440636057863486,
+            0.0006825463527704301,
+            0.004655798471198125,
+            0.010069059646067302
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0332120655314503
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0011162923351015763,
+          "cdf_global_max_pp": 0.0011163063809549456,
+          "cdf_forma_max_pp": 0.0011163063809549456,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.023811188948341666,
+            0.008570572480604,
+            0.0014112377089148254,
+            0.009125225595152386,
+            0.01973443793934493
+          ],
+          "holdout": {
+            "filas": 130,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.0319230808304762
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 7.742853084988033,
+        "cuantiles_diferencia_max_bp": [
+          162.16104402541288,
+          53.81472530485931,
+          13.219040962446638,
+          29.179730551394112,
+          51.32299443073806
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.3529631648611022
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02539460646019398,
+          "cdf_global_max_pp": 0.025393915370430786,
+          "cdf_forma_max_pp": 0.023857614580191644,
+          "forward_mov_max_bp": 0.050001960208989615,
+          "cuantiles_mov_max_bp": [
+            0.0905322963284938,
+            0.20291013725803886,
+            0.06884607265833509,
+            0.21480337400792138,
+            0.10671431853293001
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.3410793089965858
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.028811806998585432,
+          "cdf_global_max_pp": 0.028811825821228876,
+          "cdf_forma_max_pp": 0.027270877140606054,
+          "forward_mov_max_bp": 0.05944371566979356,
+          "cuantiles_mov_max_bp": [
+            0.10299132416680123,
+            0.23600190159456247,
+            0.07784368535990183,
+            0.24311299944512754,
+            0.1343736928816064
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 52,
+            "mediana_error_semispreads": 1.3659058876119792
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.06024384628217083,
+          "cdf_global_max_pp": 0.060242800463583546,
+          "cdf_forma_max_pp": 0.07316968874789831,
+          "forward_mov_max_bp": 0.1368274670077163,
+          "cuantiles_mov_max_bp": [
+            0.19147346284165145,
+            0.5242265940907931,
+            0.16127106765795318,
+            0.47748226102539704,
+            0.827489495114353
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 54,
+            "mediana_error_semispreads": 1.3640928444513034
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.05917019444613425,
+          "cdf_global_max_pp": 0.05917056301600887,
+          "cdf_forma_max_pp": 0.07210852088493924,
+          "forward_mov_max_bp": 0.13315912337330538,
+          "cuantiles_mov_max_bp": [
+            0.1851431642863055,
+            0.5127705517160575,
+            0.15939387390195847,
+            0.46919311141202513,
+            0.8157376701389829
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 54,
+            "mediana_error_semispreads": 1.3474728178049324
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.005584701744254517,
+          "cdf_global_max_pp": 0.005584719541507077,
+          "cdf_forma_max_pp": 0.003716832125466585,
+          "forward_mov_max_bp": 0.019577425749428556,
+          "cuantiles_mov_max_bp": [
+            0.06577529543250193,
+            0.04820868368504705,
+            0.02005911658553572,
+            0.047785110539599884,
+            0.03827368038722412
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.354124117324599
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.0054330063668506234,
+          "cdf_global_max_pp": 0.0054327770801498865,
+          "cdf_forma_max_pp": 0.00519127791301921,
+          "forward_mov_max_bp": 0.011718961396844918,
+          "cuantiles_mov_max_bp": [
+            0.01773645473712726,
+            0.037944820882040986,
+            0.01889872953020344,
+            0.04449842210929589,
+            0.05861997864231583
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.3538590974195146
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0011833498226976324,
+          "cdf_global_max_pp": 0.0011833363951607723,
+          "cdf_forma_max_pp": 0.0011833363951607723,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.005073675743982875,
+            0.008204781956067109,
+            0.003201101992367228,
+            0.009943258196809523,
+            0.008982350900854641
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.3533524597626148
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0019480675838234873,
+          "cdf_global_max_pp": 0.0019480104262448172,
+          "cdf_forma_max_pp": 0.0019480104262448172,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.008837764802205328,
+            0.013906942445407466,
+            0.004984155219656117,
+            0.016452624653773285,
+            0.013877016433738731
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 53,
+            "mediana_error_semispreads": 1.352276428034664
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 10.927970680513171,
+        "cuantiles_diferencia_max_bp": [
+          191.65449492069774,
+          47.46208344706959,
+          21.302116849559738,
+          36.074090431201796,
+          43.233733305698685
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2865161613822271
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.010523396696504594,
+          "cdf_global_max_pp": 0.01052343149618995,
+          "cdf_forma_max_pp": 0.00491955210165651,
+          "forward_mov_max_bp": 0.04164759819902386,
+          "cuantiles_mov_max_bp": [
+            0.09722182515936595,
+            0.03603988410483261,
+            0.06447585619406837,
+            0.08139752628366637,
+            0.04412175530932316
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 62,
+            "mediana_error_semispreads": 1.279993105231389
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.01027781030205066,
+          "cdf_global_max_pp": 0.01027763800230952,
+          "cdf_forma_max_pp": 0.0049330364164879015,
+          "forward_mov_max_bp": 0.03957716779856568,
+          "cuantiles_mov_max_bp": [
+            0.09703218857959328,
+            0.03652084579419679,
+            0.06233216366835492,
+            0.07974241358121859,
+            0.04320359108911376
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2916816777086182
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.023915234995014467,
+          "cdf_global_max_pp": 0.02391528246526997,
+          "cdf_forma_max_pp": 0.03599100747704309,
+          "forward_mov_max_bp": 0.16259823722331035,
+          "cuantiles_mov_max_bp": [
+            0.29506822749048034,
+            0.3112256958603954,
+            0.05861981516197545,
+            0.19296800282786464,
+            0.45483539580004617
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 59,
+            "mediana_error_semispreads": 1.308609617431947
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02185091415081164,
+          "cdf_global_max_pp": 0.021850855832822313,
+          "cdf_forma_max_pp": 0.03395579444409602,
+          "forward_mov_max_bp": 0.15993715112516682,
+          "cuantiles_mov_max_bp": [
+            0.3224736372997583,
+            0.28490884635412606,
+            0.056617622958832214,
+            0.17563605404058436,
+            0.448176791241206
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.306511281843591
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.004610790038511725,
+          "cdf_global_max_pp": 0.004610799327064985,
+          "cdf_forma_max_pp": 0.0030999250354990515,
+          "forward_mov_max_bp": 0.04186549111606652,
+          "cuantiles_mov_max_bp": [
+            0.06445786229103412,
+            0.05362402232478303,
+            0.029856717487231066,
+            0.019243176494487813,
+            0.05663338821682018
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2882305203957247
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 286,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780878
+          },
+          "cdf_observada_max_pp": 0.003200635538502805,
+          "cdf_global_max_pp": 0.003200634024363991,
+          "cdf_forma_max_pp": 0.0034375268585074004,
+          "forward_mov_max_bp": 0.012045917613390245,
+          "cuantiles_mov_max_bp": [
+            0.027203226138361458,
+            0.043422985692709304,
+            0.009273397389986116,
+            0.019696379747191628,
+            0.025762649440430607
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2896160070461828
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0002028418564337109,
+          "cdf_global_max_pp": 0.00020284450494845174,
+          "cdf_forma_max_pp": 0.00020284450494845174,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0028947430941173025,
+            0.0021256877624775683,
+            0.0003082586697011891,
+            0.00168532532818233,
+            0.001265796381044737
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2859769112641937
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0003901814063178577,
+          "cdf_global_max_pp": 0.0003901895649471854,
+          "cdf_forma_max_pp": 0.0003901895649471854,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.005504772835340788,
+            0.0041378677761994,
+            0.0005892317234135191,
+            0.00323697904036635,
+            0.0024088051930881704
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 61,
+            "mediana_error_semispreads": 1.2875522838069968
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 8.246330583314165,
+        "cuantiles_diferencia_max_bp": [
+          172.67856904825797,
+          52.88791419171823,
+          40.29422849450626,
+          31.41508745916788,
+          42.67334086778041
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4297995004270332
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.007837636506524692,
+          "cdf_global_max_pp": 0.007837657922560304,
+          "cdf_forma_max_pp": 0.00692345400016281,
+          "forward_mov_max_bp": 0.026384475512175598,
+          "cuantiles_mov_max_bp": [
+            0.26847295269361027,
+            0.058578607962100904,
+            0.03396387862952821,
+            0.056322822163945574,
+            0.20998921736570253
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 59,
+            "mediana_error_semispreads": 1.4487326323214198
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.007837694227941228,
+          "cdf_global_max_pp": 0.00783765583340923,
+          "cdf_forma_max_pp": 0.006892424508964101,
+          "forward_mov_max_bp": 0.02638447551328582,
+          "cuantiles_mov_max_bp": [
+            0.26789205671451377,
+            0.059211623638644184,
+            0.03366384851100079,
+            0.05641343799878129,
+            0.2095166998272724
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 55,
+            "mediana_error_semispreads": 1.4110965355553735
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.03043495920123096,
+          "cdf_global_max_pp": 0.030434116741451245,
+          "cdf_forma_max_pp": 0.015854418914240664,
+          "forward_mov_max_bp": 0.14993627471593385,
+          "cuantiles_mov_max_bp": [
+            0.6809418353459495,
+            0.0795175627521516,
+            0.07933234508206155,
+            0.2336373616929066,
+            0.21656145712700692
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 58,
+            "mediana_error_semispreads": 1.3912564607006082
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.030978037622308996,
+          "cdf_global_max_pp": 0.030978257554947763,
+          "cdf_forma_max_pp": 0.016188166943043036,
+          "forward_mov_max_bp": 0.1486566286734714,
+          "cuantiles_mov_max_bp": [
+            0.6403152458911432,
+            0.07678259532628573,
+            0.08570551455200359,
+            0.23745130762975464,
+            0.20148899892991068
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 57,
+            "mediana_error_semispreads": 1.4721372836423656
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.009137184480317861,
+          "cdf_global_max_pp": 0.009137213560050927,
+          "cdf_forma_max_pp": 0.007718983539106716,
+          "forward_mov_max_bp": 0.033440703666176574,
+          "cuantiles_mov_max_bp": [
+            0.1484482866731529,
+            0.10318766578421013,
+            0.04112367359532243,
+            0.07155996320395985,
+            0.08489293451763302
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4083267749962813
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 276,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780878
+          },
+          "cdf_observada_max_pp": 0.012854215440682992,
+          "cdf_global_max_pp": 0.012853740693408167,
+          "cdf_forma_max_pp": 0.0068633574911602935,
+          "forward_mov_max_bp": 0.04132956379243602,
+          "cuantiles_mov_max_bp": [
+            0.034807059764441206,
+            0.06550769043323079,
+            0.05763238544620464,
+            0.09334735986188392,
+            0.06126542252404832
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 57,
+            "mediana_error_semispreads": 1.4219351294101323
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0006481634227561983,
+          "cdf_global_max_pp": 0.0006481664551027944,
+          "cdf_forma_max_pp": 0.0006481664551027944,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.010984035323513552,
+            0.007401885128155428,
+            0.0028916194660943972,
+            0.0034936545878494485,
+            0.004542417781916441
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4304837493504885
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0011529454926051397,
+          "cdf_global_max_pp": 0.0011529355637085459,
+          "cdf_forma_max_pp": 0.0011529355637085459,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.019760251491751646,
+            0.01295222534447582,
+            0.005730288525906957,
+            0.005691203590618699,
+            0.009920870076562949
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 56,
+            "mediana_error_semispreads": 1.4284573546479806
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 8.966481653949455,
+        "cuantiles_diferencia_max_bp": [
+          201.6429510360629,
+          86.3699418159214,
+          66.54107351757199,
+          14.182992634599323,
+          54.517915277114696
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1179196191593537
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.011960383803211183,
+          "cdf_global_max_pp": 0.01196038605649763,
+          "cdf_forma_max_pp": 0.00495569285275943,
+          "forward_mov_max_bp": 0.05344074988755665,
+          "cuantiles_mov_max_bp": [
+            0.14943390540089752,
+            0.04042209691412779,
+            0.07935667639902277,
+            0.09737602713721927,
+            0.12349316552029421
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1124610836991216
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.010795455763124018,
+          "cdf_global_max_pp": 0.010795425159493277,
+          "cdf_forma_max_pp": 0.0043787630251701515,
+          "forward_mov_max_bp": 0.048848626751363255,
+          "cuantiles_mov_max_bp": [
+            0.15053509731077774,
+            0.03940269861946177,
+            0.07282785732032337,
+            0.08782276062380134,
+            0.12055791722920262
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.12377288340121
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.022066360368777627,
+          "cdf_global_max_pp": 0.022066276962240394,
+          "cdf_forma_max_pp": 0.01906260579819241,
+          "forward_mov_max_bp": 0.13830733720521238,
+          "cuantiles_mov_max_bp": [
+            0.39439705866284314,
+            0.2269269517141126,
+            0.16453847376141084,
+            0.16991331216686945,
+            0.2616534113464297
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 64,
+            "mediana_error_semispreads": 1.148973188410901
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02197657893839855,
+          "cdf_global_max_pp": 0.021976556737024477,
+          "cdf_forma_max_pp": 0.01930955309596971,
+          "forward_mov_max_bp": 0.13908701151588154,
+          "cuantiles_mov_max_bp": [
+            0.39273764488423346,
+            0.2290886626477029,
+            0.16467692269817036,
+            0.16871605304169535,
+            0.2669581682956945
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 65,
+            "mediana_error_semispreads": 1.1200361657837892
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09955273618459531
+          },
+          "cdf_observada_max_pp": 0.007586845236140505,
+          "cdf_global_max_pp": 0.007586824972233286,
+          "cdf_forma_max_pp": 0.0074497615596191835,
+          "forward_mov_max_bp": 0.02778285014604087,
+          "cuantiles_mov_max_bp": [
+            0.09864559524896954,
+            0.09046619990793481,
+            0.02890978417546819,
+            0.026757317415082582,
+            0.056918150692641944
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1107986517670045
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 278,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.006962887695560749,
+          "cdf_global_max_pp": 0.006962835759671826,
+          "cdf_forma_max_pp": 0.004477978373629288,
+          "forward_mov_max_bp": 0.021092599920002897,
+          "cuantiles_mov_max_bp": [
+            0.07057574755719997,
+            0.055848273656788905,
+            0.020597653884735223,
+            0.06036241336992987,
+            0.042546512226682154
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1181200267636444
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0003279303007919232,
+          "cdf_global_max_pp": 0.00032792527357994317,
+          "cdf_forma_max_pp": 0.00032792527357994317,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0061996387179519274,
+            0.0024801607378943658,
+            0.0023950863647925758,
+            0.001281419024223851,
+            0.004910808197866601
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1178735641270254
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0006400345297308263,
+          "cdf_global_max_pp": 0.0006400346725166095,
+          "cdf_forma_max_pp": 0.0006400346725166095,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.01195086354877084,
+            0.004727276666782743,
+            0.004665738808640185,
+            0.002585772835850264,
+            0.009673816454558448
+          ],
+          "holdout": {
+            "filas": 142,
+            "dentro": 63,
+            "mediana_error_semispreads": 1.1180115540725821
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 8.450634031768868,
+        "cuantiles_diferencia_max_bp": [
+          194.42860661789686,
+          45.54711032110692,
+          38.366168047829774,
+          26.507597678124828,
+          25.02847986757928
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6148105889432016
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.02135235521656398,
+          "cdf_global_max_pp": 0.022007224103459677,
+          "cdf_forma_max_pp": 0.015214406475905218,
+          "forward_mov_max_bp": 0.0931492432076908,
+          "cuantiles_mov_max_bp": [
+            0.2105866702284409,
+            0.13740834547970593,
+            0.10416479015340485,
+            0.1313026505656012,
+            0.49837991678014504
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 99,
+            "mediana_error_semispreads": 0.5728135768533142
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.023731155620587696,
+          "cdf_global_max_pp": 0.023980665674927515,
+          "cdf_forma_max_pp": 0.016687656660552275,
+          "forward_mov_max_bp": 0.0888092444306654,
+          "cuantiles_mov_max_bp": [
+            0.20606073765749855,
+            0.14720118857058928,
+            0.09997388330296175,
+            0.15188954127109966,
+            0.5079481418879261
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 99,
+            "mediana_error_semispreads": 0.5900395507880396
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.028353305411166208,
+          "cdf_global_max_pp": 0.028353303322770085,
+          "cdf_forma_max_pp": 0.02807255565183686,
+          "forward_mov_max_bp": 0.248278135754898,
+          "cuantiles_mov_max_bp": [
+            0.23116210102758217,
+            0.31240067938087535,
+            0.15335535522353894,
+            0.13738064088775204,
+            0.5622369301061525
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 100,
+            "mediana_error_semispreads": 0.6189117479421928
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.026539065581515642,
+          "cdf_global_max_pp": 0.02653905050529204,
+          "cdf_forma_max_pp": 0.025097408825669465,
+          "forward_mov_max_bp": 0.24092574748335593,
+          "cuantiles_mov_max_bp": [
+            0.23836768519913676,
+            0.2728521294659281,
+            0.16380851819652875,
+            0.1514173943140129,
+            0.5826513286688595
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6287742779501975
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.011234029770512688,
+          "cdf_global_max_pp": 0.011234061767817494,
+          "cdf_forma_max_pp": 0.007905568353228087,
+          "forward_mov_max_bp": 0.0814864460274567,
+          "cuantiles_mov_max_bp": [
+            0.03870746848599893,
+            0.11027439871136302,
+            0.06909696683043975,
+            0.06396046031476033,
+            0.18301336798476342
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6174443155433318
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 284,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.00604069096504789,
+          "cdf_global_max_pp": 0.006040662729078772,
+          "cdf_forma_max_pp": 0.005333425242604051,
+          "forward_mov_max_bp": 0.022298042533508422,
+          "cuantiles_mov_max_bp": [
+            0.04047468040280222,
+            0.03149739961738618,
+            0.03230355639427529,
+            0.04219996488918909,
+            0.07308144636564151
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.5990509229649241
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0019109990871624127,
+          "cdf_global_max_pp": 0.0019109965654795502,
+          "cdf_forma_max_pp": 0.0019109965654795502,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.016220448748605065,
+            0.011212337536203876,
+            0.005556491391445206,
+            0.01388575886940302,
+            0.024164527532288815
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6160129174110172
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.003650498313279016,
+          "cdf_global_max_pp": 0.0036505656607954684,
+          "cdf_forma_max_pp": 0.0036505656607954684,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.030908703738674603,
+            0.02158242967453816,
+            0.010511936958668144,
+            0.026558647014951475,
+            0.04578406648469979
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 98,
+            "mediana_error_semispreads": 0.6124155458723459
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 11.666722260242324,
+        "cuantiles_diferencia_max_bp": [
+          159.7761185975155,
+          36.92301781993868,
+          19.892286610114773,
+          26.94980427062621,
+          13.195618891193028
+        ]
+      }
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "variantes": [
+        {
+          "caso": "nominal",
+          "familia": "nominal",
+          "peso_mid": 0.02,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0,
+          "cdf_global_max_pp": 0.0,
+          "cdf_forma_max_pp": 0.0,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6749179146557434
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.014327956746873483,
+          "cdf_global_max_pp": 0.014327814483849899,
+          "cdf_forma_max_pp": 0.011351346715382515,
+          "forward_mov_max_bp": 0.06014454879021969,
+          "cuantiles_mov_max_bp": [
+            0.0550089326201153,
+            0.0804081020322478,
+            0.10170048122537523,
+            0.06291369977873273,
+            0.3467001356205479
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 92,
+            "mediana_error_semispreads": 0.7068566769268776
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paralelo_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.013727025216903055,
+          "cdf_global_max_pp": 0.013849950958944035,
+          "cdf_forma_max_pp": 0.009031796284442173,
+          "forward_mov_max_bp": 0.06938703356884623,
+          "cuantiles_mov_max_bp": [
+            0.05841603922362992,
+            0.06976496652932873,
+            0.07204959703077662,
+            0.08981878679037436,
+            0.31516094275874096
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 92,
+            "mediana_error_semispreads": 0.68600752848801
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_arriba",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.0380641510059454,
+          "cdf_global_max_pp": 0.03806420715976033,
+          "cdf_forma_max_pp": 0.015593533992941389,
+          "forward_mov_max_bp": 0.1520107176156138,
+          "cuantiles_mov_max_bp": [
+            0.21930984014040256,
+            0.0900706279616248,
+            0.19592735486240187,
+            0.27254183635028184,
+            0.19995298981001497
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.7258965061617637
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "paridad_abajo",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.10000000000000002
+          },
+          "cdf_observada_max_pp": 0.05002929794317712,
+          "cdf_global_max_pp": 0.050028416339120696,
+          "cdf_forma_max_pp": 0.0251655873617862,
+          "forward_mov_max_bp": 0.16025717135659256,
+          "cuantiles_mov_max_bp": [
+            0.16006014890268538,
+            0.13073845841149456,
+            0.2835298373216055,
+            0.3245807953589086,
+            0.3039662831150203
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 92,
+            "mediana_error_semispreads": 0.6919979776099967
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_17",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.0995527361845953
+          },
+          "cdf_observada_max_pp": 0.008863432501060586,
+          "cdf_global_max_pp": 0.008863444908457918,
+          "cdf_forma_max_pp": 0.006193931333164926,
+          "forward_mov_max_bp": 0.02758717296491575,
+          "cuantiles_mov_max_bp": [
+            0.08637415807699611,
+            0.03734499193552843,
+            0.05939330005144683,
+            0.05109736437081125,
+            0.06984922486408252
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6811297158705247
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "jitter_29",
+          "familia": "precio",
+          "peso_mid": 0.02,
+          "shock": {
+            "filas_training": 282,
+            "filas_capadas": 0,
+            "max_movimiento_en_semispread": 0.09996330932780877
+          },
+          "cdf_observada_max_pp": 0.004440228994501139,
+          "cdf_global_max_pp": 0.004440238538427899,
+          "cdf_forma_max_pp": 0.0010133649858412586,
+          "forward_mov_max_bp": 0.026492125200228145,
+          "cuantiles_mov_max_bp": [
+            0.016191075632443486,
+            0.03736344980076467,
+            0.028504397440176632,
+            0.025960586456097445,
+            0.04166132427929625
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6826861464480214
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.01",
+          "familia": "regularizacion",
+          "peso_mid": 0.01,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0004379187300118659,
+          "cdf_global_max_pp": 0.00043792121706687226,
+          "cdf_forma_max_pp": 0.00043792121706687226,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.003135386684727237,
+            0.0008448479682510168,
+            0.002202055677802406,
+            0.0027156442183873253,
+            0.008224337981754815
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6749412698320991
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "caso": "reg_0.04",
+          "familia": "regularizacion",
+          "peso_mid": 0.04,
+          "shock": {},
+          "cdf_observada_max_pp": 0.0008433394580342757,
+          "cdf_global_max_pp": 0.0008433389212858522,
+          "cdf_forma_max_pp": 0.0008433389212858522,
+          "forward_mov_max_bp": 0.0,
+          "cuantiles_mov_max_bp": [
+            0.006089596129577046,
+            0.0016438308192423534,
+            0.004235714250455658,
+            0.005228390165257224,
+            0.015840870886130176
+          ],
+          "holdout": {
+            "filas": 148,
+            "dentro": 93,
+            "mediana_error_semispreads": 0.6748747419561694
+          },
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ],
+      "contraste_modelos": {
+        "cdf_observada_max_pp": 6.382893187524691,
+        "cuantiles_diferencia_max_bp": [
+          150.52761294137684,
+          19.583407124217356,
+          20.250110256030407,
+          25.076289144989605,
+          24.372118563720235
+        ]
+      }
+    }
+  ],
+  "cuantiles_nominales_dentro_rango_training": [
+    0,
+    48,
+    48,
+    46,
+    0
+  ],
+  "rebanadas_nominales": 48,
+  "total": {
+    "precio": {
+      "casos": 72,
+      "cdf_observada_max_pp": 0.06024384628217083,
+      "cdf_observada_mediana_pp": 0.012669074009186154,
+      "cuantiles_mov_max_bp": [
+        0.6809418353459495,
+        0.5242265940907931,
+        0.35524774475437226,
+        0.47748226102539704,
+        0.827489495114353
+      ],
+      "forward_mov_max_bp": 0.248278135754898
+    },
+    "regularizacion": {
+      "casos": 24,
+      "cdf_observada_max_pp": 0.003967264026982775,
+      "cdf_observada_mediana_pp": 0.001121279666554953,
+      "cuantiles_mov_max_bp": [
+        0.062232401784045877,
+        0.03855733442414966,
+        0.02634621466990339,
+        0.026558647014951475,
+        0.054939375069285035
+      ],
+      "forward_mov_max_bp": 0.0
+    },
+    "contraste_modelos": {
+      "cdf_observada_max_pp": 13.290067691144303,
+      "cuantiles_diferencia_max_bp": [
+        211.31603589411242,
+        86.3699418159214,
+        66.54107351757199,
+        36.074090431201796,
+        61.08516629860006
+      ]
+    }
+  },
+  "origenes_sha256": {
+    "forward": "22c7b73ec60e56e5513503863291bd6ccb2bd0232d1e2d8ec33a9a6d86914bb9",
+    "ml": "5ec4963c158142ba444b9abc8c27aeacb31f69bd8686b86dc4c040a7fa71f0b1"
+  },
+  "codigo_sha256_lf": {
+    "experiments/estabilidad_superficie_20261014/evaluar.py": "9feff60ca60032cbf9b99a72f8e9190d3538e8e3c3340a76c75d623faa9f9c45",
+    "experiments/estabilidad_superficie_20261014/metodo.py": "b5460cb977306440f0c916e1bdfdf689f8b4b833b4377ff1e251c50e2c46b94b",
+    "experiments/estabilidad_superficie_20261014/protocolo.toml": "6f4c7a485b02d15dc92cdbf18c07414540e5cedaeb1691b90ba501b801787326",
+    "experiments/estabilidad_superficie_20261014/graficas.py": "3a85aac6e696da7f9502285f6a2a289d2d1c2b17f0c04062fc798f2475a9a65e",
+    "experiments/estabilidad_superficie_20261014/verificar.py": "4e1d600bcdaa488a853d543760e9e12d925873e425fdba4df89b159896078782",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "quantileflow/opciones.py": "697647ff2abaad624138fbfac7d2b836d351a104a343941d16c9bfd9efe81ff4"
+  },
+  "privados_sha256": {
+    "2026-10-02_0945_sensibilidad.json": "d163060ba2a78a401324e86e1ce7b6929506478aba3b744b2f1be3f7ced86a90",
+    "2026-10-02_1000_sensibilidad.json": "cb29816f6bb3812ca3c07d11f1340b7b89f31552f956e36b73033849ac60cf87",
+    "2026-10-05_0945_sensibilidad.json": "e145ac054a9eb5c9aec97aabd306f917b987e0ed3184fcb99d4a2076224eb892",
+    "2026-10-05_1000_sensibilidad.json": "f2f8589c1c3e699968af93ae69b154a6a2b3b4b6006cc8f0484921dc15452e7c",
+    "2026-10-06_0945_sensibilidad.json": "17beec98b3f330f5cb8ca717cd897a505210d3288f924c7abd54864afe455452",
+    "2026-10-06_1000_sensibilidad.json": "891cc652145896293eed2084b4e22ad9208ae330071f3d8e4f2ab3db70be1ed1",
+    "2026-10-07_0945_sensibilidad.json": "2a6a32d0d953862ab208b548adf0ae6d8534301bae6326e4f3646d34a18e6d01",
+    "2026-10-07_1000_sensibilidad.json": "5338a64351fe600f55d8c8138d5e7bfee195a540f9eaf95b7a2611452a0f80ed",
+    "2026-10-08_0945_sensibilidad.json": "f5922746f18cfb2fc76a9559714beeac5584f405d423455c659880a4241e5954",
+    "2026-10-08_1000_sensibilidad.json": "e5629942da0856e615faa7e04b19ccccd640a4b7fabb2acdac85006759d4fad4",
+    "2026-10-09_0945_sensibilidad.json": "d4d105fe33bdd8361a2a8e1baf2afda9a1d3d7d3dfcb318bbb0d4ad68f1bdeb4",
+    "2026-10-09_1000_sensibilidad.json": "43cd93b287ebf94f3f66612f173c296b40e1c1a98b75a0f46e8433899fedd823"
+  },
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.0.6"
+  }
+}
