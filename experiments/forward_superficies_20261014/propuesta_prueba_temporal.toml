@@ -1,0 +1,22 @@
+# Protocolo prospectivo; pendiente obtener/auditar entradas nuevas.
+# No instala workflows, no programa ejecuciones y no cambia la captura.
+version = "forward-superficies-temporal-0.1"
+congelado_en = "2026-10-14"
+sesiones_previstas = ["2026-10-15", "2026-10-16", "2026-10-19", "2026-10-20", "2026-10-21"]
+horas = ["09:45", "10:00"]
+plazo = "Mismos filtros del adaptador de comparación 10 oct; reportar expiraciones efectivas"
+minimo_dias = 1.0
+maximo_dias = 45.0
+ancho_logmoneyness = 0.03
+split = "Cada tercer strike ordenado por vencimiento; call/put juntos; definido con F declarado, sin refiltrar"
+peso_mid = 0.02
+tasa_nominal = 0.04
+q_nominal = 0.013
+carry = "Supuestos provisionales congelados; shocks separados como diagnóstico"
+comparacion = "2x2 declarado/estimado x plano/SSVI; forward y tres inicializaciones solo con training"
+metricas = ["cobertura bid/ask reservada", "distancia fuera de banda", "error a mid/semispread", "paridad incompatible", "restricciones SSVI", "masa/media/precio-PDF", "disponibilidad y bloqueos"]
+tratamiento_fallos = "Incluir todos los cortes previstos; ausencia/fallo/ineligibilidad se reportan, no se sustituyen por días mejores"
+analisis = "Por vencimiento/foto y agregado por sesión; cinco sesiones no validan rentabilidad"
+datos_previos = "12-14 octubre pueden describirse aparte, no se etiquetan prospectivos respecto al congelamiento de hoy"
+ml = "No usar estas sesiones repetidamente para escoger arquitectura y a la vez llamarlas test final; si seleccionan modelo, reservar otro periodo final"
+ejecucion = "Pendiente adaptar evaluador a snapshot nuevo y auditar huellas; este archivo no certifica corridas realizadas"

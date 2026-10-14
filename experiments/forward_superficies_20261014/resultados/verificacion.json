@@ -1,0 +1,10 @@
+{
+  "cortes": 12,
+  "precios_reproducidos": 19272,
+  "max_error_precio": 2.7284841053187847e-12,
+  "forwards_convexos_verificados": 48,
+  "huellas_y_split_correctos": true,
+  "sin_datos_individuales_en_json_publico": true,
+  "resumen_sha256": "22c7b73ec60e56e5513503863291bd6ccb2bd0232d1e2d8ec33a9a6d86914bb9",
+  "verificador_sha256_lf": "6ce5970ccfd94aad07bd7f7e4e27313673254388593c1cddc9d723af9f5a8864"
+}
