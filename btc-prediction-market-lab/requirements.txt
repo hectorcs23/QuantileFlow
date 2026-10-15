@@ -1,0 +1,6 @@
+# El capturador, el cliente, los costes, el sizing y el contrato funcionan con
+# SOLO biblioteca estándar: se pueden ejecutar sin instalar nada.
+# Estas dependencias son para los modelos y la evaluación.
+numpy>=1.24
+pandas>=2.1
+pytest>=7

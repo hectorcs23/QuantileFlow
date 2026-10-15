@@ -1,0 +1,32 @@
+# Configuracion del capturador prospectivo.
+
+[serie]
+# Primera investigacion: un solo mercado de 15 minutos, un solo proveedor.
+ticker = "KXBTC15M"
+# Los contratos diarios son una segunda investigacion (Fase H), con
+# entrenamiento, calibracion y evaluacion separados.
+serie_diaria_pendiente = "KXBTCD"
+
+[captura]
+raiz = "datos/captura"
+periodo_s = 5.0
+capturar_spot = true
+
+[tasa]
+# Sin autenticar se observan 429 muy por debajo del limite documentado del
+# nivel Basic (200 fichas/s de lectura, 10 fichas por peticion). Valor
+# deliberadamente bajo.
+fichas_por_segundo = 8.0
+capacidad_rafaga = 40.0
+reintentos = 4
+espera_inicial_s = 1.0
+
+[cobertura]
+# Minimos declarados ANTES de mirar los datos, para decidir si la Fase C puede
+# empezar. Un mercado de 15 minutos genera 96 contratos al dia.
+observaciones_minimas_libro = 2000
+observaciones_minimas_mercado = 2000
+observaciones_minimas_spot = 2000
+contratos_con_resultado_minimos = 200
+intervalo_esperado_libro_s = 10.0
+intervalo_esperado_spot_s = 10.0

@@ -1,0 +1,201 @@
+{
+  "auditado_en": "2026-10-15T04:45:09.959Z",
+  "serie": "KXBTC15M",
+  "base": "https://api.elections.kalshi.com/trade-api/v2",
+  "nota": "capacidades del entorno y del momento de consulta; no son garantías de la plataforma. Reauditar ante cualquier cambio de entorno.",
+  "exchange_status": {
+    "estado": "ok",
+    "detalle": true
+  },
+  "serie_metadatos": {
+    "estado": "ok",
+    "detalle": {
+      "ticker": "KXBTC15M",
+      "frecuencia": "fifteen_min",
+      "fee_type": "quadratic",
+      "fee_multiplier": 1,
+      "contract_terms_url": "https://assets.kalshi.com/contract_terms/CRYPTO.pdf",
+      "last_updated_ts": "2026-10-08T16:24:37.117847Z"
+    }
+  },
+  "mercado_abierto": {
+    "estado": "ok",
+    "detalle": {
+      "ticker": "KXBTC15M-26OCT150045-45",
+      "strike_type": "greater_or_equal",
+      "floor_strike": 81228.31,
+      "open_time": "2026-10-15T04:30:00Z",
+      "close_time": "2026-10-15T04:45:00Z",
+      "price_level_structure": "tapered_deci_cent",
+      "price_ranges": [
+        {
+          "end": "0.1000",
+          "start": "0.0000",
+          "step": "0.0010"
+        },
+        {
+          "end": "0.9000",
+          "start": "0.1000",
+          "step": "0.0100"
+        },
+        {
+          "end": "1.0000",
+          "start": "0.9000",
+          "step": "0.0010"
+        }
+      ],
+      "settlement_timer_seconds": 1,
+      "reglas_contienen_sixty_seconds": true,
+      "reglas_comparan_dos_promedios": true
+    }
+  },
+  "ficha": {
+    "estado": "ok",
+    "detalle": {
+      "contrato": "KXBTC15M-26OCT150045-45",
+      "operador": "mayor_o_igual",
+      "empate_liquida_yes": true,
+      "sin_datos_liquida": "no",
+      "umbral_es_promedio_apertura": true,
+      "estructura_rejilla": "tapered_deci_cent",
+      "tramos_rejilla": [
+        {
+          "desde_mils": 0,
+          "hasta_mils": 100,
+          "paso_mils": 1
+        },
+        {
+          "desde_mils": 100,
+          "hasta_mils": 900,
+          "paso_mils": 10
+        },
+        {
+          "desde_mils": 900,
+          "hasta_mils": 1000,
+          "paso_mils": 1
+        }
+      ],
+      "estado_reglas": "COSTS_UNVERIFIED",
+      "permite_tamano_monetario": false,
+      "motivos_bloqueo": [
+        "estado_reglas=COSTS_UNVERIFIED",
+        "comisiones no verificadas contra fuente primaria",
+        "regla faltante: constante del calendario de comisiones vigente"
+      ],
+      "limite_posicion_por_strike": "25000",
+      "huella": "e49b54c193b4620b"
+    }
+  },
+  "libro": {
+    "estado": "ok",
+    "detalle": {
+      "niveles_compra_yes": 0,
+      "niveles_compra_no": 0,
+      "niveles_venta_yes_derivados": 0,
+      "coherencia_complementaria": [
+        {
+          "lado_compra": "yes",
+          "compra_mils": null,
+          "venta_opuesta_mils": null,
+          "suma": null,
+          "cuadra": null
+        },
+        {
+          "lado_compra": "no",
+          "compra_mils": null,
+          "venta_opuesta_mils": null,
+          "suma": null,
+          "cuadra": null
+        }
+      ],
+      "discrepancias_contra_mercado": [
+        "yes_bid_dollars: API 999, libro vacio",
+        "no_ask_dollars: API 1, libro vacio"
+      ],
+      "lectura_discrepancias": "una discrepancia suele ser antigüedad entre dos lecturas HTTP; la coherencia complementaria la distingue de un error estructural",
+      "barrido_100_yes": {
+        "lleno": "0",
+        "coste": "0",
+        "niveles_usados": 0
+      },
+      "motivos_calidad": [
+        "sin ventas de YES ejecutables",
+        "sin ventas de NO ejecutables"
+      ]
+    }
+  },
+  "historico_velas": {
+    "estado": "ok",
+    "detalle": {
+      "contrato": "KXBTC15M-26OCT150045-45",
+      "velas_devueltas": 15,
+      "campos": [
+        "end_period_ts",
+        "open_interest_fp",
+        "price",
+        "volume_fp",
+        "yes_ask",
+        "yes_bid"
+      ],
+      "tiene_profundidad": false,
+      "lectura": "candlesticks da top-of-book a 1 minuto (OHLC de yes_bid y yes_ask) pero NO profundidad: el coste de barrer una cantidad no se puede reconstruir hacia atras"
+    }
+  },
+  "mercados_liquidados": {
+    "estado": "ok",
+    "detalle": {
+      "devueltos": 200,
+      "hay_mas_paginas": true,
+      "resultados": {
+        "yes": 100,
+        "no": 100
+      },
+      "con_expiration_value": 200,
+      "cierre_min": "2026-10-13T02:45:00Z",
+      "cierre_max": "2026-10-15T04:30:00Z"
+    }
+  },
+  "cadena_de_promedios": {
+    "estado": "ok",
+    "detalle": {
+      "pares_comprobados": 49,
+      "coinciden": 49,
+      "fraccion": 1.0,
+      "discrepancias_ejemplo": [],
+      "lectura": "el expiration_value de un contrato debe ser el floor_strike del siguiente: confirma que el umbral es el promedio de apertura"
+    }
+  },
+  "spot": {
+    "estado": "ok",
+    "detalle": {
+      "coinbase": {
+        "estado": "ok",
+        "latencia_fuente_s": 0.821,
+        "event_time": "2026-10-15T04:45:20.672Z"
+      },
+      "kraken": {
+        "estado": "ok",
+        "latencia_fuente_s": 21.702,
+        "event_time": "2026-10-15T04:45:00.000Z"
+      },
+      "indice_brti": {
+        "estado": "no_verificado",
+        "nota": "el contrato liquida con el BRTI de CF Benchmarks y no hay via publica verificada desde este entorno; las fuentes spot son sustitutos y la diferencia spot-indice es una variable del modelo"
+      }
+    }
+  },
+  "comisiones": {
+    "estructura_verificada_desde_api": true,
+    "constante_verificada": false,
+    "nota": "fee_type y fee_multiplier vienen del API; la constante del calendario de comisiones no se pudo obtener desde este entorno, asi que el tamano monetario esta desactivado"
+  },
+  "conectores": {
+    "robinhood": "no existe conector (verificado en conectores instalados y registro)",
+    "consecuencia": "ninguna afirmacion sobre coste o ejecucion en Robinhood tiene evidencia propia en este proyecto"
+  },
+  "diagnostico_cliente": {
+    "peticiones": 13,
+    "respuestas_429": 2,
+    "segundos_esperando": 9.378
+  }
+}

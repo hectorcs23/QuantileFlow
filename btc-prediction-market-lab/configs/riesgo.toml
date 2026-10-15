@@ -1,0 +1,56 @@
+# Limites de riesgo. TODOS los valores son de SIMULACION y estan etiquetados.
+#
+# `presupuesto_configurado = false` es la puerta: mientras sea falso, el
+# proyecto no expone ningun importe personal y `suggested_live_amount` es cero.
+# No cambiar a true sin haber fijado un capital segregado real y haber
+# completado la validacion descrita en docs/protocolo.md.
+
+[capital]
+# Capital segregado para esta estrategia. NO es patrimonio total ni poder de
+# compra con credito.
+capital_segregado = "1000.00"
+es_capital_ficticio = true
+presupuesto_configurado = false
+etiqueta = "simulacion"
+
+[limites]
+# La perdida maxima de una compra binaria mantenida a vencimiento es el coste
+# total comprometido. Un stop de P&L no la limita.
+perdida_maxima_por_operacion = "25.00"
+perdida_diaria_maxima = "50.00"
+exposicion_abierta_maxima = "100.00"
+# El MVP mantiene una sola posicion abierta para reducir el problema de
+# correlacion. Los contratos diarios se incorporan despues con limites
+# conjuntos de exposicion a BTC.
+posiciones_abiertas_maximas = 1
+concentracion_maxima_por_contrato = "25.00"
+# De los terminos del contrato: $25,000 por strike y por miembro.
+limite_posicion_exchange = "25000.00"
+# Hora UTC en la que se reinicia el presupuesto diario.
+hora_reinicio_utc = 0
+
+[kelly]
+# alpha = 0.25 es un punto de partida de simulacion, no una recomendacion.
+fraccion_kelly = "0.25"
+
+[comisiones]
+# Estructura verificada desde el API: fee_type = "quadratic", fee_multiplier = 1.
+tipo = "quadratic"
+multiplicador = "1"
+# Constante NO verificada contra fuente primaria desde el entorno auditado.
+# Mientras `verificada = false`, el tamano monetario esta desactivado.
+constante = "0.07"
+verificada = false
+# Rellenar al adjuntar la copia del calendario de comisiones vigente:
+fuente_url = ""
+fuente_consultada_en = ""
+
+[senal]
+# Margen operativo exigido al EV conservador por contrato. Se fija ANTES de la
+# prueba final; su sensibilidad se reporta sin elegir a posteriori la variante
+# ganadora.
+margen_operativo = "0.02"
+# Antiguedad maxima de la cotizacion para que la senal siga vigente.
+antiguedad_maxima_libro_s = 3.0
+antiguedad_maxima_spot_s = 10.0
+spread_maximo_mils = 60

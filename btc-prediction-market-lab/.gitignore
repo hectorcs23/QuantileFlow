@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Datos capturados: no se versionan (crecen rápido y son reproducibles).
+datos/*
+!datos/.gitkeep
+!datos/ejemplo/
+
+# Nunca versionar credenciales. El cliente de este proyecto no las usa.
+.env
+*.pem
+*.key
+secrets*
