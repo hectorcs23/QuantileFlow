@@ -103,6 +103,7 @@ def test_el_tilt_es_la_deformacion_de_minima_entropia(mundo):
 def test_tilt_de_momentos_fija_media_y_dispersion(mundo):
     q, F = mundo["q"], mundo["mercado"].F
     p = vista.tilt_momentos(q, F, 0.008, 0.9)
+    assert p.detalle["minimo_kl_certificado"] is False
     assert abs(p.media / F - 1.008) < 1e-6
     assert abs(p.momentos_log(F)["sd_log"] / q.momentos_log(F)["sd_log"] - 0.9) < 1e-6
 

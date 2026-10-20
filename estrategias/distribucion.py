@@ -23,6 +23,17 @@ import numpy as np
 
 TOL_MASA = 1e-6
 TOL_MALLA = 1e-9
+TOL_NEGATIVOS = 1e-12  # masa negativa total admisible por redondeo
+
+
+def _validar_pesos(p):
+    p = np.asarray(p, dtype=float)
+    if p.ndim != 1 or len(p) < 3 or not np.isfinite(p).all():
+        raise ValueError("probabilidades deben ser un vector finito de longitud >= 3")
+    negativa = float(-np.minimum(p, 0).sum())
+    if negativa > TOL_NEGATIVOS:
+        raise ValueError(f"probabilidades negativas: masa {negativa:.3g}")
+    return p, negativa
 
 
 def malla_precios(F, sd_log, n=1201, anchura=6.0):
@@ -57,7 +68,7 @@ class Distribucion:
 
     def __post_init__(self):
         s = np.asarray(self.s, dtype=float)
-        p = np.asarray(self.p, dtype=float)
+        p, negativa = _validar_pesos(self.p)
         if s.ndim != 1 or s.shape != p.shape or len(s) < 3:
             raise ValueError("s y p deben ser vectores de la misma longitud (>= 3)")
         if not np.all(np.isfinite(s)) or not np.all(np.isfinite(p)):
@@ -67,15 +78,18 @@ class Distribucion:
         pasos = np.diff(np.log(s))
         if np.max(np.abs(pasos - pasos[0])) > TOL_MALLA * max(1.0, abs(pasos[0])):
             raise ValueError("el soporte debe tener paso constante en logaritmo")
-        if p.min() < -TOL_MASA:
-            raise ValueError(f"probabilidades negativas (mínimo {p.min():.3g})")
         if abs(p.sum() - 1.0) > 1e-8:
             raise ValueError(f"las probabilidades suman {p.sum():.8f}, no 1")
         lo, hi = float(self.rango_fiable[0]), float(self.rango_fiable[1])
         if not (lo < hi):
             raise ValueError("rango_fiable debe ser un intervalo (lo, hi) con lo < hi")
         object.__setattr__(self, "s", s)
-        object.__setattr__(self, "p", np.maximum(p, 0.0))
+        corregida = np.maximum(p, 0.0)
+        if negativa:
+            corregida = corregida / corregida.sum()
+            object.__setattr__(self, "detalle", {
+                **self.detalle, "masa_negativa_corregida_constructor": negativa})
+        object.__setattr__(self, "p", corregida)
         object.__setattr__(self, "rango_fiable", (lo, hi))
 
     # --- malla ---------------------------------------------------------------
@@ -190,12 +204,17 @@ def desde_cdf(s, cdf, rango_fiable, origen, **detalle):
 
 def desde_probabilidades(s, p, rango_fiable, origen, tol=1e-4, **detalle):
     """Distribución a partir de pesos no negativos; normaliza y registra el ajuste."""
-    p = np.maximum(np.asarray(p, dtype=float), 0.0)
+    p, negativa = _validar_pesos(p)
+    if not np.isfinite(tol) or tol < 0:
+        raise ValueError("tolerancia de masa debe ser finita y no negativa")
     total = float(p.sum())
-    if abs(total - 1.0) > tol:
+    if total <= 0 or abs(total - 1.0) > tol:
         raise ValueError(f"los pesos suman {total:.6f}: fuera de la tolerancia {tol:g}")
-    return Distribucion(s, p / total, rango_fiable, origen,
-                        {"suma_antes_de_normalizar": total, **detalle})
+    corregida = np.maximum(p, 0.0)
+    return Distribucion(s, corregida / corregida.sum(), rango_fiable, origen,
+                        {**detalle, "suma_antes_de_normalizar": total,
+                         "masa_negativa_corregida": negativa,
+                         "tolerancia_masa_negativa": TOL_NEGATIVOS})
 
 
 def kl(p: Distribucion, q: Distribucion):

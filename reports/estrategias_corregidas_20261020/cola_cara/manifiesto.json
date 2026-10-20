@@ -1,0 +1,99 @@
+{
+  "candidatas": {
+    "aptas": 0,
+    "n": 35
+  },
+  "config": {
+    "huella": "fac52320d5a9203480f7b763b23d80deee2d8db29c42d3085e153193c16c6674",
+    "version": "estrategias-0.1"
+  },
+  "diagnostico": {
+    "asimetria_p": -2.103309509070135,
+    "asimetria_q": -1.9950032615599778,
+    "factor_vol": 0.9145309231772983,
+    "kl_p_sobre_q": 0.012602733447707397,
+    "prob_caida_10_p": 0.051553306375962546,
+    "prob_caida_10_q": 0.06444163296995317,
+    "prob_caida_5_p": 0.12565803563281866,
+    "prob_caida_5_q": 0.15707254454102326,
+    "retorno_vista": 1.2255517667369986e-06,
+    "sd_log_p": 0.05742485315877186,
+    "sd_log_q": 0.06279159261150431
+  },
+  "dictamen": {
+    "accion": "abstenerse",
+    "estructura": null,
+    "texto": "Abstenerse: ninguna de las 35 candidatas evaluables pasa los filtros."
+  },
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": true,
+      "commit": "698c66ca965fc034f5219c4b841d329b11c705f7"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "escenarios": [
+    "base",
+    "ejecución al mid",
+    "convicción a la mitad",
+    "otra estimación de Q"
+  ],
+  "fecha_corrida_utc": "2026-10-20T20:28:04+00:00",
+  "mercado": {
+    "T": 0.0821917808219178,
+    "descuento": 0.9967177272404354,
+    "forward": 100.22216422803665,
+    "n_cotizaciones": 78,
+    "n_fiables": 62,
+    "rango_fiable": [
+      78.0,
+      108.0
+    ]
+  },
+  "motivos_globales": [],
+  "q": {
+    "alternativa": "Q implícita (ajuste convexo no paramétrico)",
+    "origen": "Q implícita (ajuste SSVI de la rebanada)"
+  },
+  "salidas": {
+    "candidatas.csv": "c1b992556e56d06653bfd48f445e43c40f3b87c81f83d00c39745e78112607d1",
+    "distribuciones.png": "e09030899a448a627367cd207e4a8e9731c274deb2d2e22a11030a00d4ec574d",
+    "informe.md": "748fa06e445aff8feb789d33288c3eea0b148ddb2a194489418e5e363dbd0337",
+    "perfiles.png": "543b352c0b979f9d61727de23290764954edbdfef9f06fa088fcf6af9c42e5c6",
+    "ventaja_por_strike.png": "5e996995bb7097adad2848c230636d420b255f0fabdf9a9b0e95eabc172593b4",
+    "ventaja_riesgo.png": "238e91550b117f76e508ab4473031dd32bae70e30667ea7e3883876edf5062c6"
+  },
+  "vista": {
+    "detalle": {
+      "cambio_media": 2.220446049250313e-16,
+      "factor": 0.8,
+      "kl_sobre_q": 0.012602733447707397,
+      "lambda_compensacion": -4.265417355001302,
+      "masa_negativa_corregida": -0.0,
+      "masa_zona_p": 0.1285153449245798,
+      "masa_zona_q": 0.16064418115572474,
+      "minimo_kl_certificado": true,
+      "preservar_media": true,
+      "suma_antes_de_normalizar": 1.0,
+      "tolerancia_masa_negativa": 1e-12,
+      "umbral_log": -0.05
+    },
+    "especificacion": {
+      "factor": 0.8,
+      "preservar_media": true,
+      "tipo": "reponderar_cola",
+      "umbral_log": -0.05
+    },
+    "origen": "cola izquierda reponderada x0.80 más allá de -0.050 en log, con la media de Q"
+  }
+}

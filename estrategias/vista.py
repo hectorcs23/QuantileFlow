@@ -2,14 +2,10 @@
 
 ``Q`` es la distribución implícita en los precios. Una recomendación solo puede
 venir de un desacuerdo explícito con ella, así que la vista se construye
-**siempre a partir de Q**, deformándola lo menos posible para cumplir lo que el
-usuario afirma. La deformación mínima en el sentido de Kullback–Leibler sujeta a
-restricciones de momentos es un tilt exponencial,
-
-    p(s) proporcional a q(s) * exp(lambda * x + eta * x^2),    x = ln(S/F),
-
-y es la forma por omisión: fija la media (y, si se pide, la dispersión) sin
-inventar estructura adicional en la cola. Las otras vistas sirven para opiniones
+**siempre a partir de Q**. Para una media de precio fijada, la deformación mínima
+KL(P||Q) es p(s) proporcional a q(s) * exp(lambda * S/F). La vista con media
+y desviación logarítmica usa otra familia paramétrica: satisface sus objetivos
+cuando converge, pero no tiene certificado de mínimo KL. Las otras vistas sirven para opiniones
 que no son de momentos: un desplazamiento puro, una reponderación explícita de
 la cola izquierda o una mezcla de escenarios.
 
@@ -20,10 +16,24 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.optimize import brentq, root
+from scipy.special import softmax
 
 from .distribucion import Distribucion, desde_probabilidades, kl
 
 TOL_OBJETIVO = 1e-8
+
+
+def _pesos_exponenciales(base, estadistico, lam):
+    """Normalización estable solo sobre el soporte de masa positiva de Q."""
+    activos = base > 0
+    if not activos.any():
+        raise ValueError("el tilt no tiene soporte de probabilidad positiva")
+    logw = np.log(base[activos]) + lam * estadistico[activos]
+    if not np.isfinite(logw).all():
+        raise ValueError("el tilt produce pesos no finitos")
+    p = np.zeros_like(base)
+    p[activos] = softmax(logw)
+    return p
 
 
 def _pesos_tilt(q: Distribucion, F, lam, eta=0.0):
@@ -50,13 +60,16 @@ def tilt_media(q: Distribucion, F, retorno):
     1 %. Es la traducción honesta de «creo que esto va para arriba».
     """
     F = float(F)
+    if not np.isfinite(F) or F <= 0 or not np.isfinite(retorno):
+        raise ValueError("forward positivo y retorno finito requeridos")
     objetivo = F * (1.0 + float(retorno))
-    if not (q.s[0] < objetivo < q.s[-1]):
+    soporte = q.s[q.p > 0]
+    if not (soporte[0] < objetivo < soporte[-1]):
         raise ValueError(f"el objetivo {objetivo:.4f} cae fuera del soporte "
                          f"[{q.s[0]:.4f}, {q.s[-1]:.4f}]")
 
     def exceso(lam):
-        return float(_pesos_tilt(q, F, lam) @ q.s) - objetivo
+        return float(_pesos_exponenciales(q.p, q.s / F, lam) @ q.s) - objetivo
 
     lo, hi = -50.0, 50.0
     while exceso(lo) > 0.0 and lo > -1e4:
@@ -64,17 +77,22 @@ def tilt_media(q: Distribucion, F, retorno):
     while exceso(hi) < 0.0 and hi < 1e4:
         hi *= 2.0
     lam = float(brentq(exceso, lo, hi, xtol=1e-12, rtol=1e-14))
-    p = _pesos_tilt(q, F, lam)
+    p = _pesos_exponenciales(q.p, q.s / F, lam)
     conseguido = float(p @ q.s) / F - 1.0
     return desde_probabilidades(
         q.s, p, q.rango_fiable, f"tilt de media ({retorno:+.2%} sobre el forward)",
         tipo="tilt_media", lambda_=lam, retorno_pedido=float(retorno),
+        estadistico="S/F", minimo_kl_certificado=True,
         retorno_conseguido=conseguido, kl_sobre_q=kl(q.con(p, "tmp"), q))
 
 
 def tilt_momentos(q: Distribucion, F, retorno=None, factor_vol=None, tol=1e-7,
                   tol_borde=1e-3):
-    """Vista de dirección y de dispersión con mínima entropía relativa.
+    """Vista paramétrica de dirección y dispersión, sin certificado de mínimo KL.
+
+    Una restricción de Var(log S), con media logarítmica desconocida, no es
+    una restricción lineal de momentos. Alcanzarla con una raíz no prueba
+    minimalidad de KL. Sin factor_vol se usa el ajuste correcto de media.
 
     ``factor_vol`` multiplica la desviación típica de ``ln(S_T/F)`` implícita.
     Un ``factor_vol`` menor que 1 dice que la volatilidad implícita está cara;
@@ -89,6 +107,8 @@ def tilt_momentos(q: Distribucion, F, retorno=None, factor_vol=None, tol=1e-7,
     """
     if retorno is None and factor_vol is None:
         raise ValueError("indica al menos retorno o factor_vol")
+    if factor_vol is None:
+        return tilt_media(q, F, retorno)
     F = float(F)
     sd_q = q.momentos_log(F)["sd_log"]
     objetivos = {}
@@ -130,6 +150,7 @@ def tilt_momentos(q: Distribucion, F, retorno=None, factor_vol=None, tol=1e-7,
     return desde_probabilidades(
         q.s, p, q.rango_fiable, "tilt de momentos (" + ", ".join(partes) + ")",
         tipo="tilt_momentos", lambda_=float(sol.x[0]), eta=float(sol.x[1]),
+        minimo_kl_certificado=False, familia="exp(lambda*log(S/F)+eta*log(S/F)^2)",
         retorno_conseguido=media / F - 1.0, sd_log_q=sd_q, sd_log_p=sd, masa_en_bordes=borde,
         kl_sobre_q=kl(q.con(p, "tmp"), q))
 
@@ -184,8 +205,10 @@ def reponderar_cola(q: Distribucion, factor, umbral_log, lado="izquierda",
     de ser ``factor`` veces la implícita. Con la compensación restringida,
     ``P(zona) = factor * Q(zona)`` se cumple exactamente en los dos casos.
     """
-    if float(factor) < 0.0:
+    if not np.isfinite(factor) or float(factor) < 0.0:
         raise ValueError("factor debe ser no negativo")
+    if lado not in ("izquierda", "derecha") or not np.isfinite(umbral_log):
+        raise ValueError("lado o umbral inválido")
     F = q.detalle.get("forward", q.media)
     x = np.log(q.s / F)
     zona = x <= float(umbral_log) if lado == "izquierda" else x >= float(umbral_log)
@@ -199,14 +222,10 @@ def reponderar_cola(q: Distribucion, factor, umbral_log, lado="izquierda",
 
     def pesos(lam):
         """Zona fijada en ``factor * q``; el complemento absorbe el resto con un tilt."""
-        expo = lam * x[fuera]
-        w = q.p[fuera] * np.exp(expo - expo.max())
-        total = w.sum()
-        if not np.isfinite(total) or total <= 0.0:
-            raise ValueError("la reponderación produce pesos degenerados")
+        w = _pesos_exponenciales(q.p[fuera], q.s[fuera] / F, lam)
         p = np.zeros_like(q.p)
         p[zona] = float(factor) * q.p[zona]
-        p[fuera] = (1.0 - masa_zona) * w / total
+        p[fuera] = (1.0 - masa_zona) * w
         return p
 
     if not preservar_media:
@@ -230,6 +249,7 @@ def reponderar_cola(q: Distribucion, factor, umbral_log, lado="izquierda",
         + (", con la media de Q" if preservar_media else ""),
         tipo="reponderar_cola", factor=float(factor), umbral_log=float(umbral_log), lado=lado,
         preservar_media=bool(preservar_media), lambda_compensacion=lam,
+        estadistico_compensacion="S/F", minimo_kl_certificado=True,
         masa_zona_q=float(q.p[zona].sum()), masa_zona_p=float(p[zona].sum()),
         cambio_media=float(p @ q.s) / q.media - 1.0, kl_sobre_q=kl(q.con(p, "tmp"), q))
 
@@ -256,8 +276,9 @@ def mezcla(componentes, pesos, origen="mezcla de escenarios"):
 def escenarios(q: Distribucion, F, lista):
     """Vista por escenarios: ``lista`` de ``(peso, retorno, factor_vol)`` sobre ``Q``.
 
-    Cada escenario es un tilt de mínima entropía de la misma ``Q``; la vista es
-    su mezcla. Permite decir «60 % de probabilidad de subir un 3 %, 40 % de caer
+    Cada escenario usa tilt_media o la familia paramétrica tilt_momentos.
+    La mezcla no tiene certificado de mínimo KL. Permite decir «60 % de
+    probabilidad de subir un 3 %, 40 % de caer
     un 5 %» sin abandonar la forma que el mercado está cotizando.
     """
     pesos, partes = [], []

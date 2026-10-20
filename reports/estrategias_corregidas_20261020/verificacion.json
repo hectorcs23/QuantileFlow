@@ -1,0 +1,68 @@
+{
+  "pruebas_dirigidas_pasadas": 46,
+  "base_git": "698c66ca965fc034f5219c4b841d329b11c705f7",
+  "datos": "sinteticos",
+  "fuentes_sha256_lf": {
+    "estrategias/corrida.py": "8da6a8a0762c48e62476a692a0824429151f92779160214de89d8a5c717e03c6",
+    "estrategias/distribucion.py": "39ee370a41630f149bd644bc0595ca3de0f4ca85d2b93fa8d827f78677c97bd8",
+    "estrategias/estructuras.py": "174e03a815632b69b12e591b95dcce08b5d459c383dd3ab27f0db474c92c27bf",
+    "estrategias/evaluacion.py": "d859c418e58969439ec2a593ab323a09b435d638fb117266d62cf6f4cb29813d",
+    "estrategias/informe.py": "0e271b7d96091d0b35a423ce58f27f2f0a8f948f834b29415372a7940d093d48",
+    "estrategias/precios.py": "ed99322e2b190e9232a4c233edf924a5b9eab044307795c5773d0c67c94fc3b8",
+    "estrategias/recomendacion.py": "2a912e5b828a845cbb290201b97ea8f6e66676b3085a150343dd597291d9c187",
+    "estrategias/robustez.py": "99af935e883cf82b1d93b7b181266f0c747be12da7e22c2592a08cf17bb53744",
+    "estrategias/sintetico.py": "bd0e9a2b9a7dbfc3319b369bfe222e3825ca73794576cf979e9766e2fad55a3a",
+    "estrategias/vista.py": "9f6ef92378b6f7460fd7d3aca62c0426da763b29a39bde4f6270be5d2ac04ccc",
+    "estrategias/__init__.py": "972a48eb4e70a81432d7f97d17972cfdc41730fb72254a93d71bcb8e20691bf3",
+    "scripts/estrategias_sintetico.py": "5c464a581ef1577048b525ff81211c4649c50be711af773175967c6b7bd66392",
+    "tests/test_correcciones_entropia.py": "8c398cd2d0e8d335d9dd490c8a7413101ece5414bafe2fd6580e90a3634417a5",
+    "tests/test_estrategias.py": "800e5829f9817f2723d9045c1203f74ff3dabfb4a8f59addc96bd0807ba438cf"
+  },
+  "informes": {
+    "alcista": {
+      "aptas": 5,
+      "dictamen": {
+        "accion": "operar",
+        "estructura": "put corto 95",
+        "texto": "Vender puts: put corto 95. Ventaja esperada +0.3065 por unidad (+0.33% sobre un capital de 93.88); en el peor escenario, +0.1338."
+      },
+      "manifiesto_sha256": "3b4f307971843ba39a92a9ca7d141a5592c858f5ece1293de376b3457ee66442"
+    },
+    "alcista_misma_vol": {
+      "aptas": 2,
+      "dictamen": {
+        "accion": "operar",
+        "estructura": "reversal de riesgo -97p/+103c",
+        "texto": "Vender puts: reversal de riesgo -97p/+103c. Ventaja esperada +0.3742 por unidad (+0.39% sobre un capital de 96.37); en el peor escenario, +0.1464."
+      },
+      "manifiesto_sha256": "801f9e704b3cee468e56010ced7cafbcf7f3d5d47a205fff28ce3b715c105a7d"
+    },
+    "bajista": {
+      "aptas": 2,
+      "dictamen": {
+        "accion": "operar",
+        "estructura": "put spread bajista 92/97",
+        "texto": "Comprar puts: put spread bajista 92/97. Ventaja esperada +0.1485 por unidad (+18.80% sobre un capital de 0.79); en el peor escenario, +0.0360."
+      },
+      "manifiesto_sha256": "c2d9426a62927909c6f59d9bcaf203e8c13503c1a41ef7b7fe18203d9f698ac1"
+    },
+    "cola_cara": {
+      "aptas": 0,
+      "dictamen": {
+        "accion": "abstenerse",
+        "estructura": null,
+        "texto": "Abstenerse: ninguna de las 35 candidatas evaluables pasa los filtros."
+      },
+      "manifiesto_sha256": "0c32f9d11f103be495ae702b03d0ff88b75a45be4e5a4b8ca374c51a82ebc7f1"
+    },
+    "sin_opinion": {
+      "aptas": 0,
+      "dictamen": {
+        "accion": "abstenerse",
+        "estructura": null,
+        "texto": "Abstenerse: ninguna de las 35 candidatas evaluables pasa los filtros."
+      },
+      "manifiesto_sha256": "f707a5a48e72ad42e3cc1f7ca9ddf15f00cd35b80bea4842219afb787b610766"
+    }
+  }
+}

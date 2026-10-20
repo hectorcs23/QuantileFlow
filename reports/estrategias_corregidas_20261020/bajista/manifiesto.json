@@ -1,0 +1,94 @@
+{
+  "candidatas": {
+    "aptas": 2,
+    "n": 35
+  },
+  "config": {
+    "huella": "fac52320d5a9203480f7b763b23d80deee2d8db29c42d3085e153193c16c6674",
+    "version": "estrategias-0.1"
+  },
+  "diagnostico": {
+    "asimetria_p": -2.0769668616734656,
+    "asimetria_q": -1.9950032615599778,
+    "factor_vol": 1.1603408524639118,
+    "kl_p_sobre_q": 0.013080545706425986,
+    "prob_caida_10_p": 0.09520372426363773,
+    "prob_caida_10_q": 0.06444163296995317,
+    "prob_caida_5_p": 0.2047322113278146,
+    "prob_caida_5_q": 0.15707254454102326,
+    "retorno_vista": -0.009999999999999787,
+    "sd_log_p": 0.07285965009839958,
+    "sd_log_q": 0.06279159261150431
+  },
+  "dictamen": {
+    "accion": "operar",
+    "estructura": "put spread bajista 92/97",
+    "texto": "Comprar puts: put spread bajista 92/97. Ventaja esperada +0.1485 por unidad (+18.80% sobre un capital de 0.79); en el peor escenario, +0.0360."
+  },
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": true,
+      "commit": "698c66ca965fc034f5219c4b841d329b11c705f7"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "escenarios": [
+    "base",
+    "ejecución al mid",
+    "convicción a la mitad",
+    "dirección con la dispersión de Q",
+    "otra estimación de Q"
+  ],
+  "fecha_corrida_utc": "2026-10-20T20:28:05+00:00",
+  "mercado": {
+    "T": 0.0821917808219178,
+    "descuento": 0.9967177272404354,
+    "forward": 100.22216422803665,
+    "n_cotizaciones": 78,
+    "n_fiables": 62,
+    "rango_fiable": [
+      78.0,
+      108.0
+    ]
+  },
+  "motivos_globales": [],
+  "q": {
+    "alternativa": "Q implícita (ajuste convexo no paramétrico)",
+    "origen": "Q implícita (ajuste SSVI de la rebanada)"
+  },
+  "salidas": {
+    "candidatas.csv": "b59192311e07134210828fe69e0c768480439ca51c7894a9adb083b3adcf266e",
+    "distribuciones.png": "796b5254dfaeb27a1a6fe22dbf03457eb5ed2084f4c2fc4ad3144b4f5a2357bb",
+    "informe.md": "e82d7642b5b5526ac26f3c5bf90ee5d26cc630992d1bc2b5b5d4c9e56e3d4217",
+    "perfiles.png": "0176911e99df009e152aeee51516992d99147e88c0807a70785a194b29539664",
+    "ventaja_por_strike.png": "7a17e790d81e5d130c14b7e74ca47a86bd23a0130482d712061be44e4a7d0ecc",
+    "ventaja_riesgo.png": "ea1420cf4f40b62142bb7233fb8725ed32e724c7a6a21a0741c8639cee600309"
+  },
+  "vista": {
+    "detalle": {
+      "kl_sobre_q": 0.013080545706426201,
+      "lambda_": -2.5096690593180213,
+      "masa_negativa_corregida": -0.0,
+      "minimo_kl_certificado": true,
+      "retorno_conseguido": -0.009999999999999676,
+      "retorno_pedido": -0.01,
+      "suma_antes_de_normalizar": 1.0000000000000002,
+      "tolerancia_masa_negativa": 1e-12
+    },
+    "especificacion": {
+      "retorno": -0.01,
+      "tipo": "tilt_media"
+    },
+    "origen": "tilt de media (-1.00% sobre el forward)"
+  }
+}

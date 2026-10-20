@@ -1,0 +1,98 @@
+{
+  "candidatas": {
+    "aptas": 2,
+    "n": 35
+  },
+  "config": {
+    "huella": "fac52320d5a9203480f7b763b23d80deee2d8db29c42d3085e153193c16c6674",
+    "version": "estrategias-0.1"
+  },
+  "diagnostico": {
+    "asimetria_p": -2.83070691671064,
+    "asimetria_q": -1.9950032615599778,
+    "factor_vol": 1.0,
+    "kl_p_sobre_q": 0.01536337596075079,
+    "prob_caida_10_p": 0.04850880698144386,
+    "prob_caida_10_q": 0.06444163296995317,
+    "prob_caida_5_p": 0.12000754392966276,
+    "prob_caida_5_q": 0.15707254454102326,
+    "retorno_vista": 0.008199999999999985,
+    "sd_log_p": 0.06279159261150431,
+    "sd_log_q": 0.06279159261150431
+  },
+  "dictamen": {
+    "accion": "operar",
+    "estructura": "reversal de riesgo -97p/+103c",
+    "texto": "Vender puts: reversal de riesgo -97p/+103c. Ventaja esperada +0.3742 por unidad (+0.39% sobre un capital de 96.37); en el peor escenario, +0.1464."
+  },
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": true,
+      "commit": "698c66ca965fc034f5219c4b841d329b11c705f7"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "escenarios": [
+    "base",
+    "ejecución al mid",
+    "convicción a la mitad",
+    "dirección con la dispersión de Q",
+    "otra estimación de Q"
+  ],
+  "fecha_corrida_utc": "2026-10-20T20:28:03+00:00",
+  "mercado": {
+    "T": 0.0821917808219178,
+    "descuento": 0.9967177272404354,
+    "forward": 100.22216422803665,
+    "n_cotizaciones": 78,
+    "n_fiables": 62,
+    "rango_fiable": [
+      78.0,
+      108.0
+    ]
+  },
+  "motivos_globales": [],
+  "q": {
+    "alternativa": "Q implícita (ajuste convexo no paramétrico)",
+    "origen": "Q implícita (ajuste SSVI de la rebanada)"
+  },
+  "salidas": {
+    "candidatas.csv": "792a9f38bafa6d4962eb6b7fbca7a175fe3455a8988bae94a730a00fa19bd68f",
+    "distribuciones.png": "54ce5fcd6b0d4da63b805a6b4a45fcfc2c1ac33a5ee33d88a3367c9d77669392",
+    "informe.md": "8aec184b10f80631c59dd317378a0bc67a5e98729be1fc314bfe462f2c6968f8",
+    "perfiles.png": "2130e162410281e7abbd687fff35d924a5e1a93a14958b6ab6e00308e1a506dd",
+    "ventaja_por_strike.png": "f8f43ee16986e5af3a4f47fef0f0b5a7f44f2bb5f61e10f3fa1b4d15b25732da",
+    "ventaja_riesgo.png": "0bfe26babd011c23f659d7dbf0d093d35e2c4fd839cac36e09746f65e641f7f8"
+  },
+  "vista": {
+    "detalle": {
+      "eta": 10.953834211681988,
+      "kl_sobre_q": 0.015363375960750568,
+      "lambda_": 3.6551952907351617,
+      "masa_en_bordes": 0.00028458041665678876,
+      "masa_negativa_corregida": -0.0,
+      "minimo_kl_certificado": false,
+      "retorno_conseguido": 0.008199999999999985,
+      "sd_log_p": 0.06279159261150431,
+      "sd_log_q": 0.06279159261150431,
+      "suma_antes_de_normalizar": 0.9999999999999998,
+      "tolerancia_masa_negativa": 1e-12
+    },
+    "especificacion": {
+      "factor_vol": 1.0,
+      "retorno": 0.0082,
+      "tipo": "tilt_momentos"
+    },
+    "origen": "tilt de momentos (+0.82% sobre el forward, volatilidad x1.00)"
+  }
+}

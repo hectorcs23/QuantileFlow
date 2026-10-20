@@ -5,6 +5,12 @@
 **Estado:** versión de investigación. No hay datos de mercado, no hay resultados empíricos y
 nada de lo que produce es una recomendación de inversión.
 
+**Corrección del 20 de octubre:** se corrigieron el tilt de media, la compensación
+de cola y la aceptación de probabilidades negativas. Las cifras narrativas de
+este documento corresponden a la versión original del 2 de octubre y quedan
+como antecedente, no como resultados del código corregido. Véase
+[la corrección y sus verificaciones](CORRECCIONES_ENTROPIA_2026-10-20.md).
+
 ## 1. La pregunta
 
 La idea de partida es: *«cuando piense que algo va a subir, vender puts»*. Es una intuición
@@ -23,9 +29,10 @@ Esto no es una opinión: es la definición de `Q`. Cualquier afirmación del tip
 90 % de las veces» es verdadera y vacía, porque ese 90 % ya está en la prima. La ventaja solo puede
 venir de una distribución distinta, `P`, y de la diferencia concreta entre `P` y `Q`.
 
-Por eso el subproyecto no acepta una vista cualquiera: la construye **deformando `Q`** lo menos
-posible para que cumpla lo que uno afirma, y mide ese «lo menos posible» con la entropía relativa
-`KL(P||Q)`. Si la deformación es grande, la recomendación la produce la opinión, no el dato, y el
+El subproyecto construye vistas **a partir de `Q`** y mide la diferencia con
+`KL(P||Q)`. El ajuste de media minimiza esa divergencia; el de media y desviación
+logarítmica es una familia paramétrica y no certifica el mínimo. Si la deformación
+es grande, la recomendación la produce la opinión, no el dato, y el
 programa lo dice y se abstiene.
 
 ## 3. La identidad que contesta la pregunta
@@ -40,8 +47,10 @@ ventaja(vender un put K) = D * ( E_Q[(K-S)^+] - E_P[(K-S)^+] )
 
 Es decir:
 
-> **Vender un put de strike `K` tiene ventaja si, y solo si, tu función de distribución acumulada
-> está por debajo de la del mercado en el tramo que hay bajo `K`.**
+> **Antes de costos, vender al precio justo bajo Q tiene ventaja bajo P si y
+> solo si la integral de F_Q - F_P hasta K es positiva.** La dominancia puntual
+> de CDF es suficiente (con desigualdad estricta en un tramo), pero no necesaria.
+> Las CDF pueden cruzarse. Después de costos, la integral descontada debe superarlos.
 
 No «si crees que sube». Si crees que la probabilidad acumulada de caer por debajo de ese nivel es
 menor que la que el precio está cotizando. Comprar el put es la afirmación contraria. Un put spread
@@ -54,7 +63,8 @@ y qué strike la expresa.
 
 Afirmar un rendimiento esperado deja indeterminada la forma de la distribución. El código la
 resuelve con la deformación de mínima entropía relativa sujeta a esa media, que es un tilt
-exponencial `p(s) ∝ q(s) e^{λ ln(s/F)}`. Y ahí aparece el punto que la intuición original se salta:
+exponencial `p(s) ∝ q(s) e^{λ s/F}`. El estadístico corresponde a una media de
+precio, no a una media de logaritmos. Y ahí aparece el punto que la intuición original se salta:
 
 > **Una vista alcista de mínima entropía adelgaza la cola izquierda por su cuenta.** No es una
 > suposición añadida: es la consecuencia de reponderar hacia arriba una distribución asimétrica.
