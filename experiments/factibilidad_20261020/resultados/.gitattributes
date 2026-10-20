@@ -1,0 +1,2 @@
+# Preserve generated evidence bytes independently of core.autocrlf.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

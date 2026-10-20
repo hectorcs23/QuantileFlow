@@ -1,0 +1,12 @@
+version = "factibilidad-0.1"
+fecha = "2026-10-20"
+presupuesto_datos = 0
+anchos = [0.03, 0.10]
+grupos = ["training", "holdout"]
+niveles = ["paridad_cotas", "verticales", "convexidad"]
+forward = ["fijo_training_central", "libre_diagnostico_posterior"]
+descuento = "Anclas D del experimento previo y control extremo D>=0 sin cota superior, con D*F también libre"
+relajacion = "Por lado del intervalo, en unidades del spread completo original"
+objetivos = ["minimo_maximo", "minima_media_solo_convexidad"]
+alcance = "Diagnóstico retrospectivo de cada vencimiento; no calibración predictiva, no calendario ni certificado de extensión global"
+regla_decision = "No reparar datos ni promover PDF al comparador automáticamente. Reportar magnitud de incompatibilidad y sus límites."
