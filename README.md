@@ -120,13 +120,21 @@ Neither opens a socket, holds a credential or can place an order. Fetching with
 your own account lives in `local/`, which is outside Git — see
 [`local/README.md`](local/README.md) once you have it, and the notes below.
 
+**Capture both expirations, not one.** The pilot measures at constant maturity
+by interpolating in total variance between the two expirations that bracket 30
+days, so a capture holding a single expiration leaves the session unmeasured.
+Which pair brackets 30 days changes every session, so
+`sources.robinhood.bracketing_expirations` works it out with the pilot's own
+rule before any contract is requested.
+
 **What maps cleanly.** `settle_on_open` gives the AM/PM settlement the pilot
 refuses to mix (SPX is AM, SPXW is PM), `underlying_type` gives the exercise
 style, `trade_value_multiplier` the multiplier, and the quote carries bid, ask
 and both sizes. `tests/fixtures/robinhood/spxw_2026-10-21_sintetico.json` is a
-**synthetic** capture of ten SPXW contracts, shaped like a Robinhood read-only
-response but priced by Black-Scholes on an invented smile with a fixed seed, which
-the tests drive end to end. No third-party quotes are redistributed here.
+**synthetic** capture of twenty SPXW contracts over both expirations that session
+needed (29.3 and 30.3 days), shaped like a Robinhood read-only response but priced
+by Black-Scholes on an invented smile with a fixed seed. The tests drive it end to
+end. No third-party quotes are redistributed here.
 
 **What Robinhood cannot give, and is therefore left null.** There is no
 exchange timestamp on an option quote, so `sello_evento_utc` stays empty and

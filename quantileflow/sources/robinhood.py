@@ -50,6 +50,7 @@ import datetime as dt
 import pandas as pd
 
 from .. import contrato
+from ..calendario import CALENDARIO, _fecha, es_sesion, instante, instante_liquidacion, plazo_anios
 
 PROVIDER = "robinhood"
 FEED = "robinhood-options-marketdata"
@@ -231,3 +232,50 @@ def summary(capture: dict) -> dict:
 def now_utc() -> str:
     """Timestamp a fetcher can put in ``captured_at_utc``."""
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+# ---------------------------------------------------------------------------
+# Qué vencimientos pedir
+# ---------------------------------------------------------------------------
+#
+# El piloto mide a plazo constante interpolando entre los dos vencimientos que
+# encierran el objetivo, así que una captura con un solo vencimiento deja la
+# sesión «no disponible». Qué par encierra los 30 días cambia cada sesión, de
+# modo que el par se calcula antes de pedir contratos, con la misma regla que
+# usará el piloto después (``piloto.elegir_vencimientos``).
+
+
+def maturity_days(expirations, settlement: str, session, cutoff: str = "09:45",
+                  basis: float = 365.0, calendar: str = CALENDARIO) -> dict:
+    """Días naturales del corte al instante contractual de liquidación, por vencimiento.
+
+    Descarta los vencimientos que no son sesión del calendario y los que ya
+    liquidaron antes del corte.
+    """
+    corte = instante(session, cutoff, calendar)
+    dias = {}
+    for expiration in expirations:
+        fecha = _fecha(expiration)
+        if not es_sesion(fecha, calendar):
+            continue
+        liquida = instante_liquidacion(fecha, settlement, calendar)
+        plazo = plazo_anios(corte, liquida, basis) * basis
+        if plazo > 0:
+            dias[fecha] = plazo
+    return dias
+
+
+def bracketing_expirations(chain: dict, expirations, session, cfg, cutoff=None):
+    """Los vencimientos que el piloto usaría en esa sesión, y el motivo si no hay.
+
+    ``cfg`` es un ``piloto.ConfigPiloto``: de ahí salen el plazo objetivo, el
+    mínimo y la separación máxima, para que la captura y la medición no puedan
+    discrepar.
+    """
+    from ..piloto import elegir_vencimientos
+
+    dias = maturity_days(expirations, settlement(chain), session,
+                         cutoff or cfg.hora_principal, cfg.base_dias, cfg.calendario)
+    if not dias:
+        return [], "no expirations left at the cut-off"
+    return elegir_vencimientos(dias, cfg)
