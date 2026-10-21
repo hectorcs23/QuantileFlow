@@ -66,7 +66,8 @@ instrumentos y cotizaciones se pueden omitir los campos que no se usan, pero nun
    `comparar.py dia --verificacion $V --privado $P --datos /home/user/quantileflow-datos` y
    `comparar.py acumulado --privado $P`.
 7. Commit y push de `$P` (solo la rama `robinhood`; `main` no se toca).
-8. Una fila en el registro diario de `docs/comparacion_robinhood.md` y los totales al día, solo agregados.
+8. Una fila en el registro diario de `docs/comparacion_robinhood.md` (sección 6), solo agregados. Los
+   viernes, también el resumen y las secciones 2 a 4 con lo que da `comparar.py acumulado`.
 
 `importar` rechaza lo que no cuadra: un id que no corresponde a su símbolo, una barra con el cierre fuera de
 su máximo y mínimo, una marca que no es el punto medio o un contrato que falta. Si algo falla, se vuelve a
