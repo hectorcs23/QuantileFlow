@@ -28,6 +28,8 @@ usan datos **sintéticos** con semillas fijas.
   por Claude. Desde entonces registra también la operación diaria.
 - [`docs/respuesta_experimento_intradia.md`](docs/respuesta_experimento_intradia.md): la revisión y
   reproducción del experimento intradía de calls y puts de la rama `codex/intradia-20261007`.
+- [`docs/comparacion_robinhood.md`](docs/comparacion_robinhood.md): las capturas gratis de Alpaca frente a
+  los datos de Robinhood (SPX real, marca de las opciones y bid y ask en vivo), con un registro diario.
 - [`docs/respuesta_pde_captura_gratis.md`](docs/respuesta_pde_captura_gratis.md): la revisión del PDE con
   adjunto de la rama `codex/pde-captura-gratis-20261009`, la primera prueba real de la captura ampliada
   y los minutos de Actions medidos.

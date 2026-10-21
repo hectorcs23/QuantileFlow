@@ -15,6 +15,12 @@
 > [Alpaca como fuente de datos](fuente_alpaca.md). La sección 1 queda como registro de lo que se sabía
 > antes de tener acceso.
 
+> **Actualización del 21 de octubre.** El usuario conectó Robinhood a Claude. Del conector solo se usan
+> las herramientas de lectura de datos de mercado, como referencia gratis para las capturas de Alpaca:
+> el SPX real, la marca de las opciones cada 15 segundos (solo del día) y el bid y el ask en vivo.
+> Resultados en la [comparación con Robinhood](comparacion_robinhood.md). Lo que dice la sección 1 sobre
+> Robinhood era de antes del conector.
+
 ---
 
 ## 1. Acceso a datos: problema bloqueante
@@ -167,6 +173,9 @@ cierre anticipado, y seis días degradados a propósito:
       ([aceptación](aceptacion_operacion.md), sección 11; [revisión del experimento](respuesta_experimento_intradia.md)).
       Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
+- [ ] Comparación diaria con Robinhood: cuánto se alejan el SPX implícito, los mids y los spreads de
+      `indicative` de un dato mejor, sin pagar. El SPX implícito ya quedó validado en 28 cortes; para las
+      opciones hacen falta unas 20 sesiones antes de concluir ([comparación](comparacion_robinhood.md)).
 - [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
       de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6).
