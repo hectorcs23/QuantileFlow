@@ -10,6 +10,14 @@ datos/*
 !datos/.gitkeep
 !datos/ejemplo/
 
+# Excepción: la serie reconstruida del índice de liquidación sí se versiona.
+# Son 244 KB, hace el repositorio autosuficiente (la demostración y la Fase D
+# funcionan recién clonado) y es el insumo con el que se midió que la ventana
+# corta de spot subestimaba la volatilidad 2.83 veces. Se regenera con
+# `make indice`.
+!datos/indice/
+!datos/indice/brti.jsonl
+
 # Nunca versionar credenciales. El cliente de este proyecto no las usa.
 .env
 *.pem

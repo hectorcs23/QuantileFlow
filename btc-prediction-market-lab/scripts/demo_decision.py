@@ -37,6 +37,7 @@ from btclab.decision import (
     nuevo_decision_id,
 )
 from btclab.ficha import ficha_desde_mercado
+from btclab.indice import cargar_serie, retornos_del_indice, volatilidad_por_segundo
 from btclab.kalshi import ClienteKalshi, CuboFichas
 from btclab.libro import Lado, Libro
 from btclab.limites import EstadoRiesgo, LimitesRiesgo
@@ -70,6 +71,18 @@ def main() -> int:
     analizador.add_argument("--periodo-spot", type=float, default=2.0)
     analizador.add_argument("--trayectorias", type=int, default=20000)
     analizador.add_argument("--registro", default="")
+    analizador.add_argument(
+        "--serie-indice", default="datos/indice/brti.jsonl",
+        help="serie del indice de liquidacion (scripts/reconstruir_indice.py)",
+    )
+    analizador.add_argument(
+        "--brti", default="",
+        help=(
+            "valor del BRTI en vivo, si se dispone de el. El conector que lo "
+            "expone no es accesible desde este script, asi que se pasa a mano "
+            "y queda registrado como tal."
+        ),
+    )
     argumentos = analizador.parse_args()
 
     lado = Lado.YES if argumentos.lado == "yes" else Lado.NO
@@ -100,17 +113,86 @@ def main() -> int:
         print("el contrato ya vencio mientras leiamos datos; reintente")
         return 1
 
-    # Paso 4/5: volatilidad, simulacion y cuantiles de V_T.
-    volatilidad = volatilidad_realizada(precios, marcas, 600.0, minimo=5)
-    if volatilidad is None or volatilidad <= 0:
-        print("sin volatilidad estimable con las lecturas disponibles")
-        return 1
+    # Paso 4/5: volatilidad del OBJETIVO, no de un sustituto.
+    #
+    # La volatilidad se estima sobre la serie del indice que liquida, recortada a
+    # lo disponible en el momento de decision. Medido sobre 17 dias de serie, una
+    # ventana corta de spot subestimaba esta volatilidad unas 2.8 veces, lo que
+    # producia probabilidades extremas y una ventaja aparente inexistente.
+    volatilidad = None
+    fuente_volatilidad = "sin estimar"
+    detalle_volatilidad: dict = {}
+    ventana_volatilidad_s = 0.0
+    serie_indice = None
+
+    ruta_serie = Path(argumentos.serie_indice)
+    if ruta_serie.exists():
+        try:
+            serie_indice = cargar_serie(ruta_serie)
+            volatilidad, detalle_volatilidad = volatilidad_por_segundo(
+                serie_indice, hasta=decidido_en
+            )
+            if volatilidad:
+                fuente_volatilidad = (
+                    f"serie del indice ({detalle_volatilidad['retornos']} retornos "
+                    f"a paso de {detalle_volatilidad['paso_tipico_s']:.0f}s)"
+                )
+                primero = serie_indice.puntos[0].cierra_en
+                ultimo = (serie_indice.valor_en(decidido_en) or serie_indice.puntos[-1])
+                ventana_volatilidad_s = (ultimo.cierra_en - primero).total_seconds()
+        except Exception as exc:  # noqa: BLE001
+            print(f"aviso: no se pudo usar la serie del indice: {exc}")
+
+    if volatilidad is None:
+        # Repliegue: ventana corta de spot. Queda marcado, porque es la via que
+        # fabrica ventajas y el control de dominio debe rechazarla.
+        volatilidad = volatilidad_realizada(precios, marcas, 600.0, minimo=5)
+        fuente_volatilidad = "ventana corta de spot (REPLIEGUE, subestima)"
+        ventana_volatilidad_s = marcas[-1] - marcas[0]
+        if volatilidad is None or volatilidad <= 0:
+            print(
+                "sin volatilidad estimable: reconstruya la serie del indice con "
+                "scripts/reconstruir_indice.py"
+            )
+            return 1
+
+    # Nivel actual del indice. El indice solo publica un valor cada 15 minutos,
+    # asi que hay tres opciones, en orden de preferencia declarado:
+    #   1. una lectura en vivo del BRTI, si se proporciona;
+    #   2. el ultimo punto de la serie, con su antiguedad declarada;
+    #   3. spot, que arrastra una base de orden 20-40 USD frente al indice.
+    nivel_indice = None
+    fuente_nivel = ""
+    antiguedad_nivel_s = None
+    if argumentos.brti:
+        nivel_indice = float(argumentos.brti)
+        fuente_nivel = "BRTI en vivo (pasado a mano desde el conector)"
+        antiguedad_nivel_s = 0.0
+    elif serie_indice is not None:
+        punto = serie_indice.valor_en(decidido_en)
+        if punto is not None:
+            nivel_indice = float(punto.valor)
+            antiguedad_nivel_s = (decidido_en - punto.cierra_en).total_seconds()
+            fuente_nivel = (
+                f"ultimo punto del indice ({antiguedad_nivel_s:.0f}s de antiguedad)"
+            )
+    if nivel_indice is None:
+        nivel_indice = precios[-1]
+        fuente_nivel = "spot (sustituto, con base frente al indice)"
+        antiguedad_nivel_s = decidido_en.timestamp() - marcas[-1]
+
+    # El nivel conocido del indice puede ser antiguo (el indice publica cada 15
+    # minutos). Desde ese ancla hasta el cierre de la ventana de liquidacion hay
+    # dos tramos de difusion: el ya ocurrido pero no observado, y el que falta.
+    # El tiempo efectivo es la suma; tratar el ancla como si fuera de ahora
+    # mismo subestima la dispersion justo cuando el ancla esta mas vieja.
+    tiempo_efectivo = tiempo_restante + max(0.0, antiguedad_nivel_s or 0.0)
 
     modelo_subyacente = ModeloSubyacente(trayectorias=argumentos.trayectorias)
     simulacion = modelo_subyacente.simular(
-        spot=precios[-1],
+        spot=nivel_indice,
         volatilidad_s=volatilidad,
-        tiempo_restante_s=tiempo_restante,
+        tiempo_restante_s=tiempo_efectivo,
         ventana_promedio_s=float(ficha.regla.ventana_promedio_s),
         regla=ficha.regla,
     )
@@ -119,10 +201,33 @@ def main() -> int:
         spread_maximo_mils=60
     ).probabilidad(libro)
 
-    # Paso 5: banda por remuestreo de bloques sobre los retornos recientes.
-    retornos = [
-        math.log(precios[i] / precios[i - 1]) for i in range(1, len(precios))
-    ]
+    # Paso 5: banda por remuestreo de bloques.
+    #
+    # Se remuestrean los retornos del **indice**, que es el proceso que decide la
+    # liquidacion, y solo los anteriores al momento de decision. Remuestrear en
+    # su lugar un punado de retornos de spot daba una banda degenerada [0, 1],
+    # que el control de defendibilidad rechazaba con razon.
+    retornos: list[float] = []
+    paso_retornos_s = float(argumentos.periodo_spot)
+    if serie_indice is not None:
+        from dataclasses import replace as _replace
+
+        pasados = tuple(
+            p for p in serie_indice.puntos if p.cierra_en <= decidido_en
+        )
+        recortada = _replace(serie_indice, puntos=pasados)
+        pares = retornos_del_indice(recortada)
+        if len(pares) >= 50:
+            retornos = [r for _, r in pares]
+            paso_retornos_s = detalle_volatilidad.get("paso_tipico_s") or 900.0
+
+    if not retornos:
+        # Repliegue explicito: spot. Queda marcado por el control de dominio.
+        retornos = [
+            math.log(precios[i] / precios[i - 1]) for i in range(1, len(precios))
+        ]
+        paso_retornos_s = float(argumentos.periodo_spot)
+
     bloque = longitud_bloque_sugerida(retornos) if len(retornos) >= 8 else 1
 
     def reajustar(indices) -> float | None:
@@ -131,15 +236,16 @@ def main() -> int:
             return None
         import numpy as np
 
-        sigma = float(np.std(muestra))
-        if sigma <= 0:
+        # Varianza por segundo desde la muestra remuestreada, usando el paso
+        # real de esos retornos.
+        sigma_paso = float(np.sqrt(np.mean(np.square(muestra))))
+        if sigma_paso <= 0:
             return None
-        # El paso de los retornos es el periodo de muestreo del spot.
-        sigma_s = sigma / math.sqrt(argumentos.periodo_spot)
+        sigma_s = sigma_paso / math.sqrt(paso_retornos_s)
         return modelo_subyacente.simular(
-            spot=precios[-1],
+            spot=nivel_indice,
             volatilidad_s=sigma_s,
-            tiempo_restante_s=tiempo_restante,
+            tiempo_restante_s=tiempo_efectivo,
             ventana_promedio_s=float(ficha.regla.ventana_promedio_s),
             regla=ficha.regla,
         ).p_yes
@@ -149,6 +255,11 @@ def main() -> int:
         longitud_bloque=max(1, bloque),
         ajustar_y_predecir=reajustar,
         p_central=simulacion.p_yes,
+    )
+    print(
+        f"banda: remuestreo de {len(retornos)} retornos "
+        f"(paso {paso_retornos_s:.0f}s, bloque {max(1, bloque)})",
+        flush=True,
     )
 
     prediccion = Prediccion(
@@ -192,13 +303,14 @@ def main() -> int:
     # La ventana de spot observada es el tramo entre la primera y la ultima
     # lectura. Si el horizonte la excede con holgura, la observacion queda fuera
     # del dominio validado y la decision es no operar.
-    ventana_observada_s = marcas[-1] - marcas[0]
+    ventana_observada_s = ventana_volatilidad_s
+    observaciones_volatilidad = detalle_volatilidad.get("retornos", len(precios))
     motivos_calidad = (
         libro.calidad(decidido_en, antiguedad_max_s=3.0)
         + motivos_fuera_de_dominio(
             ventana_observada_s=ventana_observada_s,
             tiempo_restante_s=tiempo_restante,
-            observaciones=len(precios),
+            observaciones=observaciones_volatilidad,
         )
         + prediccion.motivos_no_usable()
     )
@@ -258,6 +370,23 @@ def main() -> int:
     print(f"\nreferencia de mercado (punto medio YES): {referencia}")
     print(f"  {json.dumps(detalle_mercado, ensure_ascii=False)}")
     print(f"simulacion: {simulacion.fuente_retornos}, drift={simulacion.con_drift}")
+    print(f"volatilidad: {fuente_volatilidad} -> sigma={volatilidad:.4e} /s")
+    if detalle_volatilidad.get("sigma_en_paso_tipico"):
+        print(
+            f"  equivale a {detalle_volatilidad['sigma_en_paso_tipico']*100:.3f} % "
+            f"en {detalle_volatilidad['paso_tipico_s']:.0f}s"
+        )
+    print(f"nivel del indice: {nivel_indice} via {fuente_nivel}")
+    print(
+        f"horizonte: {tiempo_restante:.0f}s hasta el cierre de la ventana "
+        f"+ {max(0.0, antiguedad_nivel_s or 0.0):.0f}s de difusion no observada "
+        f"= {tiempo_efectivo:.0f}s efectivos"
+    )
+    if precios:
+        print(
+            f"  base spot-indice: {precios[-1] - nivel_indice:+.2f} USD "
+            f"(spot Coinbase {precios[-1]:.2f})"
+        )
     print(f"senal elegible por el filtro economico: {pasa}")
     if motivos_senal:
         for motivo in motivos_senal:

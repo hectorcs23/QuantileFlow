@@ -1,6 +1,7 @@
 # Auditoría de capacidades (Paso 1)
 
-**Fecha de consulta:** 2026-10-15 (UTC). **Entorno:** contenedor de sesión en la nube de
+**Primera auditoría:** 2026-10-15 (UTC). **Revisión:** 2026-10-21, tras conectarse el conector
+de Robinhood. **Entorno:** contenedor de sesión en la nube de
 claude.ai, salida HTTPS a través de proxy. **Autor de la auditoría:** sesión de Claude Code.
 
 Este documento registra lo que **se verificó ejecutando llamadas**, no lo que se supone
@@ -14,23 +15,76 @@ contenedor y del momento de consulta, no garantías de la plataforma.
 
 ## 1. Conectores: qué hay y qué no
 
-| Conector | Estado | Sirve para este proyecto |
+| Conector | Estado (2026-10-21) | Sirve para este proyecto |
 | --- | --- | --- |
+| **Robinhood** | **conectado y activo, 83 herramientas** | **sí, pero no para contratos de eventos** |
 | Canva | instalado, `needs_reconnect` | no |
 | Google Calendar | instalado, `not_connected` | no |
 | Microsoft 365 | instalado, `not_connected` | no |
 | Opera | instalado, `needs_reconnect` | no |
 
-**No existe conector de Robinhood.** Verificado dos veces: no aparece entre los conectores
-instalados ni en el registro de conectores disponibles (búsqueda por `robinhood`, `brokerage`,
-`prediction markets`, `kalshi`, `trading`, `stocks`). Los únicos resultados del registro con datos
-de mercados de predicción son **Gemini** (solo lectura, incluye `gemini_get_prediction_event`) y
-**Webull**; ninguno es Robinhood y ninguno está instalado ni conectado.
+El 2026-10-15 **no existía** conector de Robinhood (verificado en conectores instalados y en el
+registro). El 2026-10-21 **sí está conectado**, con 83 herramientas. Esto es lo que cambia y lo que
+no.
 
-Consecuencia metodológica, alineada con §2 y §14 de la metodología: **no hay vía verificada para
-obtener de Robinhood cotizaciones ejecutables, comisiones reales ni ejecución de órdenes.** Cualquier
-afirmación sobre coste o ejecución en Robinhood queda sin evidencia propia y por tanto fuera del
-alcance demostrable de este repositorio.
+### Lo que el conector de Robinhood **no** da: contratos de eventos
+
+Las 83 herramientas cubren acciones, opciones, cripto, índices, listas, escáneres, filings y
+operaciones de cartera. **Ninguna cubre contratos de eventos ni mercados de predicción.** No es una
+deducción: la propia descripción de `search` lo dice literalmente —
+
+> «More categories (**events**, futures) will be added as their corresponding tools land.»
+
+Consecuencia, idéntica a la que ya estaba y alineada con §2 y §14: **no hay vía verificada para
+obtener de Robinhood cotizaciones ejecutables de contratos de eventos, sus comisiones reales ni
+ejecución de órdenes.** Cualquier afirmación sobre coste o ejecución de contratos de eventos en
+Robinhood sigue sin evidencia propia. La advertencia de §14 («no dar por existente una API de
+prediction markets por disponer de una API de criptomonedas») se cumple al pie de la letra.
+
+### Lo que el conector **sí** da, y es importante: el índice BRTI
+
+`get_indexes` devuelve, entre otros, el símbolo **`BRTI`** (id `1b489c2d-6bb0-433d-bad1-d832b6931b33`).
+Es el **CF Benchmarks Bitcoin Real-Time Index**, exactamente el índice que liquida el contrato de
+Kalshi, y `get_index_quotes` devuelve su valor en vivo con precisión completa y marca de venue:
+
+```
+BRTI = 84282.0671111111111111   venue_timestamp 2026-10-21T19:29:14-04:00
+```
+
+**Verificación de identidad del índice.** El mercado `KXBTC15M-26OCT211930-30` (cierre 23:30:00Z)
+liquidó en `expiration_value = 84259.75`, que es el promedio de 60 s del BRTI en 23:29:00–23:30:00.
+Dos lecturas del conector lo encierran: `84282.07` a las 23:29:14 y `84249.12` a las 23:30:11. El
+índice venía bajando y el promedio de la ventana cae entre ambas. **Es el mismo índice.**
+
+**Pero el conector no resuelve la captura continua.** Las herramientas MCP solo son invocables desde
+la sesión conversacional, **no desde `scripts/capturar.py`**. Así que el BRTI está disponible para
+verificar y para contrastar puntualmente, no para registrarse cada pocos segundos de forma autónoma.
+`scripts/demo_decision.py` acepta `--brti <valor>` para inyectar una lectura a mano, y queda
+registrada como tal.
+
+### CF Benchmarks directo: requiere clave
+
+`api.cfbenchmarks.com` no es alcanzable desde este entorno (`CONNECT tunnel failed, 502`).
+`www.cfbenchmarks.com` sí responde, pero sin clave no sirve: `/api/v1/assets` → `401 "not
+authorized"`, `/api/v1/indices` → `200` con `payload: []`, `/api/v1/values?id=BRTI` → `400 "Unknown
+id"`. **Una clave de CF Benchmarks sería la vía que permitiría al capturador registrar el BRTI de
+forma autónoma.**
+
+### Cripto de Robinhood: peor proxy de lo que parece
+
+`get_crypto_quotes` para `BTC-USD` devuelve bid `83507` / ask `85097` — **unos 1590 USD de ancho**,
+por *Market Maker Routing*. Su `mark_price` es el medio de ese spread. Medido en el mismo instante
+(23:31:13–16Z):
+
+| Fuente | Valor | Base vs BRTI |
+| --- | --- | --- |
+| **BRTI** | `84269.20` | — |
+| Coinbase (`bid/ask` a 1 céntimo) | `84288.01` | **+18.81** (+0.022 %) |
+| Robinhood `mark_price` | `84302.26` | +33.06 (+0.039 %) |
+
+Conclusión contraintuitiva pero medida: **el libro de cripto de Robinhood es un proxy peor que
+Coinbase** para el índice, pese a ser de la misma casa, porque su spread es cinco órdenes de magnitud
+más ancho.
 
 ### Acceso GitHub de esta sesión
 
@@ -206,7 +260,8 @@ Extractos que fijan reglas esenciales:
 | Coinbase Exchange | `api.exchange.coinbase.com/products/BTC-USD/ticker` | 200 | bid/ask/último, con `time` |
 | Kraken | `api.kraken.com/0/public/OHLC?pair=XBTUSD` | 200 | OHLC de 1 minuto |
 | Binance | `api.binance.com` | **451** | bloqueado por geolocalización: `Service unavailable from a restricted location` |
-| CF Benchmarks BRTI | — | **no verificado** | es el índice que liquida; no se encontró vía pública de lectura desde este entorno |
+| CF Benchmarks BRTI | conector de Robinhood, `get_index_quotes` | **verificado en vivo** | es el índice que liquida; disponible en la sesión, **no** desde el capturador |
+| CF Benchmarks directo | `www.cfbenchmarks.com/api/v1` | **requiere clave** | `401`/`payload: []` sin autenticar |
 
 **La brecha más importante:** el índice que determina la liquidación es el **BRTI de CF
 Benchmarks**, y **no tenemos acceso verificado a él**. Las fuentes spot disponibles son
@@ -249,6 +304,6 @@ distinto de cero.
 | --- | --- | --- |
 | `COSTS_UNVERIFIED` | cualquier importe distinto de cero | copia fechada del calendario de comisiones vigente |
 | sin profundidad histórica | afirmar ventaja **ejecutable** | capturar libro prospectivamente (ya implementado) |
-| sin acceso al BRTI | reproducir el valor de liquidación en vivo | vía verificada a CF Benchmarks, o aceptar sustituto y medir el error |
-| sin conector de Robinhood | cualquier afirmación sobre coste/ejecución en Robinhood | evidencia propia de ese flujo, o declararlo fuera de alcance |
+| BRTI no capturable de forma autónoma | registrar el índice cada pocos segundos | clave de CF Benchmarks; el conector lo da en sesión pero no al capturador |
+| Robinhood sin contratos de eventos | cualquier afirmación sobre coste/ejecución de contratos de eventos allí | que Robinhood publique esas herramientas («events» está anunciado como pendiente) |
 | sin latencia medida del flujo manual | convertir ventaja en decisión | medir la distribución de retrasos del flujo real |

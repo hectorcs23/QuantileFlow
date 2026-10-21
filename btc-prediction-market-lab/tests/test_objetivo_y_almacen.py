@@ -252,3 +252,37 @@ def test_flujo_con_nombre_invalido_se_rechaza(tmp_path):
     a = Almacen(tmp_path / "datos")
     with pytest.raises(Exception):
         a.ruta("../fuga", "2026-10-15")
+
+
+# -- horizonte: la ventana de liquidacion, no el vencimiento ----------------
+
+
+def test_el_horizonte_termina_en_el_cierre_de_negociacion():
+    # Las reglas de la serie de 15 minutos promedian los 60 s previos al cierre
+    # de negociacion. El vencimiento esperado llega despues, cuando el exchange
+    # publica, y usarlo anadiria difusion que el objetivo no tiene.
+    f = ficha()
+    assert f.fin_ventana_liquidacion == f.fin_negociacion
+    en_apertura = f.apertura
+    assert f.tiempo_restante_s(en_apertura) == 900.0
+
+
+def test_el_vencimiento_se_mide_aparte_para_el_capital():
+    f = ficha()
+    # La ficha de prueba tiene vencimiento esperado igual al cierre; lo que
+    # importa es que son dos cuentas distintas y no se confunden.
+    assert f.tiempo_hasta_vencimiento_s(f.apertura) >= f.tiempo_restante_s(f.apertura)
+
+
+def test_un_vencimiento_posterior_no_alarga_el_horizonte():
+    import datetime as dt_
+    from dataclasses import replace
+
+    f = ficha()
+    mas_tarde = replace(
+        f,
+        vencimiento_esperado=f.fin_negociacion + dt_.timedelta(minutes=5),
+        vencimiento_limite=f.vencimiento_limite,
+    )
+    assert mas_tarde.tiempo_restante_s(f.apertura) == 900.0
+    assert mas_tarde.tiempo_hasta_vencimiento_s(f.apertura) == 1200.0

@@ -42,8 +42,18 @@ La zona IANA importa: las reglas se publican en hora de Nueva York («12:15 AM E
 en invierno. Verificado en código: `21:00Z` = 17:00 EDT en octubre y 16:00 EST en enero. Codificar
 `-04:00` produciría un error de una hora medio año.
 
-**El horizonte es el tiempo restante hasta el vencimiento concreto**, no una constante de 15
-minutos: a 60 s de la apertura quedan ~840 s, no 900.
+**El horizonte termina en `close_time`, no en el vencimiento.** La ventana de 60 s que determina
+`V_T` cierra al **cerrar la negociación**; `expected_expiration_time` llega unos cinco minutos
+después, cuando el exchange publica y liquida. Usar el vencimiento como horizonte añadiría cinco
+minutos de difusión que el objetivo no tiene: en un contrato de 15 minutos, **un tercio del horizonte
+real**. Por eso la ficha expone dos cuentas separadas:
+
+| Método | Mide | Para qué |
+| --- | --- | --- |
+| `tiempo_restante_s` | hasta `close_time` (= `fin_ventana_liquidacion`) | el modelo de precio |
+| `tiempo_hasta_vencimiento_s` | hasta `expected_expiration_time` | el capital inmovilizado |
+
+Y no es una constante de 15 minutos: a 60 s de la apertura quedan ~840 s, no 900.
 
 ## 3. Regla de liquidación
 
@@ -55,7 +65,7 @@ minutos: a 60 s de la apertura quedan ~840 s, no 900.
 | --- | --- | --- |
 | Índice | CF Benchmarks **BRTI** | no es el spot de ningún exchange |
 | Agencia fuente | CF Benchmarks | |
-| Ventana de promedio | **60 segundos** | `V_T` es un promedio, no el precio terminal |
+| Ventana de promedio | **60 segundos**, cerrando en `close_time` | `V_T` es un promedio, no el precio terminal |
 | Operador | `greater_or_equal` (`strike_type`) | **el empate liquida YES** |
 | Umbral | `floor_strike` | **es el promedio de 60 s de la apertura** |
 | Revisiones posteriores | no cuentan | vale el valor observado |
@@ -68,6 +78,14 @@ El momento de decisión debe confirmar que ya se conoce (`MomentoDecision.admisi
 exactamente el `floor_strike` del siguiente: `KXBTC15M-26OCT150000-00` liquidó en `80833.68`, que
 es el `floor_strike` de `KXBTC15M-26OCT150015-15`. Confirma que el contrato compara dos promedios
 consecutivos y que ambos son observaciones reales del BRTI.
+
+Comprobado **a escala** el 2026-10-21: sobre 1600 mercados liquidados (17 días), la cadena se cumple
+en **1597 de 1597** casos comprobables, con **0 conflictos**. De ahí sale
+`scripts/reconstruir_indice.py`, que reconstruye la serie real del índice de liquidación.
+
+**Identidad del índice verificada contra una fuente independiente.** El conector de Robinhood expone
+`BRTI` en vivo; dos lecturas (`84282.07` a las 23:29:14 y `84249.12` a las 23:30:11) encierran el
+`expiration_value = 84259.75` del mercado que cerró a las 23:30:00. Es el mismo índice.
 
 **Operadores, literal de los términos:** «"Above X" means strictly greater than X, while "below X"
 means strictly less than X. "Exactly X" means equal to X […] and "at least X" means X or greater.

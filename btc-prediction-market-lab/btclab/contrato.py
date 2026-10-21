@@ -241,11 +241,35 @@ class FichaContrato:
         """Segundos entre apertura y fin de negociacion."""
         return (self.fin_negociacion - self.apertura).total_seconds()
 
-    def tiempo_restante_s(self, momento: dt.datetime) -> float:
-        """Segundos hasta el instante que determina la liquidacion.
+    @property
+    def fin_ventana_liquidacion(self) -> dt.datetime:
+        """Instante en que cierra la ventana que determina ``V_T``.
 
-        El horizonte es el tiempo que falta para el vencimiento concreto, no una
-        constante de 15 minutos ni de 24 horas.
+        **No es el vencimiento.** Para la serie de 15 minutos, las reglas fijan
+        el promedio de los 60 s previos al **cierre de negociacion**, mientras
+        ``expected_expiration_time`` llega unos cinco minutos despues (es cuando
+        el exchange publica y liquida). Usar el vencimiento como horizonte
+        anadiria difusion que el objetivo no tiene: en un contrato de 15 minutos
+        son cinco minutos de mas, un tercio del horizonte real.
+
+        Se verifico contra el texto oficial: para ``KXBTC15M`` el promedio de
+        cierre es el de los 60 s anteriores a ``close_time``.
+        """
+        return self.fin_negociacion
+
+    def tiempo_restante_s(self, momento: dt.datetime) -> float:
+        """Segundos hasta que cierra la ventana que determina la liquidacion.
+
+        El horizonte es el tiempo que falta para ese instante concreto, no una
+        constante de 15 minutos ni de 24 horas, y no el vencimiento.
+        """
+        return (self.fin_ventana_liquidacion - exigir_utc(momento)).total_seconds()
+
+    def tiempo_hasta_vencimiento_s(self, momento: dt.datetime) -> float:
+        """Segundos hasta el vencimiento esperado.
+
+        Es lo relevante para el capital inmovilizado, no para el modelo de
+        precio: los fondos no se liberan en el cierre de negociacion.
         """
         return (self.vencimiento_esperado - exigir_utc(momento)).total_seconds()
 

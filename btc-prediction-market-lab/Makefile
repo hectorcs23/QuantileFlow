@@ -1,8 +1,9 @@
-.PHONY: ayuda pruebas capacidades capturar cobertura demo limpiar
+.PHONY: ayuda pruebas capacidades indice capturar cobertura demo limpiar
 
 ayuda:
 	@echo "pruebas      - ejecuta la bateria de pruebas"
 	@echo "capacidades  - reaudita las capacidades en vivo y reescribe el reporte"
+	@echo "indice       - reconstruye la serie del indice de liquidacion (BRTI)"
 	@echo "capturar     - captura prospectiva (CAPTURA_S segundos, por omision 600)"
 	@echo "cobertura    - reporte de cobertura del almacen"
 	@echo "demo         - cadena completa sobre un mercado en vivo, sin ordenes"
@@ -13,6 +14,10 @@ pruebas:
 
 capacidades:
 	python3 scripts/auditar_capacidades.py --salida reportes/capacidades.json
+
+PAGINAS ?= 8
+indice:
+	python3 scripts/reconstruir_indice.py --paginas $(PAGINAS) --salida datos/indice/brti.jsonl
 
 CAPTURA_S ?= 600
 capturar:

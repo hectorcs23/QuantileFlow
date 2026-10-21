@@ -13,16 +13,22 @@ obtener una ventaja sobre el precio ejecutable, después de costes y retrasos.»
 
 ---
 
-## Lo primero: dos supuestos del diseño que había que corregir
+## Lo primero: tres supuestos del diseño que había que corregir
 
-La auditoría de capacidades (Paso 1) cambió el plan original en dos puntos:
+La auditoría de capacidades (Paso 1) cambió el plan original:
 
-1. **No existe conector de Robinhood.** Verificado en los conectores instalados y en el registro
-   completo. Por tanto **ninguna afirmación sobre coste o ejecución en Robinhood tiene evidencia
-   propia** en este proyecto.
-2. **Sí existe API público de Kalshi, sin autenticación**, con el **libro completo de profundidad**,
+1. **Sí existe API público de Kalshi, sin autenticación**, con el **libro completo de profundidad**,
    reglas, umbral, resultado oficial y valor de liquidación. Eso convierte el proyecto en viable
    mucho más allá de un diagnóstico.
+2. **El conector de Robinhood no cubre contratos de eventos.** Está conectado (83 herramientas), pero
+   ninguna es de mercados de predicción; su propia documentación anuncia «events» como pendiente. Así
+   que **ninguna afirmación sobre coste o ejecución de contratos de eventos allí tiene evidencia
+   propia.** La advertencia de §14 se cumple al pie de la letra.
+3. **Pero ese conector sí expone `BRTI`**, el índice de CF Benchmarks que liquida el contrato, en
+   vivo y con precisión completa. Era el mayor hueco de datos del proyecto. Verificado: dos lecturas
+   encierran el `expiration_value` con el que el exchange liquidó. **Salvedad: las herramientas MCP
+   no son invocables desde el capturador**, así que sirve para verificar, no para capturar en
+   continuo.
 
 Detalle y evidencia reproducible en [`capabilities.md`](capabilities.md).
 
@@ -34,7 +40,10 @@ Detalle y evidencia reproducible en [`capabilities.md`](capabilities.md).
 | **`updated_time` no sigue al precio** | desfase de **179–411 s** (mediana 295 s) mientras los precios cambiaban | para cotizaciones, el único instante fiable es `received_at` |
 | **Dos lecturas HTTP no son simultáneas** | **83 %** de 30 pares discreparon con solo **0.12–0.14 s** entre llamadas; la estructura interna cuadró **30/30** | los precios se toman del libro, y toda señal caduca (3 s por omisión) |
 | **No hay profundidad histórica** | `candlesticks` da OHLC de 1 min de `yes_bid`/`yes_ask`, sin niveles | **no se puede afirmar ventaja ejecutable** con el histórico; la profundidad se captura prospectivamente |
-| **El índice que liquida no es accesible** | Coinbase `80795.14` vs índice real `80833.68` → **~39 USD (0.05 %)** | en un contrato de 15 min cuyo umbral es el nivel de apertura, no es despreciable |
+| **La cadena se cumple a escala** | **1597/1597** pares, **0 conflictos** sobre 17 días | de ahí sale la serie real del índice: **1603 puntos** |
+| **La volatilidad estaba subestimada 2.83×** | σ real del objetivo **0.170 % a 15 min**; la ventana corta de spot daba 1/2.83 de eso | era la causa de una «ventaja» de `+0.0157` que no existía |
+| **El horizonte estaba inflado** | se usaba `expected_expiration_time`, 5 min después del cierre | en un contrato de 15 min, **un tercio** de difusión de más |
+| **La base spot−índice no es estable** | +39 USD (10-15), +18.81 USD (10-21); Robinhood `mark` +33.06 | el libro de cripto de Robinhood mide ~1590 USD de ancho: peor proxy que Coinbase |
 | **La comisión es cuadrática** | `fee_type=quadratic`, `fee_multiplier=1` | una tarifa plana subestima el coste donde más se opera (cerca de `$0.50`) |
 | **El mercado es casi una moneda** | 200 liquidados: **100 yes / 100 no** | la referencia honesta es `0.5`, no una intuición direccional |
 
@@ -44,32 +53,44 @@ Sin instalar nada, el capturador y la auditoría funcionan con biblioteca están
 
 ```bash
 make capacidades                  # reaudita capacidades en vivo -> reportes/capacidades.json
+make indice                       # reconstruye la serie del BRTI -> datos/indice/brti.jsonl
 make capturar CAPTURA_S=600       # captura prospectiva -> datos/captura/
 make cobertura                    # reporte de cobertura -> reportes/cobertura.json
 make demo                         # cadena completa sobre un mercado vivo, sin órdenes
-make pruebas                      # 191 pruebas
+make pruebas                      # 218 pruebas
 ```
+
+Empieza por `make indice`: reconstruye la serie real del índice de liquidación desde los mercados ya
+liquidados, y es lo que da al modelo la volatilidad correcta del objetivo. 17 días salen en una
+llamada de medio minuto.
 
 Los modelos y la evaluación necesitan `numpy` y `pandas` (ver `requirements.txt`). No hay secretos ni
 credenciales: el cliente **no acepta** credenciales por diseño.
 
 ### Qué muestra la demostración
 
-La cadena completa Paso 1 → Paso 12 sobre un mercado vivo. En la última ejecución el sistema
-**rechazó** una ventaja aparente de `+0.0157` con cuatro motivos explícitos, entre ellos:
+La cadena completa Paso 1 → Paso 12 sobre un mercado vivo. Su historia es la mejor descripción de
+para qué sirve el proyecto:
+
+**Primera ejecución.** El modelo dio `p_yes = 0.9765` contra `0.9455` del mercado — una ventaja de
+`+0.0157`. El sistema la **rechazó** por extrapolación fuera de dominio: estimaba la volatilidad con
+15 segundos de spot para un horizonte de 663.
+
+**Tras reconstruir la serie del índice** se pudo medir el error: la volatilidad real del objetivo es
+`0.170 %` a 15 minutos y la ventana corta la subestimaba **2.83 veces**. Con la volatilidad correcta,
+el horizonte corregido y la difusión del ancla antigua contabilizada, el modelo pasó a
+`p_yes ≈ 0.50` en el dinero y la ventaja se volvió **negativa**:
 
 ```
+Probabilidad central: p_yes=0.5006 p_no=0.4994
+Lado yes: compra=0.620 venta=0.630
+edge(n)=-0.1464
+horizonte: 370s hasta el cierre de la ventana + 530s de difusion no observada = 900s efectivos
 DECISION: NO OPERAR
-Motivos:
-  - cotizacion caducada: 15.1s > 3.0s
-  - horizonte 663s excede 3x la ventana observada (15s): extrapolacion fuera del dominio validado
-  - solo 10 observaciones de subyacente (< 30)
-  - modelo de comisiones no verificado
 ```
 
-Esa ventaja era artefacto de estimar la volatilidad con 15 segundos de datos para un horizonte de
-663. **Que el sistema la rechace en lugar de operarla es la propiedad de diseño más importante del
-proyecto.**
+**La ventaja era enteramente un artefacto de medición.** Que el sistema la rechazara antes de poder
+demostrarlo es la propiedad de diseño más importante del proyecto.
 
 ## Estructura
 
@@ -86,6 +107,7 @@ btclab/
   almacen.py            JSONL por añadido, manifiesto y huella de entorno
   captura.py            capturador prospectivo con diagnóstico
   cobertura.py          auditoría de cobertura, huecos, latencias y base spot-índice
+  indice.py             reconstruye la serie del BRTI desde los mercados liquidados
   union.py              uniones as-of hacia atrás; velas cerradas; huecos
   objetivo.py           Y, V_T, cadena de promedios, momento de decisión
   variables.py          variables, escalador solo-entrenamiento, dominio de validez
@@ -99,10 +121,11 @@ btclab/
   evaluacion.py         separación cronológica, purga, walk-forward, cota por bloques
   probabilidad.py       p_yes/p_no, banda, p_robust, predicción no usable
   decision.py           pantalla y registro con valid_until
-scripts/                auditar_capacidades, capturar, auditar_cobertura, demo_decision, extraer_repo
+scripts/                auditar_capacidades, reconstruir_indice, capturar, auditar_cobertura,
+                        demo_decision, extraer_repo
 configs/                captura.toml, riesgo.toml (sin secretos, todo etiquetado)
 docs/                   metodologia, ficha_contrato, protocolo, diccionario_datos, limitaciones
-tests/                  191 pruebas
+tests/                  218 pruebas
 ```
 
 ## Estado por fase
@@ -111,8 +134,8 @@ tests/                  191 pruebas
 | --- | --- | --- |
 | A | Capacidades, ficha de contrato y protocolo fechado | **completa** |
 | B | Capturador, esquema y auditoría de cobertura | **completa**; falta acumular datos |
-| C | Dataset temporal y referencias simples | mecanismos listos; **pendiente de cobertura** |
-| D | Predicción, calibración y bandas | implementadas; **sin ajustar sobre datos reales** |
+| C | Dataset temporal y referencias simples | **serie del índice y 1600 etiquetas ya disponibles**; falta el libro |
+| D | Predicción, calibración y bandas | implementadas; **sin calibrar**, y la banda necesita otro método (ver abajo) |
 | E | Costes, sizing y replay | **completa y probada** |
 | F | Informe con prueba final reservada | **no iniciada**; el tramo final no se ha abierto |
 | G | Dashboard y paper trading congelado | no iniciada |
@@ -140,6 +163,11 @@ Cada uno tiene una prueba que falla si se reintroduce:
 - **Las etiquetas se purgan** si invaden el tramo siguiente.
 - **1000 observaciones en 10 días correlacionados = 10 efectivas**, y se reporta así.
 - **Sin presupuesto configurado, sin banda defendible o sin comisiones verificadas → tamaño cero.**
+- **El horizonte acaba en `close_time`**, no en el vencimiento; el capital inmovilizado se mide aparte.
+- **Un ancla antigua suma su difusión no observada** al horizonte, en lugar de tratarse como actual.
+- **En el dinero, `p` es insensible a σ**, así que una banda por remuestreo de σ sale degenerada y se
+  rechaza. Fijado en una prueba: la banda defendible tendrá que venir del error de calibración fuera
+  de muestra, no de remuestrear un parámetro al que el objetivo es insensible.
 
 ## Repositorio independiente
 
@@ -157,12 +185,17 @@ gh repo create btc-prediction-market-lab --private --source=~/btc-prediction-mar
 
 ## Siguiente paso que más desbloquea
 
-1. **Dejar el capturador corriendo.** Es lo único que levanta el bloqueo de profundidad histórica, y
-   los mínimos están declarados en `configs/captura.toml` (2000 observaciones por flujo, 200
-   contratos con resultado ≈ 2 días de captura continua).
-2. **Adjuntar el calendario de comisiones vigente.** Es el único bloqueo documental que queda y, por
-   sí solo, cambia el estado de `COSTS_UNVERIFIED` y habilita los importes simulados.
-3. **Medir la latencia del flujo manual real.** Mientras no exista, toda conclusión que dependa del
+1. **Calibrar sobre la serie del índice.** Ya hay 1600 contratos con etiqueta y 17 días de la serie
+   real. Eso permite la Fase D de la parte de predicción **hoy**, sin esperar nada: separación
+   cronológica, calibrador sigmoide y bandas por cobertura empírica. Es el trabajo que más avanza y
+   no necesita a nadie.
+2. **Adjuntar el calendario de comisiones vigente.** Único bloqueo documental; por sí solo cambia
+   `COSTS_UNVERIFIED` y habilita los importes simulados.
+3. **Dejar el capturador corriendo** en una máquina que no se recicle. Es lo único que levanta el
+   bloqueo de profundidad, y los mínimos están en `configs/captura.toml`.
+4. **Una clave de CF Benchmarks**, si se quiere el BRTI en continuo. El conector lo da en sesión pero
+   no al capturador.
+5. **Medir la latencia del flujo manual real.** Mientras no exista, toda conclusión que dependa del
    retraso es provisional.
 
 ## Advertencia
