@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; avances experimentales al 10 de octubre de 2026.**
+**Versión de investigación; simulador condicional actualizado al 21 de octubre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -9,6 +9,17 @@ y manifiesto) y la captura diaria de cadenas de opciones en Alpaca. Los datos de
 Git. Hay revisiones operativas y experimentos descriptivos de capturas reales, pero aún no hay un
 predictor validado. Las figuras de la propuesta, la plantilla del informe y los benchmarks PDE
 usan datos **sintéticos**.
+
+## Simulador condicional: presupuesto, plazo y contratos
+
+Ejecuta `python scripts/simulador_opciones.py` y abre <http://127.0.0.1:8791>.
+Compara posiciones completas con contratos enteros, costos, caja y sensibilidad
+a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.
+**Esta versión usa calls europeos sintéticos; no estima probabilidades de ganar.**
+
+[Guía de uso](apps/simulador/README.md) ·
+[Resultados y siguiente paso](docs/SIMULADOR_CONDICIONAL_2026-10-21.md) ·
+[Diagnóstico de factibilidad de las superficies](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
 
 ## Documentos
 

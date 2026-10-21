@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuantileFlow · Simulador condicional</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+<main>
+  <header><p class="brand">QUANTILEFLOW / LABORATORIO</p>
+    <h1>Tu escenario. La posición completa.</h1>
+    <p class="lead">Compara strikes, vencimientos y cantidades con el mismo presupuesto.</p>
+    <p class="notice"><strong>Ejemplo sintético · calls europeos.</strong> Los precios son inventados con un modelo. No son cotizaciones ni un pronóstico.</p>
+  </header>
+  <div class="layout">
+    <aside>
+      <form id="inputs">
+        <h2>¿Qué quieres explorar?</h2>
+        <label>Presupuesto, USD<input name="presupuesto" type="number" min="1" max="100000" step="1" value="300" required></label>
+        <div class="pair">
+          <label>Movimiento, %<input name="movimiento_pct" type="number" min="-50" max="100" step=".5" value="3" required></label>
+          <label>En cuántos días<input name="dias" type="number" min="0" max="90" step="1" value="7" required></label>
+        </div>
+        <label>Cambio de IV, puntos porcentuales<input name="cambio_iv_pp" type="number" min="-100" max="100" step="1" value="0" required></label>
+        <p class="hint">−5 puntos lleva la IV de 25% a 20%. Los días son naturales, desde la compra.</p>
+        <label>Máximo capital en riesgo, % del presupuesto<input name="riesgo_pct" type="number" min="0" max="100" step="5" value="100" required></label>
+        <label>Límite de contratos por posición<input name="max_contratos" type="number" min="0" max="10000" step="1" value="0" required></label>
+        <p class="hint">0 = sin límite adicional. Se reserva el costo de cerrar.</p>
+        <details>
+          <summary>Modelo y costos</summary>
+          <label>Precio inicial del subyacente, USD<input name="spot" type="number" min="1" max="10000" step="1" value="100" required></label>
+          <label>IV inicial, % anual<input name="iv_pct" type="number" min="1" max="150" step="1" value="25" required></label>
+          <label>Comisión / contrato / lado, USD<input name="comision" type="number" min="0" max="25" step=".05" value=".65" required></label>
+          <label>Semispread / unidad / lado, USD<input name="semispread" type="number" min="0" max="10" step=".01" value=".04" required></label>
+          <label>Tasa anual, %<input name="tasa_pct" type="number" min="-5" max="25" step=".1" value="4" required></label>
+          <label>Dividendo continuo anual, %<input name="dividendo_pct" type="number" min="0" max="25" step=".1" value="1.3" required></label>
+        </details>
+        <button class="primary" type="submit">Comparar escenario</button>
+      </form>
+      <p class="hint">Cada alternativa compra una sola serie, en la cantidad entera máxima permitida. No combina strikes.</p>
+    </aside>
+    <div class="content">
+      <p id="status" role="status" aria-live="polite">Preparando el ejemplo…</p>
+      <p id="error" role="alert" hidden></p>
+      <div id="results" hidden>
+        <section aria-labelledby="winner-title">
+          <h2 id="winner-title">Resultado bajo tu hipótesis</h2>
+          <div id="winner"></div>
+          <p class="hint">“Mejor” significa mayor ganancia neta total en este escenario. Conservar el efectivo también compite, con rendimiento supuesto de 0%.</p>
+        </section>
+        <section>
+          <h2>Mismo presupuesto, distintas posiciones</h2>
+          <p class="hint">Elige una fila para explorarla. Ganancia/pérdida = toda la posición, después de comisiones y spread. DTE = días hasta vencer al comprar.</p>
+          <div class="table-scroll">
+            <table id="ranking"><thead><tr><th>Call · strike / DTE</th><th>Cantidad</th><th>Prima por contrato</th><th>Capital reservado</th><th>Efectivo libre</th><th>Ganancia / pérdida</th></tr></thead><tbody></tbody></table>
+          </div>
+          <details id="exclusions"><summary>Contratos excluidos</summary><ul></ul></details>
+        </section>
+        <section id="detail" hidden>
+          <h2 id="selected-title">Posición seleccionada</h2>
+          <div id="position-metrics" class="metrics"></div>
+          <h3>Si tu hipótesis cambia</h3>
+          <svg id="controls-chart" role="img" aria-label="Ganancia o pérdida de la posición en cinco escenarios"></svg>
+          <div id="controls-text" class="sr-only"></div>
+          <p class="hint">Estos controles no son todos los resultados posibles. “Ya venció” necesita el precio en la fecha de vencimiento; no lo inventamos.</p>
+          <h3>Superficie de ganancia y pérdida</h3>
+          <p id="surface-caption" class="hint"></p>
+          <div class="table-scroll"><table id="surface"><caption>Filas: días hasta vender. Columnas: movimiento acumulado del subyacente. Cada celda muestra USD netos.</caption><thead></thead><tbody></tbody></table></div>
+          <p class="hint">Azul + ganancia · naranja − pérdida · — fuera de plazo. La compra y la cantidad permanecen fijas en toda la superficie.</p>
+          <h3>La volatilidad también cambia el resultado</h3>
+          <svg id="iv-chart" role="img" aria-label="Ganancia o pérdida según el cambio de volatilidad implícita"></svg>
+          <div id="iv-text" class="sr-only"></div>
+          <p class="hint">Eje horizontal: puntos de IV desde la compra. Se conservan el movimiento y el plazo elegidos. Las IV no positivas se omiten.</p>
+          <details><summary>Sensibilidad local de toda la posición</summary><div id="greeks"></div><p class="hint">Sensibilidades en el instante de compra. Describen cambios pequeños y aislados; los gráficos recalculan el precio completo.</p></details>
+        </section>
+        <section>
+          <h2>¿Cambia el ganador si te equivocas un poco?</h2>
+          <p class="hint">Repetimos la comparación con ±1 punto porcentual de movimiento y ±2 días. Cada celda elige su propia posición, incluyendo efectivo. Esto no es una probabilidad de acierto.</p>
+          <div class="table-scroll"><table id="neighbors"><thead></thead><tbody></tbody></table></div>
+        </section>
+        <section>
+          <h2>Cómo leerlo</h2>
+          <p>Construimos 12 calls de ejemplo: cuatro strikes relativos al precio inicial y vencimientos de 14, 30 y 60 días. Usamos Black–Scholes con IV plana para generar la entrada y recalcular cada salida. Excluimos primas menores a US$0.01 por unidad, un piso de esta demo.</p>
+          <p>Esta superficie es de <strong>ganancia y pérdida</strong>, no una PDF ni una superficie de volatilidad extraída del mercado. Todavía no determina qué ocurrirá ni con qué confianza. Para contratos reales necesitamos precios ejecutables y un modelo adecuado al ejercicio y los dividendos.</p>
+          <p class="hint">Cada contrato representa 100 unidades. Al vencimiento se usa valor intrínseco y una comisión conservadora; no se simula entrega física ni financiación. El efectivo no genera intereses. La pérdida máxima indicada incluye los costos asumidos.</p>
+          <button id="export" type="button">Descargar este escenario (.json)</button>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
