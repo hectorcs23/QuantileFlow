@@ -12,6 +12,7 @@ import pandas as pd
 import pytest
 
 from quantileflow import cadenas as ca
+from quantileflow import piloto as pl
 from quantileflow import contrato as ct
 from quantileflow.sources import robinhood as rh
 
@@ -47,7 +48,8 @@ def _dentro_de_sesion(cot, sub, corte="2026-10-21T13:44:30Z"):
 
 def test_mapea_contratos_reales(tablas):
     cot, _ = tablas
-    assert len(cot) == 10
+    assert len(cot) == 20                                     # dos vencimientos x 5 strikes x 2 tipos
+    assert sorted({str(v) for v in cot["vencimiento"]}) == ["2026-11-19", "2026-11-20"]
     assert set(cot["raiz"]) == {"SPXW"}
     assert set(cot["tipo"]) == {"C", "P"}
     assert set(cot["ejercicio"]) == {"europeo"}      # underlying_type == index
@@ -114,7 +116,8 @@ def test_captura_posterior_al_cierre_no_sirve_en_sesion(tablas):
 
 def test_camino_completo_hasta_captura(tablas):
     cot, sub = _dentro_de_sesion(*tablas)
-    assert ct.vencimientos(cot, "SPXW", SESION, "09:45") == [pd.Timestamp("2026-11-20").date()]
+    assert ct.vencimientos(cot, "SPXW", SESION, "09:45") == [
+        pd.Timestamp("2026-11-19").date(), pd.Timestamp("2026-11-20").date()]
     cap, info = ct.captura_desde_tabla(cot, sub, "SPXW", "2026-11-20", SESION, hora="09:45",
                                        tasa=0.04, rendimiento_dividendo=0.013)
     assert info["liquidacion"] == "PM" and info["filas"] == 10
@@ -141,5 +144,86 @@ def test_resumen_no_expone_identificadores_de_cuenta(captura):
     for uuid in [i["id"] for i in captura["instruments"]] + [c["id"] for c in captura["chains"]]:
         assert uuid not in texto
     assert not any(k in texto.lower() for k in ("account", "cuenta", "token", "bearer"))
-    assert resumen["roots"] == ["SPXW"] and resumen["contracts"] == 10
+    assert resumen["roots"] == ["SPXW"] and resumen["contracts"] == 20
     assert "absent" in resumen["event_timestamp"]
+
+
+# --- Qué vencimientos pedir -------------------------------------------------
+#
+# Los vencimientos reales que devolvió la cadena SPXW el 2026-10-21.
+VENCIMIENTOS_SPXW = [
+    "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26", "2026-10-27", "2026-10-28",
+    "2026-10-29", "2026-10-30", "2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05",
+    "2026-11-06", "2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13",
+    "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20", "2026-11-23",
+    "2026-11-24", "2026-11-25", "2026-11-27", "2026-11-30", "2026-12-03", "2026-12-04",
+    "2026-12-11", "2026-12-18", "2026-12-31",
+]
+
+
+@pytest.fixture(scope="module")
+def cfg():
+    return pl.cargar_config(Path(__file__).resolve().parents[1] / "configs" / "pilot.toml")
+
+
+def test_plazos_hasta_la_liquidacion():
+    dias = rh.maturity_days(VENCIMIENTOS_SPXW, "PM", SESION, "09:45")
+    assert dias[pd.Timestamp("2026-11-20").date()] == pytest.approx(30.3, abs=0.05)
+    # El vencimiento del día ya liquidó respecto de un corte de las 09:45? No: liquida al cierre.
+    assert pd.Timestamp("2026-10-21").date() in dias
+    # AM liquida en la apertura, antes que PM: menos plazo para el mismo vencimiento.
+    am = rh.maturity_days(["2026-11-20"], "AM", SESION, "09:45")
+    assert am[pd.Timestamp("2026-11-20").date()] < dias[pd.Timestamp("2026-11-20").date()]
+
+
+def test_descarta_vencimientos_que_no_son_sesion():
+    # 2026-11-21 y 22 caen en fin de semana; 2026-11-26 es Acción de Gracias.
+    dias = rh.maturity_days(["2026-11-20", "2026-11-21", "2026-11-22", "2026-11-26"], "PM",
+                            SESION, "09:45")
+    assert sorted(str(f) for f in dias) == ["2026-11-20"]
+
+
+def test_pide_los_dos_vencimientos_que_encierran_el_objetivo(cfg, captura):
+    """Con un solo vencimiento la sesión queda sin medir: hay que capturar el par."""
+    cadena = next(c for c in captura["chains"] if c["symbol"] == "SPXW")
+    elegidos, motivo = rh.bracketing_expirations(cadena, VENCIMIENTOS_SPXW, SESION, cfg)
+    assert motivo == ""
+    assert [str(f) for f in elegidos] == ["2026-11-19", "2026-11-20"]
+
+    solo_uno, motivo_uno = rh.bracketing_expirations(cadena, ["2026-11-20"], SESION, cfg)
+    assert solo_uno == [] and "both sides" in motivo_uno
+
+
+def test_sin_vencimientos_utiles_da_motivo(cfg, captura):
+    cadena = next(c for c in captura["chains"] if c["symbol"] == "SPXW")
+    vacio, motivo = rh.bracketing_expirations(cadena, [], SESION, cfg)
+    assert vacio == [] and "no expirations" in motivo
+
+
+def test_el_par_de_vencimientos_da_una_sesion_medida(tablas, cfg):
+    """Con los dos vencimientos el piloto mide RR25 a plazo constante; con uno, no.
+
+    Es la razón por la que la captura pide el par: la medición interpola en
+    varianza total entre los dos lados del objetivo.
+    """
+    cot, sub = _dentro_de_sesion(*tablas)
+    resultado = pl.ejecutar(cot, sub, [pd.Timestamp(SESION).date()], cfg)
+    fila = resultado.principal.iloc[0]
+    assert fila["estado_sesion"] == "procesada"
+    assert str(fila["vencimiento_1"]) == "2026-11-19" and str(fila["vencimiento_2"]) == "2026-11-20"
+    assert fila["dias_1"] < cfg.objetivo_dias < fila["dias_2"]     # encierran los 30 días
+    assert fila["rr25_estado"] == "identificada", fila["rr25_motivo"]
+    assert fila["rr25_inferior"] < fila["rr25"] < fila["rr25_superior"]
+    assert -0.10 < fila["rr25"] < 0.0        # skew de índice: el put de 25 delta paga más
+    assert fila["filas_validas"] == 20
+    # La edad es desconocida en todas las filas, y el informe lo dice como alerta.
+    assert any("quote age unknown" in a for a in fila["alertas"].split(" | "))
+
+
+def test_un_solo_vencimiento_deja_la_sesion_sin_medir(tablas, cfg):
+    cot, sub = _dentro_de_sesion(*tablas)
+    uno = cot[cot["vencimiento"].map(str) == "2026-11-20"]
+    resultado = pl.ejecutar(uno, sub, [pd.Timestamp(SESION).date()], cfg)
+    fila = resultado.principal.iloc[0]
+    assert fila["estado_sesion"] != "procesada"
+    assert "both sides" in fila["motivo_sesion"]
