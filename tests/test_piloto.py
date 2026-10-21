@@ -11,7 +11,7 @@ from quantileflow import sintetico as sn
 from quantileflow.corrida import correr
 
 RAIZ = Path(__file__).resolve().parents[1]
-CONFIG = RAIZ / "configs" / "piloto.toml"
+CONFIG = RAIZ / "configs" / "pilot.toml"
 FECHAS = cal.sesiones("2025-11-19", "2025-11-28")  # incluye Acción de Gracias y un cierre anticipado
 ESCENARIOS = {FECHAS[2]: ["hueco_calls"]}
 
@@ -60,7 +60,7 @@ def test_plazo_constante_bandas_y_casos_invalidos():
     assert decreciente["estado"] == "no identificada" and "call" in decreciente["motivo"]
     ausente = pl.plazo_constante([_medida(0.15, 0.21), {"estado": "no identificada", "motivo": "hueco"}],
                                  [T1, T2], T)
-    assert ausente["estado"] == "no identificada" and "32.0 días: hueco" in ausente["motivo"]
+    assert ausente["estado"] == "no identificada" and "32.0 days: hueco" in ausente["motivo"]
 
 
 def test_eleccion_de_vencimientos(cfg):
@@ -68,7 +68,7 @@ def test_eleccion_de_vencimientos(cfg):
     assert pl.elegir_vencimientos({"a": 30.0, "b": 37.0}, cfg) == (["a"], "")
     assert pl.elegir_vencimientos({"a": 40.0, "b": 47.0}, cfg)[0] == []
     lejos = pl.elegir_vencimientos({"a": 20.0, "b": 41.0}, cfg)
-    assert lejos[0] == [] and "separación" in lejos[1]
+    assert lejos[0] == [] and "gap wider than" in lejos[1]
     assert pl.elegir_vencimientos({"a": 5.0, "b": 33.0}, cfg)[0] == []  # menos del mínimo de días
 
 
@@ -100,7 +100,7 @@ def test_hueco_cambios_y_calendario(resultado):
     hueco = p.loc[FECHAS[2]]
     assert hueco["rr25_estado"] == "no identificada" and "calls" in hueco["rr25_motivo"]
     siguiente = p.loc[FECHAS[3]]
-    assert np.isnan(siguiente["cambio_rr25"]) and "no identificada" in siguiente["cambio_rr25_motivo"]
+    assert np.isnan(siguiente["cambio_rr25"]) and "not identified" in siguiente["cambio_rr25_motivo"]
     viernes = p.loc[FECHAS[-1]]  # 2025-11-28, tras el feriado del jueves
     miercoles = p.loc[FECHAS[-2]]
     assert viernes["dias_naturales_desde_anterior"] == 2
@@ -127,8 +127,8 @@ def test_estabilidad_y_dictamen(resultado):
     assert (p.loc[ok, "dif_rr25_secundaria"].abs() < ancho).all()
     d = resultado.dictamen
     assert len(d["criterios"]) == 6
-    assert d["veredicto"] == "insuficiente"  # pocas sesiones: criterio crítico
-    assert [c for c in d["criterios"] if c["critico"]][0]["criterio"] == "Sesiones en la muestra"
+    assert d["veredicto"] == "insufficient"  # pocas sesiones: criterio crítico
+    assert [c for c in d["criterios"] if c["critico"]][0]["criterio"] == "Sessions in the sample"
 
 
 # --- Corrida reproducible ----------------------------------------------------------
@@ -148,10 +148,10 @@ def test_replay_y_datos_posteriores_al_corte(tmp_path, mercado):
     rutas = _escribir((cot, sub), tmp_path / "a")
     _, m1 = correr(CONFIG, *rutas, fechas[0], fechas[-1], tmp_path / "salida1", "prueba")
     _, m2 = correr(CONFIG, *rutas, fechas[0], fechas[-1], tmp_path / "salida2", "prueba")
-    for archivo in ("tabla_diaria.csv", "tabla_todas_las_horas.csv", "etiquetas.csv"):
-        assert m1["salidas"][archivo] == m2["salidas"][archivo]
+    for archivo in ("daily_table.csv", "all_cutoffs_table.csv", "labels.csv"):
+        assert m1["outputs"][archivo] == m2["outputs"][archivo]
         assert (tmp_path / "salida1" / archivo).read_bytes() == (tmp_path / "salida2" / archivo).read_bytes()
-    assert m1["entradas"]["cotizaciones"]["sha256"] == m2["entradas"]["cotizaciones"]["sha256"]
+    assert m1["inputs"]["quotes"]["sha256"] == m2["inputs"]["quotes"]["sha256"]
     # Snapshots posteriores a los dos cortes, con precios absurdos: no cambian nada.
     tarde = cot.copy()
     tarde["sello_snapshot_utc"] = tarde["sello_snapshot_utc"] + pd.Timedelta(minutes=45)
@@ -161,5 +161,5 @@ def test_replay_y_datos_posteriores_al_corte(tmp_path, mercado):
     tarde["ask"] = tarde["ask"] * 3.0 + 1.0
     rutas_tarde = _escribir((pd.concat([cot, tarde], ignore_index=True), sub), tmp_path / "b")
     _, m3 = correr(CONFIG, *rutas_tarde, fechas[0], fechas[-1], tmp_path / "salida3", "prueba")
-    assert m3["entradas"]["cotizaciones"]["sha256"] != m1["entradas"]["cotizaciones"]["sha256"]
-    assert m3["salidas"]["tabla_diaria.csv"] == m1["salidas"]["tabla_diaria.csv"]
+    assert m3["inputs"]["quotes"]["sha256"] != m1["inputs"]["quotes"]["sha256"]
+    assert m3["outputs"]["daily_table.csv"] == m1["outputs"]["daily_table.csv"]

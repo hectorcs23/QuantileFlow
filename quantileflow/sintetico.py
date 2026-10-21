@@ -305,8 +305,8 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                 filas_sub.append({"subyacente": subyacente, "precio": spot[(fecha, hora)], "bid": np.nan,
                                   "ask": np.nan, "sello_evento_utc": corte - pd.Timedelta(seconds=atraso),
                                   "sello_snapshot_utc": corte, "disponible_utc": corte,
-                                  "recibido_utc": recibido_utc, "proveedor": "sintetico",
-                                  "feed": "indice_sintetico"})
+                                  "recibido_utc": recibido_utc, "proveedor": "synthetic",
+                                  "feed": "synthetic_index"})
             if fecha not in fechas:
                 continue
             S = spot[(fecha, hora)]
@@ -355,8 +355,8 @@ def mercado_sintetico(fechas, semilla=0, S0=5800.0, r=0.04, q=0.013, horas=("09:
                             "tam_bid": float(rng.integers(1, 60)), "tam_ask": float(rng.integers(1, 60)),
                             "sello_evento_utc": evento[i] if not isinstance(evento, pd.Series) else evento.iloc[i],
                             "sello_snapshot_utc": corte, "disponible_utc": corte,
-                            "recibido_utc": recibido_utc, "proveedor": "sintetico",
-                            "feed": "nbbo_intervalos_sintetico"})
+                            "recibido_utc": recibido_utc, "proveedor": "synthetic",
+                            "feed": "synthetic_interval_nbbo"})
     cotizaciones = pd.DataFrame(filas)
     sub = pd.DataFrame(filas_sub)
     for tabla in (cotizaciones, sub):

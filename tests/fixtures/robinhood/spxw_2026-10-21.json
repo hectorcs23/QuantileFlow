@@ -1,0 +1,55 @@
+{
+  "captured_at_utc": "2026-10-21T21:58:00Z",
+  "provider": "robinhood",
+  "feed": "robinhood-options-marketdata",
+  "note": "Real read-only capture taken after the 2026-10-21 close. Kept small on purpose: 5 strikes x 2 types.",
+  "chains": [
+    {
+      "id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a",
+      "symbol": "SPXW",
+      "trade_value_multiplier": "100.0000",
+      "settle_on_open": false,
+      "underlying_instruments": [],
+      "min_ticks": {"above_tick": "0.10", "below_tick": "0.05", "cutoff_price": "3.00"}
+    },
+    {
+      "id": "a9f69c4e-9393-4554-9849-271f0297e70b",
+      "symbol": "SPX",
+      "trade_value_multiplier": "100.0000",
+      "settle_on_open": true,
+      "underlying_instruments": [],
+      "min_ticks": {"above_tick": "0.10", "below_tick": "0.05", "cutoff_price": "3.00"}
+    }
+  ],
+  "instruments": [
+    {"id": "89161b93-4b19-41e0-925c-d4f8219d3720", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7500.0000", "type": "put", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "8a5bab7f-3275-4e0e-b911-fddcf0d1da1a", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7500.0000", "type": "call", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "621834a7-1dde-45a6-af2f-da14f2e88bf4", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7650.0000", "type": "put", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "b1ddca83-936f-4131-a42b-074621d3fa95", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7650.0000", "type": "call", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "10c5014b-57f3-458f-b25b-fc86c271cbbd", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7750.0000", "type": "put", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "4a764a60-52ec-4647-a6bf-feb441ffbc5a", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7750.0000", "type": "call", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "4035fa86-024a-4f64-b36c-180de5c66cad", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7850.0000", "type": "put", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "926eb027-2e3f-4656-947d-ad6097b87465", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "7850.0000", "type": "call", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "051739b4-846a-4a1e-82c6-35cb2b3a9e34", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "8000.0000", "type": "call", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"},
+    {"id": "4f0a42f8-5520-46b6-b54c-6fdb0c02fa93", "chain_id": "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a", "chain_symbol": "SPXW", "underlying_type": "index", "expiration_date": "2026-11-20", "strike_price": "8000.0000", "type": "put", "state": "active", "tradability": "tradable", "trade_value_multiplier": "100.0000"}
+  ],
+  "option_quotes": [
+    {"instrument_id": "89161b93-4b19-41e0-925c-d4f8219d3720", "bid_price": "45.100000", "ask_price": "45.600000", "bid_size": 25, "ask_size": 29, "implied_volatility": "0.166616", "open_interest": 8422, "volume": 249, "updated_at": "2026-10-21T20:14:59.799444212Z"},
+    {"instrument_id": "8a5bab7f-3275-4e0e-b911-fddcf0d1da1a", "bid_price": "320.200000", "ask_price": "329.100000", "bid_size": 1, "ask_size": 1, "implied_volatility": "0.161162", "open_interest": 490, "volume": 2, "updated_at": "2026-10-21T20:14:18.348026554Z"},
+    {"instrument_id": "621834a7-1dde-45a6-af2f-da14f2e88bf4", "bid_price": "73.300000", "ask_price": "73.900000", "bid_size": 22, "ask_size": 21, "implied_volatility": "0.147396", "open_interest": 738, "volume": 62, "updated_at": "2026-10-21T20:14:59.722063977Z"},
+    {"instrument_id": "b1ddca83-936f-4131-a42b-074621d3fa95", "bid_price": "202.600000", "ask_price": "203.300000", "bid_size": 4, "ask_size": 4, "implied_volatility": "0.142515", "open_interest": 248, "volume": 6, "updated_at": "2026-10-21T20:14:59.76803913Z"},
+    {"instrument_id": "10c5014b-57f3-458f-b25b-fc86c271cbbd", "bid_price": "104.100000", "ask_price": "104.700000", "bid_size": 17, "ask_size": 9, "implied_volatility": "0.136253", "open_interest": 898, "volume": 260, "updated_at": "2026-10-21T20:14:59.759659119Z"},
+    {"instrument_id": "4a764a60-52ec-4647-a6bf-feb441ffbc5a", "bid_price": "133.800000", "ask_price": "134.400000", "bid_size": 8, "ask_size": 1, "implied_volatility": "0.131790", "open_interest": 478, "volume": 124, "updated_at": "2026-10-21T20:14:59.806964391Z"},
+    {"instrument_id": "4035fa86-024a-4f64-b36c-180de5c66cad", "bid_price": "149.300000", "ask_price": "150.000000", "bid_size": 7, "ask_size": 7, "implied_volatility": "0.127655", "open_interest": 139, "volume": 2, "updated_at": "2026-10-21T20:14:59.759524111Z"},
+    {"instrument_id": "926eb027-2e3f-4656-947d-ad6097b87465", "bid_price": "79.400000", "ask_price": "80.000000", "bid_size": 23, "ask_size": 1, "implied_volatility": "0.123134", "open_interest": 895, "volume": 247, "updated_at": "2026-10-21T20:14:59.808809223Z"},
+    {"instrument_id": "051739b4-846a-4a1e-82c6-35cb2b3a9e34", "bid_price": "29.400000", "ask_price": "29.900000", "bid_size": 32, "ask_size": 28, "implied_volatility": "0.115403", "open_interest": 2329, "volume": 251, "updated_at": "2026-10-21T20:14:59.80530926Z"},
+    {"instrument_id": "4f0a42f8-5520-46b6-b54c-6fdb0c02fa93", "bid_price": "243.900000", "ask_price": "252.800000", "bid_size": 1, "ask_size": 1, "implied_volatility": "0.120317", "open_interest": 114, "volume": 4, "updated_at": "2026-10-21T20:14:54.219000791Z"}
+  ],
+  "underlying": {
+    "kind": "index",
+    "symbol": "SPX",
+    "quotes": [
+      {"instrument_id": "432fbbb8-b82c-454a-852d-eb85382c7066", "symbol": "SPX", "value": "7757.17", "venue_timestamp": "2026-10-21T16:31:21.4484-04:00", "updated_at": "2026-10-21T17:55:46.274803266-04:00"}
+    ]
+  }
+}

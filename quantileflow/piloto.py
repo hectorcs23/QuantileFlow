@@ -37,7 +37,7 @@ NAN = float("nan")
 
 @dataclass(frozen=True)
 class ConfigPiloto:
-    """Configuración versionada del piloto (ver ``configs/piloto.toml``)."""
+    """Configuración versionada del piloto (ver ``configs/pilot.toml``)."""
 
     version: str
     raiz: str
@@ -71,27 +71,30 @@ class ConfigPiloto:
 
 
 def config_desde_dict(d: dict) -> ConfigPiloto:
-    c = d["calidad"]
+    """``ConfigPiloto`` desde el TOML de ``configs/pilot.toml`` (claves en inglés)."""
+    c = d["quality"]
     reglas = cadenas.ReglasCalidad(
-        margen_apertura=float(c["margen_apertura_s"]), edad_maxima=float(c["edad_maxima_s"]),
-        desfase_spot_max=float(c["desfase_spot_max_s"]), spread_relativo_max=float(c["spread_relativo_max"]),
-        spread_ticks_tolerados=float(c["spread_ticks_tolerados"]), tamano_minimo=float(c["tamano_minimo"]),
-        tick_bajo=float(c["tick_bajo"]), tick_alto=float(c["tick_alto"]), umbral_tick=float(c["umbral_tick"]))
+        margen_apertura=float(c["open_window_s"]), edad_maxima=float(c["max_age_s"]),
+        desfase_spot_max=float(c["max_spot_lag_s"]), spread_relativo_max=float(c["max_relative_spread"]),
+        spread_ticks_tolerados=float(c["tolerated_spread_ticks"]), tamano_minimo=float(c["min_size"]),
+        tick_bajo=float(c["tick_below"]), tick_alto=float(c["tick_above"]),
+        umbral_tick=float(c["tick_cutoff"]))
     return ConfigPiloto(
-        version=d["piloto"]["version"], raiz=d["instrumento"]["raiz"],
-        subyacente=d["instrumento"]["subyacente"], ejercicio=d["instrumento"]["ejercicio"],
-        liquidacion=d["instrumento"]["liquidacion"], calendario=d["instrumento"]["calendario"],
-        hora_principal=d["horario"]["principal"], hora_secundaria=d["horario"].get("secundaria"),
-        objetivo_dias=float(d["plazo"]["objetivo_dias"]), minimo_dias=float(d["plazo"]["minimo_dias"]),
-        separacion_maxima_dias=float(d["plazo"]["separacion_maxima_dias"]),
-        base_dias=float(d["plazo"]["base_dias_anio"]), delta=float(d["senales"]["delta"]),
-        factor_strike=float(d["senales"]["factor_strike"]), hueco_max_k=float(d["senales"]["hueco_max_k"]),
-        hueco_max_delta=float(d["senales"]["hueco_max_delta_k"]),
-        horizontes=tuple(int(h) for h in d["etiquetas"]["horizontes"]),
-        latencia_s=float(d["etiquetas"]["latencia_s"]),
-        retraso_publicacion_s=float(d["etiquetas"]["retraso_publicacion_s"]),
-        tasa=float(d["referencia"]["tasa"]), rendimiento_dividendo=float(d["referencia"]["rendimiento_dividendo"]),
-        reglas=reglas, dictamen=dict(d["dictamen"]), fuente=d, huella=huella_datos(d))
+        version=d["pilot"]["version"], raiz=d["instrument"]["root"],
+        subyacente=d["instrument"]["underlying"], ejercicio=d["instrument"]["exercise"],
+        liquidacion=d["instrument"]["settlement"], calendario=d["instrument"]["calendar"],
+        hora_principal=d["cutoffs"]["primary"], hora_secundaria=d["cutoffs"].get("secondary"),
+        objetivo_dias=float(d["maturity"]["target_days"]), minimo_dias=float(d["maturity"]["min_days"]),
+        separacion_maxima_dias=float(d["maturity"]["max_gap_days"]),
+        base_dias=float(d["maturity"]["day_count_basis"]), delta=float(d["signals"]["delta"]),
+        factor_strike=float(d["signals"]["strike_factor"]), hueco_max_k=float(d["signals"]["max_k_gap"]),
+        hueco_max_delta=float(d["signals"]["max_delta_k_gap"]),
+        horizontes=tuple(int(h) for h in d["labels"]["horizons"]),
+        latencia_s=float(d["labels"]["latency_s"]),
+        retraso_publicacion_s=float(d["labels"]["publication_delay_s"]),
+        tasa=float(d["reference"]["rate"]),
+        rendimiento_dividendo=float(d["reference"]["dividend_yield"]),
+        reglas=reglas, dictamen=dict(d["verdict"]), fuente=d, huella=huella_datos(d))
 
 
 def cargar_config(ruta) -> ConfigPiloto:
@@ -113,10 +116,11 @@ def elegir_vencimientos(plazos_dias: dict, cfg: ConfigPiloto):
     antes = [(d, v) for d, v in validos if d < cfg.objetivo_dias]
     despues = [(d, v) for d, v in validos if d > cfg.objetivo_dias]
     if not antes or not despues:
-        return [], f"no hay vencimientos a ambos lados de {cfg.objetivo_dias:g} días"
+        return [], f"no expiries on both sides of {cfg.objetivo_dias:g} days"
     (d1, v1), (d2, v2) = antes[-1], despues[0]
     if d2 - d1 > cfg.separacion_maxima_dias:
-        return [], f"vencimientos a {d1:.1f} y {d2:.1f} días: separación mayor que {cfg.separacion_maxima_dias:g}"
+        return [], (f"expiries at {d1:.1f} and {d2:.1f} days: gap wider than "
+                    f"{cfg.separacion_maxima_dias:g}")
     return [v1, v2], ""
 
 
@@ -139,7 +143,7 @@ def plazo_constante(medidas, plazos, T, base_dias=365.0):
     for m, T_i in zip(medidas, plazos):
         if m.get("estado") != "identificada":
             return {"estado": "no identificada",
-                    "motivo": f"vencimiento a {T_i * base_dias:.1f} días: {m.get('motivo', '')}"}
+                    "motivo": f"expiry at {T_i * base_dias:.1f} days: {m.get('motivo', '')}"}
     patas = {}
     for pata in ("call", "put"):
         mid = [m[f"iv_{pata}"] for m in medidas]
@@ -151,7 +155,7 @@ def plazo_constante(medidas, plazos, T, base_dias=365.0):
         (T1, T2) = plazos
         if ask[1] ** 2 * T2 < bid[0] ** 2 * T1:
             return {"estado": "no identificada",
-                    "motivo": f"varianza total decreciente entre vencimientos en la pata {pata}"}
+                    "motivo": f"total variance decreasing between expiries on the {pata} leg"}
         patas[pata] = tuple(interpolar_varianza_total(T1, x[0], T2, x[1], T) for x in (mid, bid, ask))
     (sc, bc, ac), (sp, bp, ap) = patas["call"], patas["put"]
     return {"estado": "identificada", "motivo": "", "valor": sc - sp, "inferior": bc - ap, "superior": ac - bp,
@@ -264,7 +268,7 @@ def _cambios(principal: pd.DataFrame, cfg: ConfigPiloto) -> pd.DataFrame:
         previa = sesion_desplazada(fecha, -1, cfg.calendario)
         extra["dias_naturales_desde_anterior"].append((fecha - previa).days)
         if previa not in por_fecha.index:
-            valores, motivo = (NAN,) * 4, "sesión anterior fuera de la muestra"
+            valores, motivo = (NAN,) * 4, "previous session outside the sample"
         else:
             a, b = por_fecha.loc[fecha], por_fecha.loc[previa]
             if a["rr25_estado"] == b["rr25_estado"] == "identificada":
@@ -274,7 +278,7 @@ def _cambios(principal: pd.DataFrame, cfg: ConfigPiloto) -> pd.DataFrame:
                            == "identificada" else NAN)
                 motivo = ""
             else:
-                valores, motivo = (NAN,) * 4, "RR25 no identificada hoy o en la sesión anterior"
+                valores, motivo = (NAN,) * 4, "RR25 not identified today or in the previous session"
         for clave, valor in zip(("cambio_rr25", "cambio_rr25_inferior", "cambio_rr25_superior",
                                  "cambio_asim_log"), valores):
             extra[clave].append(valor)
@@ -315,26 +319,27 @@ def dictamen(principal: pd.DataFrame, cfg: ConfigPiloto) -> dict:
         return {"criterio": nombre, "valor": valor, "umbral": umbral, "cumple": bool(cumple),
                 "critico": bool(critico and not cumple)}
 
+    # Nombres y veredictos en inglés: salen tal cual en el informe y el manifiesto.
     criterios = [
-        criterio("Sesiones en la muestra", n, f">= {u['min_sesiones']}", n >= u["min_sesiones"], True),
-        criterio("RR25 a 30 días identificada a la hora principal", fraccion_rr, f">= {u['rr25_apto']}",
-                 fraccion_rr >= u["rr25_apto"], fraccion_rr < u["rr25_minimo"]),
-        criterio("Cambio diario de RR25 disponible", fraccion_cambio, f">= {u['cambio_rr25_minimo']}",
-                 fraccion_cambio >= u["cambio_rr25_minimo"], False),
-        criterio("Estabilidad 09:45-10:00 (mediana de la diferencia absoluta / ancho de banda)", estabilidad,
-                 f"<= {u['estabilidad_max']}", np.isfinite(estabilidad) and estabilidad <= u["estabilidad_max"],
-                 False),
-        criterio("Sesiones con alertas de sincronía, edad o disponibilidad", alertas, f"<= {u['alertas_max']}",
-                 alertas <= u["alertas_max"], False),
-        criterio("Etiqueta a 1 sesión disponible", etiquetas, f">= {u['etiquetas_min']}",
-                 etiquetas >= u["etiquetas_min"], True),
+        criterio("Sessions in the sample", n, f">= {u['min_sessions']}", n >= u["min_sessions"], True),
+        criterio("RR25 at 30 days identified at the primary cut-off", fraccion_rr,
+                 f">= {u['rr25_pass']}", fraccion_rr >= u["rr25_pass"], fraccion_rr < u["rr25_floor"]),
+        criterio("Daily RR25 change available", fraccion_cambio, f">= {u['rr25_change_floor']}",
+                 fraccion_cambio >= u["rr25_change_floor"], False),
+        criterio("Stability 09:45-10:00 (median absolute difference / band width)", estabilidad,
+                 f"<= {u['max_instability']}",
+                 np.isfinite(estabilidad) and estabilidad <= u["max_instability"], False),
+        criterio("Sessions with sync, age or availability alerts", alertas,
+                 f"<= {u['max_alert_fraction']}", alertas <= u["max_alert_fraction"], False),
+        criterio("1-session label available", etiquetas, f">= {u['min_labelled']}",
+                 etiquetas >= u["min_labelled"], True),
     ]
     if any(c["critico"] for c in criterios):
-        veredicto = "insuficiente"
+        veredicto = "insufficient"
     elif all(c["cumple"] for c in criterios):
-        veredicto = "apto para ampliar historia"
+        veredicto = "usable for extending the sample"
     else:
-        veredicto = "apto con limitaciones"
+        veredicto = "usable with limitations"
     return {"veredicto": veredicto, "criterios": criterios}
 
 

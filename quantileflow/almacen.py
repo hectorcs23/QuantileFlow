@@ -96,20 +96,24 @@ def estado_git(directorio=".") -> dict:
         cambios = subprocess.run(["git", "status", "--porcelain"], cwd=directorio, capture_output=True,
                                  text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
-        return {"commit": None, "cambios_sin_registrar": None}
-    return {"commit": commit, "cambios_sin_registrar": bool(cambios)}
+        return {"commit": None, "uncommitted_changes": None}
+    return {"commit": commit, "uncommitted_changes": bool(cambios)}
 
 
 def huella_entorno(directorio=".") -> dict:
-    """Versión de Python, plataforma, versiones de paquetes y estado de Git."""
+    """Versión de Python, plataforma, versiones de paquetes y estado de Git.
+
+    Las claves salen en inglés porque esta huella se escribe tal cual en los
+    manifiestos y en los registros de verificación.
+    """
     versiones = {}
     for paquete in PAQUETES:
         try:
             versiones[paquete] = metadata.version(paquete)
         except metadata.PackageNotFoundError:
             versiones[paquete] = None
-    return {"python": sys.version.split()[0], "plataforma": platform.platform(),
-            "paquetes": versiones, "git": estado_git(directorio)}
+    return {"python": sys.version.split()[0], "platform": platform.platform(),
+            "packages": versiones, "git": estado_git(directorio)}
 
 
 def hashes(rutas) -> dict:

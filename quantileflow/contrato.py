@@ -146,7 +146,7 @@ def spot_al_corte(subyacente: pd.DataFrame, simbolo, fecha, corte_utc):
     if "sello_evento_utc" in filas:
         filas = filas[filas["sello_evento_utc"].isna() | (filas["sello_evento_utc"] <= corte_utc)]
     if filas.empty:
-        raise SinDatos(f"sin precio de {simbolo} al corte de {fecha}")
+        raise SinDatos(f"no {simbolo} price at the {fecha} cut-off")
     referencia = filas["sello_evento_utc"].fillna(filas["sello_snapshot_utc"])
     fila = filas.loc[referencia.idxmax()]
     return float(fila["precio"]), referencia.max(), pd.isna(fila["sello_evento_utc"])
@@ -173,7 +173,7 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
                          & (cotizaciones["vencimiento"].map(_fecha) == vencimiento)]
     filas = _del_dia_hasta(filas, fecha, corte_utc)
     if filas.empty:
-        raise SinDatos(f"sin cotizaciones de {raiz} {vencimiento} al corte {hora} de {fecha}")
+        raise SinDatos(f"no {raiz} {vencimiento} quotes at the {hora} cut-off on {fecha}")
     for columna in ("ejercicio", "liquidacion", "subyacente"):
         if filas[columna].nunique() != 1:
             raise ValueError(f"{columna} mezclado dentro de una captura: {sorted(filas[columna].unique())}")
@@ -181,7 +181,7 @@ def captura_desde_tabla(cotizaciones: pd.DataFrame, subyacente: pd.DataFrame, ra
     liquida_utc = instante_liquidacion(vencimiento, liquidacion, codigo)
     T = plazo_anios(corte_utc, liquida_utc, base_dias)
     if T <= 0:
-        raise SinDatos(f"{raiz} {vencimiento} ya liquidó antes del corte")
+        raise SinDatos(f"{raiz} {vencimiento} already settled before the cut-off")
     spot, sello_spot_utc, spot_sin_evento = spot_al_corte(subyacente, filas["subyacente"].iloc[0], fecha,
                                                           corte_utc)
 

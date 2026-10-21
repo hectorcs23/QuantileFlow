@@ -122,7 +122,7 @@ def test_cotizaciones_desfasadas_se_excluyen_con_motivo(limpia):
     assert res.controles.resumen()["desfasada"] == 3
     faltan = {s["strike"]: s for s in res.paridad.sin_pareja}
     for K in (95.0, 100.0, 104.0):
-        assert faltan[K]["falta"] == "put" and faltan[K]["motivo"] == "excluida: desfasada"
+        assert faltan[K]["falta"] == "put" and faltan[K]["motivo"] == "excluded: stale"
     assert not res.paridad.interpretable.any()
     assert abs(res.paridad.forward_global - verdad["forward"]) < 0.01
 
@@ -204,7 +204,7 @@ def test_strikes_ausentes_se_documentan(limpia):
     incompleta = _sin_filas(cap, _filas(cap, (90.0, 91.0), es_call=False) + _filas(cap, (103.0,), es_call=True))
     res = ca.procesar_captura(incompleta)
     faltan = {s["strike"]: s for s in res.paridad.sin_pareja}
-    assert faltan[90.0]["falta"] == "put" and faltan[90.0]["motivo"] == "sin cotización"
+    assert faltan[90.0]["falta"] == "put" and faltan[90.0]["motivo"] == "no quote"
     assert faltan[103.0]["falta"] == "call" and faltan[103.0]["presente"] == "put"
     assert not np.isin((90.0, 91.0, 103.0), res.paridad.strike).any()
     assert abs(res.paridad.forward_global - verdad["forward"]) < 0.01
@@ -265,8 +265,8 @@ def test_ultima_cotizacion_en_la_ventana_de_apertura_excluye_el_contrato(limpia)
 def test_subyacente_en_la_ventana_de_apertura_genera_alerta(limpia):
     cap, _, _ = limpia
     res = ca.procesar_captura(dataclasses.replace(cap, sello_spot=ca.HORA_APERTURA + 30.0))
-    assert any("ventana de apertura" in a for a in res.alertas)
-    assert any("desfasado" in a for a in res.alertas)
+    assert any("opening window" in a for a in res.alertas)
+    assert any("stale by" in a for a in res.alertas)
 
 
 # --- Serie observada frente a superficie ajustada --------------------------------

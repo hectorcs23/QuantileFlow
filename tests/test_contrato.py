@@ -99,8 +99,8 @@ def test_sin_hora_de_evento_no_se_inventa_la_edad(mercado):
     assert np.all(np.isnan(cap.sello)) and np.all(np.isfinite(cap.sello_snapshot))
     controles = ca.controlar(cap)
     assert "desfasada" not in controles.resumen()
-    assert any("edad de cotización desconocida" in a for a in controles.alertas)
-    assert any("subyacente desfasado 30 s" in a for a in controles.alertas)
+    assert any("quote age unknown" in a for a in controles.alertas)
+    assert any("underlying stale by 30 s" in a for a in controles.alertas)
     assert controles.valida.sum() > 0
 
 
@@ -117,7 +117,7 @@ def test_disponibilidad_posterior_al_corte_excluye(mercado):
     sin_doc = cot.copy()
     sin_doc["disponible_utc"] = pd.NaT
     cap2, _ = ct.captura_desde_tabla(sin_doc, sub, "SPXW", venc, fecha)
-    assert "disponibilidad histórica no documentada" in ca.controlar(cap2).alertas
+    assert "historical availability not documented" in ca.controlar(cap2).alertas
 
 
 def test_fila_sin_ningun_sello_se_excluye():

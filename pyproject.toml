@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "quantileflow"
 version = "0.2.0"
-description = "Bloques matemáticos de referencia para el seguimiento de distribuciones implícitas (versión de investigación)."
+description = "Reference mathematical building blocks for tracking option-implied distributions (research version)."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = ["numpy>=1.24", "scipy>=1.10", "matplotlib>=3.7", "pandas>=2.1", "pyarrow>=14",
                 "exchange_calendars>=4.5"]
 
 [tool.setuptools]
-packages = ["quantileflow"]
+packages = ["quantileflow", "quantileflow.sources"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

@@ -54,7 +54,7 @@ librerías no oficiales usan el usuario, la contraseña y el segundo factor de l
 
 | Bloque | Qué pedía el plan | Qué se hizo | Dónde |
 |---|---|---|---|
-| A1 | Versión de referencia registrada | Registro del commit, del entorno y del resultado de las pruebas. Versiones exactas de las dependencias. Configuración del piloto versionada, con huella. | `scripts/verificar_entorno.py`, `reports/verificacion/`, `requirements-bloqueo.txt`, `configs/piloto.toml` |
+| A1 | Versión de referencia registrada | Registro del commit, del entorno y del resultado de las pruebas. Versiones exactas de las dependencias. Configuración del piloto versionada, con huella. | `scripts/verify_environment.py`, `reports/verification/`, `requirements-bloqueo.txt`, `configs/pilot.toml` |
 | A2 | Contrato de datos y adaptador | Esquema de cotizaciones con raíz, strike, tipo, ejercicio, liquidación, vencimiento, multiplicador, bid/ask, tamaños y cuatro sellos UTC. Validador, símbolos OCC y adaptador a capturas. Detalles: <ul><li>si falta la hora del evento, la edad queda «desconocida», con una alerta, y no se inventa;</li><li>una disponibilidad posterior al corte excluye la fila;</li><li>no se mezclan estilos de liquidación.</li></ul> | `quantileflow/contrato.py`, `quantileflow/cadenas.py` |
 | A3 | Almacenamiento y replay | Crudo inmutable direccionado por SHA-256, tablas Parquet y manifiesto por corrida. Pruebas de que reprocesar da los mismos bytes y de que los datos posteriores al corte no cambian nada. | `quantileflow/almacen.py`, `quantileflow/corrida.py` |
 | B1 | Revisar controles; medir calidad | Métricas por sesión: filas, válidas, exclusiones por motivo, pares, cobertura, ancho en precio, relativo y en ticks, edad, sincronía y señales disponibles. Tolerancia en ticks para el spread relativo. Conjunto «solo cota» (bid nulo). | `cadenas.metricas_calidad`, `cadenas.ReglasCalidad` |
@@ -69,7 +69,7 @@ La batería de pruebas pasa de 114 a 142.
 
 ## 3. Plantilla del informe con datos sintéticos
 
-[`reports/piloto_sintetico/informe.md`](../reports/piloto_sintetico/informe.md) recorre el mismo camino
+[`reports/synthetic_pilot/report.md`](../reports/synthetic_pilot/report.md) recorre el mismo camino
 que recorrerán los datos reales: archivo crudo, normalización, validación, medición, informe y
 manifiesto. Cubre 30 sesiones, del 20 de octubre al 1 de diciembre de 2025, con Acción de Gracias y un
 cierre anticipado, y seis días degradados a propósito:
@@ -112,7 +112,7 @@ cierre anticipado, y seis días degradados a propósito:
       de tiempo, cobertura y costo.
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
-      `configs/piloto.toml`.
+      `configs/pilot.toml`.
 - [ ] Referencia externa del forward: curva de tasas y dividendos con fuente.
 - [ ] B4: pérdida robusta en el ajuste de superficie (P1).
 - [ ] Protocolo predictivo pequeño (sección 7 del plan), después del piloto.

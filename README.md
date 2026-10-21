@@ -1,98 +1,157 @@
 # QuantileFlow
 
-Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación (26 de septiembre de 2026).**
+Tracking option-implied distributions and managing daily positions.
+**Research version (26 September 2026).**
 
-Este repositorio contiene, por ahora, la propuesta técnica del sistema, un núcleo matemático de
-referencia con el que se generan sus figuras y el pipeline del piloto de medición (ingesta, controles,
-etiquetas, informe y manifiesto). No hay datos de mercado, modelos entrenados ni resultados empíricos:
-todas las figuras y la plantilla del informe usan datos **sintéticos** con semillas fijas.
+For now this repository holds the system's technical proposal, a reference
+mathematical core that generates its figures, the measurement-pilot pipeline
+(ingestion, controls, labels, report and manifest) and an adapter that turns
+Robinhood option chains into the normalized data contract. There is no market
+history, no trained model and no empirical result: every figure and the report
+template use **synthetic** data with fixed seeds.
 
-## Documentos
+The interface is in English — command-line flags, configuration keys, report
+and table headers, figure text, manifest keys. The internals and the technical
+proposal are in Spanish; output values are translated at the boundary by
+[`quantileflow/vocabulario.py`](quantileflow/vocabulario.py).
 
-- [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): plan de investigación vigente (26 de septiembre
-  de 2026). Pregunta inicial, fases con criterios de salida y correcciones previas del núcleo.
-- [`docs/avance_y_pendientes.md`](docs/avance_y_pendientes.md): qué se hizo, hallazgos y qué falta.
-- [`docs/como_proseguir.md`](docs/como_proseguir.md): continuación del plan; el siguiente hito es un
-  informe reproducible de sesiones reales de apertura (SPXW PM, 09:45, plazo constante de 30 días).
-- [`docs/estado_continuacion.md`](docs/estado_continuacion.md): qué se construyó de ese plan sin datos,
-  el problema de acceso a datos y lo que falta.
-- `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
-  y 19 diagramas. El PDF y las figuras PNG son artefactos generados: `make figuras && make pdf` los
-  regenera.
-- Fuente LaTeX en [`docs/propuesta/`](docs/propuesta/): `main.tex`, `preambulo.tex`, una sección por
-  archivo en `secciones/` y los diagramas TikZ en `diagramas/`.
+## Documents
 
-Contenido: producto e hipótesis; datos y reconstrucción de Q (cadena cruda con controles, paridad y
-asimetría call/put; SSVI, desamericanización, Breeden–Litzenberger, bandas); transporte, dinámica e
-innovación (W1/W2, PCA funcional, Kalman); de Q a P (regresión cuantílica, combinación); regímenes y
-confianza (BOCPD, calibración, conformal adaptativo, abstención); decisión (escenarios conjuntos, CVaR,
-zona de no operación, robustez, MPC); protocolo de evidencia; arquitectura y operación diaria; secuencia
-de construcción y prioridades.
+- [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): current research plan
+  (26 September 2026). Opening question, phases with exit criteria and earlier
+  corrections to the core.
+- [`docs/avance_y_pendientes.md`](docs/avance_y_pendientes.md): what was done,
+  findings and what is missing.
+- [`docs/como_proseguir.md`](docs/como_proseguir.md): continuation of the plan;
+  the next milestone is a reproducible report over real opening sessions
+  (SPXW PM, 09:45, constant 30-day maturity).
+- [`docs/estado_continuacion.md`](docs/estado_continuacion.md): what was built
+  of that plan without data, the data-access problem and what is left.
+- `docs/QuantileFlow_propuesta_tecnica.pdf`: technical guide to the process,
+  stage by stage, with 64 charts and 19 diagrams. The PDF and the PNG figures
+  are generated artifacts: `make figures && make pdf` rebuilds them.
+- LaTeX source in [`docs/propuesta/`](docs/propuesta/): `main.tex`,
+  `preambulo.tex`, one section per file under `secciones/` and the TikZ
+  diagrams in `diagramas/`.
 
-## Estructura
+Contents: product and hypotheses; data and reconstruction of Q (raw chain with
+controls, parity and call/put skew; SSVI, de-Americanization,
+Breeden–Litzenberger, bands); transport, dynamics and innovation (W1/W2,
+functional PCA, Kalman); from Q to P (quantile regression, combination);
+regimes and confidence (BOCPD, calibration, adaptive conformal, abstention);
+decision (joint scenarios, CVaR, no-trade zone, robustness, MPC); evidence
+protocol; architecture and daily operation; build sequence and priorities.
+
+## Layout
 
 ```
-quantileflow/          núcleo de referencia (numpy, scipy, pandas)
-  calendario.py        calendario bursátil real (XNYS), instantes UTC, liquidación AM/PM, plazo ACT/365
-  contrato.py          esquema normalizado de cotizaciones y subyacente, validador, símbolos OCC,
-                       adaptador de tablas a capturas
-  cadenas.py           captura cruda inmutable, controles con motivos de exclusión, paridad del
-                       mismo strike con forward fuera de muestra, desamericanización, asimetría
-                       call − put (distancia logarítmica, RR25, pendiente), métricas de calidad
-  etiquetas.py         rendimientos a 1 y 5 sesiones con decision_at, label_end_at, label_available_at
-  piloto.py            plazo constante de 30 días, tabla diaria, cambios, estabilidad y dictamen
-  informe.py           tabla exportable, gráficas e informe Markdown del piloto
-  corrida.py           corrida reproducible con manifiesto de hashes
-  almacen.py           crudo inmutable, Parquet, manifiestos y huella del entorno
-  opciones.py          Black, griegas, árbol binomial con dividendos
-  superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
-  distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
-  transporte.py        Wasserstein en 1-D, cambios firmados, PCA funcional, reordenamiento
-  filtrado.py          Kalman con ruido de observación variable, EWMA, persistencia
-  regimenes.py         BOCPD y detector por umbral
-  calibracion.py       pinball, CRPS, Brier, fiabilidad, conformal adaptativo con cota verificada
-  pronostico.py        regresión cuantílica regularizada (programa lineal)
-  decision.py          programa lineal con CVaR, costos y presupuesto de riesgo
-  evidencia.py         Sharpe deflactado, bootstrap por bloques, walk-forward con purga
-  sintetico.py         generadores del mundo sintético de las figuras
-tests/                 pruebas de propiedades del núcleo, cuantiles, conformal, cadenas, contrato,
-                       calendario, etiquetas, almacenamiento y piloto
-configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
-scripts/               piloto con datos normalizados, plantilla sintética y registro del entorno
-reports/               informes generados (no se editan a mano) y registros de verificación
-docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
+quantileflow/          reference core (numpy, scipy, pandas)
+  calendario.py        real exchange calendar (XNYS), UTC instants, AM/PM settlement, ACT/365
+  contrato.py          normalized quote and underlying schema, validator, OCC symbols,
+                       table-to-capture adapter
+  sources/robinhood.py Robinhood chains, instruments and quotes -> the data contract
+  vocabulario.py       internal codes (Spanish) -> English labels for every output
+  cadenas.py           immutable raw capture, controls with exclusion reasons, same-strike
+                       parity with out-of-sample forward, de-Americanization, call - put
+                       skew (log distance, RR25, slope), quality metrics
+  etiquetas.py         1- and 5-session returns with decision_at, label_end_at, label_available_at
+  piloto.py            constant 30-day maturity, daily table, changes, stability and verdict
+  informe.py           exportable table, charts and Markdown report of the pilot
+  corrida.py           reproducible run with a manifest of hashes
+  almacen.py           immutable raw, Parquet, manifests and environment fingerprint
+  opciones.py          Black, greeks, binomial tree with dividends
+  superficies.py       constrained SSVI, function g, anchored CDF, convex fit in prices
+  distribuciones.py    Breeden–Litzenberger, controls, quantiles with identification state
+  transporte.py        1-D Wasserstein, signed changes, functional PCA, rearrangement
+  filtrado.py          Kalman with time-varying observation noise, EWMA, persistence
+  regimenes.py         BOCPD and threshold detector
+  calibracion.py       pinball, CRPS, Brier, reliability, adaptive conformal with verified bound
+  pronostico.py        regularized quantile regression (linear program)
+  decision.py          linear program with CVaR, costs and risk budget
+  evidencia.py         deflated Sharpe, block bootstrap, purged walk-forward
+  sintetico.py         generators of the synthetic world behind the figures
+tests/                 property tests of the core, quantiles, conformal, chains, contract,
+                       calendar, labels, storage, pilot and the Robinhood adapter
+configs/pilot.toml     versioned pilot configuration (provisional thresholds)
+scripts/               pilot over normalized data, synthetic template, Robinhood ingest,
+                       environment record
+reports/               generated reports (never edited by hand) and verification records
+docs/propuesta/        LaTeX source, diagrams, figure scripts and PNG figures
 ```
 
-## Reproducir
+## Reproduce
 
 ```bash
-pip install -r requirements.txt   # o requirements-bloqueo.txt para las versiones exactas verificadas
-make test               # pruebas
-make figuras            # regenera las figuras PNG (matplotlib, estilo por defecto)
-make pdf                # compila el documento y lo copia a docs/QuantileFlow_propuesta_tecnica.pdf
-make verificar          # registra commit, entorno y resultado de las pruebas en reports/verificacion/
-make piloto-sintetico   # plantilla del informe piloto con datos sintéticos en reports/piloto_sintetico/
+pip install -r requirements.txt   # or requirements-bloqueo.txt for the exact verified versions
+make test               # tests
+make figures            # rebuilds the PNG figures (matplotlib, default style)
+make pdf                # compiles the document and copies it to docs/QuantileFlow_propuesta_tecnica.pdf
+make verify             # records commit, environment and test outcome in reports/verification/
+make synthetic-pilot    # pilot report template on synthetic data in reports/synthetic_pilot/
 ```
 
-Con datos reales normalizados (esquemas de `quantileflow/contrato.py`):
+With real normalized data (schemas in `quantileflow/contrato.py`):
 
 ```bash
-python scripts/piloto.py --cotizaciones data/normalized/cotizaciones.parquet \
-    --subyacente data/normalized/subyacente.parquet --desde AAAA-MM-DD --hasta AAAA-MM-DD
+python scripts/pilot.py --quotes data/normalized/quotes.parquet \
+    --underlying data/normalized/underlying.parquet --from YYYY-MM-DD --to YYYY-MM-DD
 ```
 
-`data/` queda fuera de Git: `data/raw/` guarda los archivos originales, inmutables y direccionados por
-su SHA-256; `data/normalized/`, las tablas Parquet. Cada corrida escribe un `manifiesto.json` con los
-hashes de entradas y salidas, la configuración, el commit y las exclusiones.
+`data/` stays out of Git: `data/raw/` keeps the original files, immutable and
+addressed by their SHA-256; `data/normalized/` holds the Parquet tables. Every
+run writes a `manifest.json` with the hashes of inputs and outputs, the
+configuration, the commit and the exclusions.
 
-`make pdf` requiere una distribución de TeX con `latexmk`, `tikz`, `tcolorbox`, `mathpazo` y
-`babel-spanish` (por ejemplo, TeX Live con los paquetes `latex-extra`, `fonts-recommended`,
-`lang-spanish`, `science` y `pictures`).
+`make pdf` needs a TeX distribution with `latexmk`, `tikz`, `tcolorbox`,
+`mathpazo` and `babel-spanish` (for example TeX Live with the `latex-extra`,
+`fonts-recommended`, `lang-spanish`, `science` and `pictures` packages).
 
-## Alcance de las pruebas
+## Robinhood
 
-Las pruebas usan datos sintéticos. Comprueban propiedades matemáticas y que el procesamiento de cadenas
-bid/ask separa efectos de los datos (cotizaciones desfasadas, dividendos, ejercicio anticipado, strikes
-ausentes, ventanas de apertura) de una posible señal. No demuestran validez predictiva ni la calidad de
-datos reales: eso exige la muestra histórica de la fase 0 del plan de trabajo.
+The committed path stops at files. `quantileflow/sources/robinhood.py` maps the
+payloads Robinhood returns for options onto the data contract, and
+`scripts/robinhood_ingest.py` reads capture files and writes normalized tables:
+
+```bash
+python scripts/robinhood_ingest.py captures/*.json --output data/normalized/robinhood
+```
+
+Neither opens a socket, holds a credential or can place an order. Fetching with
+your own account lives in `local/`, which is outside Git — see
+[`local/README.md`](local/README.md) once you have it, and the notes below.
+
+**What maps cleanly.** `settle_on_open` gives the AM/PM settlement the pilot
+refuses to mix (SPX is AM, SPXW is PM), `underlying_type` gives the exercise
+style, `trade_value_multiplier` the multiplier, and the quote carries bid, ask
+and both sizes. `tests/fixtures/robinhood/spxw_2026-10-21.json` is a real
+read-only capture of ten SPXW contracts that the tests drive end to end.
+
+**What Robinhood cannot give, and is therefore left null.** There is no
+exchange timestamp on an option quote, so `sello_evento_utc` stays empty and
+the age of a quote is unknown rather than fabricated; the staleness control
+then does not apply, and the report says so. There is no documented historical
+availability either, so `disponible_utc` stays empty.
+
+**There is no history to pull.** The endpoint answers "now", plus the previous
+session's official close. A 09:45 series exists only if you poll at 09:45 each
+session and accumulate it forward; it cannot be reconstructed backwards. A
+capture taken after the close falls outside every in-session cut-off, which the
+pipeline rejects instead of quietly accepting
+(`tests/test_robinhood.py::test_captura_posterior_al_cierre_no_sirve_en_sesion`).
+
+**Before you point this at your account.** Robinhood publishes no options API:
+the only programmatic route is the private endpoints, reached with the same
+credentials that can trade, under a customer agreement that prohibits automated
+access. Captured quotes are OPRA-licensed, so they belong in `data/` or
+`captures/` — both ignored — and not in a public repository. Every chain
+request is an authenticated call that tells your broker which strikes and
+expiries you are studying before you trade them.
+
+## Scope of the tests
+
+The tests use synthetic data, plus one real Robinhood capture for the adapter.
+They check mathematical properties and that processing bid/ask chains separates
+data effects (lagged quotes, dividends, early exercise, missing strikes,
+opening windows) from a possible signal. They do not demonstrate predictive
+validity or the quality of real data: that needs the historical sample from
+phase 0 of the work plan.

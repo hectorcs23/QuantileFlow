@@ -52,8 +52,8 @@ def test_parquet_ida_y_vuelta_exacta_y_determinista(tmp_path):
 
 def test_huellas(tmp_path):
     entorno = almacen.huella_entorno()
-    assert set(entorno) == {"python", "plataforma", "paquetes", "git"}
-    assert entorno["paquetes"]["numpy"] == np.__version__
+    assert set(entorno) == {"python", "platform", "packages", "git"}
+    assert entorno["packages"]["numpy"] == np.__version__
     assert almacen.huella_datos({"b": 1, "a": [1, 2]}) == almacen.huella_datos({"a": [1, 2], "b": 1})
     h = almacen.escribir_json({"z": 1, "a": 2}, tmp_path / "m.json")
     assert (tmp_path / "m.json").read_text().index('"a"') < (tmp_path / "m.json").read_text().index('"z"')
