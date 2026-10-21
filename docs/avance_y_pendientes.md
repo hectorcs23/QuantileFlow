@@ -20,7 +20,7 @@
 - Paquete `quantileflow/` (numpy/scipy): SSVI con restricciones, Breeden–Litzenberger, Wasserstein,
   PCA funcional, Kalman, BOCPD, calibración, conformal adaptativo, regresión cuantílica, CVaR, Sharpe
   deflactado y walk-forward con purga.
-- Figuras reproducibles con semillas fijas: `make figuras && make pdf`.
+- Figuras reproducibles con semillas fijas: `make figures && make pdf`.
 
 ### 1.2 Plan de trabajo
 
@@ -202,6 +202,6 @@ Falta:
 ```bash
 pip install -r requirements.txt
 make test      # 114 pruebas
-make figuras   # 64 figuras PNG
+make figures   # 64 figuras PNG
 make pdf       # docs/QuantileFlow_propuesta_tecnica.pdf
 ```

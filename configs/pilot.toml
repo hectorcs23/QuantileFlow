@@ -1,0 +1,62 @@
+# Measurement pilot configuration (research proposal).
+# The thresholds under [quality] and [verdict] are provisional: they get
+# reviewed against this pilot and frozen, under a new version, before the
+# evaluation period starts.
+
+[pilot]
+version = "pilot-0.1"
+description = "SPXW PM at 09:45 New York, constant 30-day maturity"
+
+[instrument]
+root = "SPXW"              # never mixed with AM-settled SPX, nor with SPY
+underlying = "SPX"
+exercise = "europeo"
+settlement = "PM"
+calendar = "XNYS"
+
+[cutoffs]
+primary = "09:45"
+secondary = "10:00"        # diagnostic only: measurement stability
+
+[maturity]
+target_days = 30.0         # calendar days from the cut-off to contractual settlement
+min_days = 7.0
+max_gap_days = 14.0
+day_count_basis = 365.0    # ACT/365
+
+[signals]
+delta = 0.25               # RR25 = IV(call, delta +0.25) - IV(put, delta -0.25); undiscounted forward delta
+strike_factor = 1.03       # symmetric log distance: K+ = F * 1.03, K- = F / 1.03
+max_k_gap = 0.02           # widest log-moneyness step between strikes that may be interpolated
+max_delta_k_gap = 0.02
+
+[labels]
+horizons = [1, 5]          # calendar sessions, 09:45 to 09:45
+latency_s = 0.0            # cut-off -> decision_at
+publication_delay_s = 0.0
+
+[reference]
+# Only for the discrepancy of the implied forward against an external reference.
+# Pending: replace with a sourced rate curve and dividend estimate.
+rate = 0.04
+dividend_yield = 0.013
+
+[quality]
+open_window_s = 300
+max_age_s = 60
+max_spot_lag_s = 2
+max_relative_spread = 0.5
+tolerated_spread_ticks = 2
+min_size = 1
+tick_below = 0.05          # SPX/SPXW ticks below 3.00 and from 3.00 up: confirm with Cboe
+tick_above = 0.10
+tick_cutoff = 3.0
+
+[verdict]
+min_sessions = 20
+rr25_pass = 0.9            # fraction of sessions with RR25 at 30 days identified
+rr25_floor = 0.7           # below this: insufficient
+rr25_change_floor = 0.8
+max_instability = 1.0      # median |RR25 10:00 - 09:45| / median band width
+max_alert_fraction = 0.2   # fraction of sessions with sync or age alerts
+min_labelled = 0.9         # fraction of sessions with a 1-session label

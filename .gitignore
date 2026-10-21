@@ -21,3 +21,7 @@ docs/propuesta/main.pdf
 
 # Datos de mercado: fuera de Git (licencias y tamaño). Solo muestras permitidas en tests/fixtures.
 data/
+
+# Account-facing code and raw provider captures: never in Git.
+local/
+captures/

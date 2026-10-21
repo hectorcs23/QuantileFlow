@@ -1,0 +1,279 @@
+{
+ "captured_at_utc": "2026-10-21T21:58:00Z",
+ "provider": "robinhood",
+ "feed": "robinhood-options-marketdata",
+ "note": "SYNTHETIC capture, not market data. Prices come from Black-Scholes on an invented smile (spot 7750.00, r 4%, q 1.3%) with a fixed seed; sizes, volume and open interest are drawn from that seed; ids are the constant c0ffee00-... . It mirrors the shape of a Robinhood read-only option capture so the adapter can be tested without redistributing third-party quotes. 10 contracts: 1 expiration(s) x 5 strikes x 2 types.",
+ "chains": [
+  {
+   "id": "c0ffee00-0000-4000-8000-00000000000a",
+   "symbol": "SPXW",
+   "trade_value_multiplier": "100.0000",
+   "settle_on_open": false,
+   "underlying_instruments": [],
+   "min_ticks": {
+    "above_tick": "0.10",
+    "below_tick": "0.05",
+    "cutoff_price": "3.00"
+   }
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-00000000000b",
+   "symbol": "SPX",
+   "trade_value_multiplier": "100.0000",
+   "settle_on_open": true,
+   "underlying_instruments": [],
+   "min_ticks": {
+    "above_tick": "0.10",
+    "below_tick": "0.05",
+    "cutoff_price": "3.00"
+   }
+  }
+ ],
+ "instruments": [
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000001",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7500.0000",
+   "type": "call",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000002",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7500.0000",
+   "type": "put",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000003",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7650.0000",
+   "type": "call",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000004",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7650.0000",
+   "type": "put",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000005",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7750.0000",
+   "type": "call",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000006",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7750.0000",
+   "type": "put",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000007",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7850.0000",
+   "type": "call",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000008",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "7850.0000",
+   "type": "put",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-000000000009",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "8000.0000",
+   "type": "call",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  },
+  {
+   "id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "chain_symbol": "SPXW",
+   "underlying_type": "index",
+   "expiration_date": "2026-11-20",
+   "strike_price": "8000.0000",
+   "type": "put",
+   "state": "active",
+   "tradability": "tradable",
+   "trade_value_multiplier": "100.0000"
+  }
+ ],
+ "option_quotes": [
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000001",
+   "bid_price": "307.200000",
+   "ask_price": "308.100000",
+   "bid_size": 25,
+   "ask_size": 1,
+   "implied_volatility": "0.153722",
+   "open_interest": 6365,
+   "volume": 414,
+   "updated_at": "2026-10-21T20:11:07.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000002",
+   "bid_price": "40.900000",
+   "ask_price": "41.300000",
+   "bid_size": 21,
+   "ask_size": 15,
+   "implied_volatility": "0.153722",
+   "open_interest": 8014,
+   "volume": 408,
+   "updated_at": "2026-10-21T20:12:14.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000003",
+   "bid_price": "191.300000",
+   "ask_price": "191.800000",
+   "bid_size": 26,
+   "ask_size": 1,
+   "implied_volatility": "0.140840",
+   "open_interest": 3719,
+   "volume": 18,
+   "updated_at": "2026-10-21T20:13:21.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000004",
+   "bid_price": "74.300000",
+   "ask_price": "74.700000",
+   "bid_size": 4,
+   "ask_size": 4,
+   "implied_volatility": "0.140840",
+   "open_interest": 2088,
+   "volume": 472,
+   "updated_at": "2026-10-21T20:14:28.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000005",
+   "bid_price": "127.100000",
+   "ask_price": "127.500000",
+   "bid_size": 27,
+   "ask_size": 6,
+   "implied_volatility": "0.133243",
+   "open_interest": 1907,
+   "volume": 315,
+   "updated_at": "2026-10-21T20:15:35.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000006",
+   "bid_price": "109.800000",
+   "ask_price": "110.200000",
+   "bid_size": 17,
+   "ask_size": 12,
+   "implied_volatility": "0.133243",
+   "open_interest": 2426,
+   "volume": 156,
+   "updated_at": "2026-10-21T20:16:42.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000007",
+   "bid_price": "76.400000",
+   "ask_price": "76.800000",
+   "bid_size": 8,
+   "ask_size": 4,
+   "implied_volatility": "0.126405",
+   "open_interest": 1992,
+   "volume": 51,
+   "updated_at": "2026-10-21T20:17:49.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000008",
+   "bid_price": "158.800000",
+   "ask_price": "159.200000",
+   "bid_size": 17,
+   "ask_size": 11,
+   "implied_volatility": "0.126405",
+   "open_interest": 5983,
+   "volume": 13,
+   "updated_at": "2026-10-21T20:18:56.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-000000000009",
+   "bid_price": "27.900000",
+   "ask_price": "28.300000",
+   "bid_size": 24,
+   "ask_size": 18,
+   "implied_volatility": "0.117512",
+   "open_interest": 8781,
+   "volume": 108,
+   "updated_at": "2026-10-21T20:19:03.500000000Z"
+  },
+  {
+   "instrument_id": "c0ffee00-0000-4000-8000-00000000000a",
+   "bid_price": "259.600000",
+   "ask_price": "260.300000",
+   "bid_size": 10,
+   "ask_size": 7,
+   "implied_volatility": "0.117512",
+   "open_interest": 5085,
+   "volume": 472,
+   "updated_at": "2026-10-21T20:10:10.500000000Z"
+  }
+ ],
+ "underlying": {
+  "kind": "index",
+  "symbol": "SPX",
+  "quotes": [
+   {
+    "instrument_id": "c0ffee00-0000-4000-8000-ffffffffffff",
+    "symbol": "SPX",
+    "value": "7750.00",
+    "venue_timestamp": "2026-10-21T16:31:21.4484-04:00",
+    "updated_at": "2026-10-21T17:55:46.274803266-04:00"
+   }
+  ]
+ }
+}

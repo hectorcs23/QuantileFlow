@@ -33,6 +33,7 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import norm
 
+from . import vocabulario
 from .opciones import binomial_crr, precio_black, vol_implicita_black
 from .superficies import Rebanada, ajustar_rebanada
 
@@ -230,17 +231,17 @@ def controlar(captura: Captura, reglas: ReglasCalidad = ReglasCalidad()) -> Cont
 
     alertas = []
     if not np.isfinite(c.sello_spot):
-        alertas.append("subyacente sin hora conocida")
+        alertas.append("underlying with no known timestamp")
     elif abs(c.corte - c.sello_spot) > r.desfase_spot_max:
-        alertas.append(f"subyacente desfasado {c.corte - c.sello_spot:.0f} s respecto del corte")
+        alertas.append(f"underlying stale by {c.corte - c.sello_spot:.0f} s against the cut-off")
     if np.isfinite(c.sello_spot) and c.sello_spot < r.apertura + r.margen_apertura:
-        alertas.append("subyacente dentro de la ventana de apertura")
+        alertas.append("underlying inside the opening window")
     sin_edad = int(np.sum(~np.isfinite(c.sello) & np.isfinite(referencia)))
     if sin_edad:
-        alertas.append(f"edad de cotización desconocida en {sin_edad} de {n} filas: "
-                       "el control de desfase no se aplicó")
+        alertas.append(f"quote age unknown in {sin_edad} of {n} rows: "
+                       "the staleness control was not applied")
     if c.disponible is not None and n and not np.any(np.isfinite(c.disponible)):
-        alertas.append("disponibilidad histórica no documentada")
+        alertas.append("historical availability not documented")
     return Controles(tuple(tuple(m) for m in motivos), tuple(alertas))
 
 
@@ -299,10 +300,10 @@ def pares_mismo_strike(captura: Captura, controles: Controles):
         filas = [i for i in range(len(captura.strike))
                  if captura.strike[i] == K and bool(captura.es_call[i]) == (falta == "call")]
         if not filas:
-            motivo = "sin cotización"
+            motivo = "no quote"
         else:
             codigos = sorted({m for i in filas for m in controles.motivos[i]})
-            motivo = "excluida: " + ", ".join(codigos)
+            motivo = "excluded: " + ", ".join(vocabulario.motivo(c) for c in codigos)
         sin_pareja.append({"strike": K, "presente": presente, "falta": falta, "motivo": motivo})
     idx_call = np.array([calls[K] for K in comunes], dtype=int)
     idx_put = np.array([puts[K] for K in comunes], dtype=int)
@@ -405,7 +406,7 @@ def residuos_paridad(captura: Captura, controles: Controles | None = None, prima
 
     minimo = 2 if descuento is not None else 3
     if n == 0 or (forward is None and en_estimacion.sum() < max(minimo, minimo_pares)):
-        alertas.append(f"paridad insuficiente: {int(en_estimacion.sum())} pares estimables")
+        alertas.append(f"insufficient parity: {int(en_estimacion.sum())} estimable pairs")
         vacio = np.full(n, np.nan)
         return ResiduosParidad(K, vacio, vacio, vacio, ancho, vacio, vacio, vacio, e_c - e_p,
                                np.zeros(n, bool), np.zeros(n, bool),
@@ -427,7 +428,7 @@ def residuos_paridad(captura: Captura, controles: Controles | None = None, prima
     banda_superior = (c_ask - e_c) - (p_bid - e_p) - prediccion
     fuera = (banda_inferior > 0.0) | (banda_superior < 0.0)
     umbral = 0.5 * ancho + np.abs(e_c) + np.abs(e_p)
-    sincronizado = not any(a.startswith("subyacente") for a in controles.alertas)
+    sincronizado = not any(a.startswith("underlying") for a in controles.alertas)
     motivos = []
     for j in range(n):
         if not np.isfinite(residuo[j]):
@@ -555,7 +556,7 @@ def asimetria_simetrica(vols: VolatilidadesObservadas, distancia=0.03, hueco_max
         k, iv, iv_b, iv_a, _ = _lado(vols, es_call)
         tramo = _tramo(k, objetivo, k, hueco_max) if len(k) > 1 else None
         if tramo is None:
-            salida["motivo"] = f"sin strikes {nombre} válidos a menos de {hueco_max} de k = {objetivo:+.4f}"
+            salida["motivo"] = (f"no valid {nombre} strikes within {hueco_max} of k = {objetivo:+.4f}")
             return salida
         resultado[nombre] = _interpolar(k, objetivo, tramo, iv, iv_b, iv_a)
     (sc, sc_b, sc_a), (sp, sp_b, sp_a) = resultado["call"], resultado["put"]
@@ -600,7 +601,7 @@ def asimetria_delta(vols: VolatilidadesObservadas, delta=0.25, hueco_max=0.02):
         x = np.abs(dl)
         tramo = _tramo(x, delta, k, hueco_max) if len(k) > 1 else None
         if tramo is None:
-            salida["motivo"] = f"ningún tramo de {nombre}s válidos cruza |delta| = {delta}"
+            salida["motivo"] = f"no span of valid {nombre}s crosses |delta| = {delta}"
             return salida
         resultado[nombre] = _interpolar(x, delta, tramo, iv, iv_b, iv_a, k)
     (sc, sc_b, sc_a, kc), (sp, sp_b, sp_a, kp) = resultado["call"], resultado["put"]
@@ -623,7 +624,7 @@ def pendiente_local(vols: VolatilidadesObservadas, ventana=0.05, minimo=3):
     k, iv = vols.k[m], vols.iv[m]
     medio = np.maximum(0.5 * (vols.iv_ask[m] - vols.iv_bid[m]), 1e-6)
     if len(k) < minimo or not (np.any(k < 0) and np.any(k > 0)):
-        return {"estado": "no identificada", "motivo": f"menos de {minimo} puntos o un solo lado del forward",
+        return {"estado": "no identificada", "motivo": f"fewer than {minimo} points or only one side of the forward",
                 "n": int(len(k))}
     w = 1.0 / medio**2
     km, ym = np.average(k, weights=w), np.average(iv, weights=w)
@@ -663,7 +664,7 @@ def procesar_captura(captura: Captura, reglas: ReglasCalidad = ReglasCalidad(), 
     F, D = paridad.forward_global, paridad.descuento_global
     if not np.isfinite(F):
         F, D = captura.forward_contractual, captura.descuento_contractual
-        alertas.append("forward contractual: la paridad no permitió estimarlo")
+        alertas.append("contractual forward: parity did not allow estimating it")
     vols = volatilidades_observadas(captura, controles, F, D, primas, n_arbol)
     return ResultadoObservado(captura, controles, paridad, vols,
                               asimetria_simetrica(vols, distancia, hueco_max),

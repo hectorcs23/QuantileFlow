@@ -1,0 +1,82 @@
+{
+  "config": {
+    "fingerprint": "a3815888b1444f9d12cbbef799e93f89c98562519d7bc53a0db66f43da578404",
+    "path": "/home/user/QuantileFlow/configs/pilot.toml",
+    "version": "piloto-0.1"
+  },
+  "cutoffs": [
+    "09:45",
+    "10:00"
+  ],
+  "environment": {
+    "git": {
+      "commit": "853047b72f66bb8bd268fe5d4c6fa38270816619",
+      "uncommitted_changes": true
+    },
+    "packages": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.5.3",
+      "pandas": "3.0.5",
+      "pyarrow": "26.0.0",
+      "pytest": "9.1.1",
+      "scipy": "1.18.1"
+    },
+    "platform": "Linux-6.18.44-fc-v140-x86_64-with-glibc2.39",
+    "python": "3.13.16"
+  },
+  "exclusions_primary_cutoff": {
+    "no_bid": 38,
+    "stale": 45,
+    "wide_spread": 40
+  },
+  "feeds": [
+    "nbbo_intervalos_sintetico"
+  ],
+  "inputs": {
+    "quotes": {
+      "path": "/home/user/QuantileFlow/data/normalized/synthetic/quotes.parquet",
+      "sha256": "18de8864cf161f8c87ad131755bc62831743daab99222f7a4b4facde7fc1eea0"
+    },
+    "underlying": {
+      "path": "/home/user/QuantileFlow/data/normalized/synthetic/underlying.parquet",
+      "sha256": "d2c5293dfbe2d864d08495448b6840844f1db580acddff120d535949a3cbe711"
+    }
+  },
+  "outputs": {
+    "all_cutoffs_table.csv": "aa75272018883422c34664ee340e5b9e92bf85d34a982129f7f4665b03b6acaa",
+    "availability_exclusions.png": "48075693f3d49a9adf90604705d021ba038341c13a4388d7e28b7a0a9bf54da3",
+    "daily_table.csv": "701035b955d206c1dd083b2334d42f2e02d3227883c85bd9b1c7d0e661b3c140",
+    "labels.csv": "a0204c1cc27282859168a4820c717777062129c93f280eedf0555529ce181413",
+    "report.md": "4a3e36382471946590591f9bd9421a6229ea644a8f1a5f502e612a327b01dccd",
+    "rr25_30d.png": "64984ce78a2301f83d3b0fe19394d198628b36e95347b00bbb3e3fa69ae8db20",
+    "rr25_change_vs_move.png": "06b1c37f985a3900b64f35177d29b46bbec68759ee288ae37f970b5bd0a6283b",
+    "stability_0945_1000.png": "3cfc9c5204f891c5dc44cbee4e5665eb31f3d956d332382598e1632f1a28f3f1"
+  },
+  "providers": [
+    "sintetico"
+  ],
+  "raw": [
+    {
+      "bytes": 9909266,
+      "nombre": "synthetic_quotes.csv",
+      "sha256": "ffa5ef67da36e6139e3d44819d226b0b497c04c18af4eea61aec9459b1bbaadb"
+    },
+    {
+      "bytes": 11285,
+      "nombre": "synthetic_underlying.csv",
+      "sha256": "7c13f018c7ed92f84f7311633491692a46b0a5d7d53e6b6717b86902d9f5d3a6"
+    }
+  ],
+  "received_utc": [
+    "2026-09-26 12:00:00+00:00",
+    "2026-09-26 12:00:00+00:00"
+  ],
+  "run_at_utc": "2026-10-21T23:04:21+00:00",
+  "sessions": {
+    "from": "2025-10-20",
+    "n": 30,
+    "to": "2025-12-01"
+  },
+  "verdict": "usable with limitations"
+}

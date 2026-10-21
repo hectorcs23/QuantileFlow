@@ -4,6 +4,9 @@ El manifiesto registra configuración (versión y huella), hashes de los archivo
 de entrada y de salida, proveedores y feeds, intervalo de recepción de los
 datos, commit y estado del árbol, exclusiones y dictamen. Reprocesar los mismos
 archivos con la misma configuración produce las mismas tablas.
+
+Se escribe como ``manifest.json``, con claves en inglés: es una salida que se
+lee, no una estructura interna.
 """
 from __future__ import annotations
 
@@ -13,7 +16,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import almacen, contrato
+from . import almacen, contrato, vocabulario
 from .calendario import sesiones
 from .informe import _exclusiones, escribir_informe
 from .piloto import cargar_config, ejecutar
@@ -45,19 +48,21 @@ def correr(config, cotizaciones, subyacente, desde, hasta, salida, titulo, aviso
     exclusiones = Counter()
     for texto in resultado.principal["exclusiones"]:
         exclusiones.update(_exclusiones(texto))
+    # Claves en inglés: el manifiesto es una salida que se lee.
     manifiesto = {
-        "fecha_corrida_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-        "config": {"ruta": str(config), "version": cfg.version, "huella": cfg.huella},
-        "entradas": {nombre: {"ruta": str(ruta), "sha256": almacen.sha256_archivo(ruta)}
-                     for nombre, ruta in (("cotizaciones", cotizaciones), ("subyacente", subyacente))},
-        "crudos": list(crudos),
-        "proveedores": sorted(cot["proveedor"].unique()), "feeds": sorted(cot["feed"].unique()),
-        "recibido_utc": [str(cot["recibido_utc"].min()), str(cot["recibido_utc"].max())],
-        "sesiones": {"desde": str(fechas[0]), "hasta": str(fechas[-1]), "n": len(fechas)},
-        "cortes": list(cfg.horas), "dictamen": resultado.dictamen["veredicto"],
-        "exclusiones_hora_principal": dict(sorted(exclusiones.items())),
-        "entorno": entorno,
-        "salidas": almacen.hashes(rutas.values()),
+        "run_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+        "config": {"path": str(config), "version": cfg.version, "fingerprint": cfg.huella},
+        "inputs": {nombre: {"path": str(ruta), "sha256": almacen.sha256_archivo(ruta)}
+                   for nombre, ruta in (("quotes", cotizaciones), ("underlying", subyacente))},
+        "raw": list(crudos),
+        "providers": sorted(cot["proveedor"].unique()), "feeds": sorted(cot["feed"].unique()),
+        "received_utc": [str(cot["recibido_utc"].min()), str(cot["recibido_utc"].max())],
+        "sessions": {"from": str(fechas[0]), "to": str(fechas[-1]), "n": len(fechas)},
+        "cutoffs": list(cfg.horas), "verdict": resultado.dictamen["veredicto"],
+        "exclusions_primary_cutoff": {vocabulario.motivo(k): v
+                                     for k, v in sorted(exclusiones.items())},
+        "environment": entorno,
+        "outputs": almacen.hashes(rutas.values()),
     }
-    almacen.escribir_json(manifiesto, salida / "manifiesto.json")
+    almacen.escribir_json(manifiesto, salida / "manifest.json")
     return resultado, manifiesto
