@@ -1,0 +1,19 @@
+{
+  "testigos": 15300,
+  "max_errores": {
+    "masa": 3.774758283725532e-15,
+    "negatividad": 0.0,
+    "bandas_normalizado": 5.118976999564122e-17,
+    "referencias": 1.5543122344752192e-15,
+    "objetivo": 1.0658141036401503e-14
+  },
+  "comparaciones_anidadas": 384,
+  "alcance": "Reprecios, masa, media, referencias, bandas y objetivos reconstruidos desde medidas guardadas. Los certificados primal/dual se comprobaron al optimizar.",
+  "verificador_sha256_lf": "fd9150b3ed7863040e978aebbe9cb9c77d3e04bb72f03655f1c23af93dbe5fbe",
+  "entradas_publicas_sha256": {
+    "resumen.json": "6cc117e74701663cd15196cf635e84a591888c41873d3f14b306dd52beef9456",
+    "por_rebanada.json": "b73fbb2690438f6bc0c1dcdc5a0433bf1a5847dbe9e334584757b1abff8583af",
+    "perfil.json": "ce9fa4e3a65729e2831fdd793457c0b8a240c412488cc74f15de66c9ec3976e1",
+    "reparaciones.json": "1ffa63fa2aa3ad01a864a22c27ecc487b251aee0007916ac72aac12bed1c1579"
+  }
+}
