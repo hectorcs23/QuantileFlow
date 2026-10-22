@@ -1,0 +1,23 @@
+version = "ruido-concentrado-0.1"
+fecha = "2026-10-22"
+presupuesto_datos = 0
+universo = "SPXW europeo; todas las filas de training del snapshot anterior, sin eliminar outliers"
+cap = "rho minimax del training + 0.5 spreads por cotizacion"
+presupuesto = "media minima de desviacion fuera de bid/ask sujeta al cap, mas margen"
+margenes_media = [0.05, 0.1, 0.5]
+margen_principal = 0.1
+ratios_cdf = [0.94, 0.97, 1.0, 1.03, 1.06]
+soporte_maximo = 2.0
+epsilon_cdf = 0.0025
+forward_banda_relativa = 0.0025
+shock_tasa_anual = 0.01
+control = "Comparar con uniforme al mismo cap; F/D libres con el mismo presupuesto absoluto; soporte 4F y rampa mitad"
+concentracion = "Participacion del 10% mayor y fraccion modificada en UN optimo L1; no identificacion unica de contratos malos"
+paridad = "Cota inferior de numero de filas que deben salir del bid/ask por pares disjuntos incompatibles al F/D fijo"
+holdout = "Tres calls reservados cercanos a K/F=.97,1,1.03; no usados para ajustar ni elegir tolerancias"
+nuevos_desde = "2026-10-12"
+nuevos_hasta = "2026-10-16"
+nuevos_horas = ["09:45", "10:00"]
+nuevos_preparacion = "Mismo adaptador descriptivo, IV finita, 1-90 DTE; split central +/-0.03 cada tercer strike reservado y extras +/-0.10 con split anidado; F por paridad de training central, D contractual; sin SSVI"
+nuevos_alcance = "Fechas historicas no usadas en estos experimentos; no validacion prospectiva ni independiente del proveedor"
+decision = "No promover PDF. Una banda menor es consecuencia de un supuesto mas restrictivo; reportar tambien contratos reservados y controles economicos"
