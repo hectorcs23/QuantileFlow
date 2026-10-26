@@ -1,0 +1,1762 @@
+[
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filas": 111,
+    "rho": 3.9681162531741982,
+    "cap": 4.468116253174198,
+    "media_min": 0.3633789718531718,
+    "fraccion_modificada": 0.34234234234234234,
+    "participacion_top10": 0.7472743809108938,
+    "paridad": {
+      "pares": 51,
+      "incompatibles": 21,
+      "filas_modificadas_min": 21,
+      "fraccion_filas_min": 0.1891891891891892,
+      "media_error_min": 0.1476206696455656
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filas": 328,
+    "rho": 2.782476968275867,
+    "cap": 3.282476968275867,
+    "media_min": 0.2568341055454551,
+    "fraccion_modificada": 0.3384146341463415,
+    "participacion_top10": 0.6899391650573278,
+    "paridad": {
+      "pares": 140,
+      "incompatibles": 46,
+      "filas_modificadas_min": 47,
+      "fraccion_filas_min": 0.14329268292682926,
+      "media_error_min": 0.09628793623769602
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filas": 84,
+    "rho": 2.3839440299323864,
+    "cap": 2.8839440299323864,
+    "media_min": 0.2897629454980453,
+    "fraccion_modificada": 0.32142857142857145,
+    "participacion_top10": 0.6930938249466745,
+    "paridad": {
+      "pares": 39,
+      "incompatibles": 13,
+      "filas_modificadas_min": 13,
+      "fraccion_filas_min": 0.15476190476190477,
+      "media_error_min": 0.10236475988307436
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filas": 86,
+    "rho": 3.938625696545247,
+    "cap": 4.438625696545246,
+    "media_min": 0.3972626860146961,
+    "fraccion_modificada": 0.32558139534883723,
+    "participacion_top10": 0.7189305146852896,
+    "paridad": {
+      "pares": 40,
+      "incompatibles": 14,
+      "filas_modificadas_min": 14,
+      "fraccion_filas_min": 0.16279069767441862,
+      "media_error_min": 0.09980907606910515
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filas": 113,
+    "rho": 12.646568884479287,
+    "cap": 13.146568884479287,
+    "media_min": 0.7685946100966639,
+    "fraccion_modificada": 0.3805309734513274,
+    "participacion_top10": 0.8278919002033945,
+    "paridad": {
+      "pares": 53,
+      "incompatibles": 21,
+      "filas_modificadas_min": 21,
+      "fraccion_filas_min": 0.18584070796460178,
+      "media_error_min": 0.16319234506680916
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filas": 324,
+    "rho": 4.615319443535411,
+    "cap": 5.115319443535411,
+    "media_min": 0.38218459454879405,
+    "fraccion_modificada": 0.3765432098765432,
+    "participacion_top10": 0.6982958821263096,
+    "paridad": {
+      "pares": 136,
+      "incompatibles": 61,
+      "filas_modificadas_min": 63,
+      "fraccion_filas_min": 0.19444444444444445,
+      "media_error_min": 0.20361138049679056
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filas": 84,
+    "rho": 2.61978398894665,
+    "cap": 3.11978398894665,
+    "media_min": 0.4071368654585447,
+    "fraccion_modificada": 0.40476190476190477,
+    "participacion_top10": 0.5874555010374466,
+    "paridad": {
+      "pares": 39,
+      "incompatibles": 17,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.20238095238095238,
+      "media_error_min": 0.1688588385011748
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filas": 87,
+    "rho": 1.5780360779345368,
+    "cap": 2.078036077934537,
+    "media_min": 0.18876402911549514,
+    "fraccion_modificada": 0.22988505747126436,
+    "participacion_top10": 0.7996901322978262,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.1839080459770115,
+      "media_error_min": 0.17420835926356748
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filas": 89,
+    "rho": 3.8591344558442766,
+    "cap": 4.359134455844277,
+    "media_min": 0.18189693395470605,
+    "fraccion_modificada": 0.2696629213483146,
+    "participacion_top10": 0.8665144327351705,
+    "paridad": {
+      "pares": 40,
+      "incompatibles": 17,
+      "filas_modificadas_min": 18,
+      "fraccion_filas_min": 0.20224719101123595,
+      "media_error_min": 0.1293756964762711
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filas": 91,
+    "rho": 1.6606851549752872,
+    "cap": 2.1606851549752872,
+    "media_min": 0.11237963331496578,
+    "fraccion_modificada": 0.18681318681318682,
+    "participacion_top10": 0.9514422260994004,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 9,
+      "filas_modificadas_min": 9,
+      "fraccion_filas_min": 0.0989010989010989,
+      "media_error_min": 0.05552141498666733
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filas": 92,
+    "rho": 1.1542272564136158,
+    "cap": 1.6542272564136158,
+    "media_min": 0.09455031522617949,
+    "fraccion_modificada": 0.18478260869565216,
+    "participacion_top10": 0.903485870717159,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 12,
+      "filas_modificadas_min": 12,
+      "fraccion_filas_min": 0.13043478260869565,
+      "media_error_min": 0.023336977371420313
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filas": 92,
+    "rho": 1.8334496626784074,
+    "cap": 2.333449662678407,
+    "media_min": 0.15363913153900663,
+    "fraccion_modificada": 0.21739130434782608,
+    "participacion_top10": 0.9140328314594216,
+    "paridad": {
+      "pares": 43,
+      "incompatibles": 9,
+      "filas_modificadas_min": 9,
+      "fraccion_filas_min": 0.09782608695652174,
+      "media_error_min": 0.06823870888336064
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filas": 91,
+    "rho": 1.0837585900823212,
+    "cap": 1.5837585900823212,
+    "media_min": 0.09814913614307322,
+    "fraccion_modificada": 0.17582417582417584,
+    "participacion_top10": 0.9019846664621383,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 10,
+      "filas_modificadas_min": 11,
+      "fraccion_filas_min": 0.12087912087912088,
+      "media_error_min": 0.06543468479909186
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filas": 92,
+    "rho": 0.7060543755292464,
+    "cap": 1.2060543755292463,
+    "media_min": 0.04588248405375901,
+    "fraccion_modificada": 0.10869565217391304,
+    "participacion_top10": 0.9999999999999819,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 7,
+      "filas_modificadas_min": 7,
+      "fraccion_filas_min": 0.07608695652173914,
+      "media_error_min": 0.02398610167859288
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filas": 92,
+    "rho": 0.924617200925491,
+    "cap": 1.424617200925491,
+    "media_min": 0.044439614539241,
+    "fraccion_modificada": 0.16304347826086957,
+    "participacion_top10": 0.9495377626557899,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 4,
+      "filas_modificadas_min": 4,
+      "fraccion_filas_min": 0.043478260869565216,
+      "media_error_min": 0.018891910731185003
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filas": 92,
+    "rho": 3.8521086082481424,
+    "cap": 4.352108608248143,
+    "media_min": 0.2950747415203464,
+    "fraccion_modificada": 0.25,
+    "participacion_top10": 0.82949683930337,
+    "paridad": {
+      "pares": 43,
+      "incompatibles": 15,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.18478260869565216,
+      "media_error_min": 0.2736075203394251
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filas": 97,
+    "rho": 2.405900991327391,
+    "cap": 2.905900991327391,
+    "media_min": 0.17908284101130129,
+    "fraccion_modificada": 0.2268041237113402,
+    "participacion_top10": 0.801057273246399,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 14,
+      "filas_modificadas_min": 15,
+      "fraccion_filas_min": 0.15463917525773196,
+      "media_error_min": 0.11721711397384617
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filas": 94,
+    "rho": 0.6652332719851078,
+    "cap": 1.165233271985108,
+    "media_min": 0.056916897810230224,
+    "fraccion_modificada": 0.1702127659574468,
+    "participacion_top10": 0.9190234590681826,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 7,
+      "filas_modificadas_min": 7,
+      "fraccion_filas_min": 0.07446808510638298,
+      "media_error_min": 0.024018042123637208
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filas": 98,
+    "rho": 2.34674302934154,
+    "cap": 2.84674302934154,
+    "media_min": 0.17986116282468362,
+    "fraccion_modificada": 0.2653061224489796,
+    "participacion_top10": 0.7077113319923283,
+    "paridad": {
+      "pares": 47,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.16326530612244897,
+      "media_error_min": 0.13971841887646527
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filas": 194,
+    "rho": 13.170967599896834,
+    "cap": 13.670967599896834,
+    "media_min": 0.6611743418432033,
+    "fraccion_modificada": 0.41237113402061853,
+    "participacion_top10": 0.7543919324085816,
+    "paridad": {
+      "pares": 91,
+      "incompatibles": 30,
+      "filas_modificadas_min": 30,
+      "fraccion_filas_min": 0.15463917525773196,
+      "media_error_min": 0.13572203408357672
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filas": 94,
+    "rho": 2.6379983026025746,
+    "cap": 3.1379983026025746,
+    "media_min": 0.1508023365067147,
+    "fraccion_modificada": 0.19148936170212766,
+    "participacion_top10": 0.8948180155090176,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 11,
+      "filas_modificadas_min": 12,
+      "fraccion_filas_min": 0.1276595744680851,
+      "media_error_min": 0.12339288428267893
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filas": 94,
+    "rho": 3.288122564255749,
+    "cap": 3.788122564255749,
+    "media_min": 0.1933039492899687,
+    "fraccion_modificada": 0.26595744680851063,
+    "participacion_top10": 0.8075060606727504,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 11,
+      "filas_modificadas_min": 11,
+      "fraccion_filas_min": 0.11702127659574468,
+      "media_error_min": 0.09070601452055732
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filas": 96,
+    "rho": 1.5689149560118603,
+    "cap": 2.0689149560118603,
+    "media_min": 0.07206974098166903,
+    "fraccion_modificada": 0.1875,
+    "participacion_top10": 0.8724570620975663,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 8,
+      "filas_modificadas_min": 8,
+      "fraccion_filas_min": 0.08333333333333333,
+      "media_error_min": 0.01986536124014444
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filas": 188,
+    "rho": 3.3588642424827464,
+    "cap": 3.8588642424827464,
+    "media_min": 0.27063139343416814,
+    "fraccion_modificada": 0.324468085106383,
+    "participacion_top10": 0.7138336304342223,
+    "paridad": {
+      "pares": 84,
+      "incompatibles": 29,
+      "filas_modificadas_min": 30,
+      "fraccion_filas_min": 0.1595744680851064,
+      "media_error_min": 0.08064582491736008
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filas": 102,
+    "rho": 2.393363416864876,
+    "cap": 2.893363416864876,
+    "media_min": 0.27719890582662526,
+    "fraccion_modificada": 0.29411764705882354,
+    "participacion_top10": 0.6971741169142046,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 13,
+      "filas_modificadas_min": 13,
+      "fraccion_filas_min": 0.12745098039215685,
+      "media_error_min": 0.08474465484947837
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filas": 104,
+    "rho": 0.9953956958057065,
+    "cap": 1.4953956958057066,
+    "media_min": 0.11028001196357896,
+    "fraccion_modificada": 0.25961538461538464,
+    "participacion_top10": 0.778477290702428,
+    "paridad": {
+      "pares": 48,
+      "incompatibles": 12,
+      "filas_modificadas_min": 12,
+      "fraccion_filas_min": 0.11538461538461539,
+      "media_error_min": 0.05731046297544891
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filas": 211,
+    "rho": 3.1668549650324893,
+    "cap": 3.6668549650324893,
+    "media_min": 0.34144682862157766,
+    "fraccion_modificada": 0.35545023696682465,
+    "participacion_top10": 0.6876487109594965,
+    "paridad": {
+      "pares": 100,
+      "incompatibles": 36,
+      "filas_modificadas_min": 37,
+      "fraccion_filas_min": 0.17535545023696683,
+      "media_error_min": 0.15563377735947573
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filas": 95,
+    "rho": 5.652466130447576,
+    "cap": 6.152466130447576,
+    "media_min": 0.32394114058277074,
+    "fraccion_modificada": 0.30526315789473685,
+    "participacion_top10": 0.6704398929195123,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 14,
+      "filas_modificadas_min": 15,
+      "fraccion_filas_min": 0.15789473684210525,
+      "media_error_min": 0.2271254041868188
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filas": 101,
+    "rho": 1.6692393009599804,
+    "cap": 2.1692393009599806,
+    "media_min": 0.10567726581814511,
+    "fraccion_modificada": 0.24752475247524752,
+    "participacion_top10": 0.8403374252014889,
+    "paridad": {
+      "pares": 47,
+      "incompatibles": 15,
+      "filas_modificadas_min": 15,
+      "fraccion_filas_min": 0.1485148514851485,
+      "media_error_min": 0.0633735109966539
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filas": 101,
+    "rho": 1.716632197171152,
+    "cap": 2.216632197171152,
+    "media_min": 0.1840792500769755,
+    "fraccion_modificada": 0.297029702970297,
+    "participacion_top10": 0.7002435636161091,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 19,
+      "filas_modificadas_min": 20,
+      "fraccion_filas_min": 0.19801980198019803,
+      "media_error_min": 0.10301222517505405
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filas": 206,
+    "rho": 4.800085553178522,
+    "cap": 5.300085553178522,
+    "media_min": 0.46843077940339334,
+    "fraccion_modificada": 0.4077669902912621,
+    "participacion_top10": 0.666615352095676,
+    "paridad": {
+      "pares": 95,
+      "incompatibles": 36,
+      "filas_modificadas_min": 38,
+      "fraccion_filas_min": 0.18446601941747573,
+      "media_error_min": 0.20332783478840552
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filas": 92,
+    "rho": 1.9926876161198888,
+    "cap": 2.4926876161198885,
+    "media_min": 0.23094231407891555,
+    "fraccion_modificada": 0.30434782608695654,
+    "participacion_top10": 0.64984416012389,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 21,
+      "filas_modificadas_min": 21,
+      "fraccion_filas_min": 0.22826086956521738,
+      "media_error_min": 0.13466589007129817
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filas": 103,
+    "rho": 1.5325910740528639,
+    "cap": 2.032591074052864,
+    "media_min": 0.08948060167039841,
+    "fraccion_modificada": 0.20388349514563106,
+    "participacion_top10": 0.8661732759783612,
+    "paridad": {
+      "pares": 48,
+      "incompatibles": 13,
+      "filas_modificadas_min": 13,
+      "fraccion_filas_min": 0.1262135922330097,
+      "media_error_min": 0.04871419558099729
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filas": 209,
+    "rho": 4.471452200287013,
+    "cap": 4.971452200287013,
+    "media_min": 0.2974693754710697,
+    "fraccion_modificada": 0.3588516746411483,
+    "participacion_top10": 0.6897286298788823,
+    "paridad": {
+      "pares": 97,
+      "incompatibles": 34,
+      "filas_modificadas_min": 34,
+      "fraccion_filas_min": 0.16267942583732056,
+      "media_error_min": 0.10447711865187623
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filas": 91,
+    "rho": 6.767218409066683,
+    "cap": 7.267218409066683,
+    "media_min": 0.4192546532902514,
+    "fraccion_modificada": 0.3956043956043956,
+    "participacion_top10": 0.7384844535744662,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 16,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.18681318681318682,
+      "media_error_min": 0.2579929083339545
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filas": 88,
+    "rho": 1.3003518857247789,
+    "cap": 1.8003518857247789,
+    "media_min": 0.10081844356236086,
+    "fraccion_modificada": 0.22727272727272727,
+    "participacion_top10": 0.7956095090805482,
+    "paridad": {
+      "pares": 40,
+      "incompatibles": 16,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.19318181818181818,
+      "media_error_min": 0.08731286523559864
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filas": 103,
+    "rho": 1.3522117962464408,
+    "cap": 1.8522117962464408,
+    "media_min": 0.08274836858755798,
+    "fraccion_modificada": 0.1941747572815534,
+    "participacion_top10": 0.9043324613858532,
+    "paridad": {
+      "pares": 47,
+      "incompatibles": 11,
+      "filas_modificadas_min": 11,
+      "fraccion_filas_min": 0.10679611650485436,
+      "media_error_min": 0.04231261743724359
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filas": 210,
+    "rho": 6.1897954721013235,
+    "cap": 6.6897954721013235,
+    "media_min": 0.34971113791221264,
+    "fraccion_modificada": 0.35714285714285715,
+    "participacion_top10": 0.7377152081539182,
+    "paridad": {
+      "pares": 99,
+      "incompatibles": 33,
+      "filas_modificadas_min": 33,
+      "fraccion_filas_min": 0.15714285714285714,
+      "media_error_min": 0.10140066594324183
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filas": 93,
+    "rho": 1.1370439727038375,
+    "cap": 1.6370439727038375,
+    "media_min": 0.14114423600254195,
+    "fraccion_modificada": 0.27956989247311825,
+    "participacion_top10": 0.6829137182813914,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 17,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.1827956989247312,
+      "media_error_min": 0.07823917924942027
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filas": 92,
+    "rho": 7.8213724165849134,
+    "cap": 8.321372416584914,
+    "media_min": 0.32593341267878967,
+    "fraccion_modificada": 0.30434782608695654,
+    "participacion_top10": 0.852803721037207,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 13,
+      "filas_modificadas_min": 14,
+      "fraccion_filas_min": 0.15217391304347827,
+      "media_error_min": 0.17341582830053093
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filas": 107,
+    "rho": 0.9808346025888569,
+    "cap": 1.4808346025888568,
+    "media_min": 0.08109115225244562,
+    "fraccion_modificada": 0.205607476635514,
+    "participacion_top10": 0.818385817571043,
+    "paridad": {
+      "pares": 48,
+      "incompatibles": 15,
+      "filas_modificadas_min": 15,
+      "fraccion_filas_min": 0.14018691588785046,
+      "media_error_min": 0.04203285418081641
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filas": 205,
+    "rho": 17.425034543613094,
+    "cap": 17.925034543613094,
+    "media_min": 0.5881677641311228,
+    "fraccion_modificada": 0.2975609756097561,
+    "participacion_top10": 0.8817486448169999,
+    "paridad": {
+      "pares": 94,
+      "incompatibles": 26,
+      "filas_modificadas_min": 26,
+      "fraccion_filas_min": 0.12682926829268293,
+      "media_error_min": 0.08397001931279006
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filas": 93,
+    "rho": 1.1977989456996483,
+    "cap": 1.6977989456996483,
+    "media_min": 0.15414706119700097,
+    "fraccion_modificada": 0.2903225806451613,
+    "participacion_top10": 0.6961253323338361,
+    "paridad": {
+      "pares": 43,
+      "incompatibles": 16,
+      "filas_modificadas_min": 18,
+      "fraccion_filas_min": 0.1935483870967742,
+      "media_error_min": 0.10669348375997097
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filas": 93,
+    "rho": 9.34825585072257,
+    "cap": 9.84825585072257,
+    "media_min": 0.48227825855990186,
+    "fraccion_modificada": 0.2903225806451613,
+    "participacion_top10": 0.8341657418718015,
+    "paridad": {
+      "pares": 43,
+      "incompatibles": 12,
+      "filas_modificadas_min": 13,
+      "fraccion_filas_min": 0.13978494623655913,
+      "media_error_min": 0.23410242863076455
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filas": 110,
+    "rho": 0.8269239843630581,
+    "cap": 1.326923984363058,
+    "media_min": 0.0851559980407667,
+    "fraccion_modificada": 0.22727272727272727,
+    "participacion_top10": 0.7288160954302891,
+    "paridad": {
+      "pares": 51,
+      "incompatibles": 17,
+      "filas_modificadas_min": 18,
+      "fraccion_filas_min": 0.16363636363636364,
+      "media_error_min": 0.05265587186836716
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filas": 209,
+    "rho": 2.3459242784741394,
+    "cap": 2.8459242784741394,
+    "media_min": 0.08139737702813325,
+    "fraccion_modificada": 0.1674641148325359,
+    "participacion_top10": 0.9299441004794095,
+    "paridad": {
+      "pares": 99,
+      "incompatibles": 19,
+      "filas_modificadas_min": 20,
+      "fraccion_filas_min": 0.09569377990430622,
+      "media_error_min": 0.051079987926172715
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filas": 95,
+    "rho": 0.7218990290785371,
+    "cap": 1.221899029078537,
+    "media_min": 0.05919815805198323,
+    "fraccion_modificada": 0.23157894736842105,
+    "participacion_top10": 0.8257204130095172,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 12,
+      "filas_modificadas_min": 12,
+      "fraccion_filas_min": 0.12631578947368421,
+      "media_error_min": 0.028911819005118983
+    }
+  },
+  {
+    "cohorte": "conocidas",
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filas": 96,
+    "rho": 1.9701590682754315,
+    "cap": 2.4701590682754313,
+    "media_min": 0.1525308363233668,
+    "fraccion_modificada": 0.20833333333333334,
+    "participacion_top10": 0.821373315434638,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 7,
+      "filas_modificadas_min": 7,
+      "fraccion_filas_min": 0.07291666666666667,
+      "media_error_min": 0.044986551610164564
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filas": 90,
+    "rho": 1.454280213828292,
+    "cap": 1.954280213828292,
+    "media_min": 0.22297372858711384,
+    "fraccion_modificada": 0.3,
+    "participacion_top10": 0.5989308905701503,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 17,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.18888888888888888,
+      "media_error_min": 0.08946380545558004
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-10",
+    "filas": 90,
+    "rho": 3.9593901803175844,
+    "cap": 4.459390180317584,
+    "media_min": 0.4077542669209163,
+    "fraccion_modificada": 0.3,
+    "participacion_top10": 0.6978519918649203,
+    "paridad": {
+      "pares": 39,
+      "incompatibles": 12,
+      "filas_modificadas_min": 12,
+      "fraccion_filas_min": 0.13333333333333333,
+      "media_error_min": 0.16031295249411698
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-11",
+    "filas": 89,
+    "rho": 2.8237424783775085,
+    "cap": 3.3237424783775085,
+    "media_min": 0.45748896089762164,
+    "fraccion_modificada": 0.4044943820224719,
+    "participacion_top10": 0.5605078552910561,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 19,
+      "filas_modificadas_min": 19,
+      "fraccion_filas_min": 0.21348314606741572,
+      "media_error_min": 0.20252923916980511
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-12",
+    "filas": 89,
+    "rho": 19.55834030836052,
+    "cap": 20.05834030836052,
+    "media_min": 1.546835231204136,
+    "fraccion_modificada": 0.4606741573033708,
+    "participacion_top10": 0.7819781058389961,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 16,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.19101123595505617,
+      "media_error_min": 0.47614764873402055
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filas": 87,
+    "rho": 1.4353319818018577,
+    "cap": 1.9353319818018577,
+    "media_min": 0.17577991376533625,
+    "fraccion_modificada": 0.2988505747126437,
+    "participacion_top10": 0.7504409457083409,
+    "paridad": {
+      "pares": 37,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.1839080459770115,
+      "media_error_min": 0.095367556548501
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filas": 89,
+    "rho": 2.17054232894989,
+    "cap": 2.67054232894989,
+    "media_min": 0.1922175850494731,
+    "fraccion_modificada": 0.33707865168539325,
+    "participacion_top10": 0.6916484316410286,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 14,
+      "filas_modificadas_min": 14,
+      "fraccion_filas_min": 0.15730337078651685,
+      "media_error_min": 0.09429746999364448
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-11",
+    "filas": 89,
+    "rho": 4.568475452196921,
+    "cap": 5.068475452196921,
+    "media_min": 0.6035876082535692,
+    "fraccion_modificada": 0.3707865168539326,
+    "participacion_top10": 0.7009661180736363,
+    "paridad": {
+      "pares": 39,
+      "incompatibles": 16,
+      "filas_modificadas_min": 18,
+      "fraccion_filas_min": 0.20224719101123595,
+      "media_error_min": 0.332109317638331
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-12",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-12",
+    "filas": 89,
+    "rho": 4.064808783497573,
+    "cap": 4.564808783497573,
+    "media_min": 0.440662047018268,
+    "fraccion_modificada": 0.43820224719101125,
+    "participacion_top10": 0.6364141099851405,
+    "paridad": {
+      "pares": 40,
+      "incompatibles": 21,
+      "filas_modificadas_min": 21,
+      "fraccion_filas_min": 0.23595505617977527,
+      "media_error_min": 0.17457500834432177
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filas": 86,
+    "rho": 0.722092139895458,
+    "cap": 1.2220921398954578,
+    "media_min": 0.0955782961410897,
+    "fraccion_modificada": 0.16279069767441862,
+    "participacion_top10": 0.7870730675805757,
+    "paridad": {
+      "pares": 36,
+      "incompatibles": 9,
+      "filas_modificadas_min": 9,
+      "fraccion_filas_min": 0.10465116279069768,
+      "media_error_min": 0.045565798629175404
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-11",
+    "filas": 89,
+    "rho": 1.733174295798456,
+    "cap": 2.233174295798456,
+    "media_min": 0.16947825426750385,
+    "fraccion_modificada": 0.21348314606741572,
+    "participacion_top10": 0.7852825444112334,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 8,
+      "filas_modificadas_min": 8,
+      "fraccion_filas_min": 0.0898876404494382,
+      "media_error_min": 0.09147571532681548
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-12",
+    "filas": 89,
+    "rho": 2.2567405529071904,
+    "cap": 2.7567405529071904,
+    "media_min": 0.31144905751062796,
+    "fraccion_modificada": 0.3146067415730337,
+    "participacion_top10": 0.7152159559831125,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.1797752808988764,
+      "media_error_min": 0.14102695405995225
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-13",
+    "filas": 180,
+    "rho": 16.739365869980002,
+    "cap": 17.239365869980002,
+    "media_min": 0.7509899547307409,
+    "fraccion_modificada": 0.42777777777777776,
+    "participacion_top10": 0.691689848299855,
+    "paridad": {
+      "pares": 79,
+      "incompatibles": 38,
+      "filas_modificadas_min": 39,
+      "fraccion_filas_min": 0.21666666666666667,
+      "media_error_min": 0.4396828186738283
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-10",
+    "filas": 88,
+    "rho": 3.5387579936943188,
+    "cap": 4.038757993694318,
+    "media_min": 0.21610160523551825,
+    "fraccion_modificada": 0.25,
+    "participacion_top10": 0.8016055713961387,
+    "paridad": {
+      "pares": 38,
+      "incompatibles": 9,
+      "filas_modificadas_min": 9,
+      "fraccion_filas_min": 0.10227272727272728,
+      "media_error_min": 0.05668886722838289
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-11",
+    "filas": 87,
+    "rho": 3.5851533665362054,
+    "cap": 4.085153366536206,
+    "media_min": 0.46322159768404947,
+    "fraccion_modificada": 0.41379310344827586,
+    "participacion_top10": 0.6467447918164572,
+    "paridad": {
+      "pares": 37,
+      "incompatibles": 17,
+      "filas_modificadas_min": 19,
+      "fraccion_filas_min": 0.21839080459770116,
+      "media_error_min": 0.1992696732822037
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-12",
+    "filas": 87,
+    "rho": 4.641304549375772,
+    "cap": 5.141304549375772,
+    "media_min": 0.3501277833228819,
+    "fraccion_modificada": 0.3333333333333333,
+    "participacion_top10": 0.8609817794998984,
+    "paridad": {
+      "pares": 37,
+      "incompatibles": 16,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.1839080459770115,
+      "media_error_min": 0.1264057042403441
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-13",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-13",
+    "filas": 185,
+    "rho": 3.952380952380995,
+    "cap": 4.452380952380995,
+    "media_min": 0.4402833434723602,
+    "fraccion_modificada": 0.4486486486486487,
+    "participacion_top10": 0.6350137843679917,
+    "paridad": {
+      "pares": 84,
+      "incompatibles": 37,
+      "filas_modificadas_min": 37,
+      "fraccion_filas_min": 0.2,
+      "media_error_min": 0.16566158304463227
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-11",
+    "filas": 91,
+    "rho": 5.2718899651011615,
+    "cap": 5.7718899651011615,
+    "media_min": 0.21110006069460785,
+    "fraccion_modificada": 0.25274725274725274,
+    "participacion_top10": 0.9096805722273501,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 14,
+      "filas_modificadas_min": 15,
+      "fraccion_filas_min": 0.16483516483516483,
+      "media_error_min": 0.1777693189231605
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-12",
+    "filas": 92,
+    "rho": 1.5584606723370598,
+    "cap": 2.05846067233706,
+    "media_min": 0.1381734175926653,
+    "fraccion_modificada": 0.2391304347826087,
+    "participacion_top10": 0.8149805618829241,
+    "paridad": {
+      "pares": 42,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.17391304347826086,
+      "media_error_min": 0.11230922377282927
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-13",
+    "filas": 188,
+    "rho": 3.033434302268115,
+    "cap": 3.533434302268115,
+    "media_min": 0.34661551208458613,
+    "fraccion_modificada": 0.4095744680851064,
+    "participacion_top10": 0.6027311085695938,
+    "paridad": {
+      "pares": 88,
+      "incompatibles": 40,
+      "filas_modificadas_min": 40,
+      "fraccion_filas_min": 0.2127659574468085,
+      "media_error_min": 0.12906728757307087
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-16",
+    "filas": 86,
+    "rho": 0.9248813911400698,
+    "cap": 1.4248813911400697,
+    "media_min": 0.08154662354563492,
+    "fraccion_modificada": 0.22093023255813954,
+    "participacion_top10": 0.7722454799038789,
+    "paridad": {
+      "pares": 39,
+      "incompatibles": 11,
+      "filas_modificadas_min": 11,
+      "fraccion_filas_min": 0.12790697674418605,
+      "media_error_min": 0.056868359896513024
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-11",
+    "filas": 93,
+    "rho": 2.666240027670857,
+    "cap": 3.166240027670857,
+    "media_min": 0.20605381286695024,
+    "fraccion_modificada": 0.27956989247311825,
+    "participacion_top10": 0.8168864827176794,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 15,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.17204301075268819,
+      "media_error_min": 0.132375685952546
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-12",
+    "filas": 93,
+    "rho": 3.0519091161254703,
+    "cap": 3.5519091161254703,
+    "media_min": 0.38394120313631286,
+    "fraccion_modificada": 0.3333333333333333,
+    "participacion_top10": 0.7111196283312176,
+    "paridad": {
+      "pares": 41,
+      "incompatibles": 18,
+      "filas_modificadas_min": 20,
+      "fraccion_filas_min": 0.21505376344086022,
+      "media_error_min": 0.2535995104448458
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-13",
+    "filas": 190,
+    "rho": 3.8181722337918043,
+    "cap": 4.318172233791804,
+    "media_min": 0.35132679858618626,
+    "fraccion_modificada": 0.3157894736842105,
+    "participacion_top10": 0.7155867636900004,
+    "paridad": {
+      "pares": 88,
+      "incompatibles": 26,
+      "filas_modificadas_min": 26,
+      "fraccion_filas_min": 0.1368421052631579,
+      "media_error_min": 0.13281541758800164
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-14",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-16",
+    "filas": 88,
+    "rho": 2.1220769618050297,
+    "cap": 2.6220769618050297,
+    "media_min": 0.30792701861713395,
+    "fraccion_modificada": 0.375,
+    "participacion_top10": 0.6547718643461194,
+    "paridad": {
+      "pares": 40,
+      "incompatibles": 21,
+      "filas_modificadas_min": 23,
+      "fraccion_filas_min": 0.26136363636363635,
+      "media_error_min": 0.19323977013751883
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-12",
+    "filas": 101,
+    "rho": 3.029328558488648,
+    "cap": 3.529328558488648,
+    "media_min": 0.20719607145571464,
+    "fraccion_modificada": 0.2871287128712871,
+    "participacion_top10": 0.7736318356201669,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 16,
+      "filas_modificadas_min": 16,
+      "fraccion_filas_min": 0.15841584158415842,
+      "media_error_min": 0.0995046725484015
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-13",
+    "filas": 207,
+    "rho": 20.745318352058057,
+    "cap": 21.245318352058057,
+    "media_min": 0.6715338173751191,
+    "fraccion_modificada": 0.3961352657004831,
+    "participacion_top10": 0.786531848080115,
+    "paridad": {
+      "pares": 95,
+      "incompatibles": 41,
+      "filas_modificadas_min": 41,
+      "fraccion_filas_min": 0.19806763285024154,
+      "media_error_min": 0.13870442511401104
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-16",
+    "filas": 101,
+    "rho": 2.6613598649481074,
+    "cap": 3.1613598649481074,
+    "media_min": 0.32705282844560185,
+    "fraccion_modificada": 0.3564356435643564,
+    "participacion_top10": 0.5961632542642373,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 19,
+      "filas_modificadas_min": 19,
+      "fraccion_filas_min": 0.18811881188118812,
+      "media_error_min": 0.10014143968662123
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-17",
+    "filas": 103,
+    "rho": 3.6271822798569793,
+    "cap": 4.12718227985698,
+    "media_min": 0.52948501305016,
+    "fraccion_modificada": 0.4077669902912621,
+    "participacion_top10": 0.5918080098519892,
+    "paridad": {
+      "pares": 47,
+      "incompatibles": 25,
+      "filas_modificadas_min": 25,
+      "fraccion_filas_min": 0.24271844660194175,
+      "media_error_min": 0.19300773809122015
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-12",
+    "filas": 102,
+    "rho": 3.651254692567111,
+    "cap": 4.151254692567111,
+    "media_min": 0.3034929511853135,
+    "fraccion_modificada": 0.24509803921568626,
+    "participacion_top10": 0.8464663626314575,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 13,
+      "filas_modificadas_min": 13,
+      "fraccion_filas_min": 0.12745098039215685,
+      "media_error_min": 0.10865565783618503
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-13",
+    "filas": 204,
+    "rho": 8.30415171792784,
+    "cap": 8.80415171792784,
+    "media_min": 0.4688791446347382,
+    "fraccion_modificada": 0.4166666666666667,
+    "participacion_top10": 0.6961774694029667,
+    "paridad": {
+      "pares": 93,
+      "incompatibles": 40,
+      "filas_modificadas_min": 40,
+      "fraccion_filas_min": 0.19607843137254902,
+      "media_error_min": 0.1525139148273416
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-16",
+    "filas": 101,
+    "rho": 2.9676010608607575,
+    "cap": 3.4676010608607575,
+    "media_min": 0.3783822094402032,
+    "fraccion_modificada": 0.39603960396039606,
+    "participacion_top10": 0.6801304706724907,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 21,
+      "filas_modificadas_min": 22,
+      "fraccion_filas_min": 0.21782178217821782,
+      "media_error_min": 0.18788614793367123
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-15",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-17",
+    "filas": 101,
+    "rho": 3.4783388094316443,
+    "cap": 3.9783388094316443,
+    "media_min": 0.44735617099896213,
+    "fraccion_modificada": 0.44554455445544555,
+    "participacion_top10": 0.6065475297937142,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 25,
+      "filas_modificadas_min": 25,
+      "fraccion_filas_min": 0.24752475247524752,
+      "media_error_min": 0.1388955530742928
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-12",
+    "filas": 113,
+    "rho": 4.4789915966386245,
+    "cap": 4.9789915966386245,
+    "media_min": 0.33812861939775535,
+    "fraccion_modificada": 0.336283185840708,
+    "participacion_top10": 0.7359458529807639,
+    "paridad": {
+      "pares": 51,
+      "incompatibles": 25,
+      "filas_modificadas_min": 25,
+      "fraccion_filas_min": 0.22123893805309736,
+      "media_error_min": 0.14145369061787363
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-13",
+    "filas": 205,
+    "rho": 5.640000000000192,
+    "cap": 6.140000000000192,
+    "media_min": 0.48061753936671664,
+    "fraccion_modificada": 0.35609756097560974,
+    "participacion_top10": 0.7237674635748758,
+    "paridad": {
+      "pares": 95,
+      "incompatibles": 35,
+      "filas_modificadas_min": 37,
+      "fraccion_filas_min": 0.18048780487804877,
+      "media_error_min": 0.2406760364688117
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-16",
+    "filas": 100,
+    "rho": 3.89684958483889,
+    "cap": 4.39684958483889,
+    "media_min": 0.3476267858498659,
+    "fraccion_modificada": 0.29,
+    "participacion_top10": 0.7283796427114988,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 18,
+      "filas_modificadas_min": 18,
+      "fraccion_filas_min": 0.18,
+      "media_error_min": 0.13752404407510335
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-17",
+    "filas": 103,
+    "rho": 13.44289011837966,
+    "cap": 13.94289011837966,
+    "media_min": 1.0016295704915226,
+    "fraccion_modificada": 0.42718446601941745,
+    "participacion_top10": 0.7331795008849943,
+    "paridad": {
+      "pares": 49,
+      "incompatibles": 26,
+      "filas_modificadas_min": 27,
+      "fraccion_filas_min": 0.2621359223300971,
+      "media_error_min": 0.45495905144554516
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-12",
+    "filas": 113,
+    "rho": 3.838858002654415,
+    "cap": 4.3388580026544155,
+    "media_min": 0.3617939992128538,
+    "fraccion_modificada": 0.35398230088495575,
+    "participacion_top10": 0.6857769327254875,
+    "paridad": {
+      "pares": 51,
+      "incompatibles": 20,
+      "filas_modificadas_min": 21,
+      "fraccion_filas_min": 0.18584070796460178,
+      "media_error_min": 0.18244340093934255
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-13",
+    "filas": 204,
+    "rho": 5.426167756680728,
+    "cap": 5.926167756680728,
+    "media_min": 0.2878786965819571,
+    "fraccion_modificada": 0.3431372549019608,
+    "participacion_top10": 0.7347322813828565,
+    "paridad": {
+      "pares": 93,
+      "incompatibles": 29,
+      "filas_modificadas_min": 29,
+      "fraccion_filas_min": 0.14215686274509803,
+      "media_error_min": 0.1169000605939193
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-16",
+    "filas": 99,
+    "rho": 8.877824643289976,
+    "cap": 9.377824643289976,
+    "media_min": 0.6418314305409324,
+    "fraccion_modificada": 0.3333333333333333,
+    "participacion_top10": 0.7679740721975499,
+    "paridad": {
+      "pares": 44,
+      "incompatibles": 16,
+      "filas_modificadas_min": 17,
+      "fraccion_filas_min": 0.1717171717171717,
+      "media_error_min": 0.2604847156149416
+    }
+  },
+  {
+    "cohorte": "nuevas",
+    "fecha": "2026-10-16",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-17",
+    "filas": 101,
+    "rho": 4.664896033887306,
+    "cap": 5.164896033887306,
+    "media_min": 0.5580967397954197,
+    "fraccion_modificada": 0.4158415841584158,
+    "participacion_top10": 0.6095566957891376,
+    "paridad": {
+      "pares": 46,
+      "incompatibles": 21,
+      "filas_modificadas_min": 22,
+      "fraccion_filas_min": 0.21782178217821782,
+      "media_error_min": 0.2825136446177023
+    }
+  }
+]

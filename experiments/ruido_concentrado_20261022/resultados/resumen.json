@@ -1,0 +1,733 @@
+{
+  "protocolo": {
+    "version": "ruido-concentrado-0.1",
+    "fecha": "2026-10-22",
+    "presupuesto_datos": 0,
+    "universo": "SPXW europeo; todas las filas de training del snapshot anterior, sin eliminar outliers",
+    "cap": "rho minimax del training + 0.5 spreads por cotizacion",
+    "presupuesto": "media minima de desviacion fuera de bid/ask sujeta al cap, mas margen",
+    "margenes_media": [
+      0.05,
+      0.1,
+      0.5
+    ],
+    "margen_principal": 0.1,
+    "ratios_cdf": [
+      0.94,
+      0.97,
+      1.0,
+      1.03,
+      1.06
+    ],
+    "soporte_maximo": 2.0,
+    "epsilon_cdf": 0.0025,
+    "forward_banda_relativa": 0.0025,
+    "shock_tasa_anual": 0.01,
+    "control": "Comparar con uniforme al mismo cap; F/D libres con el mismo presupuesto absoluto; soporte 4F y rampa mitad",
+    "concentracion": "Participacion del 10% mayor y fraccion modificada en UN optimo L1; no identificacion unica de contratos malos",
+    "paridad": "Cota inferior de numero de filas que deben salir del bid/ask por pares disjuntos incompatibles al F/D fijo",
+    "holdout": "Tres calls reservados cercanos a K/F=.97,1,1.03; no usados para ajustar ni elegir tolerancias",
+    "nuevos_desde": "2026-10-12",
+    "nuevos_hasta": "2026-10-16",
+    "nuevos_horas": [
+      "09:45",
+      "10:00"
+    ],
+    "nuevos_preparacion": "Mismo adaptador descriptivo, IV finita, 1-90 DTE; split central +/-0.03 cada tercer strike reservado y extras +/-0.10 con split anidado; F por paridad de training central, D contractual; sin SSVI",
+    "nuevos_alcance": "Fechas historicas no usadas en estos experimentos; no validacion prospectiva ni independiente del proveedor",
+    "decision": "No promover PDF. Una banda menor es consecuencia de un supuesto mas restrictivo; reportar tambien contratos reservados y controles economicos"
+  },
+  "scipy": "1.17.1",
+  "total_lp": 16192,
+  "agregado": [
+    {
+      "cohorte": "conocidas",
+      "caso": "l1_margen_0.05",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.05880783135171054,
+          "mediana_alcanzado": 0.055745035438348425,
+          "max_ancho": 0.08017732177791972
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.10471921772226947,
+          "mediana_alcanzado": 0.10050682713177884,
+          "max_ancho": 0.16240544147481256
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1564504902997176,
+          "mediana_alcanzado": 0.14754960736396971,
+          "max_ancho": 0.23498057699665198
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.19229403769368592,
+          "mediana_alcanzado": 0.1771716497737718,
+          "max_ancho": 0.2851174806499811
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06077601346908296,
+          "mediana_alcanzado": 0.052353453650826165,
+          "max_ancho": 0.08648768597577206
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 120,
+      "mediana_ancho_holdout": 3.664848365247801
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "l1_margen_0.1",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06564457259558167,
+          "mediana_alcanzado": 0.06335171860517197,
+          "max_ancho": 0.09298658288757158
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1182172875542084,
+          "mediana_alcanzado": 0.11762920372939584,
+          "max_ancho": 0.17311533039222027
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17382338631387112,
+          "mediana_alcanzado": 0.1674816196936665,
+          "max_ancho": 0.2692955345314209
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.2137237770602965,
+          "mediana_alcanzado": 0.19635625995443728,
+          "max_ancho": 0.3131293624561944
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06723595559268847,
+          "mediana_alcanzado": 0.058324040881462536,
+          "max_ancho": 0.09283325176894319
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 122,
+      "mediana_ancho_holdout": 4.2598978711405415
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "l1_margen_0.5",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06888067723206125,
+          "mediana_alcanzado": 0.0659160272419214,
+          "max_ancho": 0.12493316251624881
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1199015410811741,
+          "mediana_alcanzado": 0.11893922259621606,
+          "max_ancho": 0.22202948657913418
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1887646490960015,
+          "mediana_alcanzado": 0.1845589529075385,
+          "max_ancho": 0.3839636709661224
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.22979178880667062,
+          "mediana_alcanzado": 0.20572990975067235,
+          "max_ancho": 0.4091156693628246
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06953196290414887,
+          "mediana_alcanzado": 0.061018212806722205,
+          "max_ancho": 0.12548618335313888
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_ancho_holdout": 4.544447816673172
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "rampa_mitad",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06564457259558111,
+          "mediana_alcanzado": 0.06539423062424718,
+          "max_ancho": 0.09298658288757194
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11821728755421475,
+          "mediana_alcanzado": 0.11762920372939914,
+          "max_ancho": 0.173115330392199
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17382338631384636,
+          "mediana_alcanzado": 0.17107579873509407,
+          "max_ancho": 0.2692955345315956
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.21372377706029716,
+          "mediana_alcanzado": 0.20002507849440448,
+          "max_ancho": 0.31312936245615686
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06723595559268847,
+          "mediana_alcanzado": 0.06209462994879311,
+          "max_ancho": 0.09283325176894353
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 122,
+      "mediana_ancho_holdout": 4.25989787114066
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "referencias",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0739446222270394,
+          "mediana_alcanzado": 0.0715724215100981,
+          "max_ancho": 0.0962188944196983
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.12759167950142436,
+          "mediana_alcanzado": 0.12465720644407932,
+          "max_ancho": 0.19198648336420593
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.18980623809538166,
+          "mediana_alcanzado": 0.18655840838578364,
+          "max_ancho": 0.3667030418446803
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.22140387762573954,
+          "mediana_alcanzado": 0.20356132990978626,
+          "max_ancho": 0.37191389677726816
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06936160763664212,
+          "mediana_alcanzado": 0.06048208044854342,
+          "max_ancho": 0.1053456528919009
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 132,
+      "mediana_ancho_holdout": 4.7668969427685814
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "soporte_4F",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06564457259557918,
+          "mediana_alcanzado": 0.06335171860516095,
+          "max_ancho": 0.09298658288757254
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11821728755422047,
+          "mediana_alcanzado": 0.11762920372939664,
+          "max_ancho": 0.17311533039224788
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17382338631384175,
+          "mediana_alcanzado": 0.16748161969370673,
+          "max_ancho": 0.26929553453150507
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.21372377706029683,
+          "mediana_alcanzado": 0.19635625995426592,
+          "max_ancho": 0.3131293624562437
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06726591522932412,
+          "mediana_alcanzado": 0.05838498288748961,
+          "max_ancho": 0.09293243232010928
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 122,
+      "mediana_ancho_holdout": 4.2598978711410425
+    },
+    {
+      "cohorte": "conocidas",
+      "caso": "uniforme",
+      "rebanadas": 48,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0688806772320611,
+          "mediana_alcanzado": 0.06591602724192142,
+          "max_ancho": 0.1250830968473082
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11990154108117418,
+          "mediana_alcanzado": 0.11893922259621034,
+          "max_ancho": 0.2267951666189468
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1887646490959792,
+          "mediana_alcanzado": 0.18455895290754185,
+          "max_ancho": 0.48715751496401105
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.22979178880667106,
+          "mediana_alcanzado": 0.20572990975067235,
+          "max_ancho": 0.45456224424711444
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06953196290415548,
+          "mediana_alcanzado": 0.06101821280672248,
+          "max_ancho": 0.12849816751124377
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_ancho_holdout": 4.544447816673179
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "l1_margen_0.05",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.05631520938785514,
+          "mediana_alcanzado": 0.05472425903757913,
+          "max_ancho": 0.11784105690545559
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.10449048948410228,
+          "mediana_alcanzado": 0.09740551761080071,
+          "max_ancho": 0.1523970599321807
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.14126270101301097,
+          "mediana_alcanzado": 0.12971067892012508,
+          "max_ancho": 0.205432029163354
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.16951272588985095,
+          "mediana_alcanzado": 0.1532838509845903,
+          "max_ancho": 0.2712663637293983
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.04482122509875602,
+          "mediana_alcanzado": 0.03826396509816826,
+          "max_ancho": 0.07318697048069256
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 108,
+      "mediana_ancho_holdout": 4.036455592750462
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "l1_margen_0.1",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06518086893961275,
+          "mediana_alcanzado": 0.06251639143310679,
+          "max_ancho": 0.13349456836660478
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11843258228600761,
+          "mediana_alcanzado": 0.11305870658587006,
+          "max_ancho": 0.17243567605456278
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17460418490872845,
+          "mediana_alcanzado": 0.17035730436335497,
+          "max_ancho": 0.24461607525405615
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.1928242461533483,
+          "mediana_alcanzado": 0.17651974348480048,
+          "max_ancho": 0.30228966630657705
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.053259699891917145,
+          "mediana_alcanzado": 0.0457445005493754,
+          "max_ancho": 0.08783910050684596
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 109,
+      "mediana_ancho_holdout": 5.311819506713663
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "l1_margen_0.5",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0712989790765704,
+          "mediana_alcanzado": 0.07002402665045064,
+          "max_ancho": 0.15267747391460562
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1263400039910146,
+          "mediana_alcanzado": 0.12217697350042092,
+          "max_ancho": 0.2043668182833812
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1858091404065953,
+          "mediana_alcanzado": 0.17669852939895556,
+          "max_ancho": 0.339470867517927
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.2157300187874021,
+          "mediana_alcanzado": 0.19084528937671336,
+          "max_ancho": 0.3440687216296515
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05990879251620135,
+          "mediana_alcanzado": 0.05175818344020927,
+          "max_ancho": 0.10786564862357007
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 109,
+      "mediana_ancho_holdout": 6.290346983831718
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "rampa_mitad",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06518086893954328,
+          "mediana_alcanzado": 0.06316805008575317,
+          "max_ancho": 0.13349456836657136
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11843258228603298,
+          "mediana_alcanzado": 0.1138450764145096,
+          "max_ancho": 0.17243567605465498
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17460418490874413,
+          "mediana_alcanzado": 0.17035730436333466,
+          "max_ancho": 0.24461607525413276
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.19282424615335553,
+          "mediana_alcanzado": 0.18140682390921475,
+          "max_ancho": 0.3022896663065898
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05325969989190199,
+          "mediana_alcanzado": 0.049914380700004035,
+          "max_ancho": 0.08783910050682897
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 109,
+      "mediana_ancho_holdout": 5.311819506713827
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "referencias",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07036080642088338,
+          "mediana_alcanzado": 0.06890361470198164,
+          "max_ancho": 0.14940888831148302
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.12919849987923382,
+          "mediana_alcanzado": 0.1243781654957015,
+          "max_ancho": 0.20496791375373455
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1842231943232152,
+          "mediana_alcanzado": 0.17727199265684396,
+          "max_ancho": 0.33682067557092454
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.20284425265351763,
+          "mediana_alcanzado": 0.18299370729433106,
+          "max_ancho": 0.33887897210516116
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05776491519159427,
+          "mediana_alcanzado": 0.051407732864022226,
+          "max_ancho": 0.09780157591947258
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 113,
+      "mediana_ancho_holdout": 5.809683527704679
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "soporte_4F",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06518086893964786,
+          "mediana_alcanzado": 0.06251639143311262,
+          "max_ancho": 0.13349456836657772
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11843258228600893,
+          "mediana_alcanzado": 0.11305870658589454,
+          "max_ancho": 0.17243567605467924
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.17460418490870863,
+          "mediana_alcanzado": 0.1703573043633515,
+          "max_ancho": 0.2446160752540147
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.192824246153333,
+          "mediana_alcanzado": 0.1765206587381115,
+          "max_ancho": 0.3022896663066087
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05329248837480133,
+          "mediana_alcanzado": 0.04579258271808995,
+          "max_ancho": 0.08783910050683352
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 109,
+      "mediana_ancho_holdout": 5.3118195067134995
+    },
+    {
+      "cohorte": "nuevas",
+      "caso": "uniforme",
+      "rebanadas": 40,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07243346483815158,
+          "mediana_alcanzado": 0.07113557683449395,
+          "max_ancho": 0.1604434216756569
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1263400039910174,
+          "mediana_alcanzado": 0.12217697350042578,
+          "max_ancho": 0.21329198708755265
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.185809140406565,
+          "mediana_alcanzado": 0.17669852939893005,
+          "max_ancho": 0.43940153863398446
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.2157300187874014,
+          "mediana_alcanzado": 0.1908452893767132,
+          "max_ancho": 0.3670903796754097
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05990879251620118,
+          "mediana_alcanzado": 0.05175818344020916,
+          "max_ancho": 0.10786564862356995
+        }
+      ],
+      "holdout_n": 120,
+      "holdout_solapan": 109,
+      "mediana_ancho_holdout": 6.339385069365331
+    }
+  ],
+  "reparaciones": [
+    {
+      "cohorte": "conocidas",
+      "sesiones": 6,
+      "rebanadas": 48,
+      "filas": 5912,
+      "medianas": {
+        "rho": 2.365343529636963,
+        "cap": 2.865343529636963,
+        "media_min": 0.18298809201584076,
+        "fraccion_modificada": 0.2678101840784126,
+        "participacion_top10": 0.8003737027721125
+      },
+      "paridad": {
+        "pares": 2704,
+        "incompatibles": 859,
+        "filas_modificadas_min": 884
+      }
+    },
+    {
+      "cohorte": "nuevas",
+      "sesiones": 5,
+      "rebanadas": 40,
+      "filas": 4582,
+      "medianas": {
+        "rho": 3.6392184862120454,
+        "cap": 4.139218486212045,
+        "media_min": 0.3507272909545341,
+        "fraccion_modificada": 0.34010795329367705,
+        "participacion_top10": 0.7154013598365565
+      },
+      "paridad": {
+        "pares": 2054,
+        "incompatibles": 829,
+        "filas_modificadas_min": 851
+      }
+    }
+  ],
+  "diagnosticos": {
+    "primal": 2.5415225479719084e-12,
+    "dual": 2.7848727768287063e-09,
+    "gap": 2.242594998591585e-12
+  },
+  "origenes": {
+    "conocidas": {
+      "resumen_sha256_lf": "3dab7d24db94201f6f529725f500f4ef83c040adf7baee3c48c06b71fd99d7d4",
+      "privados_sha256": {
+        "2026-10-02_0945_evaluacion.parquet": "5661f240a2cccc2bb49e3849342170ede864fdd068ebdd6de41ee7f6c91c9294",
+        "2026-10-02_0945_modelos.json": "137e544791e11ef94055b86a17936d077bf0efaceb7c685c39a3464aeaf4cb86",
+        "2026-10-02_1000_evaluacion.parquet": "7f7d96255c8d3b3a2c0336e26b795a42bfd96fa5a302e3f5772bbc17a784be88",
+        "2026-10-02_1000_modelos.json": "0340b5225d99223c468e9d6391da747f9b564667e8ff559d944310f61864e992",
+        "2026-10-05_0945_evaluacion.parquet": "d3ebcec59a5170bcea9117a5fb3ede724572cebb7df9ac573f572ca6fc7dea90",
+        "2026-10-05_0945_modelos.json": "989569686682914b0c9e348a8ef4353f6ae21edbcc408983e4cb6d9dcd5d55b6",
+        "2026-10-05_1000_evaluacion.parquet": "f71205812e0f8a5e6d04ceb0b6295a238756bc42923d2f6dabeadbf83fc2dfab",
+        "2026-10-05_1000_modelos.json": "f322a5410f018429153948ed8d94009db4dd832c1f44a07251287e2884c0e6b4",
+        "2026-10-06_0945_evaluacion.parquet": "dd3ac4db7f01e4830d056aa28e1fbe722eb1fb0e73547bf5270f7ca5bb360b47",
+        "2026-10-06_0945_modelos.json": "1770e35df86e64ed206ba62ef331a5a8ef2a62fb229ea6ff065ef6e8ad93512f",
+        "2026-10-06_1000_evaluacion.parquet": "0a9ffd2a45c79942b3e44fb3d5559ca62024702b84ed5874ca5ece5aa70f82c5",
+        "2026-10-06_1000_modelos.json": "71136a59d749cb17147ebf8b552a3f4018ddc3c1906555f1ff7506264530d944",
+        "2026-10-07_0945_evaluacion.parquet": "1fdd6ca4b31cf28c2c64fac107eec19b8c81cd543424ecacd4a45320ee9ee8a1",
+        "2026-10-07_0945_modelos.json": "79e83e7807c2351189169066849570808714696fe969206c474b8dcca4dcf95b",
+        "2026-10-07_1000_evaluacion.parquet": "2cd5f024f572c630e2ef145ee3022e895001e25fc134c28ba257c3a9a9a2ddd2",
+        "2026-10-07_1000_modelos.json": "51401f78208602be7d6c00b91f61251780e9fefbed83a29aff129d6e49cb8b5a",
+        "2026-10-08_0945_evaluacion.parquet": "9e55e2bbddca610813753e48efef451d05475376756a1ecfe541a67baaf57c33",
+        "2026-10-08_0945_modelos.json": "524e8a30bfe342c177041b1fc663a23297c2c1b6ff880e3c7d5174ce4b200384",
+        "2026-10-08_1000_evaluacion.parquet": "2de1a00fca53fc062c5b9bfe2a9b63ce81e12c329fc2598e469ef748072ca456",
+        "2026-10-08_1000_modelos.json": "f61182591d36100ca2bbb1594b078bbc61ecbe3e95b4b06bbd37bd2a6248dcd1",
+        "2026-10-09_0945_evaluacion.parquet": "eca0b4a28196d5166c2d920eb85ccd8a9385ab5bbb3749d3ede9e48eee4fc0c1",
+        "2026-10-09_0945_modelos.json": "3bfaa6e8ba1304793e77b2e7af323c9928cb2c01fe7fa0f9de0a07ee51e77851",
+        "2026-10-09_1000_evaluacion.parquet": "aa0fc879bbbb331a73450ec9792a5d059e0e66eee4e5c705f42890497af0dbcf",
+        "2026-10-09_1000_modelos.json": "6c2382f98706ab22512c030a9e08635d42552a9e7e0d8276c7c2a497c35b85d2"
+      }
+    },
+    "nuevas": {
+      "resumen_sha256_lf": "7c11a7c4b05a4933bfd9548e09f463856896a6b9ec8634a99057a0267eb3cb86",
+      "privados_sha256": {
+        "2026-10-12_0945_evaluacion.parquet": "73e1cf528d6a1630dbe80856ce2a0ffe614ea381a51f1c4a1f2bdb1810f642d1",
+        "2026-10-12_0945_modelos.json": "db91f7e69176735abde7f488b07c60a57cd20ca2a28a44e5a8bba7e22d6a62b4",
+        "2026-10-12_1000_evaluacion.parquet": "d37aa4466bd964095353184c61389c52d50b650892414bb99790f7524cbf5832",
+        "2026-10-12_1000_modelos.json": "8e04b8f045df21b7018f38570dd5c2c069d296bce53f6792517e333e6db4a53c",
+        "2026-10-13_0945_evaluacion.parquet": "a77ba4f949e1e8c9dc543529be17978734439dd5ef948e73bc7ac9bcca08b834",
+        "2026-10-13_0945_modelos.json": "4468a941bb64bbf597576be8e1f4713caee3f4bec85f2818c82688ecdf2ca0b8",
+        "2026-10-13_1000_evaluacion.parquet": "43d1922e98f3ed1be34bda1b07b2fd2bab97ac97e51567677f3a12a50cd4859c",
+        "2026-10-13_1000_modelos.json": "44765b4a96f7f3aea4d1b36796ee5681bf0e014c9692315ae8c0d05c683db240",
+        "2026-10-14_0945_evaluacion.parquet": "59ed25a40538879913a56804cc56d8434eaf3bfc5afde553ff55fd40cf8b421d",
+        "2026-10-14_0945_modelos.json": "d487daac3ed07699ed44b691f0feaa6e54542dc652b172b43dd60b80f35388e6",
+        "2026-10-14_1000_evaluacion.parquet": "98f241158eca1787175e7f0aff6bcd35a38f7b720275a6a6fec8de208a1b593b",
+        "2026-10-14_1000_modelos.json": "fc4650938ad434eae5e86106caad80a208620b575706fd3128a3c47bf64d1d30",
+        "2026-10-15_0945_evaluacion.parquet": "759f2227d44d011fa6cca28beccab3fa7211732192626d045ee1f98445a88f3b",
+        "2026-10-15_0945_modelos.json": "853d057815a93bf6e44727487e681cd61f76a6b465a6cf5f522b1b78f4428d8c",
+        "2026-10-15_1000_evaluacion.parquet": "eaffbbc561fc8c48769fa4ceebbadb7a8e0b207b8073e4ff6c4c3f02cf7c8b25",
+        "2026-10-15_1000_modelos.json": "2b1ffe5272c491afe43e3b3c2f4b64c4c2dda23ce14ecfb40a2819a1f9ee041d",
+        "2026-10-16_0945_evaluacion.parquet": "0cbdb35ff72a5adacd14fac07acd0ebe8a93afa6e2c845a9dba8ba42adaa3b2f",
+        "2026-10-16_0945_modelos.json": "edb72acec78e1311ad91a0c15e26c1dec0d38beaea0e51c3745a356e503bc947",
+        "2026-10-16_1000_evaluacion.parquet": "e0c9e00f30323b833f24339c562a7422cb1c7aa2ef4acbadafae41816fdb6d17",
+        "2026-10-16_1000_modelos.json": "363233143e68e1a18b02a2cb2d4c73e38fc9abf347271b21d7cf08089c2823e9"
+      }
+    }
+  },
+  "codigo_sha256_lf": {
+    "experiments/ruido_concentrado_20261022/evaluar.py": "9d50b973c1e6811a2fd5335a9cc0022476d2fd120e053411b0b464a296680f91",
+    "experiments/ruido_concentrado_20261022/metodo.py": "970dd7014a24fbeee5b37894111834cb2e2f37906e8175fd987d473cc9979085",
+    "experiments/ruido_concentrado_20261022/protocolo.toml": "dc7830d253c73a703fe48babe50951b9a66919ba4afbae188169fd8108522ab2",
+    "experiments/distribuciones_ruido_20261022/metodo.py": "18720d9d475009b97a162876ec640e1958d356efb8cf34594a6caa987c1fb67f"
+  },
+  "privados_sha256": {
+    "conocidas_2026-10-02_0945_medidas.json": "f311430f2e6e4c9f1b67a0ea68c045b862d463fed72bc1e0d7398e094592ef25",
+    "conocidas_2026-10-02_1000_medidas.json": "5693ff9e753341af587d44c8ffb5f4b7d85628da05bf923488c766f45753449e",
+    "conocidas_2026-10-05_0945_medidas.json": "80da6887a77b860dd6fbd193631feca9769fde26e5816d2fa8644126d627ad7e",
+    "conocidas_2026-10-05_1000_medidas.json": "962cfd852d41141b9dd5cc84c57a97338223fe6e3c81c58068e3855362a51a18",
+    "conocidas_2026-10-06_0945_medidas.json": "093b581a6f935f652bb26ce545f69874f730f2241a6130641a9566570d7da4a2",
+    "conocidas_2026-10-06_1000_medidas.json": "57ee6f1879a334680c72c69df3a550c30565eb2d73ca8e6fec0306b65a22a051",
+    "conocidas_2026-10-07_0945_medidas.json": "c4b9219912b6239a50798ea2b9362145c9ae39cc7cef4a02ba55754e63c3b8d1",
+    "conocidas_2026-10-07_1000_medidas.json": "51648f269211bcd97e22996294e9b6eeee6612466cc6c86e351b6c0d52357546",
+    "conocidas_2026-10-08_0945_medidas.json": "ba1e3df1290f0654a2ea17e28c4914022c51bc77c55d9d146357965990b87baa",
+    "conocidas_2026-10-08_1000_medidas.json": "0104fc5e7113154c2881a55e6ba9e6f3bc67f30b0ffa0e73555b78de7e81272d",
+    "conocidas_2026-10-09_0945_medidas.json": "37f7931587536e974368025c5abd7f21f9e1e4ca747f10a2f3a87436a57c44e3",
+    "conocidas_2026-10-09_1000_medidas.json": "9320874ef9988705b4d3fa1c34b9ace22d95c4cefb5a8b1aec489e80b146d15d",
+    "nuevas_2026-10-12_0945_medidas.json": "e9cae156d2b519970dfb801406431c76ee6a85f9f31c55f5fb9c4de50275b0fb",
+    "nuevas_2026-10-12_1000_medidas.json": "6d0359a227ae3e45aa6788f94198c9238c5635c33b95b20c2a9aa92c7ea27a74",
+    "nuevas_2026-10-13_0945_medidas.json": "db7abdf3c8a0e20b11527d6a8a9135f79421928d052db223d28eff1c7d4e467d",
+    "nuevas_2026-10-13_1000_medidas.json": "1ad7677b5268e605b1fe919a038733c00969a93df9e989c3547cb69a74fde812",
+    "nuevas_2026-10-14_0945_medidas.json": "8675db53e18da33ebe3eb36a1ff5de537a64e695f94b0e224aba2be5e3110ffc",
+    "nuevas_2026-10-14_1000_medidas.json": "0846902c66d9a668dac9cb113d4460cd8f193a604a109c4a92b8f0c60d4e91b9",
+    "nuevas_2026-10-15_0945_medidas.json": "5e641f7e457aa6568e8d2b1673f53ec2f33e02600e40c708cc05ad6e00403e75",
+    "nuevas_2026-10-15_1000_medidas.json": "9c117e4293078fc3ce093c3bc61ebff156cf4e3d1186a93be96322fd2eb5b706",
+    "nuevas_2026-10-16_0945_medidas.json": "2710bbed3a5a7d9b9e2bb9604479f5bcea653192945ddd0405af2bc4fcb66b89",
+    "nuevas_2026-10-16_1000_medidas.json": "6cd442505c4a366d79a2e73ac7d256b62a4eb6040929669dbafaef6b7e575793"
+  }
+}

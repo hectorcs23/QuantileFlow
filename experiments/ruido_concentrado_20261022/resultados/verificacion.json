@@ -1,0 +1,33 @@
+{
+  "testigos": 16192,
+  "errores_maximos": {
+    "masa": 4.551914400963142e-15,
+    "negatividad": 0.0,
+    "referencia": 2.5415225479719084e-12,
+    "cap_spreads": 3.4213520905268524e-11,
+    "media_spreads": 4.865552405419749e-13,
+    "objetivo": 1.964473028692737e-11
+  },
+  "reparaciones_reconstruidas": 88,
+  "comparaciones_anidadas": 528,
+  "controles_max_cambio_extremo": {
+    "conocidas": {
+      "referencias": 0.09996906296159694,
+      "soporte_4F": 0.0002506116834696259,
+      "rampa_mitad": 0.01892428450066516
+    },
+    "nuevas": {
+      "referencias": 0.09811557163011908,
+      "soporte_4F": 0.00019390218177472995,
+      "rampa_mitad": 0.029607718393879878
+    }
+  },
+  "historial_reproduce_B": true,
+  "verificador_sha256_lf": "7d1968798898b78ef4d68991400b06ea2aeb95a92b087485f2aabcb5bf10f91a",
+  "entradas_publicas_sha256": {
+    "resumen.json": "a27818566e03759f5e9e3667b45b04036a7e31bb93790ad42895194caf1df0cb",
+    "reparaciones.json": "ce818a6695fbfad66603d32025dbd8564d7a2e0e547157f09c35e25223981f90",
+    "por_rebanada.json": "49355e247e622d5a62d149def2d8462cc315d8c5e44cbb3f2d943e98783619a6",
+    "entradas_nuevas.json": "7c11a7c4b05a4933bfd9548e09f463856896a6b9ec8634a99057a0267eb3cb86"
+  }
+}

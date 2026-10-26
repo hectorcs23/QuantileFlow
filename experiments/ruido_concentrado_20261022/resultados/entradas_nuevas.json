@@ -1,0 +1,608 @@
+{
+  "cortes": [
+    {
+      "fecha": "2026-10-12",
+      "hora": "09:45",
+      "filas": 541,
+      "training": 358,
+      "holdout": 183,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1460,
+        "validas": 1007,
+        "elegibles": 541,
+        "entrenamiento": 360,
+        "holdout": 181,
+        "edad_referencia_s": 5.479278,
+        "motivos": {
+          "desfasada": 338,
+          "sin_bid": 176,
+          "sin_tamano": 176,
+          "spread_ancho": 30,
+          "ventana_de_apertura": 5
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 488,
+            "validas": 312
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 244,
+            "validas": 171
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 244,
+            "validas": 167
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 242,
+            "validas": 185
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 242,
+            "validas": 172
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 5
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-12",
+      "hora": "10:00",
+      "filas": 535,
+      "training": 354,
+      "holdout": 181,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1460,
+        "validas": 935,
+        "elegibles": 535,
+        "entrenamiento": 357,
+        "holdout": 178,
+        "edad_referencia_s": 6.177118,
+        "motivos": {
+          "desfasada": 399,
+          "sin_bid": 183,
+          "sin_tamano": 183,
+          "spread_ancho": 30
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 488,
+            "validas": 278
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 244,
+            "validas": 166
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 244,
+            "validas": 182
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 242,
+            "validas": 157
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 242,
+            "validas": 152
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 10
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-13",
+      "hora": "09:45",
+      "filas": 673,
+      "training": 444,
+      "holdout": 229,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1633,
+        "validas": 1127,
+        "elegibles": 673,
+        "entrenamiento": 446,
+        "holdout": 227,
+        "edad_referencia_s": 5.321545,
+        "motivos": {
+          "desfasada": 330,
+          "sin_bid": 187,
+          "sin_tamano": 187,
+          "spread_ancho": 20,
+          "ventana_de_apertura": 1
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 489,
+            "validas": 232
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 244,
+            "validas": 184
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 242,
+            "validas": 187
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 242,
+            "validas": 181
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 416,
+            "validas": 343
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 22
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-13",
+      "hora": "10:00",
+      "filas": 674,
+      "training": 447,
+      "holdout": 227,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1633,
+        "validas": 1068,
+        "elegibles": 674,
+        "entrenamiento": 449,
+        "holdout": 225,
+        "edad_referencia_s": 5.080177,
+        "motivos": {
+          "desfasada": 434,
+          "sin_bid": 196,
+          "sin_tamano": 196,
+          "spread_ancho": 20
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 489,
+            "validas": 254
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 244,
+            "validas": 170
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 242,
+            "validas": 157
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 242,
+            "validas": 158
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 416,
+            "validas": 329
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 13
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-14",
+      "hora": "09:45",
+      "filas": 694,
+      "training": 457,
+      "holdout": 237,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1618,
+        "validas": 1387,
+        "elegibles": 694,
+        "entrenamiento": 461,
+        "holdout": 233,
+        "edad_referencia_s": 5.268422,
+        "motivos": {
+          "sin_bid": 183,
+          "sin_tamano": 183,
+          "desfasada": 61,
+          "spread_ancho": 30
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 486,
+            "validas": 331
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 242,
+            "validas": 219
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 242,
+            "validas": 224
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 416,
+            "validas": 401
+          },
+          {
+            "dias": 33.302083333333336,
+            "filas": 232,
+            "validas": 212
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 64
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-14",
+      "hora": "10:00",
+      "filas": 700,
+      "training": 464,
+      "holdout": 236,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1618,
+        "validas": 1332,
+        "elegibles": 700,
+        "entrenamiento": 465,
+        "holdout": 235,
+        "edad_referencia_s": 5.201163,
+        "motivos": {
+          "desfasada": 152,
+          "sin_bid": 188,
+          "sin_tamano": 188,
+          "spread_ancho": 28
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 486,
+            "validas": 321
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 242,
+            "validas": 218
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 242,
+            "validas": 205
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 416,
+            "validas": 383
+          },
+          {
+            "dias": 33.29166666666667,
+            "filas": 232,
+            "validas": 205
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 55
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-15",
+      "hora": "09:45",
+      "filas": 771,
+      "training": 512,
+      "holdout": 259,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1700,
+        "validas": 1550,
+        "elegibles": 771,
+        "entrenamiento": 512,
+        "holdout": 259,
+        "edad_referencia_s": 5.581175,
+        "motivos": {
+          "sin_bid": 126,
+          "sin_tamano": 126,
+          "spread_ancho": 24,
+          "desfasada": 20
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 498,
+            "validas": 395
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 252,
+            "validas": 238
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 446,
+            "validas": 437
+          },
+          {
+            "dias": 32.302083333333336,
+            "filas": 252,
+            "validas": 240
+          },
+          {
+            "dias": 33.302083333333336,
+            "filas": 252,
+            "validas": 240
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 67
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-15",
+      "hora": "10:00",
+      "filas": 774,
+      "training": 508,
+      "holdout": 266,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 1700,
+        "validas": 1534,
+        "elegibles": 774,
+        "entrenamiento": 515,
+        "holdout": 259,
+        "edad_referencia_s": 5.331216,
+        "motivos": {
+          "desfasada": 32,
+          "sin_bid": 127,
+          "sin_tamano": 127,
+          "spread_ancho": 26
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 498,
+            "validas": 390
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 252,
+            "validas": 238
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 446,
+            "validas": 429
+          },
+          {
+            "dias": 32.291666666666664,
+            "filas": 252,
+            "validas": 240
+          },
+          {
+            "dias": 33.29166666666667,
+            "filas": 252,
+            "validas": 237
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 68
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-16",
+      "hora": "09:45",
+      "filas": 788,
+      "training": 521,
+      "holdout": 267,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 2192,
+        "validas": 1759,
+        "elegibles": 788,
+        "entrenamiento": 522,
+        "holdout": 266,
+        "edad_referencia_s": 5.41463,
+        "motivos": {
+          "sin_bid": 411,
+          "sin_tamano": 411,
+          "desfasada": 24,
+          "spread_ancho": 22
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 970,
+            "validas": 586
+          },
+          {
+            "dias": 27.302083333333336,
+            "filas": 272,
+            "validas": 259
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 446,
+            "validas": 434
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 252,
+            "validas": 240
+          },
+          {
+            "dias": 32.302083333333336,
+            "filas": 252,
+            "validas": 240
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 60
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-16",
+      "hora": "10:00",
+      "filas": 783,
+      "training": 517,
+      "holdout": 266,
+      "rebanadas": 4,
+      "calidad": {
+        "filas": 2192,
+        "validas": 1619,
+        "elegibles": 783,
+        "entrenamiento": 520,
+        "holdout": 263,
+        "edad_referencia_s": 5.397755,
+        "motivos": {
+          "sin_bid": 409,
+          "sin_tamano": 409,
+          "desfasada": 172,
+          "spread_ancho": 23
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 970,
+            "validas": 587
+          },
+          {
+            "dias": 27.291666666666668,
+            "filas": 272,
+            "validas": 237
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 446,
+            "validas": 390
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 252,
+            "validas": 199
+          },
+          {
+            "dias": 32.291666666666664,
+            "filas": 252,
+            "validas": 206
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 45
+      },
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    }
+  ],
+  "integridad": {
+    "manifiestos": 37,
+    "paginas_unicas": 136,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "12c08c62a707c992498f0e118b0823611d69bd9122450f3e15eaf552e3a5b28f",
+      "subyacente": "365a2e4806916d63ed5e4f2152b1e48fe32f070e2c5382a9fd55fec1fc99dfaa"
+    },
+    "manifiesto_normalizacion_sha256": "aba1738e273ad7e7c0ad60a7e5ded4422d34d3186514fb4d8dbc2693df7f2fdb"
+  },
+  "datos_commit": "43b286c0df2de41d63d0475260517c01d6f36f54",
+  "codigo_sha256_lf": {
+    "experiments/ruido_concentrado_20261022/preparar_nuevos.py": "97f65bd8c0d97d81d4146deed7f3830dcc9d3c5240092948717a3fa6e0b24de9",
+    "experiments/ruido_concentrado_20261022/protocolo.toml": "dc7830d253c73a703fe48babe50951b9a66919ba4afbae188169fd8108522ab2",
+    "configs/piloto.toml": "0cf8594431350c778a04d0a2ba592f3e19b4b136b44da9e0e04fe3d348dd5a9a",
+    "quantileflow/adaptador_comparador.py": "edb1f339afb56d5473b9a1244411510d0338bd21ba97cc4b503316bb286216b9",
+    "quantileflow/cadenas.py": "32b97728c5b7e28b62ef98d2e7bbc74058afc8bfbe9396eae3e31e8ab120865c",
+    "experiments/forward_superficies_20261014/metodo.py": "e29c8d3ea55649beaca97efde43cc872e66357323051ec3814b756108ca2dbde",
+    "experiments/ventana_superficie_20261014/metodo.py": "55f547b3ec5fe38356aa90317f169f0cc5c14dfbff62bda1fb6045f7e04eaed7"
+  },
+  "privados_sha256": {
+    "2026-10-12_0945_evaluacion.parquet": "73e1cf528d6a1630dbe80856ce2a0ffe614ea381a51f1c4a1f2bdb1810f642d1",
+    "2026-10-12_0945_modelos.json": "db91f7e69176735abde7f488b07c60a57cd20ca2a28a44e5a8bba7e22d6a62b4",
+    "2026-10-12_1000_evaluacion.parquet": "d37aa4466bd964095353184c61389c52d50b650892414bb99790f7524cbf5832",
+    "2026-10-12_1000_modelos.json": "8e04b8f045df21b7018f38570dd5c2c069d296bce53f6792517e333e6db4a53c",
+    "2026-10-13_0945_evaluacion.parquet": "a77ba4f949e1e8c9dc543529be17978734439dd5ef948e73bc7ac9bcca08b834",
+    "2026-10-13_0945_modelos.json": "4468a941bb64bbf597576be8e1f4713caee3f4bec85f2818c82688ecdf2ca0b8",
+    "2026-10-13_1000_evaluacion.parquet": "43d1922e98f3ed1be34bda1b07b2fd2bab97ac97e51567677f3a12a50cd4859c",
+    "2026-10-13_1000_modelos.json": "44765b4a96f7f3aea4d1b36796ee5681bf0e014c9692315ae8c0d05c683db240",
+    "2026-10-14_0945_evaluacion.parquet": "59ed25a40538879913a56804cc56d8434eaf3bfc5afde553ff55fd40cf8b421d",
+    "2026-10-14_0945_modelos.json": "d487daac3ed07699ed44b691f0feaa6e54542dc652b172b43dd60b80f35388e6",
+    "2026-10-14_1000_evaluacion.parquet": "98f241158eca1787175e7f0aff6bcd35a38f7b720275a6a6fec8de208a1b593b",
+    "2026-10-14_1000_modelos.json": "fc4650938ad434eae5e86106caad80a208620b575706fd3128a3c47bf64d1d30",
+    "2026-10-15_0945_evaluacion.parquet": "759f2227d44d011fa6cca28beccab3fa7211732192626d045ee1f98445a88f3b",
+    "2026-10-15_0945_modelos.json": "853d057815a93bf6e44727487e681cd61f76a6b465a6cf5f522b1b78f4428d8c",
+    "2026-10-15_1000_evaluacion.parquet": "eaffbbc561fc8c48769fa4ceebbadb7a8e0b207b8073e4ff6c4c3f02cf7c8b25",
+    "2026-10-15_1000_modelos.json": "2b1ffe5272c491afe43e3b3c2f4b64c4c2dda23ce14ecfb40a2819a1f9ee041d",
+    "2026-10-16_0945_evaluacion.parquet": "0cbdb35ff72a5adacd14fac07acd0ebe8a93afa6e2c845a9dba8ba42adaa3b2f",
+    "2026-10-16_0945_modelos.json": "edb72acec78e1311ad91a0c15e26c1dec0d38beaea0e51c3745a356e503bc947",
+    "2026-10-16_1000_evaluacion.parquet": "e0c9e00f30323b833f24339c562a7422cb1c7aa2ef4acbadafae41816fdb6d17",
+    "2026-10-16_1000_modelos.json": "363233143e68e1a18b02a2cb2d4c73e38fc9abf347271b21d7cf08089c2823e9"
+  }
+}

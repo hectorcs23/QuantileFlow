@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; simulador y análisis de distribuciones, avances al 22 de octubre de 2026.**
+**Versión de investigación; simulador y análisis de distribuciones, avances al 26 de octubre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -22,6 +22,10 @@ a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.
 [Diagnóstico de factibilidad de las superficies](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
 
 ## Documentos
+
+- [Error concentrado y contraste con otras sesiones, 26 de octubre](docs/RUIDO_CONCENTRADO_2026-10-26.md):
+  límites de error total y por cotización, cinco sesiones adicionales y verificación
+  independiente; mejora de los extremos, con ambigüedad de distribución persistente.
 
 - [Distribuciones bajo cotizaciones ruidosas, 22 de octubre](docs/DISTRIBUCIONES_RUIDOSAS_2026-10-22.md):
   camino B, conjuntos de medidas admisibles, filtros y bandas de CDF;
