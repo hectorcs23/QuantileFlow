@@ -139,10 +139,10 @@ def test_importar_spx_agrupa_por_fecha_y_minuto():
     assert r == {"2026-10-21": {"13:44": [1.0, 2.0, 0.5, 1.5]}}
 
 
-def _cotizacion(i, bid, ask, marca, delta="-0.3"):
+def _cotizacion(i, bid, ask, marca, delta="-0.3", actualizada="2026-10-22T14:30:00.5Z"):
     return {"quote": {"instrument_id": i, "bid_price": bid, "ask_price": ask, "bid_size": 5, "ask_size": 7,
                       "mark_price": marca, "implied_volatility": "0.14", "delta": delta, "vega": "8.6",
-                      "updated_at": "2026-10-22T14:30:00.5Z"}}
+                      "updated_at": actualizada}}
 
 
 def test_importar_cotizaciones_exige_que_la_marca_sea_el_punto_medio():
@@ -219,10 +219,16 @@ def test_importar_y_acumulado_de_punta_a_punta(tmp_path):
         {"begins_at": "2026-10-21T13:44:00Z", "open_value": "7726", "high_value": "7728", "low_value": "7725",
          "close_value": "7727"}]}]), encoding="utf-8")
     simbolo = p["simbolos"][0]
-    (crudo / "cotizaciones.json").write_text(json.dumps([_cotizacion(f"id-{simbolo}", "1.0", "1.2", "1.1")]),
+    (crudo / "cotizaciones.json").write_text(json.dumps([_cotizacion(f"id-{simbolo}", "1.0", "1.2", "1.1",
+                                                                     actualizada="2026-10-21T14:29:59.5Z")]),
                                              encoding="utf-8")
-    (crudo / "alpaca_vivo.json").write_text(json.dumps({"recibido_utc": "2026-10-21T14:30:01Z", "cotizaciones": {
-        simbolo: {"bid": 0.9, "ask": 1.5, "t": "2026-10-21T14:30:00Z"}}}), encoding="utf-8")
+    foto_alp = {"enviado_utc": "2026-10-21T14:30:00.6Z", "recibido_utc": "2026-10-21T14:30:01Z", "cotizaciones": {
+        simbolo: {"bid": 0.9, "ask": 1.5, "t": "2026-10-21T14:30:00Z"}}}
+    (crudo / "alpaca_vivo.json").write_text(json.dumps({**foto_alp, "enviado_utc": "2026-10-21T14:30:35Z"}),
+                                            encoding="utf-8")
+    with pytest.raises(ValueError, match="no están pareadas"):
+        comparar.importar(tmp_path, resumen)
+    (crudo / "alpaca_vivo.json").write_text(json.dumps(foto_alp), encoding="utf-8")
     assert comparar.importar(tmp_path, resumen) == ["instrumentos.json", "spx_minutos.json", "vivo.json"]
     dia = comparar.resultados_dia(tmp_path, resumen)
     assert dia["spx"]["cortes"][0]["diferencia"] == pytest.approx(0.2)

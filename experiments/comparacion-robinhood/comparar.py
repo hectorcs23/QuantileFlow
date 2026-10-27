@@ -27,6 +27,7 @@ from quantileflow import alpaca  # noqa: E402
 CADENA_SPXW = "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a"  # Robinhood: SPXW, liquidación PM
 INDICE_SPX = "432fbbb8-b82c-454a-852d-eb85382c7066"
 LOTE_HISTORICOS = 10  # máximo de contratos por llamada de get_option_historicals
+DESFASE_MAXIMO_S = 5.0  # foto en vivo: entre el updated_at más reciente de Robinhood y el envío a Alpaca
 CAMPOS_COTIZACION = {"bid": "bid_price", "ask": "ask_price", "bid_size": "bid_size", "ask_size": "ask_size",
                      "marca": "mark_price", "iv": "implied_volatility", "delta": "delta", "vega": "vega"}
 
@@ -231,9 +232,13 @@ def importar(privado: Path, resumen: dict) -> list[str]:
         hecho.append("spx_minutos.json")
     rh, alp = _leer(crudo / "cotizaciones.json"), _leer(crudo / "alpaca_vivo.json")
     if rh is not None and alp is not None:
+        cotizaciones = importar_cotizaciones(rh, instrumentos)
+        ultima = max(pd.Timestamp(q["actualizado_utc"]) for q in cotizaciones.values())
+        if abs(desfase := (pd.Timestamp(alp["enviado_utc"]) - ultima).total_seconds()) > DESFASE_MAXIMO_S:
+            raise ValueError(f"la foto de Alpaca salió {desfase:+.1f} s después de la última cotización de "
+                             "Robinhood: no están pareadas")
         _escribir(carpeta / "vivo.json", {
-            "robinhood": {"fuente": "Robinhood get_option_quotes",
-                          "cotizaciones": importar_cotizaciones(rh, instrumentos)},
+            "robinhood": {"fuente": "Robinhood get_option_quotes", "cotizaciones": cotizaciones},
             "alpaca": alp})
         hecho.append("vivo.json")
     return hecho

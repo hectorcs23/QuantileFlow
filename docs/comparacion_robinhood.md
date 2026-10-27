@@ -113,6 +113,10 @@ sistemática.
 - **Muestra chica.** 14 contratos de un vencimiento por día, no la cadena entera.
 - **Solo el mismo día.** Las barras de 15 segundos de opciones solo existen para el día en curso, y el
   bid y el ask solo en vivo. Si la revisión no corre ese día, la parte de opciones se pierde; la del SPX no.
+- **Cotizaciones atrasadas.** El bid y el ask en vivo de Robinhood traen su hora (`updated_at`). El 27 de
+  octubre, las dos primeras consultas devolvieron precios de unos 6 y 4 minutos antes. Desde entonces
+  `importar` exige que la foto de Alpaca salga a menos de 5 s de la cotización más reciente de Robinhood; si
+  no, se repite (pasos en el README del experimento).
 - **Cambio de horario.** Las ventanas salen de `corte_utc`, así que siguen el cambio del 1 de noviembre
   (09:45 pasa a ser 14:45 UTC). Hay una prueba con el 2 de noviembre.
 
@@ -140,6 +144,7 @@ mínimo de su minuto.
 | 22 oct | +2.04\* / +0.99 | +0.29 / +0.19 | 9 / 4 (de 12) | Diferencia mediana +0.43; razón de spreads mediana 1.00; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Primera foto en vivo (10:33). A las 09:45 el error del forward fue de 1.19: la mayor diferencia del SPX hasta ahora. A las 10:00 se descartaron dos barras interpoladas de contratos muy dentro del dinero. |
 | 23 oct | +0.00 / −0.22 | +0.73 / +0.28 | 8 / 6 | Diferencia mediana +0.62; razón de spreads mediana 1.00; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Vencimiento del 23 de noviembre. A las 09:45 la media fuera del dinero sube por tres puts con +1 a +3 puntos, cuando sus marcas saltaban de una barra a la otra; la mediana fue +0.18. |
 | 26 oct | −0.90\* / −0.58 | +0.07 / +0.03 | 5 / 9 | Diferencia mediana −0.12; razón de spreads mediana 1.29; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Vencimiento del 25 de noviembre. En vivo, el mid de Alpaca quedó arriba solo en 6 de 14 (antes, 8 y 11): el sesgo hacia arriba no se repitió. |
+| 27 oct | −0.35 / −0.47 | +0.37 / +0.33 | 6 / 4 (de 11) | Diferencia mediana +0.42; razón de spreads mediana 1.00; iguales 0 de 14; marca dentro del spread de Alpaca 7 de 14 | Vencimiento del 27 de noviembre. A las 10:00 se descartaron tres barras interpoladas de contratos dentro del dinero. En vivo, las dos primeras respuestas de Robinhood llegaron con unos 6 y 4 minutos de atraso y la tercera quedó a 34 s de la foto de Alpaca; con fotos de Alpaca en bucle, la cuarta quedó pareada a 0.4 s. |
 
 ## 7. Cómo repetir
 

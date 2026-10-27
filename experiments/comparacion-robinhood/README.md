@@ -59,6 +59,23 @@ instrumentos y cotizaciones se pueden omitir los campos que no se usan, pero nun
    Los `data.results` van a `$P/$F/crudo/cotizaciones.json` (de cada `quote`, al menos `instrument_id`,
    `bid_price`, `ask_price`, `bid_size`, `ask_size`, `mark_price`, `implied_volatility`, `delta`, `vega`,
    `updated_at`). Después de las 16:00 de Nueva York no se toma.
+
+   `importar` exige que la foto de Alpaca salga a menos de 5 s del `updated_at` más reciente de Robinhood
+   (antes del 27 de octubre quedaban a 1.3–1.4 s). Si no, los dos archivos van a `crudo/descartadas/` y se
+   repite así: en segundo plano, fotos de Alpaca en bucle en una carpeta temporal `T`,
+
+   ```bash
+   fin=$((SECONDS + 150)); i=0
+   while [ $SECONDS -lt $fin ]; do i=$((i + 1))
+     python experiments/comparacion-robinhood/foto_alpaca.py --instrumentos $P/$F/instrumentos.json \
+       --salida $T/alpaca_$(printf %03d $i).json > /dev/null
+     sleep 0.7
+   done
+   ```
+
+   y, mientras corre, `get_option_quotes`. A `crudo/alpaca_vivo.json` se copia la primera foto de `T` con
+   `enviado_utc` posterior a ese `updated_at`. El 27 de octubre hizo falta: las dos primeras respuestas de
+   Robinhood llegaron con unos 6 y 4 minutos de atraso, y la tercera salió 34 s antes que la foto de Alpaca.
 5. `get_option_historicals` con cada lote y los parámetros de cada corte de `barras`; los `data.results`
    de un corte, juntos, van a `$P/$F/crudo/barras_0945.json` o `barras_1000.json`. `get_index_historicals`
    con los parámetros de `spx`; sus `data.results` van a `$P/$F/crudo/spx.json`.
