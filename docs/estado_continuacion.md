@@ -21,6 +21,9 @@
 > Resultados en la [comparación con Robinhood](comparacion_robinhood.md). Lo que dice la sección 1 sobre
 > Robinhood era de antes del conector.
 
+> **Actualización del 29 de octubre.** Se revisaron todas las ramas del repositorio. El mapa está en la
+> sección 6, y la lista de la sección 5 quedó al día.
+
 ---
 
 ## 1. Acceso a datos: problema bloqueante
@@ -168,23 +171,60 @@ cierre anticipado, y seis días degradados a propósito:
       registre los disparos descartados, que el histórico acepte disparos tardíos del mismo día y corregir
       el sufijo `-2` de los manifiestos del histórico. Lleva un nuevo commit fijado y se instala con una
       corrida manual de prueba y comprobación de huellas ([respuesta](respuesta_verificacion_instalacion.md);
-      [aceptación](aceptacion_operacion.md), sección 11).
+      [aceptación](aceptacion_operacion.md), sección 11). **Sigue pendiente al 28 de octubre:** el job
+      todavía cae en `ubuntu-24.04` por casualidad, cada corrida avisa por Node.js 20 y el histórico sigue
+      escribiendo el sufijo `-2`.
 - [ ] Decidir entre `indicative` y OPRA con la evidencia de la aceptación y del experimento intradía
       ([aceptación](aceptacion_operacion.md), sección 11; [revisión del experimento](respuesta_experimento_intradia.md)).
       Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
 - [ ] Comparación diaria con Robinhood: cuánto se alejan el SPX implícito, los mids y los spreads de
-      `indicative` de un dato mejor, sin pagar. El SPX implícito ya quedó validado en 28 cortes; para las
-      opciones hacen falta unas 20 sesiones antes de concluir ([comparación](comparacion_robinhood.md)).
+      `indicative` de un dato mejor, sin pagar. Al 28 de octubre, el SPX implícito lleva 38 cortes; las
+      opciones, 6 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
 - [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
       de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
-      ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6).
+      ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6). Ya no lo recomiendo: el 27 de
+      octubre la comprobación de las 09:32 llegó 33 minutos tarde, y con ese atraso se perdería la de las
+      10:00 ([aceptación](aceptacion_operacion.md), sección 12).
 - [ ] Captura ampliada (7 a 90 días): falta medir a la hora del corte que las respuestas llegan antes
       de él. Propuesta: el lunes 12 a las 09:50 y 10:05, aislada y sin tocar el piloto
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
-- [ ] Piloto real de 20–40 sesiones en `reports/piloto/`.
+- [ ] Piloto real de 20–40 sesiones en `reports/piloto/`. El 29 de octubre se completan 20 sesiones. El
+      código ya existe (`make normalizar-alpaca` y `scripts/piloto.py`): falta correrlo con los datos reales
+      y revisarlo.
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.
 - [ ] Referencia externa del forward: curva de tasas y dividendos con fuente.
 - [ ] B4: pérdida robusta en el ajuste de superficie (P1).
 - [ ] Protocolo predictivo pequeño (sección 7 del plan), después del piloto.
+- [ ] Siguiente paso de la investigación de Codex después del ruido concentrado. Codex propone medir
+      bandas del cambio de la CDF entre las 09:45 y las 10:00. La revisión propone, antes, ver con Robinhood
+      cuánto se estrechan las bandas con cotizaciones consolidadas
+      ([revisión](respuesta_ruido_concentrado.md), sección 4).
+- [ ] Ordenar las ramas: la predeterminada de GitHub, los PR abiertos y las líneas paralelas (sección 6).
+- [ ] Primer lunes con horario de invierno, el 2 de noviembre. Las rutinas van en hora de Nueva York y
+      los cron de GitHub tienen entradas para EDT y EST. Hay que comprobar que el corte de las 09:45 caiga a
+      las 14:45 UTC.
+- [ ] Decisiones para la fase de posición: posiciones actuales, moneda, costos y límites de riesgo
+      ([plan de trabajo](plan_de_trabajo.md), sección 7). No hacen falta hasta después del protocolo
+      predictivo.
+
+---
+
+## 6. Mapa del repositorio al 29 de octubre
+
+La línea principal es `claude/lucid-hamilton-hz8l80`: captura, revisión diaria y comparación con
+Robinhood. Ahí está el commit que fijan los workflows (`4ffde8a`), así que esta rama no se puede borrar.
+
+La rama predeterminada de GitHub sigue siendo `claude/compassionate-brown-1w9f90`, del 26 de septiembre.
+Quien entra al repositorio ve el README de esa fecha, 64 commits atrás.
+
+Las demás líneas no están fusionadas:
+
+| Línea | Ramas | Último cambio | Estado | Qué falta decidir |
+|---|---|---|---|---|
+| Investigación de Codex | 14 ramas `codex/*` encadenadas; la punta, `codex/ruido-concentrado-20261022`, contiene a las otras | 26 oct | El 20 de octubre Codex mostró que las bandas de `indicative` no admiten precios coherentes en ninguna de 48 combinaciones. Propuso tres caminos: A, un simulador (hecho el 21); B, distribuciones con ruido (22 y 26); C, una muestra real, que Robinhood ya da en parte. Aquí hay revisión escrita del intradía, del PDE y del ruido concentrado; de lo demás, del 10 al 22 de octubre, no | Qué camino sigue y si algo pasa a la línea principal |
+| Estrategias con puts | `claude/beautiful-darwin-v0oyon` y `codex/correcciones-entropia-20261020` | 20 oct | Solo datos sintéticos. Codex corrigió la inclinación de mínimo KL y el rechazo de probabilidades negativas | Si sigue, y con qué datos |
+| Laboratorio de BTC | `claude/hopeful-mendel-vxf3vv` (`btc-prediction-market-lab/`) | 21 oct | Proyecto aparte sobre los contratos de BTC a 15 minutos de Kalshi. Estado `DATA_ONLY`, sin ventaja medida | Si sigue en este repositorio |
+| Interfaz en inglés e ingesta de Robinhood | `claude/eloquent-mendel-aux9xy` | 21 oct | Sale del 26 de septiembre: no tiene la captura de Alpaca. Pasa nombres y archivos a inglés, así que choca con la línea principal. Aporta `quantileflow/sources/robinhood.py` | Adoptar la parte de Robinhood o descartarla |
+| Exploración con datos gratis | PR 1 (`codex/0dte-skew-reversion`) y PR 2 (`codex/validate-free-skew`), abiertos desde el 2 de octubre | 2 oct | PR 1: protocolo del skew 0DTE de SPY, sin datos. PR 2: reproduce bt2, pero la convergencia no distingue reversión de error de medición, y el SKEW diario no mejora el pronóstico | Cerrarlos o fusionarlos |
