@@ -189,9 +189,13 @@ cierre anticipado, y seis días degradados a propósito:
 - [ ] Captura ampliada (7 a 90 días): falta medir a la hora del corte que las respuestas llegan antes
       de él. Propuesta: el lunes 12 a las 09:50 y 10:05, aislada y sin tocar el piloto
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
-- [ ] Piloto real de 20–40 sesiones en `reports/piloto/`. El 29 de octubre se completan 20 sesiones. El
-      código ya existe (`make normalizar-alpaca` y `scripts/piloto.py`): falta correrlo con los datos reales
-      y revisarlo.
+- [ ] Piloto real de 20–40 sesiones en `reports/piloto/`. El código ya existe (`make normalizar-alpaca` y
+      `scripts/piloto.py`) y un ensayo con 19 sesiones corrió bien. El 29 de octubre se perdió la captura de
+      las 09:45, así que la sesión 20 completa será la del 30.
+- [ ] Atraso de las rutinas de Claude: 28, 24 y 35 minutos el 27, 28 y 29 de octubre. El 29 se perdió por
+      primera vez una hora (las 09:45). Las rutinas de entre las 9 y el mediodía de Nueva York pueden
+      atrasarse; lanzar antes de las 9 cuesta minutos de Actions, porque los jobs esperan el corte en la máquina.
+      Lo decide el usuario ([aceptación](aceptacion_operacion.md), sección 12).
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
       `configs/piloto.toml`.
 - [ ] Referencia externa del forward: curva de tasas y dividendos con fuente.
