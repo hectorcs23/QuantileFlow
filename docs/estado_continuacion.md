@@ -179,8 +179,8 @@ cierre anticipado, y seis días degradados a propósito:
       Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
 - [ ] Comparación diaria con Robinhood: cuánto se alejan el SPX implícito, los mids y los spreads de
-      `indicative` de un dato mejor, sin pagar. Al 28 de octubre, el SPX implícito lleva 38 cortes; las
-      opciones, 6 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
+      `indicative` de un dato mejor, sin pagar. Al 30 de octubre, el SPX implícito lleva 41 cortes; las
+      opciones, 8 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
 - [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
       de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6). Ya no lo recomiendo: el 27 de
@@ -192,8 +192,8 @@ cierre anticipado, y seis días degradados a propósito:
 - [ ] Piloto real de 20–40 sesiones en `reports/piloto/`. El código ya existe (`make normalizar-alpaca` y
       `scripts/piloto.py`) y un ensayo con 19 sesiones corrió bien. El 29 de octubre se perdió la captura de
       las 09:45, así que la sesión 20 completa será la del 30.
-- [ ] Atraso de las rutinas de Claude: 28, 24 y 35 minutos el 27, 28 y 29 de octubre. El 29 se perdió por
-      primera vez una hora (las 09:45). Las rutinas de entre las 9 y el mediodía de Nueva York pueden
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35 y 45 minutos del 27 al 30 de octubre. El 29 se perdió por
+      primera vez una hora (las 09:45), y el 30 la de las 09:45 quedó lista solo 84 s antes del corte. Las rutinas de entre las 9 y el mediodía de Nueva York pueden
       atrasarse; lanzar antes de las 9 cuesta minutos de Actions, porque los jobs esperan el corte en la máquina.
       Lo decide el usuario ([aceptación](aceptacion_operacion.md), sección 12).
 - [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
