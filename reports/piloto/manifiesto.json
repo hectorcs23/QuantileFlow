@@ -1,0 +1,105 @@
+{
+  "alcance": {
+    "dividendos_objetivo": "23 consultas completas que pueden confirmar dividendos, la última recibida el 2026-10-30T14:29:19.110461+00:00. Cada etiqueta madura con la primera posterior a su fin que cubre el periodo (provisional). Queda aceptada bajo la política de 60 días (una regla, no una garantía de completitud) con una recibida después de ese margen, del último cambio de valor y de la última discrepancia resuelta, sin discrepancias abiertas. Con una discrepancia sin resolver (un dividendo ausente en una consulta comparable, uno cancelado por una resolución que el proveedor vuelve a traer con otros valores, o uno recibido sin fecha ex o sin monto que podría caer en el periodo) queda pendiente: solo la resuelve evidencia fechada",
+    "estados_rendimiento_objetivo": {
+      "aceptada": 0,
+      "pendiente": 0,
+      "provisional": 20
+    },
+    "evaluacion_con_precios_de_mercado": "no permitida: cotizaciones indicativas, modificadas por el proveedor (alpaca/indicative)",
+    "fuente_objetivo": "alpaca/sip",
+    "fuente_referencia": "alpaca/implicito_paridad_SPXW_indicative",
+    "fuentes_opciones": [
+      "alpaca/indicative"
+    ],
+    "instrumento_objetivo": "SPY, distinto de SPX: otro instrumento, con sus dividendos, gastos y diferencias de seguimiento",
+    "medicion": "indicativa",
+    "precio_objetivo": "observado",
+    "referencia_opciones": "inferido por paridad de las opciones",
+    "rendimiento_objetivo": "total: dividendos en efectivo sumados en su fecha ex; el de precio va aparte",
+    "revisadas_objetivo": 0,
+    "revisadas_tras_aceptar_objetivo": 0,
+    "simbolo_objetivo": "SPY",
+    "tipo_precio_objetivo": "observado",
+    "tipo_precio_referencia": "implicito"
+  },
+  "config": {
+    "huella": "8d6dc48abb9fb1ccd512a89f4ef77f297dbdf5d2781006c27afd4b2d5ed6efc2",
+    "ruta": "/home/user/QuantileFlow/configs/piloto.toml",
+    "version": "piloto-0.3"
+  },
+  "cortes": [
+    "09:45",
+    "10:00"
+  ],
+  "crudos": [],
+  "dictamen": "apto con limitaciones",
+  "entorno": {
+    "git": {
+      "cambios_sin_registrar": false,
+      "commit": "a4680b8db5b9240e1d869cf02e60cf511252ab82"
+    },
+    "paquetes": {
+      "exchange_calendars": "4.13.2",
+      "matplotlib": "3.11.2",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pytest": "9.1.1",
+      "scipy": "1.17.1"
+    },
+    "plataforma": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+    "python": "3.11.17"
+  },
+  "entradas": {
+    "cobertura_dividendos": {
+      "ruta": "../quantileflow-datos/normalized/alpaca/cobertura_dividendos.parquet",
+      "sha256": "f7c3c004f5b3d35884753b51dfbffb167a3b49f2a2b4ae1861336ac3423e0a20"
+    },
+    "cotizaciones": {
+      "ruta": "../quantileflow-datos/normalized/alpaca/cotizaciones.parquet",
+      "sha256": "4d5ec6a2dfabe7e94d9b2b71780fb62e06afcb9feb11e7228c90b8161908cff0"
+    },
+    "dividendos": {
+      "ruta": "../quantileflow-datos/normalized/alpaca/dividendos.parquet",
+      "sha256": "92176ceeb7f2008b411b51edc9161c8835e08700033979e9fb67aa3842d3f172"
+    },
+    "subyacente": {
+      "ruta": "../quantileflow-datos/normalized/alpaca/subyacente.parquet",
+      "sha256": "7aaadc16ac3c28d404a90845385dbc943802b66da875d18c285bd3d6322967db"
+    }
+  },
+  "exclusiones_hora_principal": {
+    "desfasada": 782,
+    "sin_bid": 275,
+    "sin_tamano": 275,
+    "spread_ancho": 295,
+    "ventana_de_apertura": 18
+  },
+  "fecha_corrida_utc": "2026-10-30T15:35:02+00:00",
+  "feeds": [
+    "indicative"
+  ],
+  "proveedores": [
+    "alpaca"
+  ],
+  "recibido_utc": [
+    "2026-10-02 13:44:55.548580+00:00",
+    "2026-10-30 13:59:55.668176+00:00"
+  ],
+  "salidas": {
+    "cambio_rr25_vs_movimiento.png": "314011a0cc91f7af85b51bbd77096db5ae987e2565fa4e9f41780b91b511ae03",
+    "disponibilidad_exclusiones.png": "da29834d097b0b9fdf4170b87d4084af3dc6f734a8a2eb0584b102ec6b345e7d",
+    "estabilidad_0945_1000.png": "93b730fea10ff4e2b26eac9beb39afc55a051d8835903c44f2cccfcfd2832ab9",
+    "etiquetas.csv": "def68c3b42a46b7a9eb2b4d284455a5e9eb8d8ea5e4fdccd0cacc30993896204",
+    "informe.md": "8c136f8909a9713f557d272731d8d54464f67ac2a7f8843b77d007472f5a34d2",
+    "rr25_30d.png": "09ac334318c89cf367c68943cfebcb55b7c8656f42075ff257de8ffbc68e60ba",
+    "tabla_diaria.csv": "4aeaaee0cafa2711e5130695665ebffc76c35436ab8ab0033d2de7e2dcce1d86",
+    "tabla_todas_las_horas.csv": "7f716e862b6e876d0779ae85ddbab1e3c5c300058c7f30f4c3a19cc652c38b04"
+  },
+  "sesiones": {
+    "desde": "2026-10-02",
+    "hasta": "2026-10-30",
+    "n": 21
+  }
+}

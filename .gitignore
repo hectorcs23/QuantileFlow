@@ -21,3 +21,6 @@ docs/propuesta/main.pdf
 
 # Datos de mercado: fuera de Git (licencias y tamaño). Solo muestras permitidas en tests/fixtures.
 data/
+# Tablas del piloto real: traen niveles del SPX implícito y mids de SPY del SIP. Se regeneran con
+# scripts/piloto.py y sus huellas quedan en reports/piloto/manifiesto.json.
+reports/piloto/*.csv

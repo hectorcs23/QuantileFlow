@@ -23,6 +23,9 @@ usan datos **sintéticos** con semillas fijas.
 - [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
   revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
   metodológicas pendientes.
+- [`docs/revision_piloto.md`](docs/revision_piloto.md): la revisión del primer informe piloto con datos
+  reales ([`reports/piloto/informe.md`](reports/piloto/informe.md): 21 sesiones, apto con limitaciones)
+  y la propuesta de `piloto-0.4`.
 - [`docs/aceptacion_operacion.md`](docs/aceptacion_operacion.md): la aceptación de la operación, sesión
   por sesión. Se cerró el 8 de octubre: aceptada con observaciones, con cinco sesiones completas lanzadas
   por Claude. Desde entonces registra también la operación diaria.
