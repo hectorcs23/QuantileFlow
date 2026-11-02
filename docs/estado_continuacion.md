@@ -191,8 +191,9 @@ cierre anticipado, y seis días degradados a propósito:
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [x] Piloto real en `reports/piloto/`: 21 sesiones, del 2 al 30 de octubre, con `piloto-0.3`. Dictamen:
       apto con limitaciones ([revisión](revision_piloto.md)).
-- [ ] Atraso de las rutinas de Claude: 28, 24, 35 y 45 minutos del 27 al 30 de octubre. El 29 se perdió por
-      primera vez una hora (las 09:45), y el 30 la de las 09:45 quedó lista solo 84 s antes del corte. Las
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45 y 34 minutos del 27 de octubre al 2 de noviembre. Se
+      perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el 30 quedó lista solo 84 s antes
+      del corte. Las
       rutinas de entre las 9 y el mediodía de Nueva York pueden atrasarse; lanzar antes de las 9 cuesta
       minutos de Actions, porque los jobs esperan el corte en la máquina. Lo decide el usuario
       ([aceptación](aceptacion_operacion.md), sección 12).
