@@ -23,6 +23,7 @@
     return box;
   }
   function clearResults(message) {
+    window.dueloSimulador.limpiar();
     result = null; selected = null;
     $("results").hidden = true; $("error").hidden = true;
     $("status").textContent = message;
@@ -101,7 +102,7 @@
     });
     $("exclusions").querySelector("summary").textContent = "Contratos excluidos ("+result.excluidos.length+")";
     $("exclusions").open = !result.posiciones.length;
-    renderNeighbors(); renderDetail();
+    renderNeighbors(); renderDetail(); window.dueloSimulador.iniciar(result);
   }
   function renderNeighbors() {
     const v = result.vecindad, table = $("neighbors");

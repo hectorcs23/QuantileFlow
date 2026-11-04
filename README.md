@@ -12,6 +12,11 @@ usan datos **sintéticos**.
 
 ## Simulador condicional: presupuesto, plazo y contratos
 
+[Comparación A/B de dos compras](docs/DOS_COMPRAS_2026-11-04.md): elige las dos
+series y cantidades, consulta su efectivo libre y compara las ganancias netas
+si cambia el movimiento, el plazo o la IV. Incluye el ejemplo de tres calls
+cortos frente a uno largo bajo el mismo presupuesto de US$300.
+
 Ejecuta `python scripts/simulador_opciones.py` y abre <http://127.0.0.1:8791>.
 Compara posiciones completas con contratos enteros, costos, caja y sensibilidad
 a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>QuantileFlow · Simulador condicional</title>
   <link rel="stylesheet" href="/style.css">
+  <script src="/duelo.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
@@ -39,7 +40,7 @@
         </details>
         <button class="primary" type="submit">Comparar escenario</button>
       </form>
-      <p class="hint">Cada alternativa compra una sola serie, en la cantidad entera máxima permitida. No combina strikes.</p>
+      <p class="hint">El ranking usa la cantidad máxima de una serie. En la comparación A/B puedes elegir menos contratos y conservar la diferencia en efectivo.</p>
     </aside>
     <div class="content">
       <p id="status" role="status" aria-live="polite">Preparando el ejemplo…</p>
@@ -49,6 +50,25 @@
           <h2 id="winner-title">Resultado bajo tu hipótesis</h2>
           <div id="winner"></div>
           <p class="hint">“Mejor” significa mayor ganancia neta total en este escenario. Conservar el efectivo también compite, con rendimiento supuesto de 0%.</p>
+        </section>
+        <section id="duelo" aria-labelledby="duelo-titulo" hidden>
+          <h2 id="duelo-titulo">Dos compras con el mismo presupuesto</h2>
+          <p class="hint">Cada compra dispone del presupuesto completo. Elige cantidades enteras para ver qué ocurre si la subida es menor o llega tarde.</p>
+          <form id="duelo-form">
+            <div class="duelo-pair">
+              <fieldset><legend>Compra A</legend><label>Serie A<select id="serie-a"></select></label><label>Cantidad A<input id="cantidad-a" type="number" min="1" step="1" required></label><small id="limite-a"></small></fieldset>
+              <fieldset><legend>Compra B</legend><label>Serie B<select id="serie-b"></select></label><label>Cantidad B<input id="cantidad-b" type="number" min="1" step="1" required></label><small id="limite-b"></small></fieldset>
+            </div>
+            <button type="submit">Comparar estas compras</button>
+          </form>
+          <p id="duelo-aviso" aria-live="polite"></p>
+          <div id="duelo-salida" hidden>
+            <div class="table-scroll"><table id="duelo-capital"><caption>Entrada y efectivo que conservas</caption><thead></thead><tbody></tbody></table></div>
+            <p class="hint">El equilibrio es el precio del subyacente que recupera todos los costos en tu día de salida, con la IV elegida.</p>
+            <div class="table-scroll"><table id="duelo-casos"><caption>Ganancia o pérdida neta de cada compra, USD. El efectivo conserva su valor.</caption><thead></thead><tbody></tbody></table></div>
+            <p class="hint">Las ganancias se comparan al centavo. Si un contrato ya venció sin conocer su precio de liquidación, el escenario queda sin comparar.</p>
+            <button type="button" id="duelo-export">Descargar comparación A/B (.json)</button>
+          </div>
         </section>
         <section>
           <h2>Mismo presupuesto, distintas posiciones</h2>

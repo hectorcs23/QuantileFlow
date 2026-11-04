@@ -28,6 +28,14 @@ section{margin:0 0 32px;padding-bottom:28px;border-bottom:1px solid var(--line)}
 #winner .headline{font-size:25px;font-weight:600;letter-spacing:-.02em;margin-bottom:12px}
 #winner .headline span{font-size:16px;font-weight:400}
 .table-scroll{overflow-x:auto;max-width:100%;margin-top:12px}
+.duelo-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.duelo-pair fieldset{min-width:0;margin:0;padding:10px 14px;border:1px solid var(--line);background:var(--paper);border-radius:8px}
+.duelo-pair legend{font-weight:650;color:var(--blue)}.duelo-pair small,#duelo-aviso{font-size:13px;color:var(--muted)}
+.duelo-pair select{display:block;width:100%;padding:9px 6px;margin-top:5px;border:1px solid #a7b5b9;border-radius:5px;font:inherit;color:var(--ink);background:var(--paper)}
+#duelo-casos small{display:block;color:var(--muted)}#duelo-casos td{white-space:nowrap}
+.pnl-line{position:relative;margin-top:4px;display:block;height:5px;min-width:54px;background:linear-gradient(to right,transparent 49.5%,var(--muted) 49.5%,var(--muted) 50.5%,transparent 50.5%)}
+.pnl-line i{display:block;position:absolute;height:3px;top:1px}
+@media(max-width:560px){.duelo-pair{grid-template-columns:minmax(0,1fr)}}
 table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
 th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
 th{color:var(--muted);font-weight:550}

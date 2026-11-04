@@ -1,6 +1,6 @@
 # QuantileFlow: simulador condicional local
 
-Versión inicial del camino A, 21 de octubre de 2026. Datos totalmente sintéticos.
+Camino A, actualizado el 4 de noviembre de 2026. Datos totalmente sintéticos.
 La app no necesita claves ni servicios externos y no ejecuta órdenes.
 
 ## Abrir
@@ -21,6 +21,14 @@ Salidas: comparación por ganancia neta de toda la posición, contratos enteros,
 caja, pérdida máxima con costos, controles adversos, superficie de PnL,
 sensibilidad a IV y cambios de ganador al variar la hipótesis.
 El botón de descarga conserva parámetros, datos sintéticos, escenarios y alcance.
+
+En **Dos compras con el mismo presupuesto** puedes elegir dos series y fijar
+cuántos contratos compras de cada una. Son alternativas independientes. La
+comparación mantiene las compras fijas, muestra su punto de equilibrio al
+horizonte objetivo y contrasta siete salidas con conservar el efectivo.
+Las cifras no disponibles no compiten y los empates se muestran al centavo.
+La sección tiene su propia descarga de las dos compras y sus escenarios.
+[Ejemplo de tres calls frente a uno por US$300](../../docs/DOS_COMPRAS_2026-11-04.md).
 
 ## Convenciones que afectan el resultado
 
@@ -51,7 +59,7 @@ El detalle del resultado y el siguiente paso están en
 
 ## Verificar
 
-    python -m pytest tests/test_simulador.py tests/test_escenarios.py tests/test_posiciones.py tests/test_comparador_pdf.py -q -p no:cacheprovider
+    python -m pytest tests/test_duelo.py tests/test_simulador.py tests/test_escenarios.py tests/test_posiciones.py tests/test_comparador_pdf.py -q -p no:cacheprovider
     python experiments/simulador_20261021/generar_ejemplo.py
 
 Para verificar la UI con el servidor abierto, Node.js, Playwright y un navegador

@@ -12,8 +12,10 @@ from urllib.parse import urlsplit
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 from quantileflow.simulador import ConfiguracionSimulador, simular
+from quantileflow.duelo import comparar_dos
 
 ARCHIVOS = {"/": ("index.html", "text/html"),
+            "/duelo.js": ("duelo.js", "text/javascript"),
             "/app.js": ("app.js", "text/javascript"),
             "/style.css": ("style.css", "text/css")}
 
@@ -64,7 +66,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.autoridad_valida():
             return self.responder(403, {"error": "Solo acceso local"})
-        if self.path != "/api/simular":
+        if self.path not in ("/api/simular", "/api/comparar-dos"):
             return self.responder(404, {"error": "Ruta no disponible"})
         origen = self.headers.get("Origin")
         if origen and origen != "http://" + self.headers["Host"]:
@@ -76,11 +78,21 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < largo <= 8192:
                 return self.responder(413, {"error": "Tamaño de petición inválido"})
             datos = json.loads(self.rfile.read(largo).decode("utf-8"))
-            cfg = ConfiguracionSimulador.desde_dict(datos)
+            if self.path == "/api/comparar-dos":
+                if not isinstance(datos, dict) or set(datos) != {"configuracion", "alternativas"}:
+                    raise ValueError("Indica configuración y dos alternativas")
+                cfg = ConfiguracionSimulador.desde_dict(datos["configuracion"])
+            else:
+                cfg = ConfiguracionSimulador.desde_dict(datos)
         except (ValueError, TypeError, UnicodeError) as exc:
             return self.responder(400, {"error": str(exc)})
         try:
-            resultado = simular(cfg)
+            if self.path == "/api/simular":
+                resultado = simular(cfg)
+            else:
+                resultado = comparar_dos(cfg, datos["alternativas"])
+        except ValueError as exc:
+            return self.responder(400, {"error": str(exc)})
         except Exception:
             return self.responder(500, {"error": "No se pudo calcular; no se muestran resultados anteriores"})
         self.responder(200, resultado)
