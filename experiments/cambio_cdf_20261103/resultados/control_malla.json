@@ -1,0 +1,47 @@
+{
+  "alcance": "Exploratorio solo para los pares sin testigo conjunto inicial. Misma tolerancia, precios y presupuestos.",
+  "epsilon_relativo_al_F0945": 1e-05,
+  "pares": 1,
+  "lp": 8,
+  "resultados": [
+    {
+      "cohorte": "nuevas",
+      "fecha": "2026-10-15",
+      "vencimiento": "2026-11-17",
+      "caso": "principal",
+      "inferior_relajacion": 0.0,
+      "superior_testigo": 2.220446049250313e-16,
+      "igualdad_testificada": true
+    },
+    {
+      "cohorte": "nuevas",
+      "fecha": "2026-10-15",
+      "vencimiento": "2026-11-17",
+      "caso": "referencias",
+      "inferior_relajacion": 0.0,
+      "superior_testigo": 5.551115123125783e-16,
+      "igualdad_testificada": true
+    },
+    {
+      "cohorte": "nuevas",
+      "fecha": "2026-10-15",
+      "vencimiento": "2026-11-17",
+      "caso": "estricto",
+      "inferior_relajacion": 0.0,
+      "superior_testigo": 2.220446049250313e-16,
+      "igualdad_testificada": true
+    },
+    {
+      "cohorte": "nuevas",
+      "fecha": "2026-10-15",
+      "vencimiento": "2026-11-17",
+      "caso": "uniforme",
+      "inferior_relajacion": 0.0,
+      "superior_testigo": 3.3306690738754696e-16,
+      "igualdad_testificada": true
+    }
+  ],
+  "codigo_sha256_lf": "21b26e72fa508a71d17d28842e1777e83e8ec4aefe923c3752094bac8a7b73ca",
+  "testigos_privados_sha256": "5b16f2dd2972a6f1075cc1b2d0501eb4f126510602c4204655395d323e29f90a",
+  "verificacion_base_sha256": "a137f82b49d9d49c39d5771545bc920143e897bf7cf4ccc7baed3f7f8d8171d7"
+}
