@@ -1,0 +1,51 @@
+{
+  "casos": 300,
+  "esquinas": 7680,
+  "error_max": 0.0,
+  "diagnostico_temporal_exploratorio": {
+    "previas": {
+      "pares": 44,
+      "pasan_solo_edad": 0,
+      "pasan_solo_desfase": 1,
+      "pasan_al_recibir": 1,
+      "coincidencias_coherentes": 6,
+      "coinciden_y_pasan_al_recibir": 0,
+      "dias_coinciden_al_recibir": [],
+      "mediana_edad_max_s": 12.0866355,
+      "mediana_desfase_max_s": 5.9360444999999995,
+      "mediana_anticipacion_recepcion_s": 4.5007595
+    },
+    "adicionales": {
+      "pares": 16,
+      "pasan_solo_edad": 0,
+      "pasan_solo_desfase": 2,
+      "pasan_al_recibir": 2,
+      "coincidencias_coherentes": 3,
+      "coinciden_y_pasan_al_recibir": 0,
+      "dias_coinciden_al_recibir": [],
+      "mediana_edad_max_s": 8.392964,
+      "mediana_desfase_max_s": 3.247839,
+      "mediana_anticipacion_recepcion_s": 4.690768
+    },
+    "total": {
+      "pares": 60,
+      "pasan_solo_edad": 0,
+      "pasan_solo_desfase": 3,
+      "pasan_al_recibir": 3,
+      "coincidencias_coherentes": 9,
+      "coinciden_y_pasan_al_recibir": 0,
+      "dias_coinciden_al_recibir": [],
+      "mediana_edad_max_s": 11.1232675,
+      "mediana_desfase_max_s": 5.319528,
+      "mediana_anticipacion_recepcion_s": 4.5215185
+    }
+  },
+  "resumen_sha256": "3876171314c9181856d611667ee5256e7ec56172b945ceb15842b27128b94010",
+  "codigo_sha256_lf": {
+    "protocolo.toml": "521ce81aa00725f19bca5d640fe79bc3b81d9921dcf8859f8fb2bb74d8357bc1",
+    "preparar.py": "6c0e383edb1359c811af689b6495d2a5e0fe4764ac32c388e2dab28fd4e5c31f",
+    "metodo.py": "367cf04e88cd443c4a7984abf0b20e0face85a8e785a50d91c0e04c05dd58bc0",
+    "evaluar.py": "886945d0f512ad110eb3858fea6e1720662b75abd9f02fe6616a34ef0c8d3fc8",
+    "verificar.py": "9d803db6cb3d3cdca69b95e4bf723d0fb77f01138ccb7a1ca34ef4b2f22c6284"
+  }
+}

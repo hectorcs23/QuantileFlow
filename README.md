@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; simulador y análisis de distribuciones, avances al 3 de noviembre de 2026.**
+**Versión de investigación; simulador y análisis de distribuciones, avances al 4 de noviembre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -22,6 +22,8 @@ a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.
 [Diagnóstico de factibilidad de las superficies](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
 
 ## Documentos
+
+- [Prueba directa de verticales de puts](docs/VERTICAL_PUTS_2026-11-04.md): 18 de 60 cambios centrales superan el bid/ask; ninguno supera todos los controles de paridad y tiempo. Se prioriza el simulador por presupuesto.
 
 - [Cambio intradía de la CDF a precios fijos de SPX](docs/CAMBIO_CDF_2026-11-03.md): en once sesiones, cada uno de los 44 pares de capturas y vencimientos admite igualdad simultánea en los cinco niveles estudiados.
 
