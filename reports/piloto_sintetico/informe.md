@@ -2,7 +2,7 @@
 
 > **DATOS SINTÉTICOS.** Datos generados por el código, no de mercado: este documento es la plantilla del informe piloto. Sus cifras no dicen nada sobre SPX ni sobre ninguna señal.
 
-- Configuración: `piloto-0.3` (huella `8d6dc48abb9f`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
+- Configuración: `piloto-0.4` (huella `72be77d0c844`); instrumento SPXW (europeo, liquidación PM), subyacente SPX.
 - Corte principal 09:45 y secundario 10:00 (America/New_York); plazo constante de 30 días naturales; etiquetas a 1, 5 sesiones.
 - Sesiones: 30, del 2025-10-20 al 2025-12-01.
 - Fuentes: opciones sintetico/nbbo_intervalos_sintetico; referencia de las opciones SPX sintetico/indice_sintetico (observado); objetivo SPY sintetico/sip_sintetico (observado).

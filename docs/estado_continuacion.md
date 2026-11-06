@@ -202,12 +202,19 @@ cierre anticipado, y seis días degradados a propósito:
       semana de mucho movimiento (elecciones del 3 de noviembre) y puede deberse a datos que se publican a
       las 10:00; si sigue, conviene medir cuánto afecta al criterio de estabilidad del piloto
       ([aceptación](aceptacion_operacion.md), sección 12).
-- [ ] Revisar los umbrales de calidad y del dictamen con el piloto y congelarlos en una nueva versión de
-      `configs/piloto.toml`. Propuesta de `piloto-0.4`, pendiente de aprobar: `desfase_spot_max_s` de 2 a
-      10 s ([revisión del piloto](revision_piloto.md), sección 4).
+- [x] Umbrales de calidad y del dictamen revisados y congelados en `piloto-0.4` (6 de noviembre):
+      `desfase_spot_max_s` de 2 a 10 s. Con 26 sesiones, el dictamen es «apto para ampliar historia»
+      ([revisión del piloto](revision_piloto.md), sección 0).
+- [ ] Dos arreglos chicos del generador del informe piloto: el motivo de una sesión sin captura a la hora
+      principal y el texto que todavía llama provisionales a los umbrales.
 - [ ] Referencia externa del forward: curva de tasas y dividendos con fuente.
 - [ ] B4: pérdida robusta en el ajuste de superficie (P1).
-- [ ] Protocolo predictivo pequeño (sección 7 del plan), después del piloto.
+- [x] Protocolo predictivo, versión 1, congelado el 6 de noviembre ([protocolo](protocolo_predictivo.md)):
+      cambio de RR25 para predecir la dirección de SPY a una sesión, Brier, D frente a C. La muestra
+      confirmatoria empieza el 9 de noviembre; miradas con 125 y 250 sesiones.
+- [ ] Lo pendiente del protocolo (sección 10): `iv_atm` en el piloto, `scripts/protocolo.py` con
+      pruebas y una corrida de desarrollo. El informe piloto no se vuelve a correr con sesiones
+      posteriores al 6 de noviembre antes de la mirada intermedia.
 - [ ] Siguiente paso de la investigación de Codex después del ruido concentrado. Codex propone medir
       bandas del cambio de la CDF entre las 09:45 y las 10:00. La revisión propone, antes, ver con Robinhood
       cuánto se estrechan las bandas con cotizaciones consolidadas

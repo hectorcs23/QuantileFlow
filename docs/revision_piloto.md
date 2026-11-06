@@ -1,10 +1,44 @@
-# Revisión del primer informe piloto
+# Revisión del informe piloto
 
-**Fecha:** 30 de octubre de 2026.
-**Informe:** [`reports/piloto/informe.md`](../reports/piloto/informe.md), con la configuración `piloto-0.3`
-y 21 sesiones reales, del 2 al 30 de octubre.
+**Fecha:** 30 de octubre de 2026; actualizada el 6 de noviembre.
+**Informe:** [`reports/piloto/informe.md`](../reports/piloto/informe.md), ahora con `piloto-0.4` y 26
+sesiones reales, del 2 de octubre al 6 de noviembre (sección 0). Las secciones 1 a 6 son la primera
+revisión, con `piloto-0.3` y 21 sesiones, del 2 al 30 de octubre.
 
-## Resumen
+## 0. Actualización del 6 de noviembre: `piloto-0.4`
+
+`piloto-0.4` quedó aprobado y congelado (huella `72be77d0c844`). El único cambio es `desfase_spot_max_s`,
+de 2 a 10 s (sección 4). El informe se volvió a correr con las 26 sesiones del 2 de octubre al 6 de
+noviembre.
+
+**Dictamen: apto para ampliar historia.**
+
+| Criterio | Valor | Umbral | Cumple |
+|---|---:|---|---|
+| Sesiones en la muestra | 26 | ≥ 20 | sí |
+| RR25 a 30 días identificado a las 09:45 | 0.923 (24 de 26) | ≥ 0.9 | sí |
+| Cambio diario de RR25 disponible | 0.840 (21 de 25) | ≥ 0.8 | sí |
+| Estabilidad 09:45–10:00 (mediana del cambio / ancho de banda) | 0.457 | ≤ 1.0 | sí |
+| Sesiones con alertas de sincronía, edad o disponibilidad | 0.000 | ≤ 0.2 | sí |
+| Etiqueta de SPY a 1 sesión disponible | 0.962 (25 de 26) | ≥ 0.9 | sí |
+
+- **Alertas.** Ninguna: el atraso del SPX implícito (5 a 6 s, por diseño) queda dentro de los 10 s.
+- **RR25.** Fue de −2.95 (6 de octubre) a −8.62 (6 de noviembre). En noviembre: −5.98, −4.58, −5.66 y
+  −8.62. El cambio del 6 de noviembre, −2.96 puntos, es el mayor de la muestra (antes, 1.41 como máximo).
+- **Estabilidad.** Las dos horas difieren 0.10 puntos de mediana (antes, 0.09), con un ancho de banda
+  mediano de 0.23. El índice sube de 0.393 a 0.457 porque desde el 2 de noviembre el corte de las 10:00
+  sale más ruidoso ([estado](estado_continuacion.md), sección 5). Sigue lejos del umbral.
+- **Sin RR25.** El 29 de octubre y el 2 de noviembre, los dos días sin captura de las 09:45. El informe
+  sigue dando como motivo «no hay vencimientos a ambos lados de 30 días», y su texto fijo todavía llama
+  provisionales a los umbrales: dos arreglos chicos del generador, pendientes.
+- **Etiquetas.** 25 de 26 sesiones tienen el rendimiento de SPY a 1 sesión, todas provisionales. Las
+  primeras se aceptan a principios de diciembre (política de 60 días).
+- **Ejemplo de sesión normal.** Ahora hay uno: el 30 de octubre.
+- **Protocolo.** Este informe muestra el cambio de RR25 junto al rendimiento siguiente de SPY. Por eso
+  las sesiones hasta el 6 de noviembre no cuentan para la evaluación confirmatoria
+  ([protocolo predictivo](protocolo_predictivo.md)).
+
+## Resumen de la primera revisión (30 de octubre, `piloto-0.3`)
 
 - **Dictamen: apto con limitaciones.** Falla un solo criterio, que no es crítico: casi todas las sesiones
   tienen alertas de sincronía. Es un umbral mal puesto, no un problema de los datos (sección 4).
@@ -74,7 +108,7 @@ completo. Dos textos del informe sobre ese día confunden, aunque no cambian nin
 Conviene que el piloto diga «sin captura a la hora principal»; es un cambio de código chico, para
 después.
 
-## 4. Propuesta de `piloto-0.4` (para que la apruebes)
+## 4. Propuesta de `piloto-0.4` (aprobada el 6 de noviembre)
 
 **Un cambio:** `desfase_spot_max_s`, de 2 a 10 segundos.
 
@@ -100,8 +134,8 @@ después.
 | `alertas_max` | 0.2 | Con el cambio de arriba, 0.000 |
 | `[referencia]`: tasa y dividendo fijos | 4 % y 1.3 % | Solo sirven para un diagnóstico del forward; sigue pendiente una curva con fuente |
 
-Si lo apruebas: se crea `piloto-0.4` con ese cambio, se congela, se vuelve a correr el informe y se
-publica en lugar de este.
+Se aprobó el 6 de noviembre: `piloto-0.4` se creó con ese cambio, se congeló y el informe se volvió a
+correr con 26 sesiones (sección 0).
 
 ## 5. Limitaciones y qué sigue
 

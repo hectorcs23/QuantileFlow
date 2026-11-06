@@ -24,9 +24,9 @@
     "tipo_precio_referencia": "observado"
   },
   "config": {
-    "huella": "8d6dc48abb9fb1ccd512a89f4ef77f297dbdf5d2781006c27afd4b2d5ed6efc2",
-    "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/configs/piloto.toml",
-    "version": "piloto-0.3"
+    "huella": "72be77d0c844a20f03d010608517cea43f278b927feb829f6ee93ad023f95427",
+    "ruta": "/home/user/QuantileFlow/configs/piloto.toml",
+    "version": "piloto-0.4"
   },
   "cortes": [
     "09:45",
@@ -57,8 +57,8 @@
   "dictamen": "apto con limitaciones",
   "entorno": {
     "git": {
-      "cambios_sin_registrar": false,
-      "commit": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9"
+      "cambios_sin_registrar": true,
+      "commit": "2debeb2df90110a3b459722a899b1976b1e35a2e"
     },
     "paquetes": {
       "exchange_calendars": "4.13.2",
@@ -69,24 +69,24 @@
       "pytest": "9.1.1",
       "scipy": "1.17.1"
     },
-    "plataforma": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
-    "python": "3.11.15"
+    "plataforma": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
+    "python": "3.11.17"
   },
   "entradas": {
     "cobertura_dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/cobertura_dividendos.parquet",
+      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/cobertura_dividendos.parquet",
       "sha256": "d85348525881c2783392ec672beff899c42f178414ff669bdd78a0a7f1dead8c"
     },
     "cotizaciones": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/cotizaciones.parquet",
+      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/cotizaciones.parquet",
       "sha256": "b7527536bf16f0520ea91a807354fce9029cf338b2a28093177313036cc5f411"
     },
     "dividendos": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/dividendos.parquet",
+      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/dividendos.parquet",
       "sha256": "eaab3829885341eeb205e8017afc4c9856914aacec7d3b8dba88a2408a77e7c8"
     },
     "subyacente": {
-      "ruta": "/tmp/claude-0/-home-user-QuantileFlow/5fa3bd59-a45a-5750-9aff-82d7f0c5a6e1/scratchpad/wt_4ffde8a/data/normalized/sintetico/subyacente.parquet",
+      "ruta": "/home/user/QuantileFlow/data/normalized/sintetico/subyacente.parquet",
       "sha256": "303ffdf08fc97ded46f649332334262c1b7a06b264fca314dcb3ffda01a615af"
     }
   },
@@ -95,7 +95,7 @@
     "sin_bid": 38,
     "spread_ancho": 40
   },
-  "fecha_corrida_utc": "2026-09-28T00:01:30+00:00",
+  "fecha_corrida_utc": "2026-11-06T18:08:20+00:00",
   "feeds": [
     "nbbo_intervalos_sintetico"
   ],
@@ -107,14 +107,14 @@
     "2026-09-26 12:00:00+00:00"
   ],
   "salidas": {
-    "cambio_rr25_vs_movimiento.png": "31a2c63dddc00fb6c068ca3c67720a6797ed5014405ea801dd54974cb6512374",
-    "disponibilidad_exclusiones.png": "7600837d32577a5e40c4069bf89c1a5f7dacab52a7a5f9c1fbfaa6e75da0379d",
-    "estabilidad_0945_1000.png": "f89f7cf82caa32b48df0b8e082b3dc8262375e4f5c5e718e42b2fc12832ee2ea",
+    "cambio_rr25_vs_movimiento.png": "bdd3662b1497021cb4498a94e1af54fd964b77c24e644ee755a0614193d82b8d",
+    "disponibilidad_exclusiones.png": "c5956a74bf2441f644f5ce25dcef492f232a05e2227fca54a94270e5fbf904b1",
+    "estabilidad_0945_1000.png": "3cfc9c5204f891c5dc44cbee4e5665eb31f3d956d332382598e1632f1a28f3f1",
     "etiquetas.csv": "4f2425c62cf34d535d5a812017c6f61d11b854617a25575cea75a397617953aa",
-    "informe.md": "95474849b2604ad8c66f3adab28424d18179352febd52825b48595450569cbd6",
-    "rr25_30d.png": "cba399b90bd6cf6818d97a68872e3608298d0d3c0eec16394d3c678ea1012533",
-    "tabla_diaria.csv": "97b5cc45c73a6a28a3cca78467e88b53b578faf8d4a69d123955f0194403d54d",
-    "tabla_todas_las_horas.csv": "af33a8a6b3a6b2cbdeb9aa57b634988fb7d095f97b2c6262fe766796c606967a"
+    "informe.md": "e63ded0d56863010d8aeac9af30083a9c6b59b46c8eb671918d5556899c4b743",
+    "rr25_30d.png": "64984ce78a2301f83d3b0fe19394d198628b36e95347b00bbb3e3fa69ae8db20",
+    "tabla_diaria.csv": "68d7d272e062b7dda59cde2a7382c9f548cf98cbd825bd0c740b1d66aecde94c",
+    "tabla_todas_las_horas.csv": "f4ed6be7587c807563b6a44006dfe3a3ff89198dc86298b9710e5efc679de078"
   },
   "sesiones": {
     "desde": "2025-10-20",

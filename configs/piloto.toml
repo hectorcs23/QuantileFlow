@@ -1,9 +1,9 @@
-# Configuración del piloto de medición (propuesta de trabajo).
-# Los umbrales de [calidad] y [dictamen] son provisionales: se revisan con el
-# piloto y se congelan, con una versión nueva, antes del periodo de evaluación.
+# Configuración del piloto de medición.
+# piloto-0.4: umbrales de [calidad] y [dictamen] revisados con el piloto real del 2 al 30 de octubre de 2026
+# (docs/revision_piloto.md) y congelados el 6 de noviembre. Cualquier cambio posterior lleva versión nueva.
 
 [piloto]
-version = "piloto-0.3"
+version = "piloto-0.4"
 descripcion = "SPXW PM a las 09:45 de Nueva York, plazo constante de 30 días"
 
 [instrumento]
@@ -70,7 +70,7 @@ rendimiento_dividendo = 0.013
 [calidad]
 margen_apertura_s = 300
 edad_maxima_s = 60
-desfase_spot_max_s = 2
+desfase_spot_max_s = 10  # 0.3 usaba 2: el SPX implícito lleva 5-6 s de atraso por diseño (ráfaga 5 s antes del corte)
 spread_relativo_max = 0.5
 spread_ticks_tolerados = 2
 tamano_minimo = 1
