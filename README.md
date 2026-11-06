@@ -1,7 +1,7 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; simulador y análisis de distribuciones, avances al 4 de noviembre de 2026.**
+**Versión de investigación; simulador y análisis de distribuciones, avances al 6 de noviembre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
@@ -11,6 +11,12 @@ predictor validado. Las figuras de la propuesta, la plantilla del informe y los 
 usan datos **sintéticos**.
 
 ## Simulador condicional: presupuesto, plazo y contratos
+
+[Captura histórica con US$300](docs/CONTRATOS_OBSERVADOS_2026-11-06.md): 57 calls
+SPXW calculables en la foto del 22 de octubre, con filtros, cantidades enteras,
+comparación A/B y mapas según movimiento, tiempo e IV. El feed indicativo y la
+referencia implícita bloquean recomendaciones de compra. Se abre en `/observadas`
+tras configurar una captura privada; el ejemplo sintético sigue separado.
 
 [Comparación A/B de dos compras](docs/DOS_COMPRAS_2026-11-04.md): elige las dos
 series y cantidades, consulta su efectivo libre y compara las ganancias netas

@@ -13,8 +13,12 @@ RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
 from quantileflow.simulador import ConfiguracionSimulador, simular
 from quantileflow.duelo import comparar_dos
+from quantileflow.observadas import (ConfiguracionObservada, cargar_tablas,
+                                    preparar_observadas, simular_observadas)
 
 ARCHIVOS = {"/": ("index.html", "text/html"),
+            "/observadas": ("observadas.html", "text/html"),
+            "/observadas.js": ("observadas.js", "text/javascript"),
             "/duelo.js": ("duelo.js", "text/javascript"),
             "/app.js": ("app.js", "text/javascript"),
             "/style.css": ("style.css", "text/css")}
@@ -23,6 +27,7 @@ ARCHIVOS = {"/": ("index.html", "text/html"),
 class Servidor(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = False
+    foto_observada = None
 
     def server_bind(self):
         # Windows permite compartir un puerto con SO_REUSEADDR. Evitar servir
@@ -66,7 +71,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.autoridad_valida():
             return self.responder(403, {"error": "Solo acceso local"})
-        if self.path not in ("/api/simular", "/api/comparar-dos"):
+        if self.path not in ("/api/simular", "/api/comparar-dos", "/api/observadas"):
             return self.responder(404, {"error": "Ruta no disponible"})
         origen = self.headers.get("Origin")
         if origen and origen != "http://" + self.headers["Host"]:
@@ -78,7 +83,13 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < largo <= 8192:
                 return self.responder(413, {"error": "Tamaño de petición inválido"})
             datos = json.loads(self.rfile.read(largo).decode("utf-8"))
-            if self.path == "/api/comparar-dos":
+            if self.path == "/api/observadas":
+                if self.server.foto_observada is None:
+                    return self.responder(409, {"error": "No hay captura cargada. Inicia el servidor con --tablas-observadas y --fecha-observada."})
+                if not isinstance(datos, dict) or set(datos) - {"configuracion", "alternativas"} or "configuracion" not in datos:
+                    raise ValueError("Indica configuración observada y, opcionalmente, dos alternativas")
+                cfg = ConfiguracionObservada.desde_dict(datos["configuracion"])
+            elif self.path == "/api/comparar-dos":
                 if not isinstance(datos, dict) or set(datos) != {"configuracion", "alternativas"}:
                     raise ValueError("Indica configuración y dos alternativas")
                 cfg = ConfiguracionSimulador.desde_dict(datos["configuracion"])
@@ -87,7 +98,9 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, TypeError, UnicodeError) as exc:
             return self.responder(400, {"error": str(exc)})
         try:
-            if self.path == "/api/simular":
+            if self.path == "/api/observadas":
+                resultado = simular_observadas(self.server.foto_observada, cfg, datos.get("alternativas"))
+            elif self.path == "/api/simular":
                 resultado = simular(cfg)
             else:
                 resultado = comparar_dos(cfg, datos["alternativas"])
@@ -101,11 +114,21 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--puerto", type=int, default=8791)
+    parser.add_argument("--tablas-observadas", type=Path)
+    parser.add_argument("--fecha-observada", help="YYYY-MM-DD de la captura histórica")
+    parser.add_argument("--hora-observada", default="09:45")
     args = parser.parse_args()
     if not 1 <= args.puerto <= 65535:
         parser.error("puerto fuera de rango")
+    if bool(args.tablas_observadas) != bool(args.fecha_observada):
+        parser.error("Indica tanto tablas como fecha observada")
+    foto = None
+    if args.tablas_observadas:
+        foto = preparar_observadas(*cargar_tablas(args.tablas_observadas),
+                                  args.fecha_observada, args.hora_observada)
     servidor = Servidor(("127.0.0.1", args.puerto), Handler)
-    print(f"QuantileFlow | http://127.0.0.1:{servidor.server_port} | datos sintéticos", flush=True)
+    servidor.foto_observada = foto
+    print(f"QuantileFlow | http://127.0.0.1:{servidor.server_port} | sintético + histórico: {foto['captura'] if foto else 'sin cargar'}", flush=True)
     try:
         servidor.serve_forever()
     except KeyboardInterrupt:

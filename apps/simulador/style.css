@@ -1,5 +1,7 @@
 :root{color-scheme:light;--bg:#f6f5f1;--ink:#192c38;--muted:#53636b;--line:#d9dedc;--blue:#17668b;--orange:#a3481a;--paper:#fff;--soft:#e9eeeb}
 *{box-sizing:border-box}
+a{color:var(--blue)}
+select{max-width:100%;padding:8px;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:5px}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
 main{max-width:1400px;margin:auto;padding:36px}
 header{max-width:960px;margin-bottom:30px}

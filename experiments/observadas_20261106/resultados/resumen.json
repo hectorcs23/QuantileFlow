@@ -1,0 +1,163 @@
+{
+  "fecha_analisis": "2026-11-06",
+  "captura": "2026-10-22T0945",
+  "configuracion": {
+    "presupuesto": 300.0,
+    "movimiento_pct": 3.0,
+    "dias": 7,
+    "cambio_iv_pp": 0.0,
+    "riesgo_pct": 100.0,
+    "max_contratos": 0,
+    "comision": 0.65
+  },
+  "apto_compra": false,
+  "bloqueos": [
+    "Modelo de salida por contrato sin validación predictiva ni ejecución verificada",
+    "Feed indicative: cotizaciones modificadas; no son precios ejecutables",
+    "Referencia SPX implícita por paridad, sin precio independiente",
+    "Referencia a más de 2 segundos del corte"
+  ],
+  "embudo": {
+    "calls": 1889,
+    "modelo": 1052,
+    "calidad": 659,
+    "horizonte": 608,
+    "presupuesto": 57
+  },
+  "inventario": {
+    "SPXW": {
+      "calls": 1052,
+      "caben_sin_filtrar": 181
+    },
+    "SPY": {
+      "calls": 837,
+      "caben_sin_filtrar": 200
+    }
+  },
+  "motivos": {
+    "iv_no_identificada": 202,
+    "vence_antes_del_objetivo": 51,
+    "spread_amplio": 158,
+    "precio_o_multiplicador_invalido": 97,
+    "sin_tamano": 97,
+    "precio_antiguo": 133,
+    "fuera_del_presupuesto": 551,
+    "instrumento_no_admitido": 837
+  },
+  "reglas": {
+    "edad_maxima_s": 60.0,
+    "spread_relativo_max": 0.5,
+    "tamano_minimo": 1,
+    "maximo_dte": 90.0,
+    "tasa": 0.04,
+    "dividendo_continuo": 0.013,
+    "semispread_salida_factores": [
+      1.0,
+      2.0
+    ],
+    "choques_adicionales_iv_pp": [
+      -5.0,
+      0.0,
+      5.0
+    ]
+  },
+  "casos": [
+    {
+      "nombre": "objetivo",
+      "positivas_nominal": 57,
+      "positivas_banda_inferior": 57,
+      "faltantes": 0,
+      "ganador_efectivo": false,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "mitad",
+      "positivas_nominal": 32,
+      "positivas_banda_inferior": 22,
+      "faltantes": 0,
+      "ganador_efectivo": false,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "sin_movimiento",
+      "positivas_nominal": 0,
+      "positivas_banda_inferior": 0,
+      "faltantes": 0,
+      "ganador_efectivo": true,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "baja_3",
+      "positivas_nominal": 0,
+      "positivas_banda_inferior": 0,
+      "faltantes": 0,
+      "ganador_efectivo": true,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "iv_menor",
+      "positivas_nominal": 0,
+      "positivas_banda_inferior": 0,
+      "faltantes": 0,
+      "ganador_efectivo": true,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "tarde",
+      "positivas_nominal": 32,
+      "positivas_banda_inferior": 28,
+      "faltantes": 0,
+      "ganador_efectivo": false,
+      "ganador_separado": false
+    },
+    {
+      "nombre": "combinado",
+      "positivas_nominal": 0,
+      "positivas_banda_inferior": 0,
+      "faltantes": 0,
+      "ganador_efectivo": true,
+      "ganador_separado": false
+    }
+  ],
+  "sensibilidad_presupuesto": [
+    {
+      "presupuesto": 100.0,
+      "elegibles": 24
+    },
+    {
+      "presupuesto": 200.0,
+      "elegibles": 45
+    },
+    {
+      "presupuesto": 300.0,
+      "elegibles": 57
+    },
+    {
+      "presupuesto": 500.0,
+      "elegibles": 73
+    }
+  ],
+  "dte_min": 28.302083333333332,
+  "dte_max": 33.302083333333336,
+  "strike_distancia_pct_min": 6.843349322079573,
+  "strike_distancia_pct_max": 18.281566767752324,
+  "ganador_cambia_con_retraso": true,
+  "integridad": {
+    "manifiestos": 33,
+    "paginas_unicas": 109,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "3ed17f1512e0b26224edee09dc820b038c96fab38e6fc696f2346aac6039f9cc",
+      "subyacente": "7f9c378c3f26e76e4870855f1dc959c5b47d441c4d1729851634921bbfdcef64"
+    },
+    "manifiesto_normalizacion_sha256": "f622e064aa5a7e8f48b17efae1e19bf758f9c1519e9e61ce8a89da4612e35e18"
+  },
+  "verificacion_numerica": {
+    "celdas_con_valor": 27702,
+    "celdas_ausentes_verificadas": 9234,
+    "inversiones_comprobadas": 171,
+    "error_maximo_abs": 2.863089321181178e-09,
+    "formula": "Normal CDF mediante math.erf, independiente del ndtr del motor"
+  },
+  "analisis_privado_sha256": "50bb9c02960a598e282d01ce5de3c620226499f6a0aabdf75ac67da028bcaffa"
+}

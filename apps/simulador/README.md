@@ -1,6 +1,7 @@
 # QuantileFlow: simulador condicional local
 
-Camino A, actualizado el 4 de noviembre de 2026. Datos totalmente sintéticos.
+Camino A, actualizado el 6 de noviembre de 2026. El modo inicial usa datos sintéticos;
+el modo observado, descrito al final, carga una captura histórica privada.
 La app no necesita claves ni servicios externos y no ejecuta órdenes.
 
 ## Abrir
@@ -75,3 +76,22 @@ de dependencias de Node si Playwright no está instalado localmente.
 La lógica financiera vive en Python; el navegador solo presenta resultados.
 El servidor sirve una lista fija de archivos, valida cuerpo y origen de las
 solicitudes, y no tiene endpoints para leer archivos privados ni enviar órdenes.
+## Modo observado, 6 de noviembre de 2026
+
+La página `/observadas` admite una captura privada normalizada. Arranque:
+
+```text
+python scripts/simulador_opciones.py --tablas-observadas RUTA_TABLAS_PRIVADAS --fecha-observada 2026-10-22
+```
+
+Sólo SPXW europeo PM se valora. Se filtran precios, tamaños, timestamps,
+disponibilidad, spread y plazo; se invierte la IV bid/mid/ask de cada contrato.
+El servidor verifica las huellas de las tablas al cargar. Sin captura devuelve
+un mensaje explícito. El API no admite rutas ni cargas de archivos vía HTTP.
+
+El modo es histórico y exploratorio, con `apto_compra=false`. No comparte IV ni
+spot del ejemplo sintético. Sus exportaciones incluyen posiciones individuales:
+mantenerlas fuera del repositorio público. Ver [informe](../../docs/CONTRATOS_OBSERVADOS_2026-11-06.md).
+
+Prueba de UI: `node apps/simulador/verificar_observadas.cjs`, con Playwright
+disponible, Edge y el servidor configurado. `QA_DIR` debe apuntar fuera del repo.
