@@ -179,8 +179,8 @@ cierre anticipado, y seis días degradados a propósito:
       Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
 - [ ] Comparación diaria con Robinhood: cuánto se alejan el SPX implícito, los mids y los spreads de
-      `indicative` de un dato mejor, sin pagar. Al 30 de octubre, el SPX implícito lleva 41 cortes; las
-      opciones, 8 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
+      `indicative` de un dato mejor, sin pagar. Al 6 de noviembre, el SPX implícito lleva 50 cortes; las
+      opciones, 13 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
 - [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
       de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6). Ya no lo recomiendo: el 27 de
@@ -191,7 +191,7 @@ cierre anticipado, y seis días degradados a propósito:
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [x] Piloto real en `reports/piloto/`: 21 sesiones, del 2 al 30 de octubre, con `piloto-0.3`. Dictamen:
       apto con limitaciones ([revisión](revision_piloto.md)).
-- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3 y 3 minutos del 27 de octubre al 5 de
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3 y 5 minutos del 27 de octubre al 6 de
       noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el 30 quedó lista
       solo 84 s antes del corte. Las rutinas de entre las 9 y el mediodía de Nueva York pueden atrasarse;
       lanzar antes de las 9 cuesta minutos de Actions, porque los jobs esperan el corte en la máquina. Lo

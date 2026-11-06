@@ -1,6 +1,6 @@
 # Comparación con Robinhood
 
-**Fecha:** 21 de octubre de 2026; totales al viernes 30. **Estado:** en curso; la revisión de las 10:27
+**Fecha:** 21 de octubre de 2026; totales al viernes 6 de noviembre. **Estado:** en curso; la revisión de las 10:27
 suma una sesión por día y los totales se ponen al día los viernes.
 **Código:** [`experiments/comparacion-robinhood/`](../experiments/comparacion-robinhood/), con los pasos de
 cada día.
@@ -12,17 +12,17 @@ y no se escriben en ningún archivo.
 
 ## Resumen
 
-- **El SPX implícito sirve.** En 41 cortes (21 sesiones, del 2 al 30 de octubre), el nivel que sale de la
-  paridad put-call de SPXW difiere del índice real en −0.07 puntos de media, con desviación de 1.01. Es
-  menos de lo que se mueve el SPX en ese mismo minuto: mediana de 2.9 puntos. En 32 de 41 cortes cae
-  dentro del máximo y el mínimo del minuto; los otros 9 quedan a 1.04 puntos o menos.
-- **Opciones fuera del dinero: cerca.** En ocho sesiones (105 comparaciones al corte), el mid de Alpaca
-  queda +0.23 puntos sobre la marca de Robinhood en promedio (mediana +0.10). Son unos 0.08 puntos de
-  volatilidad en promedio y 0.36 en el peor caso. La foto en vivo da casi lo mismo: +0.25 de media.
-- **El bid y el ask de Alpaca no son los del mercado.** En las siete fotos en vivo, ningún bid y ask de
-  Alpaca coincide con el de Robinhood (0 de 98). El ancho típico es el mismo (razón mediana 1.00), pero
-  los precios están corridos: la marca de Robinhood cae dentro del spread de Alpaca en 43 de 98 en vivo y
-  en 97 de 203 al corte. El mid de Alpaca quedó arriba en 61 de 98.
+- **El SPX implícito sirve.** En 50 cortes (26 sesiones, del 2 de octubre al 6 de noviembre), el nivel que
+  sale de la paridad put-call de SPXW difiere del índice real en −0.07 puntos de media, con desviación de
+  1.14. Es menos de lo que se mueve el SPX en ese mismo minuto: mediana de 3.2 puntos. En 39 de 50 cortes
+  cae dentro del máximo y el mínimo del minuto; los otros 11 quedan a 1.21 puntos o menos.
+- **Opciones fuera del dinero: cerca.** En 13 sesiones (168 comparaciones al corte), el mid de Alpaca
+  queda +0.21 puntos sobre la marca de Robinhood en promedio (mediana +0.09). Son unos 0.08 puntos de
+  volatilidad en promedio y 0.36 en el peor caso. La foto en vivo da lo mismo: +0.21 de media.
+- **El bid y el ask de Alpaca no son los del mercado.** En las 12 fotos en vivo, ningún bid y ask de
+  Alpaca coincide con el de Robinhood (0 de 168). El ancho típico se parece (razón mediana 1.06), pero
+  los precios están corridos: la marca de Robinhood cae dentro del spread de Alpaca en 80 de 168 en vivo
+  y en 176 de 329 al corte. El mid de Alpaca quedó arriba en 104 de 168.
 
 ## 1. Qué se compara
 
@@ -40,71 +40,74 @@ siempre Alpaca menos Robinhood.
 
 | Medida | Valor |
 |---|---|
-| Cortes | 41 (21 sesiones × 09:45 y 10:00; el 29 de octubre, solo las 10:00) |
+| Cortes | 50 (26 sesiones × 09:45 y 10:00; el 29 de octubre y el 2 de noviembre, solo las 10:00) |
 | Diferencia media (implícito − cierre del minuto) | −0.07 puntos |
-| Mediana | −0.28 |
-| Desviación | 1.01 (0.013 % del nivel) |
-| Máxima en valor absoluto | 2.04 (22 de octubre, 09:45) |
-| Dentro del máximo y el mínimo del minuto | 32 de 41 |
-| Distancia al rango de los 9 de afuera | 0.01 a 1.04 |
-| Rango del SPX en ese minuto | 1.24 a 7.62; mediana 2.91 |
+| Mediana | −0.32 |
+| Desviación | 1.14 (0.015 % del nivel) |
+| Máxima en valor absoluto | 2.43 (5 de noviembre, 10:00) |
+| Dentro del máximo y el mínimo del minuto | 39 de 50 |
+| Distancia al rango de los 11 de afuera | 0.01 a 1.21 |
+| Rango del SPX en ese minuto | 1.24 a 11.13; mediana 3.16 |
 
 El error del forward que reporta la verificación no anticipa el tamaño de la diferencia (correlación
-−0.02). El 29 de octubre, con el mayor error del forward del mes (1.48), la diferencia fue de +0.34. El
-30, con errores chicos (0.27 y 0.20), los dos cortes quedaron fuera de su minuto. Para el piloto basta: el
-nivel implícito sigue al índice con un error menor que el ruido del propio minuto.
+−0.01). El 29 de octubre, con el mayor error del forward del mes (1.48), la diferencia fue de +0.34. El
+30, con errores chicos (0.27 y 0.20), los dos cortes quedaron fuera de su minuto. Las mayores diferencias
+llegaron con el índice moviéndose rápido: +2.31 y +2.43 el 5 de noviembre y −2.42 el 6, en minutos de 5 a
+11 puntos de rango; dos de esos tres cortes quedaron dentro de su minuto. Para el piloto basta: el nivel
+implícito sigue al índice con un error menor que el ruido del propio minuto.
 
-## 3. Opciones al corte (21 a 30 de octubre)
+## 3. Opciones al corte (21 de octubre a 6 de noviembre)
 
-Ocho sesiones y 15 cortes (el 29, solo las 10:00), con 14 contratos: 203 comparaciones. Se descartaron 7
-barras interpoladas: 2 el 22, 3 el 27 y 2 el 30. Vencimientos: 20, 23, 25, 27 y 30 de noviembre. Todas las
-cotizaciones de Alpaca tenían 21.5 segundos o menos (mediana 5.4).
+Trece sesiones y 24 cortes (el 29 de octubre y el 2 de noviembre, solo las 10:00), con 14 contratos: 329
+comparaciones. Se descartaron 7 barras interpoladas: 2 el 22, 3 el 27 y 2 el 30 de octubre. Vencimientos:
+20, 23, 25, 27 y 30 de noviembre, y 2, 3, 4 y 7 de diciembre. Todas las cotizaciones de Alpaca tenían 23.9
+segundos o menos (mediana 5.5).
 
 | | Todas | Fuera del dinero |
 |---|---:|---:|
-| Comparaciones | 203 | 105 |
-| Diferencia media (mid de Alpaca − marca) | +0.30 | +0.23 |
-| Mediana | +0.15 | +0.10 |
-| Desviación | 1.91 | 0.84 |
+| Comparaciones | 329 | 168 |
+| Diferencia media (mid de Alpaca − marca) | +0.37 | +0.21 |
+| Mediana | +0.14 | +0.09 |
+| Desviación | 1.86 | 0.85 |
 | Máxima en valor absoluto | 6.62 | 3.00 |
-| Diferencia relativa (media y mediana) | +0.24 % y +0.13 % | +0.32 % y +0.22 % |
+| Diferencia relativa (media y mediana) | +0.23 % y +0.14 % | +0.24 % y +0.19 % |
 | En puntos de volatilidad (media, mediana y máxima) | | 0.08, 0.07 y 0.36 |
-| Marca de Robinhood dentro del spread de Alpaca | 97 | 48 |
+| Marca de Robinhood dentro del spread de Alpaca | 176 | 86 |
 
 Los puntos de volatilidad salen de dividir cada diferencia, en valor absoluto, por la vega de
 Black-Scholes del contrato (volatilidad de 15 %, plazo de su vencimiento). Las diferencias grandes están en
 las opciones dentro del dinero, que el piloto no usa. Fuera del dinero, los spreads de Alpaca van de 0.06 a
-4.83 puntos (mediana 0.70).
+4.85 puntos (mediana 0.89).
 
 Parte de la diferencia puede ser de tiempo y no de calidad: la marca es la del instante del corte y cada
-cotización de Alpaca tiene su propia edad (hasta 21.5 segundos en esta muestra).
+cotización de Alpaca tiene su propia edad (hasta 23.9 segundos en esta muestra).
 
-## 4. Bid y ask en vivo (22 al 30 de octubre)
+## 4. Bid y ask en vivo (22 de octubre al 6 de noviembre)
 
-Una foto por día, hacia las 10:30, con las mismas 14 opciones: siete fotos. Por contrato, entre la
-cotización de Alpaca y la de Robinhood hay 1.2 segundos de mediana y 26 como máximo, en cotizaciones de
+Una foto por día, hacia las 10:30, con las mismas 14 opciones: 12 fotos. Por contrato, entre la
+cotización de Alpaca y la de Robinhood hay 1.3 segundos de mediana y 26 como máximo, en cotizaciones de
 Robinhood que no habían cambiado. Desde el 27 de octubre, `importar` exige que la foto de Alpaca salga a
 menos de 5 s de la cotización más reciente de Robinhood. Fuera del dinero se define aquí con la delta de
 Robinhood (|delta| < 0.5).
 
 | | Todas | Fuera del dinero |
 |---|---:|---:|
-| Contratos | 98 | 49 |
-| Diferencia media de mids (Alpaca − marca) | +0.55 | +0.25 |
-| Mediana | +0.41 | +0.18 |
-| Máxima en valor absoluto | 4.66 | 2.07 |
-| En puntos de volatilidad, con la vega de Robinhood (media y máxima) | | 0.08 y 0.25 |
-| Razón de spreads (Alpaca entre Robinhood), mediana | 1.00 | 1.00 |
-| Mismo ancho (±5 %), más ancho y más angosto | 15, 47 y 36 | 8, 23 y 18 |
+| Contratos | 168 | 84 |
+| Diferencia media de mids (Alpaca − marca) | +0.50 | +0.21 |
+| Mediana | +0.34 | +0.18 |
+| Máxima en valor absoluto | 5.25 | 2.07 |
+| En puntos de volatilidad, con la vega de Robinhood (media y máxima) | | 0.08 y 0.27 |
+| Razón de spreads (Alpaca entre Robinhood), mediana | 1.06 | 1.15 |
+| Mismo ancho (±5 %), más ancho y más angosto | 20, 85 y 63 | 10, 46 y 28 |
 | Bid y ask iguales | 0 | 0 |
-| El spread de Alpaca encierra al de Robinhood | 24 | 12 |
-| Marca de Robinhood dentro del spread de Alpaca | 43 | 18 |
+| El spread de Alpaca encierra al de Robinhood | 39 | 21 |
+| Marca de Robinhood dentro del spread de Alpaca | 80 | 38 |
 
 El feed `indicative` no copia el bid y el ask del mercado: los anchos se parecen, pero los precios están
 corridos. Para el piloto importa el mid, y fuera del dinero su error típico es de menos de una décima de
-punto de volatilidad. El mid de Alpaca quedó arriba en 61 de 98 contratos, y en más de la mitad en 6 de los
-7 días: apunta a un sesgo chico hacia arriba (mediana +0.18 fuera del dinero). Con siete días todavía no es
-concluyente.
+punto de volatilidad. El mid de Alpaca quedó arriba en 104 de 168 contratos, y en más de la mitad en 11 de
+los 12 días: hay un sesgo chico hacia arriba (mediana +0.18 fuera del dinero), que se mantiene desde la
+primera semana.
 
 ## 5. Límites
 
@@ -156,6 +159,7 @@ mínimo de su minuto.
 | 3 nov | −0.96 / −0.30 | +0.41 / −0.04 | 10 / 7 | Diferencia mediana +0.54; razón de spreads mediana 1.18; iguales 0 de 14; marca dentro del spread de Alpaca 7 de 14 | Vencimiento del 3 de diciembre. A las 10:00, fuera del dinero, la mediana fue −0.41 y solo 2 de las 7 marcas quedaron dentro del spread de Alpaca. En vivo, el mid de Alpaca quedó arriba en 9 de 14. Foto pareada al primer intento (2.08 s). |
 | 4 nov | −0.76 / +1.26\* | −0.10 / +0.09 | 9 / 10 | Diferencia mediana +0.90; razón de spreads mediana 1.05; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Vencimiento del 4 de diciembre. A las 10:00 el SPX implícito quedó fuera de su minuto, a 0.06 de la apertura del minuto siguiente. En vivo, la diferencia mediana es la mayor hasta ahora; el mid de Alpaca quedó arriba en 8 de 14. Foto pareada al primer intento (1.21 s). |
 | 5 nov | +2.31 / +2.43\* | −0.33 / +0.11 | 5 / 10 | Diferencia mediana +0.22; razón de spreads mediana 0.98; iguales 0 de 14; marca dentro del spread de Alpaca 12 de 14 | Vencimiento del 4 de diciembre. Con el índice cayendo unos 78 puntos entre las 09:40 y las 09:57, el SPX implícito quedó 2.3 y 2.4 puntos por encima del real: las dos mayores diferencias hasta ahora. A las 09:45 solo 1 de las 7 marcas fuera del dinero quedó dentro del spread de Alpaca. En vivo, por primera vez la razón de spreads mediana quedó debajo de 1, y 12 de 14 marcas quedaron dentro del spread de Alpaca, el máximo hasta ahora. Foto pareada al primer intento (1.25 s). |
+| 6 nov | −1.52 / −2.42 | +0.91 / +0.58 | 7 / 10 | Diferencia mediana +0.10; razón de spreads mediana 1.17; iguales 0 de 14; marca dentro del spread de Alpaca 5 de 14 | Vencimiento del 7 de diciembre. Con el SPX unos 185 puntos por debajo del jueves, la media fuera del dinero de las 09:45, +0.91, es la más alta hasta ahora; en puntos de volatilidad son 0.12 de media y 0.34 como máximo. Los dos cortes del SPX quedaron dentro de su minuto. En vivo, el mid de Alpaca quedó arriba en 8 de 14. Foto pareada al primer intento (1.17 s). |
 
 ## 7. Cómo repetir
 
