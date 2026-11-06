@@ -212,7 +212,28 @@ hashes de entradas y salidas, la configuración, el commit y las exclusiones.
 
 ## Alcance de las pruebas
 
-Las pruebas usan datos sintéticos. Comprueban propiedades matemáticas y que el procesamiento de cadenas
-bid/ask separa efectos de los datos (cotizaciones desfasadas, dividendos, ejercicio anticipado, strikes
-ausentes, ventanas de apertura) de una posible señal. No demuestran validez predictiva ni la calidad de
-datos reales: eso exige la muestra histórica de la fase 0 del plan de trabajo.
+Las 404 pruebas usan datos sintéticos. Comprueban propiedades matemáticas y que el procesamiento de
+cadenas bid/ask separa efectos de los datos (cotizaciones desfasadas, dividendos, ejercicio anticipado,
+strikes ausentes, ventanas de apertura) de una posible señal. No demuestran validez predictiva ni la
+calidad de datos reales: eso exige la muestra histórica de la fase 0 del plan de trabajo.
+
+## Procedencia de los datos y qué se publica
+
+Este repositorio es público. El acceso a una fuente no implica permiso para redistribuir sus datos, así
+que la regla es: se publica código, resultados agregados y datos sintéticos; no se publican cotizaciones
+crudas de terceros ni nada procedente de una cuenta.
+
+| Fuente | Cómo llegan los datos | Qué se publica aquí |
+|---|---|---|
+| Alpaca | API HTTP. La clave y el secreto se leen de `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el entorno y no se escriben en ningún archivo; en GitHub Actions van como secretos cifrados. Ver [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md). | Solo agregados y medidas derivadas: conteos, porcentajes, medianas, bandas y RR25 por vencimiento, como en [`reports/verificacion_alpaca/`](reports/verificacion_alpaca/). Las cadenas crudas quedan en `data/`, fuera de Git. |
+| Robinhood | Conector de solo lectura de datos de mercado, en una rama aparte de este repositorio. Nunca se usa para enviar órdenes ni para consultar la cuenta: el adaptador es un mapeo puro, sin sockets, credenciales ni tokens. | Solo agregados. Las capturas crudas no se publican y la fixture del adaptador es **sintética**, generada con Black-Scholes sobre una sonrisa inventada y semilla fija. |
+| Sintético | Generadores de este repositorio, con semillas fijas y reproducibles. | Todo: las figuras de la propuesta, la plantilla del informe piloto, los benchmarks PDE y las fixtures de las pruebas. |
+
+Fuera del repositorio, sin excepción: claves, secretos, tokens de acceso y renovación, cookies y
+sesiones guardadas, semillas TOTP y códigos de recuperación, número de cuenta y datos personales, y
+cualquier actividad financiera personal (posiciones, cantidades reales, órdenes, fills, saldos, PnL).
+Las exclusiones están en [`.gitignore`](.gitignore); las variables que el código espera, con valores
+vacíos, en [`.env.example`](.env.example).
+
+Quitar un nombre no anonimiza: fechas, símbolos, cantidades y precios pueden seguir identificando
+operaciones personales, y convertir un identificador en un hash tampoco lo evita.
