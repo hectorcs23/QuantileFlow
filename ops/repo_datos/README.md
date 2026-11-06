@@ -37,8 +37,10 @@ agregados están en el repositorio público
 El código se toma del repositorio público **por commit** (`REF_CODIGO`), así que no depende de su rama
 predeterminada. La rama que contiene ese commit no debe borrarse mientras los workflows lo fijen.
 
-Los horarios de los disparos son los programados. GitHub puede retrasarlos, a veces muchos minutos, o
-descartarlos con carga: por eso hay un respaldo por hora, y los registros miden lo que pasó de verdad.
+Las capturas se lanzan con `workflow_dispatch`, desde rutinas de Claude: `captura-temprana` a las 08:47
+de Nueva York y, de respaldo, `captura-0945` y `captura-1000` a las 09:14 y las 09:32 si la temprana no
+está en curso. Los cron de GitHub de esos dos workflows se quitaron el 6 de noviembre de 2026: llegaban
+horas tarde y se descartaban. Los registros miden lo que pasó de verdad.
 
 ## Qué hacen los workflows
 
@@ -46,12 +48,19 @@ Todos descargan el código de captura del repositorio público en el commit fija
 (revisado y verificado en `reports/verificacion/`). Cambiarlo es cambiar la versión de medición, y
 cada manifiesto registra el commit usado.
 
+**`captura-temprana`** (con `captura-hora-temprana`): las dos horas, lanzadas antes de las 9 de Nueva
+York, cuando las rutinas de Claude no se atrasan. El job de las 09:45 espera su corte en su máquina y,
+al terminar, arranca el de las 10:00 en otra máquina y otro proceso: un fallo o un cuelgue en las 09:45
+no toca a las 10:00. `captura-hora-temprana` es una copia de `captura-hora` con más tiempo de espera
+(130 minutos el job y 120 la captura) y sin compuerta; un cambio en una va también a la otra. Cada job
+usa el grupo de concurrencia de su hora, el mismo que el workflow por hora.
+
 **`captura-0945` y `captura-1000`** (con `captura-hora`, reutilizable): una hora de corte cada uno, en
 su propia máquina y su propio proceso. Un fallo o un cuelgue en las 09:45 no toca a las 10:00.
 
-- Cada uno tiene un disparo y un respaldo por horario (EDT y EST). Una compuerta deja pasar solo los
-  que arrancan entre las 09:00 y las 09:43 (09:45) o las 09:58 (10:00) de Nueva York, y la
-  concurrencia por hora hace que el respaldo espere a la corrida en curso.
+- Son el respaldo de la temprana y se lanzan con `workflow_dispatch`. La compuerta horaria solo filtra
+  disparos programados, que ya no hay. La concurrencia por hora hace que un respaldo espere a la corrida
+  en curso de su hora y después no repita lo ya capturado.
 - El script espera hasta 5 s antes del corte y captura en una ráfaga paralela:
   - SPXW: dos vencimientos a cada lado de 30 días y el más cercano (nivel implícito de SPX);
   - SPY: dos vencimientos a cada lado de 30 días;
@@ -62,7 +71,7 @@ su propia máquina y su propio proceso. Un fallo o un cuelgue en las 09:45 no to
   corte, el proceso termina con código 4 y deja su registro. Así el respaldo, en cola en el mismo
   grupo, puede arrancar antes de la compuerta y llegar al corte. Un respaldo que arranca tarde tiene
   al menos 2 minutos. Es un escenario favorable, no una garantía. Depende de:
-  - el retraso de los cron de GitHub, que pueden llegar muchos minutos tarde o no dispararse;
+  - el retraso del disparo (las rutinas de Claude pueden llegar tarde);
   - la cola;
   - la recuperación y el commit del titular;
   - el checkout y la instalación.

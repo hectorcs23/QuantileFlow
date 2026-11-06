@@ -193,9 +193,12 @@ cierre anticipado, y seis días degradados a propósito:
       apto con limitaciones ([revisión](revision_piloto.md)).
 - [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3 y 5 minutos del 27 de octubre al 6 de
       noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el 30 quedó lista
-      solo 84 s antes del corte. Las rutinas de entre las 9 y el mediodía de Nueva York pueden atrasarse;
-      lanzar antes de las 9 cuesta minutos de Actions, porque los jobs esperan el corte en la máquina. Lo
-      decide el usuario ([aceptación](aceptacion_operacion.md), sección 12).
+      solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
+      (antes de la ventana en que las rutinas se atrasan), con las dos horas en dos jobs encadenados; las
+      rutinas de las 09:14 y las 09:32 quedan de respaldo con los workflows por hora, que pierden sus cron
+      inútiles (unos 170 minutos de Actions al mes). La plantilla está lista y validada con actionlint en
+      `ops/repo_datos/`; **falta desplegarla** en `main` de QuantileFlow-datos, que necesita el OK explícito
+      del usuario, y después cambiar las rutinas ([aceptación](aceptacion_operacion.md), sección 12).
 - [ ] Vigilar el corte de las 10:00. Desde el 2 de noviembre, el spread de SPXW cerca del dinero a unos
       30 días es de 17 a 70 ticks a las 10:00, frente a 7 a 13 del 27 al 30 de octubre, y la banda del RR25
       a 30 días pasó de 0.14–0.21 a 0.36–0.73 puntos. A las 09:45 el cambio es menor. Coincide con una

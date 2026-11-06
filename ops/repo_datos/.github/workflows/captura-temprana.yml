@@ -1,0 +1,39 @@
+# Captura temprana de las dos horas de corte, lanzada a las 08:47 de Nueva York por una rutina de Claude.
+# Las rutinas de Claude se atrasan entre las 9 y el mediodía de Nueva York: el 29 de octubre y el 2 de noviembre
+# llegaron después de las 09:45 y esa hora se perdió. Antes de las 9 no hay atraso conocido.
+# El job de las 09:45 espera su corte en su máquina; cuando termina, arranca el de las 10:00 en otra máquina y
+# otro proceso, así que un fallo o un cuelgue en las 09:45 no toca a las 10:00. Cuesta lo mismo que las dos
+# corridas por hora lanzadas a las 09:14, porque el job de las 10:00 ya no espera desde temprano.
+# captura-0945.yml y captura-1000.yml quedan de respaldo (rutinas de las 09:14 y las 09:32). Cada job comparte
+# el grupo de concurrencia de su hora: un respaldo lanzado mientras tanto espera y después no repite lo ya
+# capturado.
+# Plantilla versionada en hectorcs23/QuantileFlow: ops/repo_datos/.github/workflows/
+name: captura-temprana
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  h0945:
+    concurrency:
+      group: captura-0945
+      cancel-in-progress: false
+    uses: ./.github/workflows/captura-hora-temprana.yml
+    with:
+      hora: "09:45"
+    secrets: inherit
+
+  h1000:
+    # También si el job de las 09:45 falla; no si se cancela la corrida.
+    needs: h0945
+    if: ${{ !cancelled() }}
+    concurrency:
+      group: captura-1000
+      cancel-in-progress: false
+    uses: ./.github/workflows/captura-hora-temprana.yml
+    with:
+      hora: "10:00"
+    secrets: inherit
