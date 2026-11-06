@@ -34,7 +34,7 @@ from quantileflow import piloto as pl
 from quantileflow import sintetico as sn
 
 RAIZ = Path(__file__).resolve().parents[1]
-CLAVE, SECRETO = "PKPRUEBA0123456789", "secreto-que-no-debe-aparecer"
+CLAVE, SECRETO = "PKPRUEBANOREAL0000", "secreto-que-no-debe-aparecer"
 CLIENTE_REAL, VIGILANTE_REAL = al.ClienteAlpaca, al.Vigilante  # antes de cualquier sustitución en una prueba
 FECHAS = cal.sesiones("2025-11-17", "2025-11-18")
 
@@ -134,7 +134,7 @@ def quotes_json(mids, params, atrasos=(0.2, 1.5, 4.0)):
                              "bs": 80, "bx": "T", "ap": round(mid + 0.01 * (i + 1), 2), "as": 120, "ax": "Z",
                              "c": ["R"], "z": "B"})
     dentro = [q for q in cotizaciones if inicio <= pd.Timestamp(q["t"]) <= fin][:int(params["limit"])]
-    return {"quotes": {"SPY": dentro}, "next_page_token": "U1BZfHNpZ3VpZW50ZQ=="}
+    return {"quotes": {"SPY": dentro}, "next_page_token": "pagina-2"}
 
 
 def dividendo_json(id_evento, ex, monto, especial=False):

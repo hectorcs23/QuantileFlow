@@ -21,3 +21,52 @@ docs/propuesta/main.pdf
 
 # Datos de mercado: fuera de Git (licencias y tamaño). Solo muestras permitidas en tests/fixtures.
 data/
+
+# --- Credenciales y autenticación -------------------------------------------
+# Nunca en Git, tampoco en un repositorio privado. Van en un gestor de secretos
+# o en variables del entorno local; en Actions, en secretos cifrados.
+.env
+.env.*
+!.env.example
+.auth/
+.sessions/
+.secrets/
+secretos.*
+claves.*
+storage-state*.json
+cookies*.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+
+# --- Material privado: cuentas, capturas de broker, auditorías --------------
+# La separación es por contenido y procedencia, no por extensión: un adaptador
+# sin credenciales es código publicable y un CSV puede ser resultado sintético.
+# Las capturas de mercado crudas ya quedan fuera por la regla `data/` de arriba.
+local/
+private/
+broker_exports/
+account_statements/
+security_reports/
+
+# --- Almacenamiento de aplicaciones, volcados y comprimidos -----------------
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.har
+*.log
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+# Excepción: este archivo es un registro de agregados ya versionado (conteos y
+# medianas en JSON), no la salida de una ejecución.
+!experiments/intradia_20261007/ejecucion.log
