@@ -1,239 +1,256 @@
 # QuantileFlow
 
-Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación; simulador y análisis de distribuciones, avances al 6 de noviembre de 2026.**
+Tracking option-implied distributions and managing positions day to day.
+**Research version; simulator and distribution analysis, progress as of 6 November 2026.**
 
-Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
-que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
-y manifiesto) y la captura diaria de cadenas de opciones en Alpaca. Los datos de mercado no están en
-Git. Hay revisiones operativas y experimentos descriptivos de capturas reales, pero aún no hay un
-predictor validado. Las figuras de la propuesta, la plantilla del informe y los benchmarks PDE
-usan datos **sintéticos**.
+This repository holds the technical proposal for the system, a reference mathematical core that
+generates its figures, the measurement pilot's pipeline (ingestion, quality controls, labels, report
+and manifest) and the daily capture of option chains from Alpaca. Market data is not in Git. There
+are operational reviews and descriptive experiments on real captures, but there is still no
+validated predictor. The proposal's figures, the report template and the PDE benchmarks all use
+**synthetic** data.
 
-## Simulador condicional: presupuesto, plazo y contratos
+> **A note on language.** This README and the demo are in English; the research documents linked
+> below are written in Spanish, which is the working language of the project.
 
-[Captura histórica con US$300](docs/CONTRATOS_OBSERVADOS_2026-11-06.md): 57 calls
-SPXW calculables en la foto del 22 de octubre, con filtros, cantidades enteras,
-comparación A/B y mapas según movimiento, tiempo e IV. El feed indicativo y la
-referencia implícita bloquean recomendaciones de compra. Se abre en `/observadas`
-tras configurar una captura privada; el ejemplo sintético sigue separado.
+## Conditional simulator: budget, maturity and contracts
 
-[Comparación A/B de dos compras](docs/DOS_COMPRAS_2026-11-04.md): elige las dos
-series y cantidades, consulta su efectivo libre y compara las ganancias netas
-si cambia el movimiento, el plazo o la IV. Incluye el ejemplo de tres calls
-cortos frente a uno largo bajo el mismo presupuesto de US$300.
+**[Live demo](https://hectorcs23.github.io/demo/quantileflow/)** — the budget comparator ported to
+the browser, on synthetic data, with no install and no broker connection. It cross-checks itself
+against this engine's reference cases while you watch.
 
-Ejecuta `python scripts/simulador_opciones.py` y abre <http://127.0.0.1:8791>.
-Compara posiciones completas con contratos enteros, costos, caja y sensibilidad
-a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.
-**Esta versión usa calls europeos sintéticos; no estima probabilidades de ganar.**
+[Historical capture on US$300](docs/CONTRATOS_OBSERVADOS_2026-11-06.md): 57 SPXW calls computable
+in the 22 October snapshot, with filters, whole quantities, A/B comparison and maps by move, time
+and IV. The indicative feed and the parity-implied reference block any purchase recommendation.
+It opens at `/observadas` once a private capture is configured; the synthetic example stays
+separate.
 
-[Guía de uso](apps/simulador/README.md) ·
-[Resultados y siguiente paso](docs/SIMULADOR_CONDICIONAL_2026-10-21.md) ·
-[Diagnóstico de factibilidad de las superficies](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
+[A/B comparison of two purchases](docs/DOS_COMPRAS_2026-11-04.md): pick the two series and their
+quantities, check the free cash each leaves, and compare the net gains if the move, the maturity or
+the IV changes. It includes the example of three short-dated calls against one long-dated call on
+the same US$300 budget.
 
-## Documentos
+Run `python scripts/simulador_opciones.py` and open <http://127.0.0.1:8791>. It compares complete
+positions with whole contracts, costs, cash and sensitivity to move, time and IV, with charts and
+scenario downloads. **This version uses synthetic European calls; it does not estimate probabilities
+of winning.**
 
-- [Prueba directa de verticales de puts](docs/VERTICAL_PUTS_2026-11-04.md): 18 de 60 cambios centrales superan el bid/ask; ninguno supera todos los controles de paridad y tiempo. Se prioriza el simulador por presupuesto.
+[Usage guide](apps/simulador/README.md) ·
+[Results and next step](docs/SIMULADOR_CONDICIONAL_2026-10-21.md) ·
+[Feasibility diagnosis of the surfaces](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
 
-- [Cambio intradía de la CDF a precios fijos de SPX](docs/CAMBIO_CDF_2026-11-03.md): en once sesiones, cada uno de los 44 pares de capturas y vencimientos admite igualdad simultánea en los cinco niveles estudiados.
+## Documents
 
-- [Error concentrado y contraste con otras sesiones, 26 de octubre](docs/RUIDO_CONCENTRADO_2026-10-26.md):
-  límites de error total y por cotización, cinco sesiones adicionales y verificación
-  independiente; mejora de los extremos, con ambigüedad de distribución persistente.
+- [Direct test of put verticals](docs/VERTICAL_PUTS_2026-11-04.md): 18 of 60 central changes clear
+  the bid/ask; none clears every parity and timing control. The budget simulator takes priority.
 
-- [Distribuciones bajo cotizaciones ruidosas, 22 de octubre](docs/DISTRIBUCIONES_RUIDOSAS_2026-10-22.md):
-  camino B, conjuntos de medidas admisibles, filtros y bandas de CDF;
-  incertidumbre de la reparación comprobada con distribuciones extremas.
+- [Intraday change of the CDF at fixed SPX levels](docs/CAMBIO_CDF_2026-11-03.md): across eleven
+  sessions, each of the 44 capture-and-expiry pairs admits simultaneous equality at the five levels
+  studied.
 
-- [`docs/SKEW_BANDAS_2026-10-10.md`](docs/SKEW_BANDAS_2026-10-10.md):
-  contraste justo de IV plana y SSVI, sensibilidad del ranking y control independiente
-  de forward; seis sesiones del feed gratuito, datos US$0.
+- [Concentrated error and contrast with other sessions, 26 October](docs/RUIDO_CONCENTRADO_2026-10-26.md):
+  bounds on total and per-quote error, five extra sessions and an independent check; the tails
+  improve, but the distributional ambiguity persists.
+
+- [Distributions under noisy quotes, 22 October](docs/DISTRIBUCIONES_RUIDOSAS_2026-10-22.md):
+  route B, sets of admissible measures, filters and CDF bands; the repair's uncertainty checked
+  against extreme distributions.
+
+- [`docs/SKEW_BANDAS_2026-10-10.md`](docs/SKEW_BANDAS_2026-10-10.md): a fair contrast between flat
+  IV and SSVI, ranking sensitivity and an independent forward control; six sessions of the free
+  feed, US$0 of data.
 
 - [`docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md`](docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md):
-  prueba del comparador con doce cortes privados; IV plana, holdout por strike,
-  bandas y límites de sincronía. Solo resultados agregados públicos; datos US$0.
+  the comparator tested on twelve private cut-offs; flat IV, holdout by strike, bands and
+  synchronisation limits. Only aggregate results are public; US$0 of data.
 
-- [`docs/COMPARADOR_PDF_2026-10-10.md`](docs/COMPARADOR_PDF_2026-10-10.md):
-  comparador PDE, costos y límite de pérdida; rankings de ganancia, retorno y robustez,
-  barridos de spot/IV/plazo y comprobación con una malla más fina. Datos sintéticos, US$0.
+- [`docs/COMPARADOR_PDF_2026-10-10.md`](docs/COMPARADOR_PDF_2026-10-10.md): PDE comparator, costs
+  and loss limit; gain, return and robustness rankings, spot/IV/maturity sweeps and a check on a
+  finer grid. Synthetic data, US$0.
 
-- [`docs/VALORACION_CONSISTENTE_2026-10-10.md`](docs/VALORACION_CONSISTENTE_2026-10-10.md):
-  valoración de calls/puts desde la misma PDF, identidades por strike, sensibilidades y convergencia.
+- [`docs/VALORACION_CONSISTENTE_2026-10-10.md`](docs/VALORACION_CONSISTENTE_2026-10-10.md): pricing
+  calls and puts from the same PDF, per-strike identities, sensitivities and convergence.
 
 - [`docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md`](docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md):
-  PDF, CDF, cuantiles y colas; tangentes y adjuntos, verificación y gráficos con presupuesto de datos US$0.
-- [`docs/AVANCE_PDE_GRATIS_2026-10-09.md`](docs/AVANCE_PDE_GRATIS_2026-10-09.md): primer benchmark
-  europeo de precios y sensibilidades, integridad del crudo y prueba aislada de captura ampliada.
+  PDF, CDF, quantiles and tails; tangents and adjoints, verification and charts on a US$0 data
+  budget.
+- [`docs/AVANCE_PDE_GRATIS_2026-10-09.md`](docs/AVANCE_PDE_GRATIS_2026-10-09.md): the first European
+  benchmark of prices and sensitivities, raw-data integrity and an isolated test of the extended
+  capture.
 
-- [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): plan de investigación vigente (26 de septiembre
-  de 2026). Pregunta inicial, fases con criterios de salida y correcciones previas del núcleo.
-- [`docs/avance_y_pendientes.md`](docs/avance_y_pendientes.md): qué se hizo, hallazgos y qué falta.
-- [`docs/como_proseguir.md`](docs/como_proseguir.md): continuación del plan; el siguiente hito es un
-  informe reproducible de sesiones reales de apertura (SPXW PM, 09:45, plazo constante de 30 días).
-- [`docs/estado_continuacion.md`](docs/estado_continuacion.md): qué se construyó de ese plan sin datos,
-  el problema de acceso a datos y lo que falta.
-- [`docs/resumen_sesion_alpaca.md`](docs/resumen_sesion_alpaca.md): resumen de la sesión con Alpaca y
-  mapa de dónde está cada archivo.
-- [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): los ocho hallazgos de la
-  revisión del commit `e2b92f0`, sus correcciones y pruebas de regresión, y las decisiones
-  metodológicas pendientes.
-- [`docs/aceptacion_operacion.md`](docs/aceptacion_operacion.md): la aceptación de la operación, sesión
-  por sesión. El lunes 28 GitHub no disparó los workflows programados, y la sesión se perdió.
-- [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): la
-  verificación independiente de la instalación y el mantenimiento de las plantillas antes del 19 de
-  octubre (`ubuntu-24.04`).
-- [`docs/instalacion_repo_datos.md`](docs/instalacion_repo_datos.md): la instalación del repositorio de
-  datos y su prueba manual, verificadas, y lo que falta para la aceptación.
-- [`docs/respuesta_verificacion_4ffde8a.md`](docs/respuesta_verificacion_4ffde8a.md): la verificación de
-  `4ffde8a` (queda fijado en los workflows) y la secuencia para acreditar la captura diaria.
-- [`docs/respuesta_cambios_operativos.md`](docs/respuesta_cambios_operativos.md): el registro de la
-  captura también cuando falla al iniciar, `--resoluciones` explícito y pruebas portables a Windows.
-- [`docs/respuesta_cierre_b240dc2.md`](docs/respuesta_cierre_b240dc2.md): después del cierre de la
-  revalidación: el registro de cada ejecución a prueba de errores, la revisión de la operación de las
-  primeras sesiones y cómo seguir con la prueba de captura.
-- [`docs/respuesta_revalidacion_5c15028.md`](docs/respuesta_revalidacion_5c15028.md): la revalidación
-  de `5c15028`: un dividendo recibido sin fecha ex o sin monto deja pendientes las etiquetas que podría
-  afectar, hasta que el proveedor lo complete o una resolución dé los datos.
-- [`docs/respuesta_revalidacion_a5e2748.md`](docs/respuesta_revalidacion_a5e2748.md): la revalidación
-  de `a5e2748`: discrepancias de dividendos que solo resuelve evidencia fechada, cobertura con los
-  filtros de cada consulta, tramos de etiqueta con el estado de cada instante (provisional, aceptada
-  bajo la política de 60 días, pendiente) y el respaldo como escenario favorable.
-- [`docs/respuesta_revision_8c97b2b.md`](docs/respuesta_revision_8c97b2b.md): la revisión de `8c97b2b`:
-  cobertura de dividendos aparte, eventos y etiquetas versionados, plazo de preparación del respaldo y
-  correcciones a la entrega anterior.
-- [`docs/respuesta_revalidacion_d815bdd.md`](docs/respuesta_revalidacion_d815bdd.md): la entrega que
-  pidió la revalidación de `d815bdd`: señal, referencia y objetivo separados; SPY del SIP histórico
-  con dividendos; recuperación de capturas interrumpidas y workflows por hora.
-- [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): qué ofrece Alpaca (verificado el 26 de septiembre
-  de 2026), la captura diaria hacia adelante, la primera verificación con datos reales y las decisiones
-  pendientes (dónde corre la captura y qué feed usar).
-- `docs/QuantileFlow_propuesta_tecnica.pdf`: guía técnica del proceso, etapa por etapa, con 64 gráficas
-  y 21 diagramas. Su sección 11 resume el estado del proyecto al 28 de septiembre de 2026: qué se
-  construyó, la captura diaria instalada, las revisiones y lo que falta. El PDF y las figuras PNG son
-  artefactos generados: `make figuras && make pdf` los regenera.
-- Fuente LaTeX en [`docs/propuesta/`](docs/propuesta/): `main.tex`, `preambulo.tex`, una sección por
-  archivo en `secciones/` y los diagramas TikZ en `diagramas/`.
+- [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): the research plan in force (26 September
+  2026). The opening question, the phases with their exit criteria, and earlier corrections to the
+  core.
+- [`docs/avance_y_pendientes.md`](docs/avance_y_pendientes.md): what was done, what was found and
+  what is missing.
+- [`docs/como_proseguir.md`](docs/como_proseguir.md): the plan's continuation; the next milestone is
+  a reproducible report over real opening sessions (SPXW PM, 09:45, constant 30-day maturity).
+- [`docs/estado_continuacion.md`](docs/estado_continuacion.md): what was built of that plan without
+  data, the data-access problem and what is still missing.
+- [`docs/resumen_sesion_alpaca.md`](docs/resumen_sesion_alpaca.md): a summary of the Alpaca session
+  and a map of where each file lives.
+- [`docs/respuesta_revision_e2b92f0.md`](docs/respuesta_revision_e2b92f0.md): the eight findings from
+  the review of commit `e2b92f0`, their corrections and regression tests, and the methodological
+  decisions still open.
+- [`docs/aceptacion_operacion.md`](docs/aceptacion_operacion.md): acceptance of the operation,
+  session by session. On Monday the 28th GitHub did not fire the scheduled workflows and the session
+  was lost.
+- [`docs/respuesta_verificacion_instalacion.md`](docs/respuesta_verificacion_instalacion.md): the
+  independent verification of the installation and the upkeep of the templates before 19 October
+  (`ubuntu-24.04`).
+- [`docs/instalacion_repo_datos.md`](docs/instalacion_repo_datos.md): the data repository's
+  installation and its manual test, both verified, and what acceptance still needs.
+- [`docs/respuesta_verificacion_4ffde8a.md`](docs/respuesta_verificacion_4ffde8a.md): the
+  verification of `4ffde8a` (now pinned in the workflows) and the sequence for accrediting the daily
+  capture.
+- [`docs/respuesta_cambios_operativos.md`](docs/respuesta_cambios_operativos.md): logging the capture
+  even when it fails on start, an explicit `--resoluciones`, and tests portable to Windows.
+- [`docs/respuesta_cierre_b240dc2.md`](docs/respuesta_cierre_b240dc2.md): after the revalidation
+  closed: a failure-proof log of every run, the operational review of the first sessions, and how to
+  continue with the capture test.
+- [`docs/respuesta_revalidacion_5c15028.md`](docs/respuesta_revalidacion_5c15028.md): the
+  revalidation of `5c15028`: a dividend received without an ex-date or without an amount leaves the
+  labels it could affect pending, until the provider completes it or a resolution supplies the data.
+- [`docs/respuesta_revalidacion_a5e2748.md`](docs/respuesta_revalidacion_a5e2748.md): the
+  revalidation of `a5e2748`: dividend discrepancies that only dated evidence resolves, coverage
+  under each query's filters, label spans carrying the state at each instant (provisional, accepted
+  under the 60-day policy, pending) and the backup as a favourable scenario.
+- [`docs/respuesta_revision_8c97b2b.md`](docs/respuesta_revision_8c97b2b.md): the review of
+  `8c97b2b`: dividend coverage kept separate, events and labels versioned, a preparation window for
+  the backup, and corrections to the previous delivery.
+- [`docs/respuesta_revalidacion_d815bdd.md`](docs/respuesta_revalidacion_d815bdd.md): the delivery
+  the revalidation of `d815bdd` asked for: signal, reference and target kept separate; SPY from the
+  historical SIP with dividends; recovery of interrupted captures and hourly workflows.
+- [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md): what Alpaca offers (verified 26 September 2026),
+  the daily forward capture, the first verification against real data, and the decisions still open
+  (where the capture runs and which feed to use).
+- `docs/QuantileFlow_propuesta_tecnica.pdf`: a technical guide to the process, stage by stage, with
+  64 charts and 21 diagrams. Its section 11 summarises the state of the project as of 28 September
+  2026: what was built, the daily capture now installed, the reviews, and what is missing. The PDF
+  and the PNG figures are generated artefacts: `make figuras && make pdf` regenerates them.
+- LaTeX source in [`docs/propuesta/`](docs/propuesta/): `main.tex`, `preambulo.tex`, one section per
+  file in `secciones/`, and the TikZ diagrams in `diagramas/`.
 
-Contenido: producto e hipótesis; datos y reconstrucción de Q (cadena cruda con controles, paridad y
-asimetría call/put; SSVI, desamericanización, Breeden–Litzenberger, bandas); transporte, dinámica e
-innovación (W1/W2, PCA funcional, Kalman); de Q a P (regresión cuantílica, combinación); regímenes y
-confianza (BOCPD, calibración, conformal adaptativo, abstención); decisión (escenarios conjuntos, CVaR,
-zona de no operación, robustez, MPC); protocolo de evidencia; arquitectura y operación diaria; secuencia
-de construcción y prioridades.
+Contents: product and hypothesis; data and reconstruction of Q (raw chain with quality controls,
+parity and call/put asymmetry; SSVI, de-Americanisation, Breeden–Litzenberger, bands); transport,
+dynamics and innovation (W1/W2, functional PCA, Kalman); from Q to P (quantile regression,
+combination); regimes and confidence (BOCPD, calibration, adaptive conformal, abstention); decision
+(joint scenarios, CVaR, no-trade zone, robustness, MPC); evidence protocol; architecture and daily
+operation; build sequence and priorities.
 
-## Estructura
+## Layout
 
 ```
-quantileflow/          núcleo de referencia (numpy, scipy, pandas)
-  calendario.py        calendario bursátil real (XNYS), instantes UTC, liquidación AM/PM, plazo ACT/365
-  contrato.py          esquema normalizado de cotizaciones y subyacente, validador, símbolos OCC,
-                       adaptador de tablas a capturas
-  cadenas.py           captura cruda inmutable, controles con motivos de exclusión, paridad del
-                       mismo strike con forward fuera de muestra, desamericanización, asimetría
-                       call − put (distancia logarítmica, RR25, pendiente), métricas de calidad
-  etiquetas.py         rendimientos a 1 y 5 sesiones con decision_at, label_end_at, label_available_at;
-                       rendimiento total (dividendos en su fecha ex) y de precio
-  piloto.py            plazo constante de 30 días, tabla diaria, cambios, estabilidad y dictamen;
-                       señal (SPXW), referencia de las opciones (regla puntual) y objetivo (regla histórica)
-  informe.py           tabla exportable, gráficas e informe Markdown del piloto
-  corrida.py           corrida reproducible con manifiesto de hashes
-  almacen.py           crudo inmutable, Parquet, manifiestos y huella del entorno
-  alpaca.py            adaptador de Alpaca: cliente, crudo inmutable por respuesta, diario y manifiesto por
-                       captura, recuperación, plazo absoluto, histórico SIP, dividendos, elección de
-                       vencimientos y normalización al contrato
-  implicito.py         nivel implícito del subyacente por paridad (Alpaca no da el nivel de SPX)
-  diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
-  operacion.py         revisión de la operación: estado de cada corte, puntualidad, respaldo, SIP y dividendos
-  opciones.py          Black, griegas, árbol binomial con dividendos
-  pde.py               difusión europea de referencia y adjunto discreto de precios
-  distribucion_pde.py  PDF/CDF reconstruidas, cuantiles, colas y sensibilidades de distribuciones Q
-  superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
-  distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
-  transporte.py        Wasserstein en 1-D, cambios firmados, PCA funcional, reordenamiento
-  filtrado.py          Kalman con ruido de observación variable, EWMA, persistencia
-  regimenes.py         BOCPD y detector por umbral
-  calibracion.py       pinball, CRPS, Brier, fiabilidad, conformal adaptativo con cota verificada
-  pronostico.py        regresión cuantílica regularizada (programa lineal)
-  decision.py          programa lineal con CVaR, costos y presupuesto de riesgo
-  evidencia.py         Sharpe deflactado, bootstrap por bloques, walk-forward con purga
-  sintetico.py         generadores del mundo sintético de las figuras
-tests/                 pruebas de propiedades del núcleo, cuantiles, conformal, cadenas, contrato,
-                       calendario, etiquetas, almacenamiento, piloto y adaptador de Alpaca (sin red)
-configs/piloto.toml    configuración versionada del piloto (umbrales provisionales)
-configs/captura_alpaca.toml  qué, cuándo y con qué feed se captura en Alpaca
-ops/repo_datos/        plantilla del repositorio privado de datos: workflows por hora de captura, histórico
-                       SIP y README
-scripts/               piloto con datos normalizados, plantilla sintética, registro del entorno, captura,
-                       histórico, normalización, verificación y revisión de la operación de Alpaca
-reports/               informes generados (no se editan a mano) y registros de verificación
-docs/propuesta/        fuente LaTeX, diagramas, scripts de figuras y figuras PNG
+quantileflow/          reference core (numpy, scipy, pandas)
+  calendario.py        real exchange calendar (XNYS), UTC instants, AM/PM settlement, ACT/365 maturity
+  contrato.py          normalised schema for quotes and underlying, validator, OCC symbols,
+                       adapter from tables to captures
+  cadenas.py           immutable raw capture, controls with exclusion reasons, same-strike parity
+                       with an out-of-sample forward, de-Americanisation, call − put asymmetry
+                       (log distance, RR25, slope), quality metrics
+  etiquetas.py         1- and 5-session returns with decision_at, label_end_at, label_available_at;
+                       total return (dividends on their ex-date) and price return
+  piloto.py            constant 30-day maturity, daily table, changes, stability and verdict;
+                       signal (SPXW), option reference (pointwise rule) and target (historical rule)
+  informe.py           exportable table, charts and Markdown report for the pilot
+  corrida.py           reproducible run with a manifest of hashes
+  almacen.py           immutable raw data, Parquet, manifests and environment fingerprint
+  alpaca.py            Alpaca adapter: client, immutable raw data per response, log and manifest per
+                       capture, recovery, absolute maturity, historical SIP, dividends, expiry
+                       selection and normalisation to the contract
+  implicito.py         implied level of the underlying by parity (Alpaca does not give the SPX level)
+  diagnostico.py       capture diagnosis: strict eligibility at the cut-off and feed quality
+  operacion.py         operational review: state of each cut-off, punctuality, backup, SIP and dividends
+  opciones.py          Black, greeks, binomial tree with dividends
+  pde.py               reference European diffusion and discrete adjoint of prices
+  distribucion_pde.py  reconstructed PDF/CDF, quantiles, tails and sensitivities of Q distributions
+  superficies.py       SSVI with constraints, g function, anchored CDF, convex fit in prices
+  distribuciones.py    Breeden–Litzenberger, controls, quantiles with identification state
+  transporte.py        1-D Wasserstein, signed changes, functional PCA, rearrangement
+  filtrado.py          Kalman with varying observation noise, EWMA, persistence
+  regimenes.py         BOCPD and threshold detector
+  calibracion.py       pinball, CRPS, Brier, reliability, adaptive conformal with a verified bound
+  pronostico.py        regularised quantile regression (linear program)
+  decision.py          linear program with CVaR, costs and risk budget
+  evidencia.py         deflated Sharpe, block bootstrap, walk-forward with purging
+  sintetico.py         generators for the synthetic world behind the figures
+tests/                 property tests for the core, quantiles, conformal, chains, contract,
+                       calendar, labels, storage, pilot and the Alpaca adapter (no network)
+configs/piloto.toml    versioned pilot configuration (provisional thresholds)
+configs/captura_alpaca.toml  what is captured from Alpaca, when, and with which feed
+ops/repo_datos/        template for the private data repository: hourly capture workflows, historical
+                       SIP and README
+scripts/               pilot on normalised data, synthetic template, environment log, capture,
+                       history, normalisation, verification and operational review of Alpaca
+reports/               generated reports (never hand-edited) and verification logs
+docs/propuesta/        LaTeX source, diagrams, figure scripts and PNG figures
 ```
 
-## Reproducir
+## Reproducing
 
 ```bash
-pip install -r requirements.txt   # o requirements-bloqueo.txt para las versiones exactas verificadas
-make test               # pruebas
-make figuras            # regenera las figuras PNG (matplotlib, estilo por defecto)
-make pdf                # compila el documento y lo copia a docs/QuantileFlow_propuesta_tecnica.pdf
-make verificar          # registra commit, entorno y resultado de las pruebas en reports/verificacion/
-make piloto-sintetico   # plantilla del informe piloto con datos sintéticos en reports/piloto_sintetico/
+pip install -r requirements.txt   # or requirements-bloqueo.txt for the exact verified versions
+make test               # tests
+make figuras            # regenerates the PNG figures (matplotlib, default style)
+make pdf                # builds the document and copies it to docs/QuantileFlow_propuesta_tecnica.pdf
+make verificar          # logs commit, environment and test result in reports/verificacion/
+make piloto-sintetico   # pilot report template on synthetic data in reports/piloto_sintetico/
 ```
 
-Captura en Alpaca (requiere `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el entorno; ver
+Capturing from Alpaca (needs `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the environment; see
 [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md)):
 
 ```bash
-make captura-prueba                                   # captura inmediata de prueba
-make captura                                          # día hábil: espera y captura a las 09:45 y 10:00 ET
-make historico-alpaca                                 # SIP de SPY en cada corte (pasados 15 min) y dividendos
-make verificar-alpaca FECHA=2026-09-28                # elegibilidad y calidad en reports/verificacion_alpaca/
-make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-13   # tablas para el piloto desde el crudo
+make captura-prueba                                   # immediate test capture
+make captura                                          # trading day: waits and captures at 09:45 and 10:00 ET
+make historico-alpaca                                 # SPY SIP at each cut-off (after 15 min) and dividends
+make verificar-alpaca FECHA=2026-09-28                # eligibility and quality in reports/verificacion_alpaca/
+make normalizar-alpaca DESDE=2026-09-28 HASTA=2026-11-13   # pilot tables from the raw data
 ```
 
-Con datos reales normalizados (esquemas de `quantileflow/contrato.py`). El objetivo es SPY del SIP
-histórico, con dividendos:
+With real normalised data (schemas in `quantileflow/contrato.py`). The target is SPY from the
+historical SIP, with dividends:
 
 ```bash
 N=data/normalized/alpaca
 python scripts/piloto.py --cotizaciones $N/cotizaciones.parquet --subyacente $N/subyacente.parquet \
     --dividendos $N/dividendos.parquet --cobertura-dividendos $N/cobertura_dividendos.parquet \
-    --fuente-objetivo alpaca/sip --desde AAAA-MM-DD --hasta AAAA-MM-DD
+    --fuente-objetivo alpaca/sip --desde YYYY-MM-DD --hasta YYYY-MM-DD
 ```
 
-`data/` queda fuera de Git (licencias y tamaño; este repositorio es público): `data/raw/` guarda los
-archivos originales, inmutables y direccionados por su SHA-256; `data/normalized/`, las tablas Parquet. Cada corrida escribe un `manifiesto.json` con los
-hashes de entradas y salidas, la configuración, el commit y las exclusiones.
+`data/` stays out of Git (licensing and size; this repository is public): `data/raw/` keeps the
+original files, immutable and addressed by their SHA-256; `data/normalized/` keeps the Parquet
+tables. Every run writes a `manifiesto.json` with the hashes of its inputs and outputs, the
+configuration, the commit and the exclusions.
 
-`make pdf` requiere una distribución de TeX con `latexmk`, `tikz`, `tcolorbox`, `mathpazo` y
-`babel-spanish` (por ejemplo, TeX Live con los paquetes `latex-extra`, `fonts-recommended`,
-`lang-spanish`, `science` y `pictures`).
+`make pdf` needs a TeX distribution with `latexmk`, `tikz`, `tcolorbox`, `mathpazo` and
+`babel-spanish` (for example TeX Live with the `latex-extra`, `fonts-recommended`, `lang-spanish`,
+`science` and `pictures` packages).
 
-## Alcance de las pruebas
+## What the tests cover
 
-Las 404 pruebas usan datos sintéticos. Comprueban propiedades matemáticas y que el procesamiento de
-cadenas bid/ask separa efectos de los datos (cotizaciones desfasadas, dividendos, ejercicio anticipado,
-strikes ausentes, ventanas de apertura) de una posible señal. No demuestran validez predictiva ni la
-calidad de datos reales: eso exige la muestra histórica de la fase 0 del plan de trabajo.
+The 404 tests run on synthetic data. They check mathematical properties, and that the bid/ask chain
+processing separates data effects (stale quotes, dividends, early exercise, missing strikes, opening
+windows) from a possible signal. They do not demonstrate predictive validity, nor the quality of
+real data: that requires the historical sample from phase 0 of the research plan.
 
-## Procedencia de los datos y qué se publica
+## Data provenance and what gets published
 
-Este repositorio es público. El acceso a una fuente no implica permiso para redistribuir sus datos, así
-que la regla es: se publica código, resultados agregados y datos sintéticos; no se publican cotizaciones
-crudas de terceros ni nada procedente de una cuenta.
+This repository is public. Access to a source does not imply permission to redistribute its data, so
+the rule is: code, aggregate results and synthetic data are published; raw third-party quotes and
+anything coming from an account are not.
 
-| Fuente | Cómo llegan los datos | Qué se publica aquí |
+| Source | How the data arrives | What is published here |
 |---|---|---|
-| Alpaca | API HTTP. La clave y el secreto se leen de `APCA_API_KEY_ID` y `APCA_API_SECRET_KEY` en el entorno y no se escriben en ningún archivo; en GitHub Actions van como secretos cifrados. Ver [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md). | Solo agregados y medidas derivadas: conteos, porcentajes, medianas, bandas y RR25 por vencimiento, como en [`reports/verificacion_alpaca/`](reports/verificacion_alpaca/). Las cadenas crudas quedan en `data/`, fuera de Git. |
-| Robinhood | Conector de solo lectura de datos de mercado, en una rama aparte de este repositorio. Nunca se usa para enviar órdenes ni para consultar la cuenta: el adaptador es un mapeo puro, sin sockets, credenciales ni tokens. | Solo agregados. Las capturas crudas no se publican y la fixture del adaptador es **sintética**, generada con Black-Scholes sobre una sonrisa inventada y semilla fija. |
-| Sintético | Generadores de este repositorio, con semillas fijas y reproducibles. | Todo: las figuras de la propuesta, la plantilla del informe piloto, los benchmarks PDE y las fixtures de las pruebas. |
+| Alpaca | HTTP API. The key and secret are read from `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the environment and are never written to a file; in GitHub Actions they travel as encrypted secrets. See [`docs/fuente_alpaca.md`](docs/fuente_alpaca.md). | Aggregates and derived measures only: counts, percentages, medians, bands and RR25 per expiry, as in [`reports/verificacion_alpaca/`](reports/verificacion_alpaca/). Raw chains stay in `data/`, outside Git. |
+| Robinhood | A read-only market-data connector, on a separate branch of this repository. It is never used to send orders or to query the account: the adapter is a pure mapping, with no sockets, credentials or tokens. | Aggregates only. Raw captures are not published and the adapter's fixture is **synthetic**, generated with Black–Scholes on an invented smile and a fixed seed. |
+| Synthetic | Generators from this repository, with fixed, reproducible seeds. | Everything: the proposal's figures, the pilot report template, the PDE benchmarks and the test fixtures. |
 
-Fuera del repositorio, sin excepción: claves, secretos, tokens de acceso y renovación, cookies y
-sesiones guardadas, semillas TOTP y códigos de recuperación, número de cuenta y datos personales, y
-cualquier actividad financiera personal (posiciones, cantidades reales, órdenes, fills, saldos, PnL).
-Las exclusiones están en [`.gitignore`](.gitignore); las variables que el código espera, con valores
-vacíos, en [`.env.example`](.env.example).
+Outside the repository, without exception: keys, secrets, access and refresh tokens, cookies and
+saved sessions, TOTP seeds and recovery codes, account numbers and personal data, and any personal
+financial activity (positions, real quantities, orders, fills, balances, PnL). The exclusions live
+in [`.gitignore`](.gitignore); the variables the code expects, with empty values, in
+[`.env.example`](.env.example).
 
-Quitar un nombre no anonimiza: fechas, símbolos, cantidades y precios pueden seguir identificando
-operaciones personales, y convertir un identificador en un hash tampoco lo evita.
+Removing a name does not anonymise: dates, symbols, quantities and prices can still identify
+personal trades, and turning an identifier into a hash does not prevent that either.
