@@ -191,9 +191,9 @@ cierre anticipado, y seis días degradados a propósito:
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [x] Piloto real en `reports/piloto/`: 21 sesiones, del 2 al 30 de octubre, con `piloto-0.3`. Dictamen:
       apto con limitaciones ([revisión](revision_piloto.md)).
-- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5 y 7 minutos del 27 de octubre al 9
-      de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el 30 quedó lista
-      solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5, 7 y 6 minutos del 27 de octubre al
+      10 de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el 30 quedó
+      lista solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
       (antes de la ventana en que las rutinas se atrasan), con las dos horas en dos jobs encadenados; las
       rutinas de las 09:14 y las 09:32 quedan de respaldo con los workflows por hora, que pierden sus cron
       inútiles (unos 170 minutos de Actions al mes). La plantilla está lista y validada con actionlint en
@@ -203,8 +203,8 @@ cierre anticipado, y seis días degradados a propósito:
       30 días es de 17 a 70 ticks a las 10:00, frente a 7 a 13 del 27 al 30 de octubre, y la banda del RR25
       a 30 días pasó de 0.14–0.21 a 0.36–0.73 puntos. A las 09:45 el cambio es menor. Coincide con una
       semana de mucho movimiento (elecciones del 3 de noviembre) y puede deberse a datos que se publican a
-      las 10:00. El 9 de noviembre no se repitió; si vuelve, conviene medir cuánto afecta al criterio de
-      estabilidad del piloto
+      las 10:00. El 9 y el 10 de noviembre no se repitió; si vuelve, conviene medir cuánto afecta al
+      criterio de estabilidad del piloto
       ([aceptación](aceptacion_operacion.md), sección 12).
 - [x] Umbrales de calidad y del dictamen revisados y congelados en `piloto-0.4` (6 de noviembre):
       `desfase_spot_max_s` de 2 a 10 s. Con 26 sesiones, el dictamen es «apto para ampliar historia»
