@@ -228,7 +228,8 @@ cierre anticipado, y seis días degradados a propósito:
       y los dividendos conocidos al corte. Con US$300, SPY da 145 calls comparables en la foto del 22 de
       octubre, el más cercano a 2.8 % del precio (SPXW: 57, a 6.8 %), y gana en las 24 sesiones de
       desarrollo. Sigue sin haber una compra defendible ([informe](contratos_observados_spy.md)).
-- [ ] Comparador, lo que sigue: medir las cotizaciones de SPY contra Robinhood, como se hace con SPXW;
+- [ ] Comparador, lo que sigue. Desde el 12 de noviembre la revisión diaria compara también 14 contratos
+      de SPY con Robinhood ([comparación](comparacion_robinhood.md)); hacen falta unas semanas. Falta
       decidir cómo tratar los contratos que cruzan un dividendo sin declarar (hoy se excluyen: del 3 al 6
       de noviembre, entre 151 y 409 calls por sesión); y perturbar la dinámica de la IV.
 - [ ] Ordenar las ramas: la predeterminada de GitHub, los PR abiertos y las líneas paralelas (sección 6).

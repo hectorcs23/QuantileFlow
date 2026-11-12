@@ -26,6 +26,7 @@ from quantileflow import alpaca  # noqa: E402
 
 CADENA_SPXW = "7a7fa2b1-b65e-4c75-a0b3-7f62749bee0a"  # Robinhood: SPXW, liquidación PM
 INDICE_SPX = "432fbbb8-b82c-454a-852d-eb85382c7066"
+PASO_SPY = 10  # strikes de SPY: ±10, ±20 y ±30 dólares, el mismo 1.3 % a 4 % que ±100 a ±300 en SPX
 LOTE_HISTORICOS = 10  # máximo de contratos por llamada de get_option_historicals
 DESFASE_MAXIMO_S = 5.0  # foto en vivo: entre el updated_at más reciente de Robinhood y el envío a Alpaca
 CAMPOS_COTIZACION = {"bid": "bid_price", "ask": "ask_price", "bid_size": "bid_size", "ask_size": "ask_size",
@@ -65,6 +66,11 @@ def simbolo_occ(raiz, vencimiento, tipo, strike) -> str:
     return f"{raiz}{pd.Timestamp(vencimiento):%y%m%d}{tipo[0].upper()}{round(float(strike) * 1000):08d}"
 
 
+def raiz_de(simbolo: str) -> str:
+    """Raíz de un símbolo OCC sin espacios: ``SPXW261120P07725000`` -> ``SPXW``."""
+    return simbolo[:-15]
+
+
 def fuera_del_dinero(simbolo: str, nivel: float) -> bool:
     """Put con strike bajo el nivel o call con strike sobre él (símbolo OCC sin espacios)."""
     tipo, strike = simbolo[-9], int(simbolo[-8:]) / 1000
@@ -74,6 +80,13 @@ def fuera_del_dinero(simbolo: str, nivel: float) -> bool:
 # ---------------------------------------------------------------------------
 # Qué pedir a Robinhood
 # ---------------------------------------------------------------------------
+
+
+def _vencimiento_30d(captura, raiz, fecha, dias_objetivo):
+    par = ((captura["raices"].get(raiz) or {}).get("plazo_constante_30d") or {}).get("vencimientos") or []
+    if not par:
+        return None
+    return min(par, key=lambda v: (abs((pd.Timestamp(v) - fecha).days - dias_objetivo), -pd.Timestamp(v).value))
 
 
 def plan(resumen: dict, instrumentos=None, paso=100, lado=3, dias_objetivo=30) -> dict:
@@ -89,10 +102,9 @@ def plan(resumen: dict, instrumentos=None, paso=100, lado=3, dias_objetivo=30) -
     if not capturas:
         return {"fecha": resumen["fecha"], "motivo": "sin nivel implícito identificado"}
     primera, fecha = capturas[0], pd.Timestamp(resumen["fecha"])
-    par = ((primera["raices"].get("SPXW") or {}).get("plazo_constante_30d") or {}).get("vencimientos") or []
-    if not par:
+    vencimiento = _vencimiento_30d(primera, "SPXW", fecha, dias_objetivo)
+    if vencimiento is None:
         return {"fecha": resumen["fecha"], "motivo": "sin vencimientos de SPXW a 30 días"}
-    vencimiento = min(par, key=lambda v: (abs((pd.Timestamp(v) - fecha).days - dias_objetivo), -pd.Timestamp(v).value))
     centro = 25 * round(primera["spot_spx_implicito"]["spot"] / 25)
     strikes = [centro + paso * j for j in range(-lado, lado + 1)]
     cortes = {c["hora"]: pd.Timestamp(c["corte_utc"]) for c in resumen["capturas"]}
@@ -107,6 +119,15 @@ def plan(resumen: dict, instrumentos=None, paso=100, lado=3, dias_objetivo=30) -
               "barras": {h: {"interval": "15second", "bounds": "regular",
                              "start_time": _rfc3339(t - pd.Timedelta(seconds=15)),
                              "end_time": _rfc3339(t + pd.Timedelta(seconds=15))} for h, t in cortes.items()}}
+    # SPY, desde el 12 de noviembre: mismo criterio con su precio de IEX. Sin precio o sin par de
+    # vencimientos, el día sigue solo con SPXW.
+    venc_spy, spot_spy = _vencimiento_30d(primera, "SPY", fecha, dias_objetivo), primera.get("spot_spy_iex")
+    if venc_spy is not None and spot_spy:
+        strikes_spy = [round(spot_spy) + PASO_SPY * j for j in range(-lado, lado + 1)]
+        salida["spy"] = {"vencimiento": venc_spy, "nivel": spot_spy, "strikes": strikes_spy}
+        salida["simbolos"] += [simbolo_occ("SPY", venc_spy, t, k) for k in strikes_spy for t in ("call", "put")]
+        salida["instrumentos"] += [{"chain_symbol": "SPY", "expiration_dates": venc_spy,
+                                    "strike_price": f"{k:.4f}"} for k in strikes_spy]
     if instrumentos:
         ids = [instrumentos[s] for s in salida["simbolos"] if s in instrumentos]
         salida["lotes"] = [ids[i:i + LOTE_HISTORICOS] for i in range(0, len(ids), LOTE_HISTORICOS)]
@@ -212,7 +233,9 @@ def importar(privado: Path, resumen: dict) -> list[str]:
     if (lista := _leer(crudo / "instrumentos.json")) is not None:
         p = plan(resumen)
         _escribir(carpeta / "instrumentos.json", {
-            "fuente": f"Robinhood get_option_instruments, cadena SPXW {CADENA_SPXW}", "vencimiento": p["vencimiento"],
+            "fuente": f"Robinhood get_option_instruments, cadena SPXW {CADENA_SPXW}"
+                      + (" y cadena de SPY" if "spy" in p else ""),
+            "vencimiento": p["vencimiento"], **({"vencimiento_spy": p["spy"]["vencimiento"]} if "spy" in p else {}),
             "instrumentos": importar_instrumentos(lista, p["simbolos"])})
         hecho.append("instrumentos.json")
     instrumentos = (_leer(carpeta / "instrumentos.json") or {}).get("instrumentos", {})
@@ -383,17 +406,27 @@ def resultados_dia(privado: Path, resumen: dict, datos=None) -> dict:
     carpeta, salida = privado / fecha, {"fecha": fecha}
     if spx := _leer(privado / "spx_minutos.json"):
         salida["spx"] = comparar_spx(spx["barras"], [resumen])
-    niveles = {c["hora"]: (c.get("spot_spx_implicito") or {}).get("spot") for c in resumen["capturas"]}
+    # SPXW conserva las claves de siempre; SPY va aparte, con su propio nivel, para no mezclar los totales.
+    niveles = {c["hora"]: {"SPXW": (c.get("spot_spx_implicito") or {}).get("spot"), "SPY": c.get("spot_spy_iex")}
+               for c in resumen["capturas"]}
+    claves = {"SPXW": ("opciones", "vivo"), "SPY": ("opciones_spy", "vivo_spy")}
     for ruta in sorted(carpeta.glob("barras_*.json")):
         if datos is None:
             raise ValueError("hay barras de opciones: hace falta --datos con las capturas de Alpaca")
         barras = _leer(ruta)
         hora = _hora_ny(barras["corte_utc"])
         q = cotizaciones_alpaca(datos, fecha, hora, barras["barras"])
-        salida.setdefault("opciones", []).append({"hora": hora, **comparar_opciones(barras, q, niveles.get(hora))})
+        for raiz, (clave, _) in claves.items():
+            propias = {s: b for s, b in barras["barras"].items() if raiz_de(s) == raiz}
+            if propias:
+                salida.setdefault(clave, []).append({"hora": hora, **comparar_opciones(
+                    {**barras, "barras": propias}, q, (niveles.get(hora) or {}).get(raiz))})
     if vivo := _leer(carpeta / "vivo.json"):
-        salida["vivo"] = {"alpaca_recibido_utc": vivo["alpaca"]["recibido_utc"],
-                          **comparar_vivo(vivo["robinhood"]["cotizaciones"], vivo["alpaca"]["cotizaciones"])}
+        rh, alp = vivo["robinhood"]["cotizaciones"], vivo["alpaca"]["cotizaciones"]
+        for raiz, (_, clave) in claves.items():
+            propias = {s: r for s, r in rh.items() if raiz_de(s) == raiz}
+            if propias:
+                salida[clave] = {"alpaca_recibido_utc": vivo["alpaca"]["recibido_utc"], **comparar_vivo(propias, alp)}
     return salida
 
 
@@ -407,15 +440,21 @@ def acumulado(privado: Path) -> dict:
     """Agregados de todos los ``<fecha>/resultados.json``: lo que se publica."""
     dias = [_leer(p) for p in sorted(privado.glob("*/resultados.json"))]
     spx = [f for d in dias for f in (d.get("spx") or {}).get("cortes", [])]
-    opciones = [f for d in dias for c in d.get("opciones", []) for f in c["contratos"]]
-    vivo = [f for d in dias for f in (d.get("vivo") or {}).get("contratos", [])]
-    return {"dias": len(dias),
-            "spx": {"diferencia": _resumen([f["diferencia"] for f in spx]),
-                    "dentro_del_minuto": sum(f["dentro"] for f in spx)},
-            "opciones": {"dias": sum(bool(d.get("opciones")) for d in dias), "todas": _bloque_opciones(opciones),
-                         "fuera_del_dinero": _bloque_opciones([f for f in opciones if f["fuera_del_dinero"]])},
-            "vivo": {"dias": sum(bool(d.get("vivo")) for d in dias), "todas": _bloque_vivo(vivo),
-                     "fuera_del_dinero": _bloque_vivo([f for f in vivo if f["fuera_del_dinero"]])}}
+    salida = {"dias": len(dias),
+              "spx": {"diferencia": _resumen([f["diferencia"] for f in spx]),
+                      "dentro_del_minuto": sum(f["dentro"] for f in spx)}}
+    for sufijo in ("", "_spy"):
+        opciones = [f for d in dias for c in d.get("opciones" + sufijo, []) for f in c["contratos"]]
+        vivo = [f for d in dias for f in (d.get("vivo" + sufijo) or {}).get("contratos", [])]
+        if sufijo and not (opciones or vivo):
+            continue
+        salida["opciones" + sufijo] = {
+            "dias": sum(bool(d.get("opciones" + sufijo)) for d in dias), "todas": _bloque_opciones(opciones),
+            "fuera_del_dinero": _bloque_opciones([f for f in opciones if f["fuera_del_dinero"]])}
+        salida["vivo" + sufijo] = {
+            "dias": sum(bool(d.get("vivo" + sufijo)) for d in dias), "todas": _bloque_vivo(vivo),
+            "fuera_del_dinero": _bloque_vivo([f for f in vivo if f["fuera_del_dinero"]])}
+    return salida
 
 
 def _sin_contratos(informe):

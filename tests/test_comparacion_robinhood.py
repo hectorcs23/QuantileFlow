@@ -237,3 +237,61 @@ def test_importar_y_acumulado_de_punta_a_punta(tmp_path):
     total = comparar.acumulado(tmp_path)
     assert total["dias"] == 1 and total["spx"]["dentro_del_minuto"] == 1
     assert total["vivo"]["dias"] == 1 and total["opciones"]["dias"] == 0
+
+
+def _con_spy(captura, spot=756.4, par=("2026-12-04", "2026-12-11")):
+    captura["spot_spy_iex"] = spot
+    captura["raices"]["SPY"] = {"plazo_constante_30d": {"vencimientos": list(par)}}
+    return captura
+
+
+def test_plan_agrega_spy_con_su_precio_y_sus_vencimientos():
+    r = _resumen("2026-11-11", _con_spy(_captura("09:45", "2026-11-11T14:45:00Z", 7583.9,
+                                                 par=("2026-12-10", "2026-12-11"))))
+    p = comparar.plan(r)
+    assert p["vencimiento"] == "2026-12-11" and p["spy"]["vencimiento"] == "2026-12-11"
+    assert p["spy"]["strikes"] == [726, 736, 746, 756, 766, 776, 786]
+    assert len(p["simbolos"]) == 28 and p["simbolos"][14:16] == ["SPY261211C00726000", "SPY261211P00726000"]
+    assert p["instrumentos"][7] == {"chain_symbol": "SPY", "expiration_dates": "2026-12-11", "strike_price": "726.0000"}
+    ids = {s: f"id{i}" for i, s in enumerate(p["simbolos"])}
+    assert [len(x) for x in comparar.plan(r, ids)["lotes"]] == [10, 10, 8]
+    # Sin precio de SPY el día sigue solo con SPXW.
+    r["capturas"][0]["spot_spy_iex"] = None
+    assert "spy" not in comparar.plan(r) and len(comparar.plan(r)["simbolos"]) == 14
+
+
+def test_raiz_de_un_simbolo():
+    assert comparar.raiz_de("SPXW261120P07725000") == "SPXW"
+    assert comparar.raiz_de("SPY261211C00756000") == "SPY"
+    assert comparar.fuera_del_dinero("SPY261211C00766000", 756.4)
+    assert not comparar.fuera_del_dinero("SPY261211P00766000", 756.4)
+
+
+def test_spy_va_aparte_y_no_cambia_los_totales_de_spxw(tmp_path, monkeypatch):
+    resumen = _resumen("2026-11-11", _con_spy(_captura("09:45", "2026-11-11T14:45:00.000000Z", 7700.0)))
+    carpeta = tmp_path / "2026-11-11"
+    comparar._escribir(carpeta / "barras_0945.json", {"corte_utc": "2026-11-11T14:45:00Z", "barras": {
+        "SPXW261120P07425000": {"14:44:45": [10.0, 10.0, 10.0, 10.0]},
+        "SPY261211C00766000": {"14:44:45": [2.0, 2.0, 2.0, 2.0]}}})
+    q = {"SPXW261120P07425000": {"bid": 9.8, "ask": 10.6, "edad_s": 5.0},
+         "SPY261211C00766000": {"bid": 1.99, "ask": 2.03, "edad_s": 5.0}}
+    monkeypatch.setattr(comparar, "cotizaciones_alpaca", lambda *a: q)
+    rh = {"SPXW261120P07425000": {"bid": 10.0, "ask": 10.4, "marca": 10.2, "delta": -0.3,
+                                  "actualizado_utc": "2026-11-11T15:30:00Z"},
+          "SPY261211C00766000": {"bid": 2.0, "ask": 2.02, "marca": 2.01, "delta": 0.3,
+                                 "actualizado_utc": "2026-11-11T15:30:00Z"}}
+    alp = {"SPXW261120P07425000": {"bid": 9.9, "ask": 10.5, "t": "2026-11-11T15:30:00Z"},
+           "SPY261211C00766000": {"bid": 1.99, "ask": 2.03, "t": "2026-11-11T15:30:00Z"}}
+    comparar._escribir(carpeta / "vivo.json", {"robinhood": {"cotizaciones": rh},
+                                               "alpaca": {"recibido_utc": "2026-11-11T15:30:01Z", "cotizaciones": alp}})
+    dia = comparar.resultados_dia(tmp_path, resumen, datos=tmp_path)
+    assert [f["simbolo"] for f in dia["opciones"][0]["contratos"]] == ["SPXW261120P07425000"]
+    spy = dia["opciones_spy"][0]
+    assert spy["nivel"] == 756.4 and spy["contratos"][0]["fuera_del_dinero"]
+    assert spy["contratos"][0]["diferencia"] == pytest.approx(0.01)
+    assert dia["vivo"]["n"] == 1 and dia["vivo_spy"]["n"] == 1
+    assert dia["vivo_spy"]["razon_spread"]["mediana"] == pytest.approx(2.0)
+    comparar._escribir(carpeta / "resultados.json", dia)
+    total = comparar.acumulado(tmp_path)
+    assert total["opciones"]["todas"]["n"] == 1 and total["vivo"]["todas"]["n"] == 1
+    assert total["opciones_spy"]["dias"] == 1 and total["vivo_spy"]["todas"]["n"] == 1

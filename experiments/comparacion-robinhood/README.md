@@ -37,6 +37,13 @@ solo llegan agregados. El conector nunca se usa para órdenes ni para ver la cue
 - call y put de cada strike: 14 contratos;
 - ventanas en UTC sacadas de `corte_utc`, así que siguen el cambio de horario del 1 de noviembre.
 
+**SPY, desde el 12 de noviembre.** El plan agrega 14 contratos de SPY con el mismo criterio: vencimiento
+del par de SPY a 30 días más cercano a 30 días; strikes en el dólar más cercano al precio de IEX de las
+09:45, ±10, ±20 y ±30 (el mismo 1.3 % a 4 % que en SPX). Son 28 contratos en total. Sirve para medir la
+calidad de las cotizaciones de SPY que usa el [comparador de contratos](../../docs/contratos_observados_spy.md).
+Los resultados de SPY van en claves aparte (`opciones_spy`, `vivo_spy`): los de SPXW no cambian. Si un día
+falta el precio de SPY, el plan sigue solo con SPXW.
+
 ## Pasos de cada día
 
 Van dentro de la revisión de las 10:27, después de `scripts/verificar_alpaca.py`. `V` es su carpeta de
@@ -49,12 +56,13 @@ instrumentos y cotizaciones se pueden omitir los campos que no se usan, pero nun
 
 1. `git -C $P pull` y `python experiments/comparacion-robinhood/comparar.py plan --verificacion $V`.
    Si responde con `motivo`, no hay nada que pedir.
-2. `get_option_instruments` por cada elemento de `instrumentos` del plan, en paralelo. Los
+2. `get_option_instruments` por cada elemento de `instrumentos` del plan, en paralelo (SPXW lleva
+   `chain_id`; SPY, `chain_symbol`). Los
    `data.instruments` juntos van a `$P/$F/crudo/instrumentos.json` (al menos `id`, `chain_symbol`,
    `expiration_date`, `strike_price`, `type`). Luego `comparar.py importar --verificacion $V --privado $P`:
    tiene que decir `instrumentos.json`.
-3. `comparar.py plan --verificacion $V --privado $P` ahora trae `lotes` (hasta 10 ids).
-4. Foto en vivo, en un mismo mensaje y en paralelo: `get_option_quotes` con los 14 ids y
+3. `comparar.py plan --verificacion $V --privado $P` ahora trae `lotes` (hasta 10 ids; con SPY, tres lotes).
+4. Foto en vivo, en un mismo mensaje y en paralelo: `get_option_quotes` con todos los ids (14, o 28 con SPY, en una sola llamada) y
    `python experiments/comparacion-robinhood/foto_alpaca.py --instrumentos $P/$F/instrumentos.json --salida $P/$F/crudo/alpaca_vivo.json`.
    Los `data.results` van a `$P/$F/crudo/cotizaciones.json` (de cada `quote`, al menos `instrument_id`,
    `bid_price`, `ask_price`, `bid_size`, `ask_size`, `mark_price`, `implied_volatility`, `delta`, `vega`,

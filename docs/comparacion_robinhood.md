@@ -164,6 +164,15 @@ mínimo de su minuto.
 | 10 nov | +1.13 / −2.09 | +0.07 / +0.71 | 7 / 5 | Diferencia mediana +0.30; razón de spreads mediana 1.76; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Vencimiento del 10 de diciembre. A las 10:00, con el índice subiendo unos 27 puntos entre las 09:52 y las 10:00, el SPX implícito quedó 2.09 por debajo del real, dentro de su minuto: es la cuarta mayor diferencia de 54 cortes. En vivo, la razón de spreads mediana, 1.76, vuelve a ser la más alta hasta ahora (1.54 el 9): el spread de Alpaca salió más ancho en 9 de 14 contratos, igual en 1 y más angosto en 4. El mid de Alpaca quedó arriba en 9 de 14. Foto pareada al primer intento (1.07 s). |
 | 11 nov | +1.24 / −0.05 | +0.24 / +0.52 | 4 (de 13) / 4 | Diferencia mediana +0.12; razón de spreads mediana 1.54; iguales 0 de 14; marca dentro del spread de Alpaca 8 de 14 | Vencimiento del 11 de diciembre. A las 09:45 se descartó una barra interpolada. En vivo, tercer día seguido con la razón de spreads mediana en 1.5 o más (1.54 el 9 y 1.76 el 10; antes, como mucho 1.29): el spread de Alpaca salió más ancho en 9 de 14 contratos, igual en 3 y más angosto en 2. El mid de Alpaca quedó arriba en 9 de 14. Foto pareada al primer intento (1.06 s). |
 
+### SPY, desde el 12 de noviembre
+
+Las mismas medidas con 14 contratos de SPY a unos 30 días: strikes del precio de IEX ±10, ±20 y ±30
+dólares. Diferencias en dólares por acción, Alpaca menos Robinhood. Mide el feed que usa el
+[comparador de contratos con SPY](contratos_observados_spy.md).
+
+| Sesión | Opciones fuera del dinero, media 09:45 / 10:00 | Marca dentro del spread (de 14) | En vivo | Notas |
+|---|---|---|---|---|
+
 ## 7. Cómo repetir
 
 ```bash
