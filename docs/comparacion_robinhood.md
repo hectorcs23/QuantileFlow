@@ -163,6 +163,7 @@ mínimo de su minuto.
 | 9 nov | −1.61 / −1.17 | +0.63 / +0.48 | 8 / 6 | Diferencia mediana +0.64; razón de spreads mediana 1.54; iguales 0 de 14; marca dentro del spread de Alpaca 7 de 14 | Vencimiento del 9 de diciembre. En vivo, la razón de spreads mediana, 1.54, es la más alta hasta ahora: el spread de Alpaca salió más ancho que el de Robinhood. El mid de Alpaca quedó arriba en 8 de 14. Foto pareada al primer intento (1.29 s). |
 | 10 nov | +1.13 / −2.09 | +0.07 / +0.71 | 7 / 5 | Diferencia mediana +0.30; razón de spreads mediana 1.76; iguales 0 de 14; marca dentro del spread de Alpaca 6 de 14 | Vencimiento del 10 de diciembre. A las 10:00, con el índice subiendo unos 27 puntos entre las 09:52 y las 10:00, el SPX implícito quedó 2.09 por debajo del real, dentro de su minuto: es la cuarta mayor diferencia de 54 cortes. En vivo, la razón de spreads mediana, 1.76, vuelve a ser la más alta hasta ahora (1.54 el 9): el spread de Alpaca salió más ancho en 9 de 14 contratos, igual en 1 y más angosto en 4. El mid de Alpaca quedó arriba en 9 de 14. Foto pareada al primer intento (1.07 s). |
 | 11 nov | +1.24 / −0.05 | +0.24 / +0.52 | 4 (de 13) / 4 | Diferencia mediana +0.12; razón de spreads mediana 1.54; iguales 0 de 14; marca dentro del spread de Alpaca 8 de 14 | Vencimiento del 11 de diciembre. A las 09:45 se descartó una barra interpolada. En vivo, tercer día seguido con la razón de spreads mediana en 1.5 o más (1.54 el 9 y 1.76 el 10; antes, como mucho 1.29): el spread de Alpaca salió más ancho en 9 de 14 contratos, igual en 3 y más angosto en 2. El mid de Alpaca quedó arriba en 9 de 14. Foto pareada al primer intento (1.06 s). |
+| 12 nov | −1.88 / −0.35 | +0.46 / +0.31 | 9 / 8 | Diferencia mediana +0.35; razón de spreads mediana 1.07; iguales 0 de 14; marca dentro del spread de Alpaca 8 de 14 | Vencimiento del 11 de diciembre. En vivo, la razón de spreads mediana vuelve a 1.07, después de tres días en 1.5 o más. El mid de Alpaca quedó arriba en 8 de 14. Primer día con 28 contratos (14 de SPY, en su tabla); foto pareada al primer intento (1.19 s). |
 
 ### SPY, desde el 12 de noviembre
 
@@ -172,6 +173,7 @@ dólares. Diferencias en dólares por acción, Alpaca menos Robinhood. Mide el f
 
 | Sesión | Opciones fuera del dinero, media 09:45 / 10:00 | Marca dentro del spread (de 14) | En vivo | Notas |
 |---|---|---|---|---|
+| 12 nov | +0.01 / +0.03 | 9 / 7 | Diferencia mediana +0.015; razón de spreads mediana 1.11; iguales 0 de 14; marca dentro del spread de Alpaca 8 de 14 | Primer día. Vencimiento del 11 de diciembre, strikes de 727 a 787. Fuera del dinero, el mid de Alpaca quedó 0.1 % y 0.6 % por encima de la marca de Robinhood en los cortes. En vivo, los spreads de Alpaca fueron de 1 centavo a 1.78 dólares (Robinhood, de 3 centavos a 2.22): más anchos en 7 de 14, iguales en 3 y más angostos en 4. El mid de Alpaca quedó arriba en 9 de 14. |
 
 ## 7. Cómo repetir
 
