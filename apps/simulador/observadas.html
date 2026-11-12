@@ -17,7 +17,7 @@
 <label>Límite de contratos (0 = sin extra)<input name="max_contratos" type="number" min="0" max="10000" value="0" step="1" required></label>
 <label>Comisión / contrato / lado, USD<input name="comision" type="number" min="0" max="25" value=".65" step=".05" required></label>
 <button class="primary" type="submit">Evaluar captura</button></form>
-<p class="hint">SPXW europeo PM. SPY se cuenta en el diagnóstico, pero no se valora con este módulo. Reserva de entrada y cierre; cantidad limitada al tamaño ask publicado.</p></aside>
+<p class="hint"><span id="instrumento">SPXW europeo PM. SPY se cuenta en el diagnóstico, pero no se valora en este modo.</span> Reserva de entrada y cierre; cantidad limitada al tamaño ask publicado.</p></aside>
 <div class="content"><p id="status" role="status" aria-live="polite">Cargando captura…</p><p id="error" role="alert" hidden></p>
 <div id="observadas-resultados" hidden>
 <section><h2 id="foto-titulo"></h2><div id="embudo" class="metrics"></div><p id="dictamen"></p><ul id="bloqueos"></ul>
@@ -31,7 +31,7 @@
 <section id="observadas-explorar" hidden><h2>Mapa de una compra fija</h2>
 <label>Posición a explorar<select id="observada-posicion"></select></label>
 <p id="posicion-resumen"></p><label>Choque de volatilidad<select id="observada-iv"></select></label>
-<div class="table-scroll"><table id="surface"><caption>Ganancia / pérdida nominal, USD. Filas: días hasta salir. Columnas: movimiento del índice. Cada celda conserva la compra inicial.</caption><thead></thead><tbody></tbody></table></div>
+<div class="table-scroll"><table id="surface"><caption>Ganancia / pérdida nominal, USD. Filas: días hasta salir. Columnas: movimiento del subyacente. Cada celda conserva la compra inicial.</caption><thead></thead><tbody></tbody></table></div>
 <p class="hint">Azul: ganancia. Naranja: pérdida. —: ya venció o IV fuera de dominio. Pasa sobre una celda para ver su banda de supuestos. Cada salida es una valoración teórica; no se garantiza que ese día sea hábil.</p></section>
 <section><h2>Qué cambia cuando te equivocas</h2><p id="estabilidad"></p><p class="hint">Se repite la comparación entre todas las compras elegibles. No se asignan probabilidades a estos escenarios.</p>
 <div class="table-scroll"><table id="escenarios-observados"><thead><tr><th>Escenario</th><th>Mayor nominal</th><th>Separación entre bandas</th></tr></thead><tbody></tbody></table></div>

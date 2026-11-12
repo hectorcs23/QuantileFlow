@@ -223,6 +223,14 @@ cierre anticipado, y seis días degradados a propósito:
       bandas del cambio de la CDF entre las 09:45 y las 10:00. La revisión propone, antes, ver con Robinhood
       cuánto se estrechan las bandas con cotizaciones consolidadas
       ([revisión](respuesta_ruido_concentrado.md), sección 4).
+- [x] Comparador de contratos observados con SPY (12 de noviembre). Se unió
+      `codex/contratos-observados-20261106` a la línea principal y se agregó SPY, con ejercicio americano
+      y los dividendos conocidos al corte. Con US$300, SPY da 145 calls comparables en la foto del 22 de
+      octubre, el más cercano a 2.8 % del precio (SPXW: 57, a 6.8 %), y gana en las 24 sesiones de
+      desarrollo. Sigue sin haber una compra defendible ([informe](contratos_observados_spy.md)).
+- [ ] Comparador, lo que sigue: medir las cotizaciones de SPY contra Robinhood, como se hace con SPXW;
+      decidir cómo tratar los contratos que cruzan un dividendo sin declarar (hoy se excluyen: del 3 al 6
+      de noviembre, entre 151 y 409 calls por sesión); y perturbar la dinámica de la IV.
 - [ ] Ordenar las ramas: la predeterminada de GitHub, los PR abiertos y las líneas paralelas (sección 6).
 - [ ] Primer lunes con horario de invierno, el 2 de noviembre. Las rutinas van en hora de Nueva York y
       los cron de GitHub tienen entradas para EDT y EST. Hay que comprobar que el corte de las 09:45 caiga a
@@ -245,7 +253,7 @@ Las demás líneas no están fusionadas:
 
 | Línea | Ramas | Último cambio | Estado | Qué falta decidir |
 |---|---|---|---|---|
-| Investigación de Codex | 14 ramas `codex/*` encadenadas; la punta, `codex/ruido-concentrado-20261022`, contiene a las otras | 26 oct | El 20 de octubre Codex mostró que las bandas de `indicative` no admiten precios coherentes en ninguna de 48 combinaciones. Propuso tres caminos: A, un simulador (hecho el 21); B, distribuciones con ruido (22 y 26); C, una muestra real, que Robinhood ya da en parte. Aquí hay revisión escrita del intradía, del PDE y del ruido concentrado; de lo demás, del 10 al 22 de octubre, no | Qué camino sigue y si algo pasa a la línea principal |
+| Investigación de Codex | Ramas `codex/*` encadenadas; la punta, `codex/contratos-observados-20261106`, contiene a las otras y **está unida a la línea principal desde el 12 de noviembre** | 6 nov | El 20 de octubre Codex mostró que las bandas de `indicative` no admiten precios coherentes en ninguna de 48 combinaciones. Propuso tres caminos: A, un simulador (hecho el 21); B, distribuciones con ruido (22 y 26); C, una muestra real, que Robinhood ya da en parte. Aquí hay revisión escrita del intradía, del PDE y del ruido concentrado; de lo demás, del 10 al 22 de octubre, no | Qué camino sigue y si algo pasa a la línea principal |
 | Estrategias con puts | `claude/beautiful-darwin-v0oyon` y `codex/correcciones-entropia-20261020` | 20 oct | Solo datos sintéticos. Codex corrigió la inclinación de mínimo KL y el rechazo de probabilidades negativas | Si sigue, y con qué datos |
 | Laboratorio de BTC | `claude/hopeful-mendel-vxf3vv` (`btc-prediction-market-lab/`) | 21 oct | Proyecto aparte sobre los contratos de BTC a 15 minutos de Kalshi. Estado `DATA_ONLY`, sin ventaja medida | Si sigue en este repositorio |
 | Interfaz en inglés e ingesta de Robinhood | `claude/eloquent-mendel-aux9xy` | 21 oct | Sale del 26 de septiembre: no tiene la captura de Alpaca. Pasa nombres y archivos a inglés, así que choca con la línea principal. Aporta `quantileflow/sources/robinhood.py` | Adoptar la parte de Robinhood o descartarla |

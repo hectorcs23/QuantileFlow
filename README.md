@@ -12,6 +12,11 @@ usan datos **sintéticos**.
 
 ## Simulador condicional: presupuesto, plazo y contratos
 
+[SPY frente a SPXW con US$300](docs/contratos_observados_spy.md): con ejercicio
+americano y los dividendos conocidos al corte, SPY da 145 calls comparables en la
+misma foto, el más cercano a 2.8 % del precio (SPXW: 57, a 6.8 %), y se repite en
+24 sesiones. Sigue sin haber una compra defendible: el feed es indicativo.
+
 [Captura histórica con US$300](docs/CONTRATOS_OBSERVADOS_2026-11-06.md): 57 calls
 SPXW calculables en la foto del 22 de octubre, con filtros, cantidades enteras,
 comparación A/B y mapas según movimiento, tiempo e IV. El feed indicativo y la

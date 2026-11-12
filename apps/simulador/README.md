@@ -84,7 +84,11 @@ La página `/observadas` admite una captura privada normalizada. Arranque:
 python scripts/simulador_opciones.py --tablas-observadas RUTA_TABLAS_PRIVADAS --fecha-observada 2026-10-22
 ```
 
-Sólo SPXW europeo PM se valora. Se filtran precios, tamaños, timestamps,
+Con `--subyacente-observado SPY` se valoran los calls de SPY en lugar de los de SPXW:
+ejercicio americano y dividendos en efectivo conocidos al corte, sin estimar ninguno
+([informe](../../docs/contratos_observados_spy.md)). Las tablas deben incluir `dividendos`.
+
+Sin esa opción, sólo SPXW europeo PM se valora. Se filtran precios, tamaños, timestamps,
 disponibilidad, spread y plazo; se invierte la IV bid/mid/ask de cada contrato.
 El servidor verifica las huellas de las tablas al cargar. Sin captura devuelve
 un mensaje explícito. El API no admite rutas ni cargas de archivos vía HTTP.
@@ -95,3 +99,4 @@ mantenerlas fuera del repositorio público. Ver [informe](../../docs/CONTRATOS_O
 
 Prueba de UI: `node apps/simulador/verificar_observadas.cjs`, con Playwright
 disponible, Edge y el servidor configurado. `QA_DIR` debe apuntar fuera del repo.
+Para el modo SPY: `RAIZ=SPY ESPERADAS=145`; con `BROWSER_CHANNEL` vacío usa Chromium.

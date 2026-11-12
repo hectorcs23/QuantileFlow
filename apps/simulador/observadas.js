@@ -30,11 +30,13 @@
     }catch(e){if(e.name!=='AbortError')$('#ab-status').textContent=e.message;}
   }
   function render(r){
-    $('#foto-titulo').textContent=`Captura ${r.captura} · exploratoria`;
-    $('#embudo').replaceChildren(...[['Calls observados',r.embudo.calls],['SPXW con calidad básica',r.embudo.calidad],['Caben y cubren el plazo',r.embudo.presupuesto]].map(([k,v])=>{const d=node('div',undefined,'metric');d.append(node('p',k),node('strong',String(v)));return d;}));
+    const spy=r.subyacente==='SPY', raiz=spy?'SPY':'SPXW', otra=spy?'SPXW':'SPY', div=r.dividendos;
+    $('#foto-titulo').textContent=`Captura ${r.captura} · ${raiz} · exploratoria`;
+    $('#instrumento').textContent=spy?'SPY americano. SPXW se cuenta en el diagnóstico, pero no se valora en este modo.':'SPXW europeo PM. SPY se cuenta en el diagnóstico, pero no se valora en este modo.';
+    $('#embudo').replaceChildren(...[['Calls observados',r.embudo.calls],[raiz+' con calidad básica',r.embudo.calidad],['Caben y cubren el plazo',r.embudo.presupuesto]].map(([k,v])=>{const d=node('div',undefined,'metric');d.append(node('p',k),node('strong',String(v)));return d;}));
     $('#dictamen').textContent=r.posiciones.length?`${r.posiciones.length} posiciones calculables. Ninguna habilitada como recomendación de compra.`:'No hay candidatos que cumplan presupuesto, plazo y calidad. No se fabrica una elección.';
     $('#bloqueos').replaceChildren(...r.bloqueos.map(x=>node('li',x)));$('#alcance').replaceChildren(...r.alcance.map(x=>node('li',x)));
-    $('#reglas').textContent=`Edad máxima: ${r.reglas.edad_maxima_s} s. Spread relativo máximo: ${r.reglas.spread_relativo_max*100}%. Tamaño mínimo: 1. Tasa 4%, dividendo continuo 1.3%, supuestos. SPY: ${r.inventario.SPY?.calls||0} calls observados; excluidos por ejercicio americano.`;
+    $('#reglas').textContent=`Edad máxima: ${r.reglas.edad_maxima_s} s. Spread relativo máximo: ${r.reglas.spread_relativo_max*100}%. Tamaño mínimo: 1. ${spy?`Tasa 4%, supuesta. Dividendos conocidos al corte: ${div.conocidos_al_corte}; declarados por venir: ${div.declarados_futuros.length}. No se valora lo que vence desde ${div.primera_fecha_ex_sin_declarar??'ninguna fecha: falta historial'}: podría cruzar un dividendo sin declarar.`:'Tasa 4%, dividendo continuo 1.3%, supuestos.'} ${otra}: ${r.inventario[otra]?.calls||0} calls observados; no se valoran en este modo.`;
     $('#observadas-explorar').hidden=$('#observadas-duelo').hidden=!r.posiciones.length;
     if(r.posiciones.length){
       const sorted=r.posiciones.map((p,i)=>[i,p]).sort((a,b)=>(b[1].controles[0].nominal??-Infinity)-(a[1].controles[0].nominal??-Infinity));

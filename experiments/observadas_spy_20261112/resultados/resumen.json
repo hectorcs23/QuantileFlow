@@ -1,0 +1,393 @@
+{
+  "fecha_analisis": "2026-11-12",
+  "captura": "2026-10-22T0945",
+  "configuracion": {
+    "presupuesto": 300.0,
+    "movimiento_pct": 3.0,
+    "dias": 7,
+    "cambio_iv_pp": 0.0,
+    "riesgo_pct": 100.0,
+    "max_contratos": 0,
+    "comision": 0.65
+  },
+  "apto_compra": false,
+  "dividendos_spy": {
+    "conocidos_al_corte": 5,
+    "declarados_futuros": [],
+    "primera_fecha_ex_sin_declarar": "2026-12-10"
+  },
+  "reglas_spy": {
+    "edad_maxima_s": 60.0,
+    "spread_relativo_max": 0.5,
+    "tamano_minimo": 1,
+    "maximo_dte": 90.0,
+    "tasa": 0.04,
+    "dividendo_continuo": 0.0,
+    "semispread_salida_factores": [
+      1.0,
+      2.0
+    ],
+    "choques_adicionales_iv_pp": [
+      -5.0,
+      0.0,
+      5.0
+    ],
+    "pasos_arbol": 400,
+    "margen_fecha_ex_dias": 7
+  },
+  "raices": {
+    "SPXW": {
+      "subyacente": "SPX",
+      "referencia": {
+        "tipo": "implicito",
+        "feed": "implicito_paridad_SPXW_indicative",
+        "edad_s": 5.746954
+      },
+      "bloqueos": [
+        "Modelo de salida por contrato sin validación predictiva ni ejecución verificada",
+        "Feed indicative: cotizaciones modificadas; no son precios ejecutables",
+        "Referencia SPX implícita por paridad, sin precio independiente",
+        "Referencia a más de 2 segundos del corte"
+      ],
+      "embudo": {
+        "calls": 1052,
+        "calidad": 659,
+        "horizonte": 608,
+        "presupuesto": 57
+      },
+      "motivos": {
+        "iv_no_identificada": 202,
+        "vence_antes_del_objetivo": 51,
+        "spread_amplio": 103,
+        "precio_o_multiplicador_invalido": 71,
+        "sin_tamano": 71,
+        "precio_antiguo": 127,
+        "fuera_del_presupuesto": 551
+      },
+      "casos": [
+        {
+          "nombre": "objetivo",
+          "positivas_nominal": 57,
+          "positivas_banda_inferior": 57,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "mitad",
+          "positivas_nominal": 32,
+          "positivas_banda_inferior": 22,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "sin_movimiento",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "baja_3",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "iv_menor",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "tarde",
+          "positivas_nominal": 32,
+          "positivas_banda_inferior": 28,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "combinado",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        }
+      ],
+      "dte_min": 28.302083333333332,
+      "dte_max": 33.302083333333336,
+      "strike_distancia_pct_min": 6.843349322079595,
+      "strike_distancia_pct_mediana": 8.923025221292825,
+      "strike_distancia_pct_max": 18.281566767752345,
+      "candidatos_a_menos_de_5_pct": 0,
+      "spread_relativo_pct_mediana": 15.510204081632667,
+      "ganador_cambia_con_retraso": true
+    },
+    "SPY": {
+      "subyacente": "SPY",
+      "referencia": {
+        "tipo": "observado",
+        "feed": "iex",
+        "edad_s": 4.857195
+      },
+      "bloqueos": [
+        "Modelo de salida por contrato sin validación predictiva ni ejecución verificada",
+        "Feed indicative: cotizaciones modificadas; no son precios ejecutables",
+        "Referencia SPY de iex: una sola bolsa, no el consolidado",
+        "Referencia a más de 2 segundos del corte"
+      ],
+      "embudo": {
+        "calls": 837,
+        "calidad": 621,
+        "horizonte": 621,
+        "presupuesto": 145
+      },
+      "motivos": {
+        "fuera_del_presupuesto": 476,
+        "iv_no_identificada": 155,
+        "precio_antiguo": 6,
+        "spread_amplio": 55,
+        "precio_o_multiplicador_invalido": 26,
+        "sin_tamano": 26
+      },
+      "casos": [
+        {
+          "nombre": "objetivo",
+          "positivas_nominal": 139,
+          "positivas_banda_inferior": 135,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "mitad",
+          "positivas_nominal": 111,
+          "positivas_banda_inferior": 105,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "sin_movimiento",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "baja_3",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "iv_menor",
+          "positivas_nominal": 47,
+          "positivas_banda_inferior": 46,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": true
+        },
+        {
+          "nombre": "tarde",
+          "positivas_nominal": 113,
+          "positivas_banda_inferior": 111,
+          "faltantes": 0,
+          "ganador_efectivo": false,
+          "ganador_separado": false
+        },
+        {
+          "nombre": "combinado",
+          "positivas_nominal": 0,
+          "positivas_banda_inferior": 0,
+          "faltantes": 0,
+          "ganador_efectivo": true,
+          "ganador_separado": false
+        }
+      ],
+      "dte_min": 22.302083333333332,
+      "dte_max": 39.302083333333336,
+      "strike_distancia_pct_min": 2.7821618166877338,
+      "strike_distancia_pct_mediana": 5.912582988769599,
+      "strike_distancia_pct_max": 21.303820418172094,
+      "candidatos_a_menos_de_5_pct": 48,
+      "spread_relativo_pct_mediana": 4.081632653061228,
+      "ganador_cambia_con_retraso": true
+    }
+  },
+  "union": [
+    {
+      "nombre": "objetivo",
+      "compras": 202,
+      "mayor_nominal": "SPY",
+      "ganador_separado": false
+    },
+    {
+      "nombre": "mitad",
+      "compras": 202,
+      "mayor_nominal": "SPY",
+      "ganador_separado": false
+    },
+    {
+      "nombre": "sin_movimiento",
+      "compras": 202,
+      "mayor_nominal": "efectivo",
+      "ganador_separado": false
+    },
+    {
+      "nombre": "baja_3",
+      "compras": 202,
+      "mayor_nominal": "efectivo",
+      "ganador_separado": false
+    },
+    {
+      "nombre": "iv_menor",
+      "compras": 202,
+      "mayor_nominal": "SPY",
+      "ganador_separado": true
+    },
+    {
+      "nombre": "tarde",
+      "compras": 202,
+      "mayor_nominal": "SPY",
+      "ganador_separado": false
+    },
+    {
+      "nombre": "combinado",
+      "compras": 202,
+      "mayor_nominal": "efectivo",
+      "ganador_separado": false
+    }
+  ],
+  "sensibilidad_presupuesto": [
+    {
+      "presupuesto": 100.0,
+      "SPXW": {
+        "elegibles": 24,
+        "strike_distancia_pct_min": 9.182984708694475
+      },
+      "SPY": {
+        "elegibles": 91,
+        "strike_distancia_pct_min": 4.347372402728666
+      }
+    },
+    {
+      "presupuesto": 200.0,
+      "SPXW": {
+        "elegibles": 45,
+        "strike_distancia_pct_min": 7.558237912434129
+      },
+      "SPY": {
+        "elegibles": 126,
+        "strike_distancia_pct_min": 3.303898678701378
+      }
+    },
+    {
+      "presupuesto": 300.0,
+      "SPXW": {
+        "elegibles": 57,
+        "strike_distancia_pct_min": 6.843349322079595
+      },
+      "SPY": {
+        "elegibles": 145,
+        "strike_distancia_pct_min": 2.7821618166877338
+      }
+    },
+    {
+      "presupuesto": 500.0,
+      "SPXW": {
+        "elegibles": 73,
+        "strike_distancia_pct_min": 5.933491116173806
+      },
+      "SPY": {
+        "elegibles": 177,
+        "strike_distancia_pct_min": 1.869122308163873
+      }
+    }
+  ],
+  "referencia_spy": {
+    "iex_spread_pct": 0.015652105860409896,
+    "sensibilidad": [
+      {
+        "referencia": "bid",
+        "distancia_al_medio_pct": -0.007826052930215432,
+        "elegibles": 145,
+        "positivas_nominal": [
+          139,
+          111,
+          0,
+          0,
+          47,
+          113,
+          0
+        ]
+      },
+      {
+        "referencia": "medio",
+        "distancia_al_medio_pct": 0.0,
+        "elegibles": 145,
+        "positivas_nominal": [
+          139,
+          111,
+          0,
+          0,
+          47,
+          113,
+          0
+        ]
+      },
+      {
+        "referencia": "ask",
+        "distancia_al_medio_pct": 0.007826052930193228,
+        "elegibles": 145,
+        "positivas_nominal": [
+          139,
+          111,
+          0,
+          0,
+          47,
+          113,
+          0
+        ]
+      }
+    ],
+    "sip_posterior_menos_iex_pct": -0.007826052930215432,
+    "nota": "El SIP se publicó después del corte: solo audita la referencia, no entra en ningún cálculo."
+  },
+  "integridad": {
+    "manifiestos": 35,
+    "paginas_unicas": 28,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "29dcc5c01f57a6dab874e1cb39341a17ac0d86fc2e5cf423bc80536d13a5a5ce",
+      "subyacente": "6d60c98c1a7a79375aafd148daaeb43b3b9bea1eb4c09ccc33327ecba4795595"
+    },
+    "manifiesto_normalizacion_sha256": "a7e410494548d0e67b6b222faff5c0e5af97716ac6b439b49c8ca6669079355d"
+  },
+  "verificacion_numerica": {
+    "celdas_con_valor": 72981,
+    "celdas_ausentes_verificadas": 20979,
+    "inversiones_comprobadas": 435,
+    "error_maximo_abs": 1.280568540096283e-09,
+    "formula": "Black–Scholes sin dividendos con math.erf"
+  },
+  "control_arbol": {
+    "contratos": 145,
+    "prima_ejercicio_anticipado_max": 0.0,
+    "error_max_400_pasos": 0.005781690992673116,
+    "error_max_1600_pasos": 0.001664062626456797,
+    "nota": "Sin dividendos en la vida de ningún candidato: el árbol confirma que el call americano vale lo que el europeo. Error en dólares por acción."
+  },
+  "analisis_privado_sha256": "2ea6411bf495f6f6e4801db99c770c0e9dbd1c3d3d91a551f440807c0ed57de6"
+}

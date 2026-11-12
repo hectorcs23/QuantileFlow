@@ -117,6 +117,8 @@ def main():
     parser.add_argument("--tablas-observadas", type=Path)
     parser.add_argument("--fecha-observada", help="YYYY-MM-DD de la captura histórica")
     parser.add_argument("--hora-observada", default="09:45")
+    parser.add_argument("--subyacente-observado", choices=("SPX", "SPY"), default="SPX",
+                        help="SPX: calls SPXW europeos. SPY: calls americanos con los dividendos conocidos al corte")
     args = parser.parse_args()
     if not 1 <= args.puerto <= 65535:
         parser.error("puerto fuera de rango")
@@ -124,11 +126,13 @@ def main():
         parser.error("Indica tanto tablas como fecha observada")
     foto = None
     if args.tablas_observadas:
-        foto = preparar_observadas(*cargar_tablas(args.tablas_observadas),
-                                  args.fecha_observada, args.hora_observada)
+        spy = args.subyacente_observado == "SPY"
+        cotizaciones, referencias, *dividendos = cargar_tablas(args.tablas_observadas, con_dividendos=spy)
+        foto = preparar_observadas(cotizaciones, referencias, args.fecha_observada, args.hora_observada,
+                                   args.subyacente_observado, dividendos[0] if spy else None)
     servidor = Servidor(("127.0.0.1", args.puerto), Handler)
     servidor.foto_observada = foto
-    print(f"QuantileFlow | http://127.0.0.1:{servidor.server_port} | sintético + histórico: {foto['captura'] if foto else 'sin cargar'}", flush=True)
+    print(f"QuantileFlow | http://127.0.0.1:{servidor.server_port} | sintético + histórico: {foto['captura'] + ' ' + foto['subyacente'] if foto else 'sin cargar'}", flush=True)
     try:
         servidor.serve_forever()
     except KeyboardInterrupt:

@@ -1,9 +1,12 @@
 """Comparador histórico exploratorio; las tablas y posiciones permanecen privadas.
 
-Calls SPXW europeos PM. IV por contrato invertida de bid/mid/ask, sin afirmar
-que esas IV formen una superficie libre de arbitraje. Nunca recomienda operar.
+Calls SPXW europeos PM o, con ``subyacente='SPY'``, calls SPY americanos con
+los dividendos en efectivo conocidos al corte. IV por contrato invertida de
+bid/mid/ask, sin afirmar que esas IV formen una superficie libre de arbitraje.
+Nunca recomienda operar.
 """
 from dataclasses import asdict, dataclass, fields
+import datetime as dt
 import hashlib
 import json
 import math
@@ -12,8 +15,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .calendario import instante, instante_liquidacion
-from .opciones import precio_bs, vol_implicita_black
+from scipy.optimize import brentq
+
+from .calendario import apertura, instante, instante_liquidacion
+from .opciones import binomial_crr, precio_bs, vol_implicita_black
 from .simulador import ConfiguracionSimulador
 
 
@@ -49,7 +54,78 @@ REGLAS = dict(edad_maxima_s=60., spread_relativo_max=.5, tamano_minimo=1,
               semispread_salida_factores=[1., 2.], choques_adicionales_iv_pp=[-5., 0., 5.])
 
 
-def cargar_tablas(ruta):
+# Qué contratos admite cada subyacente. SPX conserva el dividendo continuo
+# heredado del piloto; SPY usa dividendos discretos: los declarados al corte.
+SUBYACENTES = dict(SPX=dict(raiz='SPXW', ejercicio='europeo'),
+                   SPY=dict(raiz='SPY', ejercicio='americano'))
+REGLAS_SPY = dict(dividendo_continuo=0., pasos_arbol=400, margen_fecha_ex_dias=7)
+
+
+def call_americano(S, K, T, r, sigma, dividendos=(), pasos=REGLAS_SPY['pasos_arbol']):
+    """Call americano con dividendos en efectivo ``(t_i, monto)``, en años desde hoy.
+
+    Sin dividendos en ``(0, T]`` y con ``r >= 0`` nunca conviene ejercer antes
+    (Merton, 1973): vale lo que el europeo y se usa Black–Scholes con ``q = 0``.
+    Con dividendos se usa el árbol CRR con el dividendo en depósito, cuyo error
+    baja como ``1/pasos``; las pruebas lo contrastan con Roll–Geske–Whaley.
+    """
+    if r < 0:
+        raise ValueError('call_americano supone una tasa no negativa')
+    divs = [(t, m) for t, m in dividendos if 0. < t <= T]
+    if not divs:
+        return float(precio_bs(S, K, T, r, 0., sigma, True))
+    if S <= sum(m*math.exp(-r*t) for t, m in divs):
+        raise ValueError('Los dividendos superan el precio del subyacente')
+    if sigma <= r*math.sqrt(T/pasos):
+        raise ValueError('Volatilidad demasiado baja para el árbol')  # probabilidad fuera de (0, 1)
+    return binomial_crr(S, K, T, r, sigma, True, 0., divs, pasos, True)
+
+
+def _iv_americana(precios, S, K, T, r, divs, vol_min=.01, vol_max=5.):
+    """IV de cada precio; NaN si no tiene raíz. Nunca se rellena.
+
+    Sin dividendos en la vida es la inversión europea de siempre. Con ellos se
+    invierte el árbol, que no admite volatilidades cercanas a cero.
+    """
+    if not any(0. < t <= T for t, _ in divs):
+        return vol_implicita_black(precios, S*math.exp(r*T), K, T, math.exp(-r*T), True)
+    salida = []
+    for precio in precios:
+        f = lambda v: call_americano(S, K, T, r, v, divs)-precio
+        con_raiz = math.isfinite(precio) and f(vol_min) < 0. < f(vol_max)
+        salida.append(brentq(f, vol_min, vol_max, xtol=1e-10) if con_raiz else float('nan'))
+    return np.array(salida)
+
+
+def dividendos_al_corte(dividendos, simbolo, corte):
+    """Dividendos conocidos al corte y primera fecha ex que podría faltar por declarar.
+
+    Solo cuentan las versiones recibidas antes del corte y no retiradas. De cada
+    evento vale la última. ``futuros`` son los declarados con fecha ex posterior
+    a la sesión del corte. ``limite`` es la última fecha ex conocida más la
+    separación mínima entre dividendos ordinarios menos un margen: un contrato
+    que vence ese día o después podría cruzar un dividendo todavía sin declarar.
+    Con menos de dos ordinarios no hay cadencia y ``limite`` es ``None``.
+    """
+    d = dividendos[dividendos.simbolo == simbolo].copy()
+    for col in ('recibido_utc', 'retirado_utc'):
+        d[col] = pd.to_datetime(d[col], utc=True, errors='coerce')
+    d = d[d.recibido_utc <= corte].sort_values('version').groupby('id_evento').tail(1)
+    d = d[~(d.retirado_utc <= corte) & d.fecha_ex.notna() & d.monto.notna()]
+    d = d.assign(fecha_ex=pd.to_datetime(d.fecha_ex).dt.date).sort_values('fecha_ex')
+    if not (np.isfinite(d.monto) & (d.monto > 0)).all():
+        raise ValueError('Dividendo con monto inválido')
+    hoy = corte.tz_convert('America/New_York').date()
+    ordinarios = list(d.fecha_ex[d.clase == 'ordinario'])
+    saltos = [(b-a).days for a, b in zip(ordinarios, ordinarios[1:])]
+    limite = None
+    if saltos and min(saltos) > REGLAS_SPY['margen_fecha_ex_dias']:
+        limite = ordinarios[-1]+dt.timedelta(days=min(saltos)-REGLAS_SPY['margen_fecha_ex_dias'])
+    futuros = [(f, float(m)) for f, m in zip(d.fecha_ex, d.monto) if f > hoy]
+    return dict(conocidos=len(d), futuros=futuros, limite=limite)
+
+
+def cargar_tablas(ruta, con_dividendos=False):
     """Verifica las huellas de TODAS las tablas de la normalización antes de leer."""
     ruta = Path(ruta).resolve()
     m = json.loads((ruta/'manifiesto_normalizacion.json').read_text(encoding='utf8'))
@@ -59,17 +135,28 @@ def cargar_tablas(ruta):
         p = (ruta/(nombre+'.parquet')).resolve()
         if not p.is_relative_to(ruta) or hashlib.sha256(p.read_bytes()).hexdigest() != esperado:
             raise ValueError('Huella de tabla incorrecta')
-    return pd.read_parquet(ruta/'cotizaciones.parquet'), pd.read_parquet(ruta/'subyacente.parquet')
+    tablas = [pd.read_parquet(ruta/'cotizaciones.parquet'), pd.read_parquet(ruta/'subyacente.parquet')]
+    if con_dividendos:
+        if 'dividendos' not in m['salidas']:
+            raise ValueError('Manifiesto sin tabla de dividendos')
+        tablas.append(pd.read_parquet(ruta/'dividendos.parquet'))
+    return tuple(tablas)
 
 
-def preparar_observadas(cotizaciones, referencias, fecha, hora='09:45'):
+def preparar_observadas(cotizaciones, referencias, fecha, hora='09:45', subyacente='SPX', dividendos=None):
     """Selecciona una única foto causal; SIP disponible más tarde no se incorpora."""
+    if subyacente not in SUBYACENTES:
+        raise ValueError('Subyacente no admitido')
+    admitido = SUBYACENTES[subyacente]
+    americano = admitido['ejercicio'] == 'americano'
+    if americano and dividendos is None:
+        raise ValueError('El ejercicio americano requiere la tabla de dividendos')
     corte = instante(fecha, hora)
     tag = f"{fecha}T{hora.replace(':', '')}"
     filas = cotizaciones[(cotizaciones.captura == tag) & (cotizaciones.tipo == 'C')].copy()
-    refs = referencias[(referencias.captura == tag) & (referencias.subyacente == 'SPX')].copy()
+    refs = referencias[(referencias.captura == tag) & (referencias.subyacente == subyacente)].copy()
     if filas.empty or len(refs) != 1:
-        raise ValueError('Requiere calls y una referencia SPX en la captura')
+        raise ValueError(f'Requiere calls y una referencia {subyacente} en la captura')
     if filas.id_contrato.duplicated().any():
         raise ValueError('Contratos duplicados en la captura')
     for col in SELLOS:
@@ -77,21 +164,23 @@ def preparar_observadas(cotizaciones, referencias, fecha, hora='09:45'):
         refs[col] = pd.to_datetime(refs[col], utc=True, errors='coerce')
     ref = refs.iloc[0]
     if not math.isfinite(ref.precio) or ref.precio <= 0:
-        raise ValueError('Referencia SPX inválida')
+        raise ValueError(f'Referencia {subyacente} inválida')
     if any(pd.isna(ref[c]) or ref[c] > corte for c in SELLOS):
         raise ValueError('Referencia no disponible al corte')
     if ref.sello_evento_utc > ref.sello_snapshot_utc or ref.sello_snapshot_utc > ref.recibido_utc:
         raise ValueError('Cronología de referencia inválida')
     edad_ref = (corte-ref.sello_evento_utc).total_seconds()
     if edad_ref > REGLAS['edad_maxima_s']:
-        raise ValueError('Referencia SPX demasiado antigua')
+        raise ValueError(f'Referencia {subyacente} demasiado antigua')
+    conocidos = dividendos_al_corte(dividendos, subyacente, corte) if americano else None
     filas = filas.sort_values('id_contrato')
     registros = []
     for _, row in filas.iterrows():
         motivos = []
         def mal(m): motivos.append(m)
         c = dict(contrato=str(row.id_contrato), raiz=str(row.raiz))
-        if not (row.raiz == 'SPXW' and row.subyacente == 'SPX' and row.ejercicio == 'europeo' and row.liquidacion == 'PM'):
+        if not (row.raiz == admitido['raiz'] and row.subyacente == subyacente
+                and row.ejercicio == admitido['ejercicio'] and row.liquidacion == 'PM'):
             mal('instrumento_no_admitido')
         if row.proveedor != 'alpaca' or row.feed not in ('indicative', 'opra'):
             mal('fuente_no_admitida')
@@ -118,8 +207,33 @@ def preparar_observadas(cotizaciones, referencias, fecha, hora='09:45'):
         except (ValueError, TypeError):
             dte = None
             mal('vencimiento_invalido')
+        divs = []
+        if americano and 'instrumento_no_admitido' not in motivos and dte is not None:
+            vence = pd.Timestamp(row.vencimiento).date()
+            if conocidos['limite'] is None:
+                mal('historial_de_dividendos_insuficiente')
+            elif vence >= conocidos['limite']:
+                mal('dividendo_esperado_sin_declarar')
+            # El precio cae al abrir la fecha ex: el vencimiento de ese mismo día ya la cruzó.
+            divs = [((apertura(f)-corte).total_seconds()/86400, m)
+                    for f, m in conocidos['futuros'] if f <= vence]
         c.update(dte=dte, motivos=motivos)
-        if not motivos:
+        if not motivos and americano:
+            t, r = dte/365, REGLAS['tasa']
+            en_anios = [(x/365, m) for x, m in divs]
+            try:
+                iv = _iv_americana([row.bid, (row.bid+row.ask)/2, row.ask], ref.precio, row.strike, t, r, en_anios)
+            except ValueError:
+                iv = np.array([np.nan])
+            if not np.isfinite(iv).all():
+                mal('iv_no_identificada')
+            else:
+                c.update(strike=float(row.strike), bid=float(row.bid), ask=float(row.ask),
+                         multiplicador=100, tam_ask=math.floor(row.tam_ask),
+                         iv_bid=float(iv[0]), iv=float(iv[1]), iv_ask=float(iv[2]),
+                         edad_s=(corte-row.sello_evento_utc).total_seconds(),
+                         ejercicio='americano', dividendos=divs)
+        elif not motivos:
             t = dte/365
             F = ref.precio*math.exp((REGLAS['tasa']-REGLAS['dividendo_continuo'])*t)
             iv = vol_implicita_black([row.bid, (row.bid+row.ask)/2, row.ask], F, row.strike,
@@ -136,12 +250,36 @@ def preparar_observadas(cotizaciones, referencias, fecha, hora='09:45'):
     if (filas.feed == 'indicative').any():
         bloqueos.append('Feed indicative: cotizaciones modificadas; no son precios ejecutables')
     if ref.tipo_precio != 'observado' or 'indicative' in str(ref.feed):
-        bloqueos.append('Referencia SPX implícita por paridad, sin precio independiente')
+        bloqueos.append(f'Referencia {subyacente} implícita por paridad, sin precio independiente')
+    elif ref.feed != 'sip':
+        bloqueos.append(f'Referencia {subyacente} de {ref.feed}: una sola bolsa, no el consolidado')
     if edad_ref > 2:
         bloqueos.append('Referencia a más de 2 segundos del corte')
-    return dict(fecha=fecha, hora=hora, captura=tag, corte_utc=corte.isoformat(),
+    foto = dict(fecha=fecha, hora=hora, captura=tag, corte_utc=corte.isoformat(), subyacente=subyacente,
                 spot=float(ref.precio), referencia=dict(tipo=str(ref.tipo_precio), feed=str(ref.feed), edad_s=edad_ref),
                 reglas=dict(REGLAS), registros=registros, bloqueos=bloqueos, apto_compra=False)
+    if americano:
+        foto['reglas'].update(REGLAS_SPY)
+        foto['dividendos'] = dict(conocidos_al_corte=conocidos['conocidos'],
+            declarados_futuros=[dict(fecha_ex=str(f), monto=m) for f, m in conocidos['futuros']],
+            primera_fecha_ex_sin_declarar=None if conocidos['limite'] is None else str(conocidos['limite']))
+    return foto
+
+
+def _teorico(c, s, restante, transcurrido, sigma):
+    """Precio teórico por celda. Tras la última fecha ex, el call americano vale lo que el europeo."""
+    if c.get('ejercicio') != 'americano':
+        return precio_bs(s, c['strike'], restante/365, REGLAS['tasa'], REGLAS['dividendo_continuo'], sigma, True)
+    con = np.array([any(t > x for t, _ in c['dividendos']) for x in transcurrido], bool)
+    precios = np.empty(s.shape)
+    precios[~con] = precio_bs(s[~con], c['strike'], restante[~con]/365, REGLAS['tasa'], 0., sigma, True)
+    for i in np.flatnonzero(con):
+        divs = [((t-transcurrido[i])/365, m) for t, m in c['dividendos']]
+        try:
+            precios[i] = call_americano(s[i], c['strike'], restante[i]/365, REGLAS['tasa'], sigma, divs)
+        except ValueError:
+            precios[i] = np.nan  # fuera del dominio del árbol: ausente, nunca cero
+    return precios
 
 
 def _valores(c, spot, n, cfg, dias, movimientos, choque):
@@ -156,8 +294,7 @@ def _valores(c, spot, n, cfg, dias, movimientos, choque):
         valores = np.full(ds.shape, np.nan)
         validos = antes & (sigma > 0)
         if validos.any():
-            teorico = precio_bs(s[validos], c['strike'], restante[validos]/365,
-                               REGLAS['tasa'], REGLAS['dividendo_continuo'], sigma, True)
+            teorico = _teorico(c, s[validos], restante[validos], ds[validos], sigma)
             valores[validos] = np.maximum(0., teorico-factor*(c['ask']-c['bid'])/2)
         valores[vence] = np.maximum(0., s[vence]-c['strike'])
         salida[clave] = n*(100*(valores-c['ask'])-2*cfg.comision)
@@ -264,7 +401,14 @@ def simular_observadas(foto, cfg=None, alternativas=None):
     motivos = {}
     for e in exclusiones:
         for m in e['motivos']: motivos[m] = motivos.get(m,0)+1
+    alcance_modelo = ['Tasa 4% y dividendo continuo 1.3% son supuestos; no curvas observadas.',
+                      'No se modela ejecución ni ejercicio americano; SPY se excluye.']
+    if 'dividendos' in foto:
+        alcance_modelo = ['Tasa 4% supuesta. Dividendos en efectivo declarados al corte; ninguno estimado.',
+                          'Ejercicio americano: sin dividendo en lo que queda de vida vale lo que el europeo; '
+                          'con dividendo declarado, árbol binomial. La salida es vender: no se simula ejercer.']
     return dict(version=1, configuracion=asdict(cfg), captura=foto['captura'],
+        subyacente=foto['subyacente'], dividendos=foto.get('dividendos'),
         spot=foto['spot'], referencia=foto['referencia'], reglas=foto['reglas'],
         apto_compra=False, bloqueos=foto['bloqueos'], probabilidades='no estimadas',
         embudo=embudo, inventario=inventario, exclusiones=exclusiones, motivos=motivos,
@@ -275,8 +419,8 @@ def simular_observadas(foto, cfg=None, alternativas=None):
                  'IV bid/mid/ask por contrato; no es una superficie calibrada ni una PDF.',
                  'Banda: IV bid–ask y salida menos 1–2 semispreads; no es confianza estadística.',
                  'Cantidades fijas, limitadas por presupuesto y tamaño ask publicado.',
-                 'Tasa 4% y dividendo continuo 1.3% son supuestos; no curvas observadas.',
+                 alcance_modelo[0],
                  'Fuera del vencimiento o IV no positiva: ausente, nunca cero.',
                  'Una ausencia impide declarar ganador completo; efectivo conserva su valor.',
-                 'No se modela ejecución ni ejercicio americano; SPY se excluye.',
+                 alcance_modelo[1],
                  'Los días son naturales; valoración teórica, sin garantizar sesión abierta.'])

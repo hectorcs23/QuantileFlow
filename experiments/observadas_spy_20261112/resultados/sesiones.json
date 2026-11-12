@@ -1,0 +1,459 @@
+{
+  "configuracion": "US$300, +3% en 7 días, corte de las 09:45",
+  "resumen": {
+    "sesiones": 24,
+    "sesiones_con_las_dos_fotos": 24,
+    "spy_con_mas_elegibles": 24,
+    "spy_mas_cerca_del_dinero": 24,
+    "SPXW_elegibles": {
+      "min": 7,
+      "mediana": 34.5,
+      "max": 107
+    },
+    "SPXW_strike_distancia_pct_min": {
+      "min": 5.510247771110799,
+      "mediana": 6.460146652628795,
+      "max": 7.980587191420607
+    },
+    "SPXW_a_menos_de_5_pct": {
+      "min": 0,
+      "mediana": 0.0,
+      "max": 0
+    },
+    "SPY_elegibles": {
+      "min": 86,
+      "mediana": 138.5,
+      "max": 169
+    },
+    "SPY_strike_distancia_pct_min": {
+      "min": 1.5896783854082663,
+      "mediana": 2.1924543895279758,
+      "max": 3.697085380876941
+    },
+    "SPY_a_menos_de_5_pct": {
+      "min": 16,
+      "mediana": 56.0,
+      "max": 70
+    }
+  },
+  "sesiones": [
+    {
+      "fecha": "2026-10-02",
+      "SPXW": {
+        "elegibles": 54,
+        "strike_distancia_pct_min": 6.540469694455164,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 34,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 145,
+        "strike_distancia_pct_min": 2.1281007802172347,
+        "a_menos_de_5_pct": 55,
+        "con_ganancia_mitad": 117,
+        "con_ganancia_iv_menor": 51
+      }
+    },
+    {
+      "fecha": "2026-10-05",
+      "SPXW": {
+        "elegibles": 16,
+        "strike_distancia_pct_min": 6.351318373506909,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 10,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 159,
+        "strike_distancia_pct_min": 1.8680127951414827,
+        "a_menos_de_5_pct": 63,
+        "con_ganancia_mitad": 114,
+        "con_ganancia_iv_menor": 57
+      }
+    },
+    {
+      "fecha": "2026-10-06",
+      "SPXW": {
+        "elegibles": 7,
+        "strike_distancia_pct_min": 7.495525558211225,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 5,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 137,
+        "strike_distancia_pct_min": 1.5939069343300138,
+        "a_menos_de_5_pct": 64,
+        "con_ganancia_mitad": 97,
+        "con_ganancia_iv_menor": 59
+      }
+    },
+    {
+      "fecha": "2026-10-07",
+      "SPXW": {
+        "elegibles": 25,
+        "strike_distancia_pct_min": 6.418153436020324,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 19,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 140,
+        "strike_distancia_pct_min": 1.5896783854082663,
+        "a_menos_de_5_pct": 70,
+        "con_ganancia_mitad": 99,
+        "con_ganancia_iv_menor": 63
+      }
+    },
+    {
+      "fecha": "2026-10-08",
+      "SPXW": {
+        "elegibles": 24,
+        "strike_distancia_pct_min": 6.4392672838448295,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 18,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 112,
+        "strike_distancia_pct_min": 2.2351020092037377,
+        "a_menos_de_5_pct": 49,
+        "con_ganancia_mitad": 86,
+        "con_ganancia_iv_menor": 44
+      }
+    },
+    {
+      "fecha": "2026-10-09",
+      "SPXW": {
+        "elegibles": 27,
+        "strike_distancia_pct_min": 6.010857715498097,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 23,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 116,
+        "strike_distancia_pct_min": 1.9934497253526695,
+        "a_menos_de_5_pct": 56,
+        "con_ganancia_mitad": 90,
+        "con_ganancia_iv_menor": 49
+      }
+    },
+    {
+      "fecha": "2026-10-12",
+      "SPXW": {
+        "elegibles": 19,
+        "strike_distancia_pct_min": 6.190320598672039,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 15,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 116,
+        "strike_distancia_pct_min": 1.803056659242186,
+        "a_menos_de_5_pct": 56,
+        "con_ganancia_mitad": 82,
+        "con_ganancia_iv_menor": 52
+      }
+    },
+    {
+      "fecha": "2026-10-13",
+      "SPXW": {
+        "elegibles": 31,
+        "strike_distancia_pct_min": 5.945581565017122,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 25,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 116,
+        "strike_distancia_pct_min": 1.6487399925465995,
+        "a_menos_de_5_pct": 62,
+        "con_ganancia_mitad": 81,
+        "con_ganancia_iv_menor": 55
+      }
+    },
+    {
+      "fecha": "2026-10-14",
+      "SPXW": {
+        "elegibles": 28,
+        "strike_distancia_pct_min": 5.745877142327038,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 26,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 115,
+        "strike_distancia_pct_min": 1.6426641213004523,
+        "a_menos_de_5_pct": 68,
+        "con_ganancia_mitad": 81,
+        "con_ganancia_iv_menor": 55
+      }
+    },
+    {
+      "fecha": "2026-10-15",
+      "SPXW": {
+        "elegibles": 40,
+        "strike_distancia_pct_min": 6.238504309248327,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 29,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 119,
+        "strike_distancia_pct_min": 2.511265153343034,
+        "a_menos_de_5_pct": 48,
+        "con_ganancia_mitad": 93,
+        "con_ganancia_iv_menor": 43
+      }
+    },
+    {
+      "fecha": "2026-10-16",
+      "SPXW": {
+        "elegibles": 41,
+        "strike_distancia_pct_min": 5.510247771110799,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 31,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 116,
+        "strike_distancia_pct_min": 2.149806769852214,
+        "a_menos_de_5_pct": 57,
+        "con_ganancia_mitad": 90,
+        "con_ganancia_iv_menor": 47
+      }
+    },
+    {
+      "fecha": "2026-10-19",
+      "SPXW": {
+        "elegibles": 17,
+        "strike_distancia_pct_min": 6.228632553205937,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 16,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 163,
+        "strike_distancia_pct_min": 2.0627627334050214,
+        "a_menos_de_5_pct": 63,
+        "con_ganancia_mitad": 113,
+        "con_ganancia_iv_menor": 58
+      }
+    },
+    {
+      "fecha": "2026-10-20",
+      "SPXW": {
+        "elegibles": 61,
+        "strike_distancia_pct_min": 6.227920185186364,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 41,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 169,
+        "strike_distancia_pct_min": 2.2750308983069623,
+        "a_menos_de_5_pct": 58,
+        "con_ganancia_mitad": 113,
+        "con_ganancia_iv_menor": 57
+      }
+    },
+    {
+      "fecha": "2026-10-21",
+      "SPXW": {
+        "elegibles": 52,
+        "strike_distancia_pct_min": 6.441690215411611,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 38,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 150,
+        "strike_distancia_pct_min": 2.050090235130675,
+        "a_menos_de_5_pct": 66,
+        "con_ganancia_mitad": 102,
+        "con_ganancia_iv_menor": 61
+      }
+    },
+    {
+      "fecha": "2026-10-22",
+      "SPXW": {
+        "elegibles": 57,
+        "strike_distancia_pct_min": 6.843349322079595,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 32,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 145,
+        "strike_distancia_pct_min": 2.7821618166877338,
+        "a_menos_de_5_pct": 48,
+        "con_ganancia_mitad": 111,
+        "con_ganancia_iv_menor": 47
+      }
+    },
+    {
+      "fecha": "2026-10-23",
+      "SPXW": {
+        "elegibles": 63,
+        "strike_distancia_pct_min": 6.811117893950747,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 29,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 153,
+        "strike_distancia_pct_min": 2.9917593439043433,
+        "a_menos_de_5_pct": 40,
+        "con_ganancia_mitad": 119,
+        "con_ganancia_iv_menor": 43
+      }
+    },
+    {
+      "fecha": "2026-10-26",
+      "SPXW": {
+        "elegibles": 35,
+        "strike_distancia_pct_min": 7.21536209228224,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 19,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 166,
+        "strike_distancia_pct_min": 2.580247399420199,
+        "a_menos_de_5_pct": 52,
+        "con_ganancia_mitad": 117,
+        "con_ganancia_iv_menor": 54
+      }
+    },
+    {
+      "fecha": "2026-10-27",
+      "SPXW": {
+        "elegibles": 98,
+        "strike_distancia_pct_min": 6.775355847681919,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 60,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 157,
+        "strike_distancia_pct_min": 2.2414983263652877,
+        "a_menos_de_5_pct": 63,
+        "con_ganancia_mitad": 111,
+        "con_ganancia_iv_menor": 60
+      }
+    },
+    {
+      "fecha": "2026-10-28",
+      "SPXW": {
+        "elegibles": 93,
+        "strike_distancia_pct_min": 6.724250990166025,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 56,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 155,
+        "strike_distancia_pct_min": 2.1447808170284466,
+        "a_menos_de_5_pct": 63,
+        "con_ganancia_mitad": 102,
+        "con_ganancia_iv_menor": 61
+      }
+    },
+    {
+      "fecha": "2026-10-30",
+      "SPXW": {
+        "elegibles": 107,
+        "strike_distancia_pct_min": 6.531887884177046,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 62,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 158,
+        "strike_distancia_pct_min": 2.732067926811621,
+        "a_menos_de_5_pct": 55,
+        "con_ganancia_mitad": 125,
+        "con_ganancia_iv_menor": 53
+      }
+    },
+    {
+      "fecha": "2026-11-03",
+      "SPXW": {
+        "elegibles": 34,
+        "strike_distancia_pct_min": 7.379885365361649,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 16,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 127,
+        "strike_distancia_pct_min": 3.4037052994398964,
+        "a_menos_de_5_pct": 32,
+        "con_ganancia_mitad": 97,
+        "con_ganancia_iv_menor": 36
+      }
+    },
+    {
+      "fecha": "2026-11-04",
+      "SPXW": {
+        "elegibles": 39,
+        "strike_distancia_pct_min": 6.47860308984598,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 17,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 117,
+        "strike_distancia_pct_min": 2.6148557141368878,
+        "a_menos_de_5_pct": 51,
+        "con_ganancia_mitad": 86,
+        "con_ganancia_iv_menor": 49
+      }
+    },
+    {
+      "fecha": "2026-11-05",
+      "SPXW": {
+        "elegibles": 30,
+        "strike_distancia_pct_min": 6.988368274966139,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 16,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 86,
+        "strike_distancia_pct_min": 3.04239269720068,
+        "a_menos_de_5_pct": 26,
+        "con_ganancia_mitad": 69,
+        "con_ganancia_iv_menor": 27
+      }
+    },
+    {
+      "fecha": "2026-11-06",
+      "SPXW": {
+        "elegibles": 34,
+        "strike_distancia_pct_min": 7.980587191420607,
+        "a_menos_de_5_pct": 0,
+        "con_ganancia_mitad": 6,
+        "con_ganancia_iv_menor": 0
+      },
+      "SPY": {
+        "elegibles": 109,
+        "strike_distancia_pct_min": 3.697085380876941,
+        "a_menos_de_5_pct": 16,
+        "con_ganancia_mitad": 54,
+        "con_ganancia_iv_menor": 21
+      }
+    }
+  ],
+  "integridad": {
+    "manifiestos": 133,
+    "paginas_unicas": 681,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "1e3402f87113667ff531e0f4714c72e3cf7d70f4845b9c3477f8ebc065f8551c",
+      "subyacente": "b9b3db96281b9262ad57f8062abb8cfb1c4d804b83d69356f1f65cfe2ac01aed"
+    },
+    "manifiesto_normalizacion_sha256": "83e234329c0182d1df7f6c6c7970262d976285acdb95e655cf0c4b13e96d44a8"
+  }
+}
