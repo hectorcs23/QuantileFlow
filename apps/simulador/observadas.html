@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuantileFlow · Contratos observados</title><link rel="stylesheet" href="/style.css"><script src="/observadas.js" defer></script></head>
+<body><main>
+<header><p class="brand">QUANTILEFLOW / FOTO HISTÓRICA</p><h1>¿Qué cabe en tu presupuesto?</h1>
+<p class="lead">Contratos observados, salidas hipotéticas. Explora cuánto depende el resultado del movimiento, el tiempo y la volatilidad.</p>
+<p class="notice"><strong>Exploratorio. No hay una compra validada.</strong> La captura es histórica e indicativa. Sus cotizaciones no son precios ejecutables.</p>
+<p><a href="/">Volver al ejemplo sintético</a></p></header>
+<div class="layout"><aside><form id="observadas-form">
+<h2>Tu hipótesis</h2>
+<label>Presupuesto, USD<input name="presupuesto" type="number" min="1" max="100000" value="300" step="1" required></label>
+<div class="pair"><label>Movimiento, %<input name="movimiento_pct" type="number" min="-50" max="100" value="3" step=".5" required></label>
+<label>Días naturales<input name="dias" type="number" min="0" max="90" value="7" step="1" required></label></div>
+<label>Cambio de IV, puntos<input name="cambio_iv_pp" type="number" min="-100" max="100" value="0" step="1" required></label>
+<label>Capital en riesgo, %<input name="riesgo_pct" type="number" min="0" max="100" value="100" step="5" required></label>
+<label>Límite de contratos (0 = sin extra)<input name="max_contratos" type="number" min="0" max="10000" value="0" step="1" required></label>
+<label>Comisión / contrato / lado, USD<input name="comision" type="number" min="0" max="25" value=".65" step=".05" required></label>
+<button class="primary" type="submit">Evaluar captura</button></form>
+<p class="hint">SPXW europeo PM. SPY se cuenta en el diagnóstico, pero no se valora con este módulo. Reserva de entrada y cierre; cantidad limitada al tamaño ask publicado.</p></aside>
+<div class="content"><p id="status" role="status" aria-live="polite">Cargando captura…</p><p id="error" role="alert" hidden></p>
+<div id="observadas-resultados" hidden>
+<section><h2 id="foto-titulo"></h2><div id="embudo" class="metrics"></div><p id="dictamen"></p><ul id="bloqueos"></ul>
+<details><summary>Filtros y supuestos</summary><p id="reglas"></p><ul id="alcance"></ul></details></section>
+<section id="observadas-duelo" hidden><h2>Dos compras alternativas</h2><p class="hint">Cada alternativa dispone del presupuesto completo. Puedes elegir cantidades menores al máximo y conservar el resto.</p>
+<form id="observadas-ab"><div class="duelo-pair">
+<fieldset><legend>Compra A</legend><label>Serie A<select id="observada-a"></select></label><label>Cantidad A<input id="n-a" type="number" min="1" step="1" required></label></fieldset>
+<fieldset><legend>Compra B</legend><label>Serie B<select id="observada-b"></select></label><label>Cantidad B<input id="n-b" type="number" min="1" step="1" required></label></fieldset></div>
+<button type="submit">Comparar compras observadas</button></form><p id="ab-status" aria-live="polite"></p>
+<div id="ab-resultados" hidden><p id="ab-capital"></p><div class="table-scroll"><table id="ab-tabla"><caption>USD netos: valor nominal [banda de supuestos]. No es un intervalo de confianza.</caption><thead><tr><th>Escenario</th><th>A</th><th>B</th><th>Mayor nominal, con efectivo</th></tr></thead><tbody></tbody></table></div></div></section>
+<section id="observadas-explorar" hidden><h2>Mapa de una compra fija</h2>
+<label>Posición a explorar<select id="observada-posicion"></select></label>
+<p id="posicion-resumen"></p><label>Choque de volatilidad<select id="observada-iv"></select></label>
+<div class="table-scroll"><table id="surface"><caption>Ganancia / pérdida nominal, USD. Filas: días hasta salir. Columnas: movimiento del índice. Cada celda conserva la compra inicial.</caption><thead></thead><tbody></tbody></table></div>
+<p class="hint">Azul: ganancia. Naranja: pérdida. —: ya venció o IV fuera de dominio. Pasa sobre una celda para ver su banda de supuestos. Cada salida es una valoración teórica; no se garantiza que ese día sea hábil.</p></section>
+<section><h2>Qué cambia cuando te equivocas</h2><p id="estabilidad"></p><p class="hint">Se repite la comparación entre todas las compras elegibles. No se asignan probabilidades a estos escenarios.</p>
+<div class="table-scroll"><table id="escenarios-observados"><thead><tr><th>Escenario</th><th>Mayor nominal</th><th>Separación entre bandas</th></tr></thead><tbody></tbody></table></div>
+<button type="button" id="observadas-export">Descargar análisis privado (.json)</button></section>
+</div></div></div></main></body></html>

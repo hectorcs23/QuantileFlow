@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+matplotlib/
+*.parquet
+*.csv.gz
+*.json.gz
+*.zip

@@ -1,0 +1,11 @@
+{
+  "fecha": "2026-10-14",
+  "comando": "python -X utf8 -m pytest experiments/forward_fijo_20261014/test_paridad_fija.py -q",
+  "pasadas": 4,
+  "duracion_segundos": 2.34,
+  "alcance": "Pruebas de bandas de paridad y límites; no validación predictiva ni operación en vivo",
+  "codigo_sha256_lf": {
+    "metodo.py": "b0db6982e6ca649d0871f521d2fd1d8be2fa9852380d8190f871a35b551c8455",
+    "test_paridad_fija.py": "33eaa89d736a03328fd1bdfb7d663fd3fc66e369e807dbf333e619a8a1fc3d71"
+  }
+}

@@ -1,0 +1,2542 @@
+{
+  "presupuesto_operacion_ficticio": 300,
+  "presupuesto_datos": 0,
+  "ejemplo_contable_sin_costos": {
+    "contratos": [
+      {
+        "contrato": "Call K108, prima USD 100",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.0,
+        "ask": 1.0,
+        "multiplicador": 100,
+        "contratos": 3,
+        "desembolso": 300.0,
+        "efectivo_sobrante": 0.0,
+        "reserva_comision_cierre": 0,
+        "efectivo_libre": 0.0,
+        "perdida_maxima_prima_y_entrada": 300.0,
+        "perdida_maxima_costos_asumidos": 300.0,
+        "pnl_minimo_escenarios": -300.0,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 2.000000000000014,
+            "precio_salida_asumido": 2.000000000000014,
+            "pnl": 300.0000000000043,
+            "retorno_desembolso": 1.0000000000000144,
+            "retorno_capital_reservado": 1.0000000000000144,
+            "diagnostico_pde": {}
+          },
+          "menor_subida": {
+            "valor_teorico": 0,
+            "precio_salida_asumido": 0,
+            "pnl": -300.0,
+            "retorno_desembolso": -1.0,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.5890936096632028,
+          "delta": 0.16046689639606873,
+          "gamma": 0.03396586610182932,
+          "vega_por_punto_iv": 0.06980657038865988,
+          "theta_por_dia": -0.030789465615056924,
+          "masa_fronteras": 2.3572322044617335e-71,
+          "error_media_financiera": 0.00047353449886600174
+        },
+        "capital_reservado": 300.0,
+        "pnl_objetivo": 300.0000000000043,
+        "retorno_objetivo": 1.0000000000000144,
+        "retorno_minimo_escenarios": -1.0
+      },
+      {
+        "contrato": "Call K105, prima USD 300",
+        "strike": 105,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 3.0,
+        "ask": 3.0,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 300.0,
+        "efectivo_sobrante": 0.0,
+        "reserva_comision_cierre": 0,
+        "efectivo_libre": 0.0,
+        "perdida_maxima_prima_y_entrada": 300.0,
+        "perdida_maxima_costos_asumidos": 300.0,
+        "pnl_minimo_escenarios": -100.0,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 5.000000000000014,
+            "precio_salida_asumido": 5.000000000000014,
+            "pnl": 200.00000000000142,
+            "retorno_desembolso": 0.6666666666666714,
+            "retorno_capital_reservado": 0.6666666666666714,
+            "diagnostico_pde": {}
+          },
+          "menor_subida": {
+            "valor_teorico": 2.0,
+            "precio_salida_asumido": 2.0,
+            "pnl": -100.0,
+            "retorno_desembolso": -0.3333333333333333,
+            "retorno_capital_reservado": -0.3333333333333333,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 1.169155006324214,
+          "delta": 0.27435129067116787,
+          "gamma": 0.04649967568180694,
+          "vega_por_punto_iv": 0.09545516902061726,
+          "theta_por_dia": -0.04265994488738869,
+          "masa_fronteras": 2.3572322044617335e-71,
+          "error_media_financiera": 0.00047353449886600174
+        },
+        "capital_reservado": 300.0,
+        "pnl_objetivo": 200.00000000000142,
+        "retorno_objetivo": 0.6666666666666714,
+        "retorno_minimo_escenarios": -0.3333333333333333
+      }
+    ],
+    "excluidos": [],
+    "probabilidades": "no estimadas",
+    "motor": "pde",
+    "rankings": {
+      "ganancia_objetivo": [
+        "Call K108, prima USD 100",
+        "Call K105, prima USD 300"
+      ],
+      "retorno_objetivo": [
+        "Call K108, prima USD 100",
+        "Call K105, prima USD 300"
+      ],
+      "robustez": [
+        "Call K105, prima USD 300",
+        "Call K108, prima USD 100"
+      ]
+    },
+    "presupuesto": 300,
+    "limite_perdida": 300,
+    "escenario_objetivo": "objetivo",
+    "criterio_robusto": "maximizar mínimo PnL de la lista; efectivo tiene PnL cero",
+    "alternativa_robusta": "efectivo",
+    "pnl_robusto_con_efectivo": 0.0,
+    "costos": {
+      "comision_por_contrato_y_lado": 0,
+      "semispread_salida_por_unidad": 0
+    },
+    "malla": {
+      "nodos": 401,
+      "pasos": 400,
+      "semiancho": 1.5
+    },
+    "fuente_cotizaciones": "primas inventadas para ilustrar contabilidad, no calibradas",
+    "tolerancias_numericas": {
+      "masa_fronteras": 1e-06,
+      "error_momento_sobre_spot": 0.001
+    },
+    "alcance": "europeo, IV plana por contrato; rankings condicionados, no pronóstico",
+    "posiciones": [
+      {
+        "contrato": "Call K108, prima USD 100",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 3,
+        "multiplicador": 100,
+        "prima_por_contrato": 100.0,
+        "capital_reservado_por_contrato": 100.0,
+        "prima_total": 300.0,
+        "desembolso_entrada": 300.0,
+        "reserva_comision_cierre": 0,
+        "capital_reservado": 300.0,
+        "efectivo_libre": 0.0,
+        "uso_presupuesto": 1.0,
+        "perdida_maxima_costos_asumidos": 300.0,
+        "pnl_minimo_escenarios": -300.0,
+        "sensibilidad_posicion": {
+          "delta": 48.14006891882062,
+          "gamma": 10.189759830548796,
+          "vega_por_punto_iv": 20.941971116597966,
+          "theta_por_dia": -9.236839684517077
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 100.00000000000144,
+            "pnl_posicion": 300.0000000000043,
+            "capital_final_incluyendo_caja": 600.0000000000043,
+            "retorno_presupuesto": 1.0000000000000144,
+            "retorno_capital_reservado": 1.0000000000000144
+          },
+          "menor_subida": {
+            "pnl_por_contrato": -100.0,
+            "pnl_posicion": -300.0,
+            "capital_final_incluyendo_caja": 0.0,
+            "retorno_presupuesto": -1.0,
+            "retorno_capital_reservado": -1.0
+          }
+        }
+      },
+      {
+        "contrato": "Call K105, prima USD 300",
+        "strike": 105,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 300.0,
+        "capital_reservado_por_contrato": 300.0,
+        "prima_total": 300.0,
+        "desembolso_entrada": 300.0,
+        "reserva_comision_cierre": 0,
+        "capital_reservado": 300.0,
+        "efectivo_libre": 0.0,
+        "uso_presupuesto": 1.0,
+        "perdida_maxima_costos_asumidos": 300.0,
+        "pnl_minimo_escenarios": -100.0,
+        "sensibilidad_posicion": {
+          "delta": 27.435129067116787,
+          "gamma": 4.649967568180694,
+          "vega_por_punto_iv": 9.545516902061726,
+          "theta_por_dia": -4.265994488738869
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 200.00000000000142,
+            "pnl_posicion": 200.00000000000142,
+            "capital_final_incluyendo_caja": 500.0000000000014,
+            "retorno_presupuesto": 0.6666666666666714,
+            "retorno_capital_reservado": 0.6666666666666714
+          },
+          "menor_subida": {
+            "pnl_por_contrato": -100.0,
+            "pnl_posicion": -100.0,
+            "capital_final_incluyendo_caja": 200.0,
+            "retorno_presupuesto": -0.3333333333333333,
+            "retorno_capital_reservado": -0.3333333333333333
+          }
+        }
+      }
+    ],
+    "comparacion_presupuesto": {
+      "criterio_principal": "PnL neto total en el escenario objetivo; mismo presupuesto",
+      "mejor_en_objetivo_incluyendo_caja": "Call K108, prima USD 100",
+      "pnl_mejor_en_objetivo_incluyendo_caja": 300.0000000000043,
+      "efectivo": {
+        "capital_inicial": 300,
+        "capital_final": 300,
+        "pnl": 0.0
+      },
+      "politica_cantidad": "máximo entero por serie dentro de presupuesto, pérdida y límites de cantidad",
+      "mezcla_series": false,
+      "probabilidades_escenarios": "no estimadas",
+      "unidades_sensibilidad": {
+        "delta": "USD de posición por USD de cambio en spot",
+        "gamma": "USD de posición por USD² de cambio en spot; término cuadrático 0.5*gamma*dS²",
+        "vega_por_punto_iv": "USD de posición por punto porcentual de IV",
+        "theta_por_dia": "USD de posición por día transcurrido"
+      }
+    }
+  },
+  "ejemplo_contable_con_costos": {
+    "contratos": [
+      {
+        "contrato": "Call K108, prima USD 100",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.0,
+        "ask": 1.0,
+        "multiplicador": 100,
+        "contratos": 2,
+        "desembolso": 201.3,
+        "efectivo_sobrante": 98.69999999999999,
+        "reserva_comision_cierre": 1.3,
+        "efectivo_libre": 97.39999999999998,
+        "perdida_maxima_prima_y_entrada": 201.3,
+        "perdida_maxima_costos_asumidos": 202.60000000000002,
+        "pnl_minimo_escenarios": -202.60000000000002,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 2.000000000000014,
+            "precio_salida_asumido": 2.000000000000014,
+            "pnl": 197.40000000000282,
+            "retorno_desembolso": 0.9806259314456175,
+            "retorno_capital_reservado": 0.9743336623889576,
+            "diagnostico_pde": {}
+          },
+          "menor_subida": {
+            "valor_teorico": 0,
+            "precio_salida_asumido": 0,
+            "pnl": -202.60000000000002,
+            "retorno_desembolso": -1.0064580228514655,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.5890936096632028,
+          "delta": 0.16046689639606873,
+          "gamma": 0.03396586610182932,
+          "vega_por_punto_iv": 0.06980657038865988,
+          "theta_por_dia": -0.030789465615056924,
+          "masa_fronteras": 2.3572322044617335e-71,
+          "error_media_financiera": 0.00047353449886600174
+        },
+        "capital_reservado": 202.60000000000002,
+        "pnl_objetivo": 197.40000000000282,
+        "retorno_objetivo": 0.9743336623889576,
+        "retorno_minimo_escenarios": -1.0
+      }
+    ],
+    "excluidos": [
+      {
+        "contrato": "Call K105, prima USD 300",
+        "motivo": "no cabe en presupuesto"
+      }
+    ],
+    "probabilidades": "no estimadas",
+    "motor": "pde",
+    "rankings": {
+      "ganancia_objetivo": [
+        "Call K108, prima USD 100"
+      ],
+      "retorno_objetivo": [
+        "Call K108, prima USD 100"
+      ],
+      "robustez": [
+        "Call K108, prima USD 100"
+      ]
+    },
+    "presupuesto": 300,
+    "limite_perdida": 300,
+    "escenario_objetivo": "objetivo",
+    "criterio_robusto": "maximizar mínimo PnL de la lista; efectivo tiene PnL cero",
+    "alternativa_robusta": "efectivo",
+    "pnl_robusto_con_efectivo": 0.0,
+    "costos": {
+      "comision_por_contrato_y_lado": 0.65,
+      "semispread_salida_por_unidad": 0
+    },
+    "malla": {
+      "nodos": 401,
+      "pasos": 400,
+      "semiancho": 1.5
+    },
+    "fuente_cotizaciones": "mismo ejemplo con comisión USD 0.65 por contrato y lado",
+    "tolerancias_numericas": {
+      "masa_fronteras": 1e-06,
+      "error_momento_sobre_spot": 0.001
+    },
+    "alcance": "europeo, IV plana por contrato; rankings condicionados, no pronóstico",
+    "posiciones": [
+      {
+        "contrato": "Call K108, prima USD 100",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 2,
+        "multiplicador": 100,
+        "prima_por_contrato": 100.0,
+        "capital_reservado_por_contrato": 101.30000000000001,
+        "prima_total": 200.0,
+        "desembolso_entrada": 201.3,
+        "reserva_comision_cierre": 1.3,
+        "capital_reservado": 202.60000000000002,
+        "efectivo_libre": 97.39999999999998,
+        "uso_presupuesto": 0.6753333333333335,
+        "perdida_maxima_costos_asumidos": 202.60000000000002,
+        "pnl_minimo_escenarios": -202.60000000000002,
+        "sensibilidad_posicion": {
+          "delta": 32.09337927921375,
+          "gamma": 6.793173220365864,
+          "vega_por_punto_iv": 13.961314077731975,
+          "theta_por_dia": -6.157893123011385
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 98.70000000000141,
+            "pnl_posicion": 197.40000000000282,
+            "capital_final_incluyendo_caja": 497.4000000000028,
+            "retorno_presupuesto": 0.6580000000000094,
+            "retorno_capital_reservado": 0.9743336623889576
+          },
+          "menor_subida": {
+            "pnl_por_contrato": -101.30000000000001,
+            "pnl_posicion": -202.60000000000002,
+            "capital_final_incluyendo_caja": 97.39999999999998,
+            "retorno_presupuesto": -0.6753333333333335,
+            "retorno_capital_reservado": -1.0
+          }
+        }
+      }
+    ],
+    "comparacion_presupuesto": {
+      "criterio_principal": "PnL neto total en el escenario objetivo; mismo presupuesto",
+      "mejor_en_objetivo_incluyendo_caja": "Call K108, prima USD 100",
+      "pnl_mejor_en_objetivo_incluyendo_caja": 197.40000000000282,
+      "efectivo": {
+        "capital_inicial": 300,
+        "capital_final": 300,
+        "pnl": 0.0
+      },
+      "politica_cantidad": "máximo entero por serie dentro de presupuesto, pérdida y límites de cantidad",
+      "mezcla_series": false,
+      "probabilidades_escenarios": "no estimadas",
+      "unidades_sensibilidad": {
+        "delta": "USD de posición por USD de cambio en spot",
+        "gamma": "USD de posición por USD² de cambio en spot; término cuadrático 0.5*gamma*dS²",
+        "vega_por_punto_iv": "USD de posición por punto porcentual de IV",
+        "theta_por_dia": "USD de posición por día transcurrido"
+      }
+    }
+  },
+  "escenario_antes_de_vencer": {
+    "contratos": [
+      {
+        "contrato": "C100-14d",
+        "strike": 100,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.9632797411757172,
+        "ask": 2.0432797411757173,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 204.97797411757173,
+        "efectivo_sobrante": 95.02202588242827,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 94.37202588242826,
+        "perdida_maxima_prima_y_entrada": 204.97797411757173,
+        "perdida_maxima_costos_asumidos": 205.62797411757174,
+        "pnl_minimo_escenarios": -173.05794543335168,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 3.425217098776496,
+            "precio_salida_asumido": 3.385217098776496,
+            "pnl": 132.89373576007787,
+            "retorno_desembolso": 0.6483317845840958,
+            "retorno_capital_reservado": 0.6462823763662299,
+            "diagnostico_pde": {
+              "delta": 0.8120936161682984,
+              "gamma": 0.07548090106379336,
+              "vega_por_punto_iv": 0.038377483228151044,
+              "theta_por_dia": -0.07433938216689152,
+              "probabilidad_q_itm_al_vencimiento": 0.8028198793302398,
+              "cuantil_q_05": 97.28585771753391,
+              "cuantil_q_95": 109.03191731689813,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00012082990215844802,
+              "error_dualidad": 0.0
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 1.4070400444121325,
+            "precio_salida_asumido": 1.3670400444121324,
+            "pnl": -68.9239696763585,
+            "retorno_desembolso": -0.33625061411147,
+            "retorno_capital_reservado": -0.33518770961070643,
+            "diagnostico_pde": {
+              "delta": 0.5127499769475263,
+              "gamma": 0.11534807849052442,
+              "vega_por_punto_iv": 0.05517222982274078,
+              "theta_por_dia": -0.10216085109610447,
+              "probabilidad_q_itm_al_vencimiento": 0.49906227198816855,
+              "cuantil_q_05": 94.45228904614943,
+              "cuantil_q_95": 105.85623040475546,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011731058462771671,
+              "error_dualidad": 2.220446049250313e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.36570028684220063,
+            "precio_salida_asumido": 0.32570028684220065,
+            "pnl": -173.05794543335168,
+            "retorno_desembolso": -0.8442758114785968,
+            "retorno_capital_reservado": -0.8416070146876148,
+            "diagnostico_pde": {
+              "delta": 0.1982293434241893,
+              "gamma": 0.08286939248674424,
+              "vega_por_punto_iv": 0.037367127840705325,
+              "theta_por_dia": -0.0681136481426161,
+              "probabilidad_q_itm_al_vencimiento": 0.18877021475142408,
+              "cuantil_q_05": 91.61872037476495,
+              "cuantil_q_95": 102.6805434926128,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011379126708277454,
+              "error_dualidad": 2.7755575615628914e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 3.2503194432395937,
+            "precio_salida_asumido": 3.2103194432395936,
+            "pnl": 115.40397020638764,
+            "retorno_desembolso": 0.5630066874414222,
+            "retorno_capital_reservado": 0.5612269959942474,
+            "diagnostico_pde": {
+              "delta": 0.8640960291480864,
+              "gamma": 0.07620108630618053,
+              "vega_por_punto_iv": 0.03102355006988249,
+              "theta_por_dia": -0.050540872530679834,
+              "probabilidad_q_itm_al_vencimiento": 0.8581737882442635,
+              "cuantil_q_05": 98.42031183237957,
+              "cuantil_q_95": 107.82192085368452,
+              "masa_fronteras": 2.4900142770396358e-298,
+              "error_media_financiera": 0.00012085595783162262,
+              "error_dualidad": 2.220446049250313e-15
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 3.0,
+            "precio_salida_asumido": 3.0,
+            "pnl": 94.37202588242829,
+            "retorno_desembolso": 0.46040081276390293,
+            "retorno_capital_reservado": 0.45894546346339665,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 2.003615314096581,
+          "delta": 0.5179445286648722,
+          "gamma": 0.08144028866958848,
+          "vega_por_punto_iv": 0.07798427451706245,
+          "theta_por_dia": -0.07324083162749863,
+          "masa_fronteras": 2.481722218651122e-152,
+          "error_media_financiera": 0.00011745607740465402
+        },
+        "capital_reservado": 205.62797411757174,
+        "pnl_objetivo": 132.89373576007787,
+        "retorno_objetivo": 0.6462823763662299,
+        "retorno_minimo_escenarios": -0.8416070146876148
+      },
+      {
+        "contrato": "C103-14d",
+        "strike": 103,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.8211551975665186,
+        "ask": 0.9011551975665186,
+        "multiplicador": 100,
+        "contratos": 3,
+        "desembolso": 272.2965592699556,
+        "efectivo_sobrante": 27.703440730044406,
+        "reserva_comision_cierre": 1.9500000000000002,
+        "efectivo_libre": 25.753440730044417,
+        "perdida_maxima_prima_y_entrada": 272.2965592699556,
+        "perdida_maxima_costos_asumidos": 274.2465592699556,
+        "pnl_minimo_escenarios": -274.2465592699556,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 1.4492512457444962,
+            "precio_salida_asumido": 1.4092512457444961,
+            "pnl": 148.5288144533933,
+            "retorno_desembolso": 0.5454670997371708,
+            "retorno_capital_reservado": 0.5415886159110876,
+            "diagnostico_pde": {
+              "delta": 0.5127499769475263,
+              "gamma": 0.11198842571895574,
+              "vega_por_punto_iv": 0.05682739671742303,
+              "theta_por_dia": -0.10522567662898767,
+              "probabilidad_q_itm_al_vencimiento": 0.49906227198816855,
+              "cuantil_q_05": 97.28585771753391,
+              "cuantil_q_95": 109.03191731689813,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00012082990215844802,
+              "error_dualidad": 2.220446049250313e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 0.394840098914891,
+            "precio_salida_asumido": 0.35484009891489104,
+            "pnl": -167.79452959548829,
+            "retorno_desembolso": -0.6162197937621985,
+            "retorno_capital_reservado": -0.6118382306861292,
+            "diagnostico_pde": {
+              "delta": 0.2055472555641995,
+              "gamma": 0.08214951273612278,
+              "vega_por_punto_iv": 0.03936856681093751,
+              "theta_por_dia": -0.07178267106592624,
+              "probabilidad_q_itm_al_vencimiento": 0.19587724765494507,
+              "cuantil_q_05": 94.45228904614943,
+              "cuantil_q_95": 105.85623040475546,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011731058462771671,
+              "error_dualidad": 2.7755575615628914e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.06113184880129954,
+            "precio_salida_asumido": 0.021131848801299542,
+            "pnl": -267.90700462956573,
+            "retorno_desembolso": -0.9838795075040296,
+            "retorno_capital_reservado": -0.9768837404660035,
+            "diagnostico_pde": {
+              "delta": 0.0445999935938536,
+              "gamma": 0.027839423419743423,
+              "vega_por_punto_iv": 0.012617458299938046,
+              "theta_por_dia": -0.022847312723882438,
+              "probabilidad_q_itm_al_vencimiento": 0.0414402001718307,
+              "cuantil_q_05": 91.61872037476495,
+              "cuantil_q_95": 102.6805434926128,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011379126708277454,
+              "error_dualidad": 2.0816681711721685e-17
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 1.1651487881877403,
+            "precio_salida_asumido": 1.1251487881877402,
+            "pnl": 63.29807718636647,
+            "retorno_desembolso": 0.23246006984470405,
+            "retorno_capital_reservado": 0.23080718808238093,
+            "diagnostico_pde": {
+              "delta": 0.5128562364706981,
+              "gamma": 0.14010174310071258,
+              "vega_por_punto_iv": 0.05681136402714124,
+              "theta_por_dia": -0.08493921126672209,
+              "probabilidad_q_itm_al_vencimiento": 0.5019290060935016,
+              "cuantil_q_05": 98.42031183237957,
+              "cuantil_q_95": 107.82192085368452,
+              "masa_fronteras": 2.4900142770396358e-298,
+              "error_media_financiera": 0.00012085595783162262,
+              "error_dualidad": 4.440892098500626e-16
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 0.0,
+            "precio_salida_asumido": 0.0,
+            "pnl": -274.2465592699556,
+            "retorno_desembolso": -1.0071613097324037,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.8616519544920069,
+          "delta": 0.28816933767196706,
+          "gamma": 0.06970436097439224,
+          "vega_por_punto_iv": 0.06679333438184029,
+          "theta_por_dia": -0.06167644654984214,
+          "masa_fronteras": 2.481722218651122e-152,
+          "error_media_financiera": 0.00011745607740465402
+        },
+        "capital_reservado": 274.2465592699556,
+        "pnl_objetivo": 148.5288144533933,
+        "retorno_objetivo": 0.5415886159110876,
+        "retorno_minimo_escenarios": -1.0
+      },
+      {
+        "contrato": "C105-14d",
+        "strike": 105,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.3974732168226449,
+        "ask": 0.4774732168226449,
+        "multiplicador": 100,
+        "contratos": 6,
+        "desembolso": 290.3839300935869,
+        "efectivo_sobrante": 9.616069906413088,
+        "reserva_comision_cierre": 3.9000000000000004,
+        "efectivo_libre": 5.716069906413111,
+        "perdida_maxima_prima_y_entrada": 290.3839300935869,
+        "perdida_maxima_costos_asumidos": 294.2839300935869,
+        "pnl_minimo_escenarios": -294.2839300935869,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 0.6685356514914196,
+            "precio_salida_asumido": 0.6285356514914195,
+            "pnl": 82.83746080126485,
+            "retorno_desembolso": 0.2852687501493882,
+            "retorno_capital_reservado": 0.2814882238894976,
+            "diagnostico_pde": {
+              "delta": 0.30022521030416577,
+              "gamma": 0.09756910540102802,
+              "vega_por_punto_iv": 0.0495676294537091,
+              "theta_por_dia": -0.0907315742957289,
+              "probabilidad_q_itm_al_vencimiento": 0.2883607520879903,
+              "cuantil_q_05": 97.28585771753391,
+              "cuantil_q_95": 109.03191731689813,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00012082990215844802,
+              "error_dualidad": 1.1102230246251565e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 0.1325050999928008,
+            "precio_salida_asumido": 0.0925050999928008,
+            "pnl": -238.78087009790642,
+            "retorno_desembolso": -0.8222936786513995,
+            "retorno_capital_reservado": -0.8113962254818684,
+            "diagnostico_pde": {
+              "delta": 0.08432873507296935,
+              "gamma": 0.04451121344966284,
+              "vega_por_punto_iv": 0.021389223079917186,
+              "theta_por_dia": -0.03880823046983395,
+              "probabilidad_q_itm_al_vencimiento": 0.07911179291545656,
+              "cuantil_q_05": 94.45228904614943,
+              "cuantil_q_95": 105.85623040475546,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011731058462771671,
+              "error_dualidad": 8.326672684688674e-17
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.01416133930250605,
+            "precio_salida_asumido": 0.0,
+            "pnl": -294.2839300935869,
+            "retorno_desembolso": -1.013430495271357,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {
+              "delta": 0.012177455791750703,
+              "gamma": 0.009326532340842776,
+              "vega_por_punto_iv": 0.004237423495607382,
+              "theta_por_dia": -0.007653880837954878,
+              "probabilidad_q_itm_al_vencimiento": 0.011123309415682958,
+              "cuantil_q_05": 91.61872037476495,
+              "cuantil_q_95": 102.6805434926128,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011379126708277454,
+              "error_dualidad": 1.734723475976807e-18
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 0.4295776579244815,
+            "precio_salida_asumido": 0.3895776579244815,
+            "pnl": -60.537335338898004,
+            "retorno_desembolso": -0.20847343487426326,
+            "retorno_capital_reservado": -0.2057106391084494,
+            "diagnostico_pde": {
+              "delta": 0.2538426870689818,
+              "gamma": 0.1122896123393465,
+              "vega_por_punto_iv": 0.04563068422185097,
+              "theta_por_dia": -0.06707980781067195,
+              "probabilidad_q_itm_al_vencimiento": 0.24510432561316686,
+              "cuantil_q_05": 98.42031183237957,
+              "cuantil_q_95": 107.82192085368452,
+              "masa_fronteras": 2.4900142770396358e-298,
+              "error_media_financiera": 0.00012085595783162262,
+              "error_dualidad": 1.1102230246251565e-16
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 0,
+            "precio_salida_asumido": 0,
+            "pnl": -294.2839300935869,
+            "retorno_desembolso": -1.013430495271357,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.43811689808312765,
+          "delta": 0.1707059645989573,
+          "gamma": 0.05178509240720784,
+          "vega_por_punto_iv": 0.04965570409085178,
+          "theta_por_dia": -0.04555293533920632,
+          "masa_fronteras": 2.481722218651122e-152,
+          "error_media_financiera": 0.00011745607740465402
+        },
+        "capital_reservado": 294.2839300935869,
+        "pnl_objetivo": 82.83746080126485,
+        "retorno_objetivo": 0.2814882238894976,
+        "retorno_minimo_escenarios": -1.0
+      },
+      {
+        "contrato": "C108-14d",
+        "strike": 108,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.09254595327285567,
+        "ask": 0.17254595327285568,
+        "multiplicador": 100,
+        "contratos": 16,
+        "desembolso": 286.47352523656906,
+        "efectivo_sobrante": 13.52647476343094,
+        "reserva_comision_cierre": 10.4,
+        "efectivo_libre": 3.126474763430963,
+        "perdida_maxima_prima_y_entrada": 286.47352523656906,
+        "perdida_maxima_costos_asumidos": 296.87352523656904,
+        "pnl_minimo_escenarios": -296.87352523656904,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 0.14878769009675172,
+            "precio_salida_asumido": 0.10878769009675171,
+            "pnl": -122.81322108176633,
+            "retorno_desembolso": -0.4287070540998422,
+            "retorno_capital_reservado": -0.4136886944832834,
+            "diagnostico_pde": {
+              "delta": 0.09068307075768504,
+              "gamma": 0.045688348278225,
+              "vega_por_punto_iv": 0.023259713239464085,
+              "theta_por_dia": -0.04221397237711394,
+              "probabilidad_q_itm_al_vencimiento": 0.08517242934700753,
+              "cuantil_q_05": 97.28585771753391,
+              "cuantil_q_95": 109.03191731689813,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00012082990215844802,
+              "error_dualidad": 1.1102230246251565e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 0.017598029777416778,
+            "precio_salida_asumido": 0.0,
+            "pnl": -296.87352523656904,
+            "retorno_desembolso": -1.0363035292403082,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {
+              "delta": 0.014408946445832634,
+              "gamma": 0.01050268072178975,
+              "vega_por_punto_iv": 0.005052943640134784,
+              "theta_por_dia": -0.009129205012282001,
+              "probabilidad_q_itm_al_vencimiento": 0.013188785904452827,
+              "cuantil_q_05": 94.45228904614943,
+              "cuantil_q_95": 105.85623040475546,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011731058462771671,
+              "error_dualidad": 1.3877787807814457e-17
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.0010635168343498085,
+            "precio_salida_asumido": 0.0,
+            "pnl": -296.87352523656904,
+            "retorno_desembolso": -1.0363035292403082,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {
+              "delta": 0.0011232639900664299,
+              "gamma": 0.0011016990202702436,
+              "vega_por_punto_iv": 0.0005011010303489416,
+              "theta_por_dia": -0.0009029628951331867,
+              "probabilidad_q_itm_al_vencimiento": 0.0009997767523948209,
+              "cuantil_q_05": 91.61872037476495,
+              "cuantil_q_95": 102.6805434926128,
+              "masa_fronteras": 7.537817871046974e-236,
+              "error_media_financiera": 0.00011379126708277454,
+              "error_dualidad": 0.0
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 0.05524990731836487,
+            "precio_salida_asumido": 0.01524990731836487,
+            "pnl": -272.47367352718527,
+            "retorno_desembolso": -0.9511303821258081,
+            "retorno_capital_reservado": -0.9178106175350588,
+            "diagnostico_pde": {
+              "delta": 0.04682453260113393,
+              "gamma": 0.03411612080492435,
+              "vega_por_punto_iv": 0.013917656400936548,
+              "theta_por_dia": -0.020237546663122163,
+              "probabilidad_q_itm_al_vencimiento": 0.04417903472047169,
+              "cuantil_q_05": 98.42031183237957,
+              "cuantil_q_95": 107.82192085368452,
+              "masa_fronteras": 2.4900142770396358e-298,
+              "error_media_financiera": 0.00012085595783162262,
+              "error_dualidad": 3.469446951953614e-17
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 0,
+            "precio_salida_asumido": 0,
+            "pnl": -296.87352523656904,
+            "retorno_desembolso": -1.0363035292403082,
+            "retorno_capital_reservado": -1.0,
+            "diagnostico_pde": {}
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.13317755766012268,
+          "delta": 0.0635111556242915,
+          "gamma": 0.025387948192738926,
+          "vega_por_punto_iv": 0.024367446776519933,
+          "theta_por_dia": -0.022213942678248406,
+          "masa_fronteras": 2.481722218651122e-152,
+          "error_media_financiera": 0.00011745607740465402
+        },
+        "capital_reservado": 296.87352523656904,
+        "pnl_objetivo": -122.81322108176633,
+        "retorno_objetivo": -0.4136886944832834,
+        "retorno_minimo_escenarios": -1.0
+      },
+      {
+        "contrato": "C103-30d",
+        "strike": 103,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.6788937351317574,
+        "ask": 1.7588937351317575,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 176.53937351317575,
+        "efectivo_sobrante": 123.46062648682425,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 122.81062648682425,
+        "perdida_maxima_prima_y_entrada": 176.53937351317575,
+        "perdida_maxima_costos_asumidos": 177.18937351317575,
+        "pnl_minimo_escenarios": -121.56642243232517,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 2.662599576071025,
+            "precio_salida_asumido": 2.622599576071025,
+            "pnl": 85.07058409392675,
+            "retorno_desembolso": 0.4818788149125138,
+            "retorno_capital_reservado": 0.4801110947412483,
+            "diagnostico_pde": {
+              "delta": 0.5228945624824411,
+              "gamma": 0.06160939244657092,
+              "vega_por_punto_iv": 0.102862185183993,
+              "theta_por_dia": -0.05959580633254917,
+              "probabilidad_q_itm_al_vencimiento": 0.4982984848269828,
+              "cuantil_q_05": 92.87112060609219,
+              "cuantil_q_95": 114.17231415383496,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00012120648855784566,
+              "error_dualidad": 1.7763568394002505e-15
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 1.371250080608262,
+            "precio_salida_asumido": 1.3312500806082619,
+            "pnl": -44.06436545234956,
+            "retorno_desembolso": -0.2496007806953098,
+            "retorno_capital_reservado": -0.24868514730130217,
+            "diagnostico_pde": {
+              "delta": 0.3396348200823818,
+              "gamma": 0.058353774721091656,
+              "vega_por_punto_iv": 0.0918676410625213,
+              "theta_por_dia": -0.05229163064666223,
+              "probabilidad_q_itm_al_vencimiento": 0.3172280177645539,
+              "cuantil_q_05": 90.16613651076912,
+              "cuantil_q_95": 110.84690694547083,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00011767620249258925,
+              "error_dualidad": 2.6645352591003757e-15
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.5962295108085057,
+            "precio_salida_asumido": 0.5562295108085057,
+            "pnl": -121.56642243232517,
+            "retorno_desembolso": -0.6886079859304148,
+            "retorno_capital_reservado": -0.6860819022156852,
+            "diagnostico_pde": {
+              "delta": 0.18442133634731148,
+              "gamma": 0.0437403255856659,
+              "vega_por_punto_iv": 0.06482730001318877,
+              "theta_por_dia": -0.03649215072507945,
+              "probabilidad_q_itm_al_vencimiento": 0.16831341768002483,
+              "cuantil_q_05": 87.46115241544605,
+              "cuantil_q_95": 107.52149973710671,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.000114145916413122,
+              "error_dualidad": 3.3306690738754696e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 2.148307673414347,
+            "precio_salida_asumido": 2.108307673414347,
+            "pnl": 33.64139382825894,
+            "retorno_desembolso": 0.1905602878201455,
+            "retorno_capital_reservado": 0.1898612380711272,
+            "diagnostico_pde": {
+              "delta": 0.5230920561492908,
+              "gamma": 0.07702892765793302,
+              "vega_por_punto_iv": 0.10285059951879588,
+              "theta_por_dia": -0.048467958823005336,
+              "probabilidad_q_itm_al_vencimiento": 0.5035022034685191,
+              "cuantil_q_05": 94.87507041630356,
+              "cuantil_q_95": 111.9197036381689,
+              "masa_fronteras": 4.727676559649823e-147,
+              "error_media_financiera": 0.00012129220152701237,
+              "error_dualidad": 8.881784197001252e-16
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 2.2097936892014305,
+            "precio_salida_asumido": 2.1697936892014305,
+            "pnl": 39.78999540696728,
+            "retorno_desembolso": 0.2253887878671871,
+            "retorno_capital_reservado": 0.22456197354300428,
+            "diagnostico_pde": {
+              "delta": 0.5191619639831542,
+              "gamma": 0.07393847636853382,
+              "vega_por_punto_iv": 0.08585348912985907,
+              "theta_por_dia": -0.07078667656537102,
+              "probabilidad_q_itm_al_vencimiento": 0.4985811147458238,
+              "cuantil_q_05": 94.48279712887827,
+              "cuantil_q_95": 112.24304546558079,
+              "masa_fronteras": 1.463566268191016e-138,
+              "error_media_financiera": 0.00012102683083980992,
+              "error_dualidad": 1.7763568394002505e-15
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 1.719080649759609,
+          "delta": 0.36436929741981655,
+          "gamma": 0.052395281828901324,
+          "vega_por_punto_iv": 0.10759575023159729,
+          "theta_por_dia": -0.047339688297041035,
+          "masa_fronteras": 4.6411356485225036e-85,
+          "error_media_financiera": 0.00011787317021116905
+        },
+        "capital_reservado": 177.18937351317575,
+        "pnl_objetivo": 85.07058409392675,
+        "retorno_objetivo": 0.4801110947412483,
+        "retorno_minimo_escenarios": -0.6860819022156852
+      },
+      {
+        "contrato": "C105-30d",
+        "strike": 105,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.0986412002267916,
+        "ask": 1.1786412002267916,
+        "multiplicador": 100,
+        "contratos": 2,
+        "desembolso": 237.02824004535833,
+        "efectivo_sobrante": 62.97175995464167,
+        "reserva_comision_cierre": 1.3,
+        "efectivo_libre": 61.67175995464166,
+        "perdida_maxima_prima_y_entrada": 237.02824004535833,
+        "perdida_maxima_costos_asumidos": 238.32824004535834,
+        "pnl_minimo_escenarios": -180.33331883453673,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 1.7898975720916086,
+            "precio_salida_asumido": 1.7498975720916086,
+            "pnl": 111.6512743729634,
+            "retorno_desembolso": 0.4710462953764392,
+            "retorno_capital_reservado": 0.46847689703794254,
+            "diagnostico_pde": {
+              "delta": 0.40170565787002727,
+              "gamma": 0.05982745043696705,
+              "vega_por_punto_iv": 0.09991400598483816,
+              "theta_por_dia": -0.057166722456318035,
+              "probabilidad_q_itm_al_vencimiento": 0.3779589420114944,
+              "cuantil_q_05": 92.87112060609219,
+              "cuantil_q_95": 114.17231415383496,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00012120648855784566,
+              "error_dualidad": 8.881784197001252e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 0.841768660914971,
+            "precio_salida_asumido": 0.801768660914971,
+            "pnl": -77.97450786236413,
+            "retorno_desembolso": -0.32896716377526464,
+            "retorno_capital_reservado": -0.3271727590801834,
+            "diagnostico_pde": {
+              "delta": 0.2358189049570827,
+              "gamma": 0.04904770136631886,
+              "vega_por_punto_iv": 0.07723571906921654,
+              "theta_por_dia": -0.04363004350999567,
+              "probabilidad_q_itm_al_vencimiento": 0.21711915903548185,
+              "cuantil_q_05": 90.16613651076912,
+              "cuantil_q_95": 110.84690694547083,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00011767620249258925,
+              "error_dualidad": 3.3306690738754696e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.32997460605410806,
+            "precio_salida_asumido": 0.2899746060541081,
+            "pnl": -180.33331883453673,
+            "retorno_desembolso": -0.7608094242273734,
+            "retorno_capital_reservado": -0.7566594659542483,
+            "diagnostico_pde": {
+              "delta": 0.11413115924854372,
+              "gamma": 0.031680373879792396,
+              "vega_por_punto_iv": 0.04697929651584837,
+              "theta_por_dia": -0.026316853530761495,
+              "probabilidad_q_itm_al_vencimiento": 0.102550995795188,
+              "cuantil_q_05": 87.46115241544605,
+              "cuantil_q_95": 107.52149973710671,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.000114145916413122,
+              "error_dualidad": 1.6653345369377348e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 1.295151304551757,
+            "precio_salida_asumido": 1.255151304551757,
+            "pnl": 12.702020864993074,
+            "retorno_desembolso": 0.0535886393223119,
+            "retorno_capital_reservado": 0.05329633140653261,
+            "diagnostico_pde": {
+              "delta": 0.37256755566353716,
+              "gamma": 0.07317530791595393,
+              "vega_por_punto_iv": 0.09774881462818127,
+              "theta_por_dia": -0.045197896147604576,
+              "probabilidad_q_itm_al_vencimiento": 0.3540274760392961,
+              "cuantil_q_05": 94.87507041630356,
+              "cuantil_q_95": 111.9197036381689,
+              "masa_fronteras": 4.727676559649823e-147,
+              "error_media_financiera": 0.00012129220152701237,
+              "error_dualidad": 1.5543122344752192e-15
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 1.3595425780054147,
+            "precio_salida_asumido": 1.3195425780054146,
+            "pnl": 25.58027555572457,
+            "retorno_desembolso": 0.10792079269048052,
+            "retorno_capital_reservado": 0.10733212124109237,
+            "diagnostico_pde": {
+              "delta": 0.37472561786712427,
+              "gamma": 0.07032758706621617,
+              "vega_por_punto_iv": 0.081694175448692,
+              "theta_por_dia": -0.0665312481625622,
+              "probabilidad_q_itm_al_vencimiento": 0.3552623424416774,
+              "cuantil_q_05": 94.48279712887827,
+              "cuantil_q_95": 112.24304546558079,
+              "masa_fronteras": 1.463566268191016e-138,
+              "error_media_financiera": 0.00012102683083980992,
+              "error_dualidad": 6.661338147750939e-16
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 1.1389596283021401,
+          "delta": 0.2692714768204324,
+          "gamma": 0.04605564698731009,
+          "vega_por_punto_iv": 0.09459043397113197,
+          "theta_por_dia": -0.04128134719608006,
+          "masa_fronteras": 4.6411356485225036e-85,
+          "error_media_financiera": 0.00011787317021116905
+        },
+        "capital_reservado": 238.32824004535834,
+        "pnl_objetivo": 111.6512743729634,
+        "retorno_objetivo": 0.46847689703794254,
+        "retorno_minimo_escenarios": -0.7566594659542483
+      },
+      {
+        "contrato": "C108-30d",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.5301179161177654,
+        "ask": 0.6101179161177654,
+        "multiplicador": 100,
+        "contratos": 4,
+        "desembolso": 246.64716644710617,
+        "efectivo_sobrante": 53.35283355289383,
+        "reserva_comision_cierre": 2.6,
+        "efectivo_libre": 50.75283355289383,
+        "perdida_maxima_prima_y_entrada": 246.64716644710617,
+        "perdida_maxima_costos_asumidos": 249.24716644710617,
+        "pnl_minimo_escenarios": -216.3640628302303,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 0.8999965118796509,
+            "precio_salida_asumido": 0.8599965118796509,
+            "pnl": 94.75143830475415,
+            "retorno_desembolso": 0.3841578221620224,
+            "retorno_capital_reservado": 0.38015051346576395,
+            "diagnostico_pde": {
+              "delta": 0.24267969546455148,
+              "gamma": 0.04836426780047816,
+              "vega_por_punto_iv": 0.0808086765801857,
+              "theta_por_dia": -0.04567012905403815,
+              "probabilidad_q_itm_al_vencimiento": 0.22367429520456017,
+              "cuantil_q_05": 92.87112060609219,
+              "cuantil_q_95": 114.17231415383496,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00012120648855784566,
+              "error_dualidad": 4.440892098500626e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 0.36630534285596056,
+            "precio_salida_asumido": 0.3263053428559606,
+            "pnl": -118.72502930472194,
+            "retorno_desembolso": -0.481355739921637,
+            "retorno_capital_reservado": -0.4763345196540764,
+            "diagnostico_pde": {
+              "delta": 0.12131854544187584,
+              "gamma": 0.032093504194846155,
+              "vega_por_punto_iv": 0.05057162908377239,
+              "theta_por_dia": -0.028343810663333247,
+              "probabilidad_q_itm_al_vencimiento": 0.10921520590588829,
+              "cuantil_q_05": 90.16613651076912,
+              "cuantil_q_95": 110.84690694547083,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.00011767620249258925,
+              "error_dualidad": 2.7755575615628914e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.12220775904218967,
+            "precio_salida_asumido": 0.08220775904218966,
+            "pnl": -216.3640628302303,
+            "retorno_desembolso": -0.8772209547220964,
+            "retorno_capital_reservado": -0.8680703011167265,
+            "diagnostico_pde": {
+              "delta": 0.04915697348175323,
+              "gamma": 0.016684900682207633,
+              "vega_por_punto_iv": 0.024759035236586128,
+              "theta_por_dia": -0.013796633941261714,
+              "probabilidad_q_itm_al_vencimiento": 0.043127258818136394,
+              "cuantil_q_05": 87.46115241544605,
+              "cuantil_q_95": 107.52149973710671,
+              "masa_fronteras": 2.2808177051714e-105,
+              "error_media_financiera": 0.000114145916413122,
+              "error_dualidad": 9.71445146547012e-17
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 0.5215286489279183,
+            "precio_salida_asumido": 0.4815286489279183,
+            "pnl": -56.63570687593884,
+            "retorno_desembolso": -0.2296223698482441,
+            "retorno_capital_reservado": -0.22722708419619184,
+            "diagnostico_pde": {
+              "delta": 0.1878183686493009,
+              "gamma": 0.05206643532876309,
+              "vega_por_punto_iv": 0.06960758981094003,
+              "theta_por_dia": -0.03164078092825087,
+              "probabilidad_q_itm_al_vencimiento": 0.1747339756054742,
+              "cuantil_q_05": 94.87507041630356,
+              "cuantil_q_95": 111.9197036381689,
+              "masa_fronteras": 4.727676559649823e-147,
+              "error_media_financiera": 0.00012129220152701237,
+              "error_dualidad": 3.3306690738754696e-16
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 0.5717308127313255,
+            "precio_salida_asumido": 0.5317308127313255,
+            "pnl": -36.554841354575956,
+            "retorno_desembolso": -0.14820701928645588,
+            "retorno_capital_reservado": -0.1466610107374417,
+            "diagnostico_pde": {
+              "delta": 0.19559639253546224,
+              "gamma": 0.05120689096305695,
+              "vega_por_punto_iv": 0.05952675117726052,
+              "theta_por_dia": -0.047935474794542375,
+              "probabilidad_q_itm_al_vencimiento": 0.18156528226545454,
+              "cuantil_q_05": 94.48279712887827,
+              "cuantil_q_95": 112.24304546558079,
+              "masa_fronteras": 1.463566268191016e-138,
+              "error_media_financiera": 0.00012102683083980992,
+              "error_dualidad": 4.440892098500626e-16
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 0.5706128755381271,
+          "delta": 0.15676364371752052,
+          "gamma": 0.03347180188554239,
+          "vega_por_punto_iv": 0.06878214647677632,
+          "theta_por_dia": -0.02975809611069556,
+          "masa_fronteras": 4.6411356485225036e-85,
+          "error_media_financiera": 0.00011787317021116905
+        },
+        "capital_reservado": 249.24716644710617,
+        "pnl_objetivo": 94.75143830475415,
+        "retorno_objetivo": 0.38015051346576395,
+        "retorno_minimo_escenarios": -0.8680703011167265
+      },
+      {
+        "contrato": "C103-60d",
+        "strike": 103,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 2.9001179728668696,
+        "ask": 2.9801179728668696,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 298.6617972866869,
+        "efectivo_sobrante": 1.3382027133130805,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 0.6882027133131032,
+        "perdida_maxima_prima_y_entrada": 298.6617972866869,
+        "perdida_maxima_costos_asumidos": 299.3117972866869,
+        "pnl_minimo_escenarios": -140.48143690236353,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 4.102368769506564,
+            "precio_salida_asumido": 4.062368769506564,
+            "pnl": 106.92507966396948,
+            "retorno_desembolso": 0.35801391619341116,
+            "retorno_capital_reservado": 0.3572364358280021,
+            "diagnostico_pde": {
+              "delta": 0.5343645364385128,
+              "gamma": 0.04044173650188031,
+              "vega_por_punto_iv": 0.15564433531473523,
+              "theta_por_dia": -0.04033062756512346,
+              "probabilidad_q_itm_al_vencimiento": 0.49741644310472255,
+              "cuantil_q_05": 88.00576951200418,
+              "cuantil_q_95": 120.40004633598267,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00012223988751713932,
+              "error_dualidad": 8.881784197001252e-16
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 2.6832459873438452,
+            "precio_salida_asumido": 2.643245987343845,
+            "pnl": -34.9871985523024,
+            "retorno_desembolso": -0.11714654793534916,
+            "retorno_capital_reservado": -0.11689214681635471,
+            "diagnostico_pde": {
+              "delta": 0.4115332061055219,
+              "gamma": 0.04079923747444179,
+              "vega_por_punto_iv": 0.14802669183016293,
+              "theta_por_dia": -0.03766291949849365,
+              "probabilidad_q_itm_al_vencimiento": 0.3756715282372367,
+              "cuantil_q_05": 85.4424946718487,
+              "cuantil_q_95": 116.89324886988608,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011867950243527048,
+              "error_dualidad": 8.881784197001252e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 1.628303603843234,
+            "precio_salida_asumido": 1.5883036038432339,
+            "pnl": -140.48143690236353,
+            "retorno_desembolso": -0.47036962269236837,
+            "retorno_capital_reservado": -0.469348145231334,
+            "diagnostico_pde": {
+              "delta": 0.2935555830660122,
+              "gamma": 0.03722498400409068,
+              "vega_por_punto_iv": 0.12709318165229713,
+              "theta_por_dia": -0.0319039420684108,
+              "probabilidad_q_itm_al_vencimiento": 0.2621647819311702,
+              "cuantil_q_05": 82.87921983169325,
+              "cuantil_q_95": 113.3864514037895,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011511911736761249,
+              "error_dualidad": 6.661338147750939e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 3.3241594949885114,
+            "precio_salida_asumido": 3.2841594949885113,
+            "pnl": 29.10415221216425,
+            "retorno_desembolso": 0.0974485269846114,
+            "retorno_capital_reservado": 0.09723690304224028,
+            "diagnostico_pde": {
+              "delta": 0.5346652875098817,
+              "gamma": 0.05055426701573958,
+              "vega_por_punto_iv": 0.15562817628116457,
+              "theta_por_dia": -0.03307343769512146,
+              "probabilidad_q_itm_al_vencimiento": 0.5053183872191487,
+              "cuantil_q_05": 90.9556371840476,
+              "cuantil_q_95": 116.87693978990458,
+              "masa_fronteras": 8.83978830233865e-77,
+              "error_media_financiera": 0.00012243783918108875,
+              "error_dualidad": 2.6645352591003757e-15
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 3.810805469891135,
+            "precio_salida_asumido": 3.770805469891135,
+            "pnl": 77.76874970242659,
+            "retorno_desembolso": 0.2603906840745888,
+            "retorno_capital_reservado": 0.2598252070496844,
+            "diagnostico_pde": {
+              "delta": 0.5320891719387425,
+              "gamma": 0.04344462099185371,
+              "vega_por_punto_iv": 0.1451123582910628,
+              "theta_por_dia": -0.04306937618943274,
+              "probabilidad_q_itm_al_vencimiento": 0.4975931634629742,
+              "cuantil_q_05": 88.96085251901482,
+              "cuantil_q_95": 119.1268480891785,
+              "masa_fronteras": 3.618207565616444e-59,
+              "error_media_financiera": 0.00012196046634471713,
+              "error_dualidad": 8.881784197001252e-16
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 2.940057165227121,
+          "delta": 0.42091338663187267,
+          "gamma": 0.03853177420058384,
+          "vega_por_punto_iv": 0.15826606459357187,
+          "theta_por_dia": -0.03576425080980281,
+          "masa_fronteras": 7.403993074592323e-47,
+          "error_media_financiera": 0.00011897347783929035
+        },
+        "capital_reservado": 299.3117972866869,
+        "pnl_objetivo": 106.92507966396948,
+        "retorno_objetivo": 0.3572364358280021,
+        "retorno_minimo_escenarios": -0.469348145231334
+      },
+      {
+        "contrato": "C105-60d",
+        "strike": 105,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 2.2104173992085046,
+        "ask": 2.2904173992085046,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 229.69173992085047,
+        "efectivo_sobrante": 70.30826007914953,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 69.65826007914953,
+        "perdida_maxima_prima_y_entrada": 229.69173992085047,
+        "perdida_maxima_costos_asumidos": 230.34173992085047,
+        "pnl_minimo_escenarios": -117.37421641883114,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 3.1933441269187415,
+            "precio_salida_asumido": 3.1533441269187414,
+            "pnl": 84.9926727710237,
+            "retorno_desembolso": 0.37002929578708993,
+            "retorno_capital_reservado": 0.3689851122954472,
+            "diagnostico_pde": {
+              "delta": 0.45409338223166446,
+              "gamma": 0.04033767738045749,
+              "vega_por_punto_iv": 0.15526067357478468,
+              "theta_por_dia": -0.03972856847493134,
+              "probabilidad_q_itm_al_vencimiento": 0.4174487895412611,
+              "cuantil_q_05": 88.00576951200418,
+              "cuantil_q_95": 120.40004633598267,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00012223988751713932,
+              "error_dualidad": 1.3322676295501878e-15
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 2.010814492770735,
+            "precio_salida_asumido": 1.9708144927707352,
+            "pnl": -33.260290643776955,
+            "retorno_desembolso": -0.14480403455186558,
+            "retorno_capital_reservado": -0.14439541289913754,
+            "diagnostico_pde": {
+              "delta": 0.33531919928884535,
+              "gamma": 0.03822470943008438,
+              "vega_por_punto_iv": 0.1386918581728417,
+              "theta_por_dia": -0.034971539555042834,
+              "probabilidad_q_itm_al_vencimiento": 0.3019497109029994,
+              "cuantil_q_05": 85.4424946718487,
+              "cuantil_q_95": 116.89324886988608,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011867950243527048,
+              "error_dualidad": 1.3322676295501878e-15
+            }
+          },
+          "baja": {
+            "valor_teorico": 1.1696752350201933,
+            "precio_salida_asumido": 1.1296752350201933,
+            "pnl": -117.37421641883114,
+            "retorno_desembolso": -0.5110075636994049,
+            "retorno_capital_reservado": -0.5095655544633944,
+            "diagnostico_pde": {
+              "delta": 0.22821691246234635,
+              "gamma": 0.0326902519945401,
+              "vega_por_punto_iv": 0.11163535486022744,
+              "theta_por_dia": -0.027839807654803508,
+              "probabilidad_q_itm_al_vencimiento": 0.20085240651415193,
+              "cuantil_q_05": 82.87921983169325,
+              "cuantil_q_95": 113.3864514037895,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011511911736761249,
+              "error_dualidad": 2.220446049250313e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 2.419395595595358,
+            "precio_salida_asumido": 2.379395595595358,
+            "pnl": 7.597819638685337,
+            "retorno_desembolso": 0.03307833203450621,
+            "retorno_capital_reservado": 0.03298498848405019,
+            "diagnostico_pde": {
+              "delta": 0.43447873178550744,
+              "gamma": 0.05007898895790689,
+              "vega_por_punto_iv": 0.15419168011842324,
+              "theta_por_dia": -0.03213883000045815,
+              "probabilidad_q_itm_al_vencimiento": 0.40550954512805526,
+              "cuantil_q_05": 90.9556371840476,
+              "cuantil_q_95": 116.87693978990458,
+              "masa_fronteras": 8.83978830233865e-77,
+              "error_media_financiera": 0.00012243783918108875,
+              "error_dualidad": 4.884981308350689e-15
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 2.906567682198956,
+            "precio_salida_asumido": 2.866567682198956,
+            "pnl": 56.31502829904514,
+            "retorno_desembolso": 0.24517654974641556,
+            "retorno_capital_reservado": 0.24448468748389235,
+            "diagnostico_pde": {
+              "delta": 0.4459485535585797,
+              "gamma": 0.043197779259345835,
+              "vega_por_punto_iv": 0.1443060447477293,
+              "theta_por_dia": -0.04229350583369643,
+              "probabilidad_q_itm_al_vencimiento": 0.4118436173530844,
+              "cuantil_q_05": 88.96085251901482,
+              "cuantil_q_95": 119.1268480891785,
+              "masa_fronteras": 3.618207565616444e-59,
+              "error_media_financiera": 0.00012196046634471713,
+              "error_dualidad": 1.3322676295501878e-15
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 2.250452593877278,
+          "delta": 0.34861690051052113,
+          "gamma": 0.03645225390882441,
+          "vega_por_punto_iv": 0.14972959033996822,
+          "theta_por_dia": -0.03352688863145624,
+          "masa_fronteras": 7.403993074592323e-47,
+          "error_media_financiera": 0.00011897347783929035
+        },
+        "capital_reservado": 230.34173992085047,
+        "pnl_objetivo": 84.9926727710237,
+        "retorno_objetivo": 0.3689851122954472,
+        "retorno_minimo_escenarios": -0.5095655544633944
+      },
+      {
+        "contrato": "C108-60d",
+        "strike": 108,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.4185187163276578,
+        "ask": 1.4985187163276579,
+        "multiplicador": 100,
+        "contratos": 1,
+        "desembolso": 150.50187163276578,
+        "efectivo_sobrante": 149.49812836723422,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 148.8481283672342,
+        "perdida_maxima_prima_y_entrada": 150.50187163276578,
+        "perdida_maxima_costos_asumidos": 151.1518716327658,
+        "pnl_minimo_escenarios": -86.7029994549168,
+        "escenarios": {
+          "objetivo": {
+            "valor_teorico": 2.1165488734035898,
+            "precio_salida_asumido": 2.0765488734035897,
+            "pnl": 56.50301570759319,
+            "retorno_desembolso": 0.37543065142381865,
+            "retorno_capital_reservado": 0.3738161830034846,
+            "diagnostico_pde": {
+              "delta": 0.3406403662202507,
+              "gamma": 0.037332742972569104,
+              "vega_por_punto_iv": 0.14372176304313897,
+              "theta_por_dia": -0.03626121920812298,
+              "probabilidad_q_itm_al_vencimiento": 0.307050551819932,
+              "cuantil_q_05": 88.00576951200418,
+              "cuantil_q_95": 120.40004633598267,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00012223988751713932,
+              "error_dualidad": 1.3322676295501878e-15
+            }
+          },
+          "sin_subida": {
+            "valor_teorico": 1.2560929162355041,
+            "precio_salida_asumido": 1.216092916235504,
+            "pnl": -29.542580009215385,
+            "retorno_desembolso": -0.19629377155721475,
+            "retorno_capital_reservado": -0.19544964736520884,
+            "diagnostico_pde": {
+              "delta": 0.2355375779686292,
+              "gamma": 0.03227102507731861,
+              "vega_por_punto_iv": 0.11712748102294322,
+              "theta_por_dia": -0.029230478398272478,
+              "probabilidad_q_itm_al_vencimiento": 0.20766251338039832,
+              "cuantil_q_05": 85.4424946718487,
+              "cuantil_q_95": 116.89324886988608,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011867950243527048,
+              "error_dualidad": 4.440892098500626e-16
+            }
+          },
+          "baja": {
+            "valor_teorico": 0.6844887217784897,
+            "precio_salida_asumido": 0.6444887217784897,
+            "pnl": -86.7029994549168,
+            "retorno_desembolso": -0.5760924998094222,
+            "retorno_capital_reservado": -0.573615123109874,
+            "diagnostico_pde": {
+              "delta": 0.14912621899511572,
+              "gamma": 0.025110609514739254,
+              "vega_por_punto_iv": 0.08577824819730123,
+              "theta_por_dia": -0.021227116778238384,
+              "probabilidad_q_itm_al_vencimiento": 0.12834286170221776,
+              "cuantil_q_05": 82.87921983169325,
+              "cuantil_q_95": 113.3864514037895,
+              "masa_fronteras": 2.828924446123099e-52,
+              "error_media_financiera": 0.00011511911736761249,
+              "error_dualidad": 1.1102230246251565e-16
+            }
+          },
+          "cae_iv": {
+            "valor_teorico": 1.416197010076343,
+            "precio_salida_asumido": 1.376197010076343,
+            "pnl": -13.5321706251315,
+            "retorno_desembolso": -0.08991363680945352,
+            "retorno_capital_reservado": -0.08952698024149426,
+            "diagnostico_pde": {
+              "delta": 0.2965822115142795,
+              "gamma": 0.04402203749032182,
+              "vega_por_punto_iv": 0.1355841522929239,
+              "theta_por_dia": -0.027687948779491153,
+              "probabilidad_q_itm_al_vencimiento": 0.27130987800430384,
+              "cuantil_q_05": 90.9556371840476,
+              "cuantil_q_95": 116.87693978990458,
+              "masa_fronteras": 8.83978830233865e-77,
+              "error_media_financiera": 0.00012243783918108875,
+              "error_dualidad": 6.661338147750939e-16
+            }
+          },
+          "llega_tarde": {
+            "valor_teorico": 1.8567470299075883,
+            "precio_salida_asumido": 1.8167470299075883,
+            "pnl": 30.522831357993027,
+            "retorno_desembolso": 0.20280698855673165,
+            "retorno_capital_reservado": 0.2019348555084413,
+            "diagnostico_pde": {
+              "delta": 0.3252586801926321,
+              "gamma": 0.039353830858652745,
+              "vega_por_punto_iv": 0.1314939416944201,
+              "theta_por_dia": -0.03800800367654761,
+              "probabilidad_q_itm_al_vencimiento": 0.29448911812153367,
+              "cuantil_q_05": 88.96085251901482,
+              "cuantil_q_95": 119.1268480891785,
+              "masa_fronteras": 3.618207565616444e-59,
+              "error_media_financiera": 0.00012196046634471713,
+              "error_dualidad": 1.7763568394002505e-15
+            }
+          }
+        },
+        "sensibilidad_entrada": {
+          "valor_modelo": 1.45873592263445,
+          "delta": 0.2524808135055051,
+          "gamma": 0.03148469705986783,
+          "vega_por_punto_iv": 0.12936203105008479,
+          "theta_por_dia": -0.028659546296846042,
+          "masa_fronteras": 7.403993074592323e-47,
+          "error_media_financiera": 0.00011897347783929035
+        },
+        "capital_reservado": 151.1518716327658,
+        "pnl_objetivo": 56.50301570759319,
+        "retorno_objetivo": 0.3738161830034846,
+        "retorno_minimo_escenarios": -0.573615123109874
+      }
+    ],
+    "excluidos": [
+      {
+        "contrato": "C100-30d",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C100-60d",
+        "motivo": "no cabe en presupuesto"
+      }
+    ],
+    "probabilidades": "no estimadas",
+    "motor": "pde",
+    "rankings": {
+      "ganancia_objetivo": [
+        "C103-14d",
+        "C100-14d",
+        "C105-30d",
+        "C103-60d",
+        "C108-30d",
+        "C103-30d",
+        "C105-60d",
+        "C105-14d",
+        "C108-60d",
+        "C108-14d"
+      ],
+      "retorno_objetivo": [
+        "C100-14d",
+        "C103-14d",
+        "C103-30d",
+        "C105-30d",
+        "C108-30d",
+        "C108-60d",
+        "C105-60d",
+        "C103-60d",
+        "C105-14d",
+        "C108-14d"
+      ],
+      "robustez": [
+        "C108-60d",
+        "C105-60d",
+        "C103-30d",
+        "C103-60d",
+        "C100-14d",
+        "C105-30d",
+        "C108-30d",
+        "C103-14d",
+        "C105-14d",
+        "C108-14d"
+      ]
+    },
+    "presupuesto": 300,
+    "limite_perdida": 300,
+    "escenario_objetivo": "objetivo",
+    "criterio_robusto": "maximizar mínimo PnL de la lista; efectivo tiene PnL cero",
+    "alternativa_robusta": "efectivo",
+    "pnl_robusto_con_efectivo": 0.0,
+    "costos": {
+      "comision_por_contrato_y_lado": 0.65,
+      "semispread_salida_por_unidad": 0.04
+    },
+    "malla": {
+      "nodos": 801,
+      "pasos": 1200,
+      "semiancho": 1.5
+    },
+    "fuente_cotizaciones": "Black–Scholes sintético +/- 0.04; ninguna cotización real",
+    "tolerancias_numericas": {
+      "masa_fronteras": 1e-06,
+      "error_momento_sobre_spot": 0.001
+    },
+    "alcance": "europeo, IV plana por contrato; rankings condicionados, no pronóstico",
+    "posiciones": [
+      {
+        "contrato": "C103-14d",
+        "strike": 103,
+        "dte": 14,
+        "es_call": true,
+        "cantidad": 3,
+        "multiplicador": 100,
+        "prima_por_contrato": 90.11551975665186,
+        "capital_reservado_por_contrato": 91.41551975665186,
+        "prima_total": 270.3465592699556,
+        "desembolso_entrada": 272.2965592699556,
+        "reserva_comision_cierre": 1.9500000000000002,
+        "capital_reservado": 274.2465592699556,
+        "efectivo_libre": 25.753440730044417,
+        "uso_presupuesto": 0.9141551975665186,
+        "perdida_maxima_costos_asumidos": 274.2465592699556,
+        "pnl_minimo_escenarios": -274.2465592699556,
+        "sensibilidad_posicion": {
+          "delta": 86.45080130159012,
+          "gamma": 20.91130829231767,
+          "vega_por_punto_iv": 20.038000314552086,
+          "theta_por_dia": -18.502933964952643
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 49.509604817797765,
+            "pnl_posicion": 148.5288144533933,
+            "capital_final_incluyendo_caja": 448.5288144533933,
+            "retorno_presupuesto": 0.49509604817797764,
+            "retorno_capital_reservado": 0.5415886159110876
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -55.93150986516276,
+            "pnl_posicion": -167.79452959548829,
+            "capital_final_incluyendo_caja": 132.20547040451171,
+            "retorno_presupuesto": -0.5593150986516277,
+            "retorno_capital_reservado": -0.6118382306861292
+          },
+          "baja": {
+            "pnl_por_contrato": -89.30233487652191,
+            "pnl_posicion": -267.90700462956573,
+            "capital_final_incluyendo_caja": 32.09299537043427,
+            "retorno_presupuesto": -0.8930233487652192,
+            "retorno_capital_reservado": -0.9768837404660035
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 21.099359062122158,
+            "pnl_posicion": 63.29807718636647,
+            "capital_final_incluyendo_caja": 363.29807718636647,
+            "retorno_presupuesto": 0.21099359062122156,
+            "retorno_capital_reservado": 0.23080718808238093
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": -91.41551975665186,
+            "pnl_posicion": -274.2465592699556,
+            "capital_final_incluyendo_caja": 25.753440730044417,
+            "retorno_presupuesto": -0.9141551975665186,
+            "retorno_capital_reservado": -1.0
+          }
+        }
+      },
+      {
+        "contrato": "C100-14d",
+        "strike": 100,
+        "dte": 14,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 204.32797411757173,
+        "capital_reservado_por_contrato": 205.62797411757174,
+        "prima_total": 204.32797411757173,
+        "desembolso_entrada": 204.97797411757173,
+        "reserva_comision_cierre": 0.65,
+        "capital_reservado": 205.62797411757174,
+        "efectivo_libre": 94.37202588242826,
+        "uso_presupuesto": 0.6854265803919058,
+        "perdida_maxima_costos_asumidos": 205.62797411757174,
+        "pnl_minimo_escenarios": -173.05794543335168,
+        "sensibilidad_posicion": {
+          "delta": 51.79445286648722,
+          "gamma": 8.144028866958848,
+          "vega_por_punto_iv": 7.798427451706245,
+          "theta_por_dia": -7.324083162749863
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 132.89373576007787,
+            "pnl_posicion": 132.89373576007787,
+            "capital_final_incluyendo_caja": 432.8937357600779,
+            "retorno_presupuesto": 0.44297911920025956,
+            "retorno_capital_reservado": 0.6462823763662299
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -68.9239696763585,
+            "pnl_posicion": -68.9239696763585,
+            "capital_final_incluyendo_caja": 231.0760303236415,
+            "retorno_presupuesto": -0.22974656558786166,
+            "retorno_capital_reservado": -0.33518770961070643
+          },
+          "baja": {
+            "pnl_por_contrato": -173.05794543335168,
+            "pnl_posicion": -173.05794543335168,
+            "capital_final_incluyendo_caja": 126.94205456664832,
+            "retorno_presupuesto": -0.5768598181111723,
+            "retorno_capital_reservado": -0.8416070146876148
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 115.40397020638764,
+            "pnl_posicion": 115.40397020638764,
+            "capital_final_incluyendo_caja": 415.4039702063876,
+            "retorno_presupuesto": 0.3846799006879588,
+            "retorno_capital_reservado": 0.5612269959942474
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 94.37202588242829,
+            "pnl_posicion": 94.37202588242829,
+            "capital_final_incluyendo_caja": 394.37202588242826,
+            "retorno_presupuesto": 0.3145734196080943,
+            "retorno_capital_reservado": 0.45894546346339665
+          }
+        }
+      },
+      {
+        "contrato": "C105-30d",
+        "strike": 105,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 2,
+        "multiplicador": 100,
+        "prima_por_contrato": 117.86412002267916,
+        "capital_reservado_por_contrato": 119.16412002267917,
+        "prima_total": 235.72824004535832,
+        "desembolso_entrada": 237.02824004535833,
+        "reserva_comision_cierre": 1.3,
+        "capital_reservado": 238.32824004535834,
+        "efectivo_libre": 61.67175995464166,
+        "uso_presupuesto": 0.7944274668178611,
+        "perdida_maxima_costos_asumidos": 238.32824004535834,
+        "pnl_minimo_escenarios": -180.33331883453673,
+        "sensibilidad_posicion": {
+          "delta": 53.85429536408648,
+          "gamma": 9.211129397462017,
+          "vega_por_punto_iv": 18.918086794226394,
+          "theta_por_dia": -8.25626943921601
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 55.8256371864817,
+            "pnl_posicion": 111.6512743729634,
+            "capital_final_incluyendo_caja": 411.65127437296337,
+            "retorno_presupuesto": 0.37217091457654466,
+            "retorno_capital_reservado": 0.46847689703794254
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -38.98725393118207,
+            "pnl_posicion": -77.97450786236413,
+            "capital_final_incluyendo_caja": 222.02549213763587,
+            "retorno_presupuesto": -0.25991502620788043,
+            "retorno_capital_reservado": -0.3271727590801834
+          },
+          "baja": {
+            "pnl_por_contrato": -90.16665941726836,
+            "pnl_posicion": -180.33331883453673,
+            "capital_final_incluyendo_caja": 119.66668116546327,
+            "retorno_presupuesto": -0.601111062781789,
+            "retorno_capital_reservado": -0.7566594659542483
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 6.351010432496537,
+            "pnl_posicion": 12.702020864993074,
+            "capital_final_incluyendo_caja": 312.7020208649931,
+            "retorno_presupuesto": 0.04234006954997691,
+            "retorno_capital_reservado": 0.05329633140653261
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 12.790137777862284,
+            "pnl_posicion": 25.58027555572457,
+            "capital_final_incluyendo_caja": 325.5802755557246,
+            "retorno_presupuesto": 0.08526758518574856,
+            "retorno_capital_reservado": 0.10733212124109237
+          }
+        }
+      },
+      {
+        "contrato": "C103-60d",
+        "strike": 103,
+        "dte": 60,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 298.01179728668694,
+        "capital_reservado_por_contrato": 299.3117972866869,
+        "prima_total": 298.01179728668694,
+        "desembolso_entrada": 298.6617972866869,
+        "reserva_comision_cierre": 0.65,
+        "capital_reservado": 299.3117972866869,
+        "efectivo_libre": 0.6882027133131032,
+        "uso_presupuesto": 0.997705990955623,
+        "perdida_maxima_costos_asumidos": 299.3117972866869,
+        "pnl_minimo_escenarios": -140.48143690236353,
+        "sensibilidad_posicion": {
+          "delta": 42.091338663187265,
+          "gamma": 3.8531774200583837,
+          "vega_por_punto_iv": 15.826606459357187,
+          "theta_por_dia": -3.576425080980281
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 106.92507966396948,
+            "pnl_posicion": 106.92507966396948,
+            "capital_final_incluyendo_caja": 406.9250796639695,
+            "retorno_presupuesto": 0.3564169322132316,
+            "retorno_capital_reservado": 0.3572364358280021
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -34.9871985523024,
+            "pnl_posicion": -34.9871985523024,
+            "capital_final_incluyendo_caja": 265.0128014476976,
+            "retorno_presupuesto": -0.11662399517434134,
+            "retorno_capital_reservado": -0.11689214681635471
+          },
+          "baja": {
+            "pnl_por_contrato": -140.48143690236353,
+            "pnl_posicion": -140.48143690236353,
+            "capital_final_incluyendo_caja": 159.51856309763647,
+            "retorno_presupuesto": -0.46827145634121176,
+            "retorno_capital_reservado": -0.469348145231334
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 29.10415221216425,
+            "pnl_posicion": 29.10415221216425,
+            "capital_final_incluyendo_caja": 329.10415221216425,
+            "retorno_presupuesto": 0.09701384070721417,
+            "retorno_capital_reservado": 0.09723690304224028
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 77.76874970242659,
+            "pnl_posicion": 77.76874970242659,
+            "capital_final_incluyendo_caja": 377.7687497024266,
+            "retorno_presupuesto": 0.2592291656747553,
+            "retorno_capital_reservado": 0.2598252070496844
+          }
+        }
+      },
+      {
+        "contrato": "C108-30d",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 4,
+        "multiplicador": 100,
+        "prima_por_contrato": 61.011791611776545,
+        "capital_reservado_por_contrato": 62.31179161177654,
+        "prima_total": 244.04716644710618,
+        "desembolso_entrada": 246.64716644710617,
+        "reserva_comision_cierre": 2.6,
+        "capital_reservado": 249.24716644710617,
+        "efectivo_libre": 50.75283355289383,
+        "uso_presupuesto": 0.8308238881570206,
+        "perdida_maxima_costos_asumidos": 249.24716644710617,
+        "pnl_minimo_escenarios": -216.3640628302303,
+        "sensibilidad_posicion": {
+          "delta": 62.70545748700821,
+          "gamma": 13.388720754216957,
+          "vega_por_punto_iv": 27.512858590710525,
+          "theta_por_dia": -11.903238444278225
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 23.687859576188536,
+            "pnl_posicion": 94.75143830475415,
+            "capital_final_incluyendo_caja": 394.7514383047542,
+            "retorno_presupuesto": 0.3158381276825138,
+            "retorno_capital_reservado": 0.38015051346576395
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -29.681257326180486,
+            "pnl_posicion": -118.72502930472194,
+            "capital_final_incluyendo_caja": 181.27497069527806,
+            "retorno_presupuesto": -0.3957500976824065,
+            "retorno_capital_reservado": -0.4763345196540764
+          },
+          "baja": {
+            "pnl_por_contrato": -54.091015707557574,
+            "pnl_posicion": -216.3640628302303,
+            "capital_final_incluyendo_caja": 83.6359371697697,
+            "retorno_presupuesto": -0.7212135427674343,
+            "retorno_capital_reservado": -0.8680703011167265
+          },
+          "cae_iv": {
+            "pnl_por_contrato": -14.15892671898471,
+            "pnl_posicion": -56.63570687593884,
+            "capital_final_incluyendo_caja": 243.36429312406116,
+            "retorno_presupuesto": -0.1887856895864628,
+            "retorno_capital_reservado": -0.22722708419619184
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": -9.138710338643989,
+            "pnl_posicion": -36.554841354575956,
+            "capital_final_incluyendo_caja": 263.44515864542404,
+            "retorno_presupuesto": -0.12184947118191986,
+            "retorno_capital_reservado": -0.1466610107374417
+          }
+        }
+      },
+      {
+        "contrato": "C103-30d",
+        "strike": 103,
+        "dte": 30,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 175.88937351317574,
+        "capital_reservado_por_contrato": 177.18937351317575,
+        "prima_total": 175.88937351317574,
+        "desembolso_entrada": 176.53937351317575,
+        "reserva_comision_cierre": 0.65,
+        "capital_reservado": 177.18937351317575,
+        "efectivo_libre": 122.81062648682425,
+        "uso_presupuesto": 0.5906312450439192,
+        "perdida_maxima_costos_asumidos": 177.18937351317575,
+        "pnl_minimo_escenarios": -121.56642243232517,
+        "sensibilidad_posicion": {
+          "delta": 36.43692974198166,
+          "gamma": 5.239528182890132,
+          "vega_por_punto_iv": 10.759575023159728,
+          "theta_por_dia": -4.733968829704104
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 85.07058409392675,
+            "pnl_posicion": 85.07058409392675,
+            "capital_final_incluyendo_caja": 385.07058409392675,
+            "retorno_presupuesto": 0.2835686136464225,
+            "retorno_capital_reservado": 0.4801110947412483
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -44.06436545234956,
+            "pnl_posicion": -44.06436545234956,
+            "capital_final_incluyendo_caja": 255.93563454765044,
+            "retorno_presupuesto": -0.14688121817449853,
+            "retorno_capital_reservado": -0.24868514730130217
+          },
+          "baja": {
+            "pnl_por_contrato": -121.56642243232517,
+            "pnl_posicion": -121.56642243232517,
+            "capital_final_incluyendo_caja": 178.43357756767483,
+            "retorno_presupuesto": -0.40522140810775054,
+            "retorno_capital_reservado": -0.6860819022156852
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 33.64139382825894,
+            "pnl_posicion": 33.64139382825894,
+            "capital_final_incluyendo_caja": 333.64139382825897,
+            "retorno_presupuesto": 0.1121379794275298,
+            "retorno_capital_reservado": 0.1898612380711272
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 39.78999540696728,
+            "pnl_posicion": 39.78999540696728,
+            "capital_final_incluyendo_caja": 339.78999540696725,
+            "retorno_presupuesto": 0.13263331802322426,
+            "retorno_capital_reservado": 0.22456197354300428
+          }
+        }
+      },
+      {
+        "contrato": "C105-60d",
+        "strike": 105,
+        "dte": 60,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 229.04173992085046,
+        "capital_reservado_por_contrato": 230.34173992085047,
+        "prima_total": 229.04173992085046,
+        "desembolso_entrada": 229.69173992085047,
+        "reserva_comision_cierre": 0.65,
+        "capital_reservado": 230.34173992085047,
+        "efectivo_libre": 69.65826007914953,
+        "uso_presupuesto": 0.7678057997361682,
+        "perdida_maxima_costos_asumidos": 230.34173992085047,
+        "pnl_minimo_escenarios": -117.37421641883114,
+        "sensibilidad_posicion": {
+          "delta": 34.861690051052115,
+          "gamma": 3.645225390882441,
+          "vega_por_punto_iv": 14.97295903399682,
+          "theta_por_dia": -3.352688863145624
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 84.9926727710237,
+            "pnl_posicion": 84.9926727710237,
+            "capital_final_incluyendo_caja": 384.9926727710237,
+            "retorno_presupuesto": 0.2833089092367457,
+            "retorno_capital_reservado": 0.3689851122954472
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -33.260290643776955,
+            "pnl_posicion": -33.260290643776955,
+            "capital_final_incluyendo_caja": 266.73970935622305,
+            "retorno_presupuesto": -0.11086763547925652,
+            "retorno_capital_reservado": -0.14439541289913754
+          },
+          "baja": {
+            "pnl_por_contrato": -117.37421641883114,
+            "pnl_posicion": -117.37421641883114,
+            "capital_final_incluyendo_caja": 182.62578358116886,
+            "retorno_presupuesto": -0.3912473880627705,
+            "retorno_capital_reservado": -0.5095655544633944
+          },
+          "cae_iv": {
+            "pnl_por_contrato": 7.597819638685337,
+            "pnl_posicion": 7.597819638685337,
+            "capital_final_incluyendo_caja": 307.59781963868534,
+            "retorno_presupuesto": 0.025326065462284456,
+            "retorno_capital_reservado": 0.03298498848405019
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 56.31502829904514,
+            "pnl_posicion": 56.31502829904514,
+            "capital_final_incluyendo_caja": 356.31502829904514,
+            "retorno_presupuesto": 0.18771676099681714,
+            "retorno_capital_reservado": 0.24448468748389235
+          }
+        }
+      },
+      {
+        "contrato": "C105-14d",
+        "strike": 105,
+        "dte": 14,
+        "es_call": true,
+        "cantidad": 6,
+        "multiplicador": 100,
+        "prima_por_contrato": 47.747321682264484,
+        "capital_reservado_por_contrato": 49.04732168226448,
+        "prima_total": 286.48393009358693,
+        "desembolso_entrada": 290.3839300935869,
+        "reserva_comision_cierre": 3.9000000000000004,
+        "capital_reservado": 294.2839300935869,
+        "efectivo_libre": 5.716069906413111,
+        "uso_presupuesto": 0.9809464336452897,
+        "perdida_maxima_costos_asumidos": 294.2839300935869,
+        "pnl_minimo_escenarios": -294.2839300935869,
+        "sensibilidad_posicion": {
+          "delta": 102.42357875937438,
+          "gamma": 31.071055444324706,
+          "vega_por_punto_iv": 29.793422454511067,
+          "theta_por_dia": -27.33176120352379
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 13.806243466877476,
+            "pnl_posicion": 82.83746080126485,
+            "capital_final_incluyendo_caja": 382.83746080126485,
+            "retorno_presupuesto": 0.27612486933754954,
+            "retorno_capital_reservado": 0.2814882238894976
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -39.796811682984405,
+            "pnl_posicion": -238.78087009790642,
+            "capital_final_incluyendo_caja": 61.219129902093584,
+            "retorno_presupuesto": -0.795936233659688,
+            "retorno_capital_reservado": -0.8113962254818684
+          },
+          "baja": {
+            "pnl_por_contrato": -49.04732168226448,
+            "pnl_posicion": -294.2839300935869,
+            "capital_final_incluyendo_caja": 5.716069906413111,
+            "retorno_presupuesto": -0.9809464336452897,
+            "retorno_capital_reservado": -1.0
+          },
+          "cae_iv": {
+            "pnl_por_contrato": -10.089555889816333,
+            "pnl_posicion": -60.537335338898004,
+            "capital_final_incluyendo_caja": 239.462664661102,
+            "retorno_presupuesto": -0.2017911177963267,
+            "retorno_capital_reservado": -0.2057106391084494
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": -49.04732168226448,
+            "pnl_posicion": -294.2839300935869,
+            "capital_final_incluyendo_caja": 5.716069906413111,
+            "retorno_presupuesto": -0.9809464336452897,
+            "retorno_capital_reservado": -1.0
+          }
+        }
+      },
+      {
+        "contrato": "C108-60d",
+        "strike": 108,
+        "dte": 60,
+        "es_call": true,
+        "cantidad": 1,
+        "multiplicador": 100,
+        "prima_por_contrato": 149.85187163276578,
+        "capital_reservado_por_contrato": 151.1518716327658,
+        "prima_total": 149.85187163276578,
+        "desembolso_entrada": 150.50187163276578,
+        "reserva_comision_cierre": 0.65,
+        "capital_reservado": 151.1518716327658,
+        "efectivo_libre": 148.8481283672342,
+        "uso_presupuesto": 0.5038395721092193,
+        "perdida_maxima_costos_asumidos": 151.1518716327658,
+        "pnl_minimo_escenarios": -86.7029994549168,
+        "sensibilidad_posicion": {
+          "delta": 25.24808135055051,
+          "gamma": 3.148469705986783,
+          "vega_por_punto_iv": 12.93620310500848,
+          "theta_por_dia": -2.8659546296846043
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": 56.50301570759319,
+            "pnl_posicion": 56.50301570759319,
+            "capital_final_incluyendo_caja": 356.5030157075932,
+            "retorno_presupuesto": 0.1883433856919773,
+            "retorno_capital_reservado": 0.3738161830034846
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -29.542580009215385,
+            "pnl_posicion": -29.542580009215385,
+            "capital_final_incluyendo_caja": 270.4574199907846,
+            "retorno_presupuesto": -0.09847526669738461,
+            "retorno_capital_reservado": -0.19544964736520884
+          },
+          "baja": {
+            "pnl_por_contrato": -86.7029994549168,
+            "pnl_posicion": -86.7029994549168,
+            "capital_final_incluyendo_caja": 213.2970005450832,
+            "retorno_presupuesto": -0.289009998183056,
+            "retorno_capital_reservado": -0.573615123109874
+          },
+          "cae_iv": {
+            "pnl_por_contrato": -13.5321706251315,
+            "pnl_posicion": -13.5321706251315,
+            "capital_final_incluyendo_caja": 286.46782937486853,
+            "retorno_presupuesto": -0.045107235417105,
+            "retorno_capital_reservado": -0.08952698024149426
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": 30.522831357993027,
+            "pnl_posicion": 30.522831357993027,
+            "capital_final_incluyendo_caja": 330.522831357993,
+            "retorno_presupuesto": 0.10174277119331009,
+            "retorno_capital_reservado": 0.2019348555084413
+          }
+        }
+      },
+      {
+        "contrato": "C108-14d",
+        "strike": 108,
+        "dte": 14,
+        "es_call": true,
+        "cantidad": 16,
+        "multiplicador": 100,
+        "prima_por_contrato": 17.254595327285568,
+        "capital_reservado_por_contrato": 18.554595327285565,
+        "prima_total": 276.0735252365691,
+        "desembolso_entrada": 286.47352523656906,
+        "reserva_comision_cierre": 10.4,
+        "capital_reservado": 296.87352523656904,
+        "efectivo_libre": 3.126474763430963,
+        "uso_presupuesto": 0.9895784174552301,
+        "perdida_maxima_costos_asumidos": 296.87352523656904,
+        "pnl_minimo_escenarios": -296.87352523656904,
+        "sensibilidad_posicion": {
+          "delta": 101.61784899886639,
+          "gamma": 40.62071710838228,
+          "vega_por_punto_iv": 38.98791484243189,
+          "theta_por_dia": -35.54230828519745
+        },
+        "escenarios": {
+          "objetivo": {
+            "pnl_por_contrato": -7.675826317610396,
+            "pnl_posicion": -122.81322108176633,
+            "capital_final_incluyendo_caja": 177.18677891823367,
+            "retorno_presupuesto": -0.40937740360588776,
+            "retorno_capital_reservado": -0.4136886944832834
+          },
+          "sin_subida": {
+            "pnl_por_contrato": -18.554595327285565,
+            "pnl_posicion": -296.87352523656904,
+            "capital_final_incluyendo_caja": 3.126474763430963,
+            "retorno_presupuesto": -0.9895784174552301,
+            "retorno_capital_reservado": -1.0
+          },
+          "baja": {
+            "pnl_por_contrato": -18.554595327285565,
+            "pnl_posicion": -296.87352523656904,
+            "capital_final_incluyendo_caja": 3.126474763430963,
+            "retorno_presupuesto": -0.9895784174552301,
+            "retorno_capital_reservado": -1.0
+          },
+          "cae_iv": {
+            "pnl_por_contrato": -17.02960459544908,
+            "pnl_posicion": -272.47367352718527,
+            "capital_final_incluyendo_caja": 27.52632647281473,
+            "retorno_presupuesto": -0.9082455784239509,
+            "retorno_capital_reservado": -0.9178106175350588
+          },
+          "llega_tarde": {
+            "pnl_por_contrato": -18.554595327285565,
+            "pnl_posicion": -296.87352523656904,
+            "capital_final_incluyendo_caja": 3.126474763430963,
+            "retorno_presupuesto": -0.9895784174552301,
+            "retorno_capital_reservado": -1.0
+          }
+        }
+      }
+    ],
+    "comparacion_presupuesto": {
+      "criterio_principal": "PnL neto total en el escenario objetivo; mismo presupuesto",
+      "mejor_en_objetivo_incluyendo_caja": "C103-14d",
+      "pnl_mejor_en_objetivo_incluyendo_caja": 148.5288144533933,
+      "efectivo": {
+        "capital_inicial": 300,
+        "capital_final": 300,
+        "pnl": 0.0
+      },
+      "politica_cantidad": "máximo entero por serie dentro de presupuesto, pérdida y límites de cantidad",
+      "mezcla_series": false,
+      "probabilidades_escenarios": "no estimadas",
+      "unidades_sensibilidad": {
+        "delta": "USD de posición por USD de cambio en spot",
+        "gamma": "USD de posición por USD² de cambio en spot; término cuadrático 0.5*gamma*dS²",
+        "vega_por_punto_iv": "USD de posición por punto porcentual de IV",
+        "theta_por_dia": "USD de posición por día transcurrido"
+      }
+    }
+  },
+  "entrada": {
+    "spot": 100,
+    "contratos": [
+      {
+        "identificador": "C100-14d",
+        "strike": 100,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.9632797411757172,
+        "ask": 2.0432797411757173,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C103-14d",
+        "strike": 103,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.8211551975665186,
+        "ask": 0.9011551975665186,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C105-14d",
+        "strike": 105,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.3974732168226449,
+        "ask": 0.4774732168226449,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C108-14d",
+        "strike": 108,
+        "dte": 14,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.09254595327285567,
+        "ask": 0.17254595327285568,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C100-30d",
+        "strike": 100,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 2.9245841802537447,
+        "ask": 3.0045841802537447,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C103-30d",
+        "strike": 103,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.6788937351317574,
+        "ask": 1.7588937351317575,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C105-30d",
+        "strike": 105,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.0986412002267916,
+        "ask": 1.1786412002267916,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C108-30d",
+        "strike": 108,
+        "dte": 30,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 0.5301179161177654,
+        "ask": 0.6101179161177654,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C100-60d",
+        "strike": 100,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 4.209221096844275,
+        "ask": 4.289221096844275,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C103-60d",
+        "strike": 103,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 2.9001179728668696,
+        "ask": 2.9801179728668696,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C105-60d",
+        "strike": 105,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 2.2104173992085046,
+        "ask": 2.2904173992085046,
+        "multiplicador": 100
+      },
+      {
+        "identificador": "C108-60d",
+        "strike": 108,
+        "dte": 60,
+        "es_call": true,
+        "ejercicio": "europeo",
+        "iv": 0.25,
+        "bid": 1.4185187163276578,
+        "ask": 1.4985187163276579,
+        "multiplicador": 100
+      }
+    ],
+    "escenarios": [
+      {
+        "nombre": "objetivo",
+        "dias": 7,
+        "retorno_spot": 0.03,
+        "cambio_iv": 0
+      },
+      {
+        "nombre": "sin_subida",
+        "dias": 7,
+        "retorno_spot": 0,
+        "cambio_iv": 0
+      },
+      {
+        "nombre": "baja",
+        "dias": 7,
+        "retorno_spot": -0.03,
+        "cambio_iv": 0
+      },
+      {
+        "nombre": "cae_iv",
+        "dias": 7,
+        "retorno_spot": 0.03,
+        "cambio_iv": -0.05
+      },
+      {
+        "nombre": "llega_tarde",
+        "dias": 14,
+        "retorno_spot": 0.03,
+        "cambio_iv": 0
+      }
+    ],
+    "comision": 0.65,
+    "semispread_salida": 0.04,
+    "tasa": 0.04,
+    "q": 0.013,
+    "fuente_cotizaciones": "Black–Scholes sintético +/- 0.04; ninguna cotización real"
+  },
+  "refinamiento": {
+    "max_cambio_pnl": 4.240756946935107,
+    "mismo_primero": true,
+    "mismos_rankings": true,
+    "mismos_candidatos": true
+  },
+  "sha256_fuentes_lf": {
+    "experiments/presupuesto_20261016/demo.py": "0598e2077d54d1c570b56281d5bd42c66ff4a0e78f044ab0a3befd2fe66bedc7",
+    "quantileflow/posiciones.py": "60ea88355c1d11650c5e05feb9e0118eea46aae5fb6e7f6f68a98186b3ba0808",
+    "quantileflow/comparador.py": "271025528c3f8ea05709f157fb744baa669897bf2c14a6f592e761af4c84a24d",
+    "quantileflow/escenarios.py": "455f2a2d7e011baf0492664181ddfa1f298b7a098ce9ad67de9a50d20c492364",
+    "quantileflow/distribucion_pde.py": "7b2b7ef428620e24fbf0459a92e7485a02e90bfd9479a60a96affbd0cf6391c8",
+    "quantileflow/pde.py": "48f9aea807f1c914c6f14c46b719529a4338652208a3d5deda1ee47496b91315"
+  }
+}

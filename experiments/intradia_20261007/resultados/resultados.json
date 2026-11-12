@@ -1,0 +1,3919 @@
+{
+  "fechas": [
+    "2026-10-02",
+    "2026-10-05",
+    "2026-10-06"
+  ],
+  "raiz_residuos": "SPXW",
+  "feed": "indicative",
+  "codigo_captura": "4ffde8a",
+  "hipotesis": "Exploracion descriptiva; no se prueba prediccion ni se calculan p-valores.",
+  "pares_todos_base": 3900,
+  "pares_cerca_base": 2215,
+  "resumen_cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "n": 110,
+      "fuera": 43,
+      "fraccion_fuera": 0.39090909090909093,
+      "residuo_abs_mediana": 0.7957958394844553,
+      "multiplo_medio_ancho_mediana": 0.6500565167573482,
+      "ancho_mediana": 1.4300000000000015,
+      "edad_mediana": 5.9286079999983485,
+      "desfase_patas_mediana": 0.6516745000008086,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "n": 321,
+      "fuera": 134,
+      "fraccion_fuera": 0.4174454828660436,
+      "residuo_abs_mediana": 1.8228895942920644,
+      "multiplo_medio_ancho_mediana": 0.7221902379907736,
+      "ancho_mediana": 5.009999999999977,
+      "edad_mediana": 6.873692000001029,
+      "desfase_patas_mediana": 1.0139339999950607,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "n": 110,
+      "fuera": 47,
+      "fraccion_fuera": 0.42727272727272725,
+      "residuo_abs_mediana": 0.8658873992886384,
+      "multiplo_medio_ancho_mediana": 0.7353661883411582,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.843513499999972,
+      "desfase_patas_mediana": 0.49194149999675574,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "n": 322,
+      "fuera": 140,
+      "fraccion_fuera": 0.43478260869565216,
+      "residuo_abs_mediana": 1.9743742185451278,
+      "multiplo_medio_ancho_mediana": 0.7626019419290835,
+      "ancho_mediana": 4.7299999999999915,
+      "edad_mediana": 6.155692000000272,
+      "desfase_patas_mediana": 0.4999115000027814,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "n": 94,
+      "fuera": 40,
+      "fraccion_fuera": 0.425531914893617,
+      "residuo_abs_mediana": 0.6310504393939667,
+      "multiplo_medio_ancho_mediana": 0.6353264315892759,
+      "ancho_mediana": 1.8900000000000114,
+      "edad_mediana": 5.630191000000195,
+      "desfase_patas_mediana": 0.4322905000044557,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "n": 216,
+      "fuera": 62,
+      "fraccion_fuera": 0.28703703703703703,
+      "residuo_abs_mediana": 2.0502980089709553,
+      "multiplo_medio_ancho_mediana": 0.535223782447371,
+      "ancho_mediana": 7.219999999999992,
+      "edad_mediana": 5.756586499999685,
+      "desfase_patas_mediana": 0.4118914999962726,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "n": 96,
+      "fuera": 34,
+      "fraccion_fuera": 0.3541666666666667,
+      "residuo_abs_mediana": 1.0044877852129517,
+      "multiplo_medio_ancho_mediana": 0.6133677966478668,
+      "ancho_mediana": 3.2099999999999933,
+      "edad_mediana": 5.224683000000368,
+      "desfase_patas_mediana": 0.26910599999973783,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "n": 216,
+      "fuera": 55,
+      "fraccion_fuera": 0.25462962962962965,
+      "residuo_abs_mediana": 1.594658815102484,
+      "multiplo_medio_ancho_mediana": 0.4932604648289487,
+      "ancho_mediana": 6.680000000000007,
+      "edad_mediana": 9.316697000002023,
+      "desfase_patas_mediana": 4.015811000001122,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "n": 87,
+      "fuera": 46,
+      "fraccion_fuera": 0.5287356321839081,
+      "residuo_abs_mediana": 0.6547072673909291,
+      "multiplo_medio_ancho_mediana": 1.3050228300364741,
+      "ancho_mediana": 1.1099999999999943,
+      "edad_mediana": 5.955710000002,
+      "desfase_patas_mediana": 0.6565929999997024,
+      "excluidos_estimacion": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "n": 276,
+      "fuera": 98,
+      "fraccion_fuera": 0.35507246376811596,
+      "residuo_abs_mediana": 1.7109676888517527,
+      "multiplo_medio_ancho_mediana": 0.7284892552464934,
+      "ancho_mediana": 4.900000000000013,
+      "edad_mediana": 6.053029000002425,
+      "desfase_patas_mediana": 1.0204865000014252,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "n": 94,
+      "fuera": 50,
+      "fraccion_fuera": 0.5319148936170213,
+      "residuo_abs_mediana": 0.8364462313002647,
+      "multiplo_medio_ancho_mediana": 1.165045986839414,
+      "ancho_mediana": 1.3000000000000103,
+      "edad_mediana": 5.711982000000717,
+      "desfase_patas_mediana": 0.46719650000159163,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "n": 273,
+      "fuera": 86,
+      "fraccion_fuera": 0.315018315018315,
+      "residuo_abs_mediana": 1.9507112455906963,
+      "multiplo_medio_ancho_mediana": 0.5680722452245128,
+      "ancho_mediana": 6.729999999999997,
+      "edad_mediana": 5.37171600000147,
+      "desfase_patas_mediana": 0.09906000000046333,
+      "excluidos_estimacion": 0
+    }
+  ],
+  "calidad": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 30,
+      "fuera": 2,
+      "fraccion_fuera": 0.06666666666666667,
+      "residuo_abs_mediana": 1.8052555390137144,
+      "multiplo_medio_ancho_mediana": 0.23980818422252664,
+      "ancho_mediana": 17.08499999999998,
+      "edad_mediana": 23.246710999999777,
+      "desfase_patas_mediana": 15.105223499998829,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 80,
+      "fuera": 41,
+      "fraccion_fuera": 0.5125,
+      "residuo_abs_mediana": 0.4972333720635014,
+      "multiplo_medio_ancho_mediana": 1.0277441087213277,
+      "ancho_mediana": 0.8695000000000035,
+      "edad_mediana": 5.884202500001265,
+      "desfase_patas_mediana": 0.46397150000120746,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 100,
+      "fuera": 41,
+      "fraccion_fuera": 0.41,
+      "residuo_abs_mediana": 2.529607455423644,
+      "multiplo_medio_ancho_mediana": 0.6757911511433337,
+      "ancho_mediana": 6.454999999999995,
+      "edad_mediana": 10.851433499999985,
+      "desfase_patas_mediana": 4.906793499998457,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 221,
+      "fuera": 93,
+      "fraccion_fuera": 0.42081447963800905,
+      "residuo_abs_mediana": 1.6500029888203755,
+      "multiplo_medio_ancho_mediana": 0.7319969056087606,
+      "ancho_mediana": 4.100000000000023,
+      "edad_mediana": 6.347584000002826,
+      "desfase_patas_mediana": 0.5296220000018366,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 13,
+      "fuera": 8,
+      "fraccion_fuera": 0.6153846153846154,
+      "residuo_abs_mediana": 1.3535758425983317,
+      "multiplo_medio_ancho_mediana": 1.1925099412868527,
+      "ancho_mediana": 1.9799999999999955,
+      "edad_mediana": 8.498480000002019,
+      "desfase_patas_mediana": 3.3484609999941313,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 97,
+      "fuera": 39,
+      "fraccion_fuera": 0.4020618556701031,
+      "residuo_abs_mediana": 0.7276920977051873,
+      "multiplo_medio_ancho_mediana": 0.7179929220331389,
+      "ancho_mediana": 1.349999999999983,
+      "edad_mediana": 5.826345000001311,
+      "desfase_patas_mediana": 0.40191600000252947,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 3,
+      "fuera": 1,
+      "fraccion_fuera": 0.3333333333333333,
+      "residuo_abs_mediana": 3.011871012479162,
+      "multiplo_medio_ancho_mediana": 0.43879223034597725,
+      "ancho_mediana": 17.62999999999999,
+      "edad_mediana": 7.2316569999966305,
+      "desfase_patas_mediana": 2.153218999999808,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 319,
+      "fuera": 139,
+      "fraccion_fuera": 0.43573667711598746,
+      "residuo_abs_mediana": 1.9722042023300617,
+      "multiplo_medio_ancho_mediana": 0.7654964261135586,
+      "ancho_mediana": 4.699999999999989,
+      "edad_mediana": 6.150486999998975,
+      "desfase_patas_mediana": 0.49845099999947706,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 9,
+      "fuera": 1,
+      "fraccion_fuera": 0.1111111111111111,
+      "residuo_abs_mediana": 1.3866668732748622,
+      "multiplo_medio_ancho_mediana": 0.19021704005117915,
+      "ancho_mediana": 17.070000000000018,
+      "edad_mediana": 8.174848000002385,
+      "desfase_patas_mediana": 2.9140709999992396,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 85,
+      "fuera": 39,
+      "fraccion_fuera": 0.4588235294117647,
+      "residuo_abs_mediana": 0.5932484844769874,
+      "multiplo_medio_ancho_mediana": 0.7405908594897249,
+      "ancho_mediana": 1.6800000000000017,
+      "edad_mediana": 5.615355000001728,
+      "desfase_patas_mediana": 0.3720220000031986,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 4,
+      "fuera": 0,
+      "fraccion_fuera": 0.0,
+      "residuo_abs_mediana": 4.599357457107288,
+      "multiplo_medio_ancho_mediana": 0.411954100166654,
+      "ancho_mediana": 24.75999999999999,
+      "edad_mediana": 8.418896499999391,
+      "desfase_patas_mediana": 3.054141000000527,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 212,
+      "fuera": 62,
+      "fraccion_fuera": 0.29245283018867924,
+      "residuo_abs_mediana": 2.0239059104418713,
+      "multiplo_medio_ancho_mediana": 0.5613007859081904,
+      "ancho_mediana": 7.054999999999987,
+      "edad_mediana": 5.756434999999328,
+      "desfase_patas_mediana": 0.34816349999891827,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 5,
+      "fuera": 1,
+      "fraccion_fuera": 0.2,
+      "residuo_abs_mediana": 3.921033141508275,
+      "multiplo_medio_ancho_mediana": 0.650254252323098,
+      "ancho_mediana": 12.059999999999983,
+      "edad_mediana": 8.34415699999954,
+      "desfase_patas_mediana": 3.1194140000006882,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 91,
+      "fuera": 33,
+      "fraccion_fuera": 0.3626373626373626,
+      "residuo_abs_mediana": 0.952270549284691,
+      "multiplo_medio_ancho_mediana": 0.6050238612302996,
+      "ancho_mediana": 2.9299999999999953,
+      "edad_mediana": 5.224683000000368,
+      "desfase_patas_mediana": 0.24756300000444753,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 173,
+      "fuera": 45,
+      "fraccion_fuera": 0.26011560693641617,
+      "residuo_abs_mediana": 1.7580580785406141,
+      "multiplo_medio_ancho_mediana": 0.49215507384582446,
+      "ancho_mediana": 7.329999999999977,
+      "edad_mediana": 10.352288000001863,
+      "desfase_patas_mediana": 4.230089000004227,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 43,
+      "fuera": 10,
+      "fraccion_fuera": 0.23255813953488372,
+      "residuo_abs_mediana": 1.3720891754771998,
+      "multiplo_medio_ancho_mediana": 0.5458245262092409,
+      "ancho_mediana": 4.799999999999983,
+      "edad_mediana": 5.693027000001166,
+      "desfase_patas_mediana": 0.0734840000004624,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 17,
+      "fuera": 8,
+      "fraccion_fuera": 0.47058823529411764,
+      "residuo_abs_mediana": 2.080039169161296,
+      "multiplo_medio_ancho_mediana": 0.5614417273418205,
+      "ancho_mediana": 2.9300000000000033,
+      "edad_mediana": 12.189015000003565,
+      "desfase_patas_mediana": 6.476945999995223,
+      "excluidos_estimacion": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 70,
+      "fuera": 38,
+      "fraccion_fuera": 0.5428571428571428,
+      "residuo_abs_mediana": 0.5762329654204308,
+      "multiplo_medio_ancho_mediana": 1.4352222997784396,
+      "ancho_mediana": 0.8599999999999995,
+      "edad_mediana": 5.767191499999171,
+      "desfase_patas_mediana": 0.4769369999994524,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 123,
+      "fuera": 36,
+      "fraccion_fuera": 0.2926829268292683,
+      "residuo_abs_mediana": 2.012033391400621,
+      "multiplo_medio_ancho_mediana": 0.5396228759242268,
+      "ancho_mediana": 7.310000000000045,
+      "edad_mediana": 15.81674799999746,
+      "desfase_patas_mediana": 8.009422000002814,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 153,
+      "fuera": 62,
+      "fraccion_fuera": 0.40522875816993464,
+      "residuo_abs_mediana": 1.4513106550663082,
+      "multiplo_medio_ancho_mediana": 0.867896327836149,
+      "ancho_mediana": 3.589999999999989,
+      "edad_mediana": 6.005063999997219,
+      "desfase_patas_mediana": 0.28934599999774946,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": false,
+      "n": 15,
+      "fuera": 1,
+      "fraccion_fuera": 0.06666666666666667,
+      "residuo_abs_mediana": 1.5411080847606229,
+      "multiplo_medio_ancho_mediana": 0.17691527276996358,
+      "ancho_mediana": 17.919999999999984,
+      "edad_mediana": 49.65784200000053,
+      "desfase_patas_mediana": 42.63025000000198,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "0DTE",
+      "fresco": true,
+      "n": 79,
+      "fuera": 49,
+      "fraccion_fuera": 0.620253164556962,
+      "residuo_abs_mediana": 0.7654483566742982,
+      "multiplo_medio_ancho_mediana": 1.7115811048787226,
+      "ancho_mediana": 1.109999999999996,
+      "edad_mediana": 5.71010699999897,
+      "desfase_patas_mediana": 0.3732209999943734,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": false,
+      "n": 2,
+      "fuera": 1,
+      "fraccion_fuera": 0.5,
+      "residuo_abs_mediana": 4.179321365795033,
+      "multiplo_medio_ancho_mediana": 0.5491882731404568,
+      "ancho_mediana": 22.42500000000004,
+      "edad_mediana": 43.711114000001544,
+      "desfase_patas_mediana": 38.34008200000244,
+      "excluidos_estimacion": 0
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "segmento": "plazo_mensual",
+      "fresco": true,
+      "n": 271,
+      "fuera": 85,
+      "fraccion_fuera": 0.31365313653136534,
+      "residuo_abs_mediana": 1.9507112455906963,
+      "multiplo_medio_ancho_mediana": 0.5680722452245128,
+      "ancho_mediana": 6.679999999999978,
+      "edad_mediana": 5.3703610000011395,
+      "desfase_patas_mediana": 0.09905499999877065,
+      "excluidos_estimacion": 0
+    }
+  ],
+  "cambios": [
+    {
+      "fecha": "2026-10-02",
+      "segmento": "0DTE",
+      "pares_comunes": 108,
+      "fuera_0945": 42,
+      "fuera_1000": 45,
+      "persisten_mismo_signo": 16,
+      "regresan_a_banda": 17,
+      "cambian_signo_fuera": 9,
+      "delta_abs_mediana": 0.9732517121552746,
+      "cambio_supera_bandas": 31,
+      "frescos_en_ambos": 72,
+      "fraccion_persistente_condicional": 0.38095238095238093
+    },
+    {
+      "fecha": "2026-10-02",
+      "segmento": "plazo_mensual",
+      "pares_comunes": 319,
+      "fuera_0945": 132,
+      "fuera_1000": 138,
+      "persisten_mismo_signo": 35,
+      "regresan_a_banda": 72,
+      "cambian_signo_fuera": 25,
+      "delta_abs_mediana": 2.4021660682556103,
+      "cambio_supera_bandas": 72,
+      "frescos_en_ambos": 219,
+      "fraccion_persistente_condicional": 0.26515151515151514
+    },
+    {
+      "fecha": "2026-10-05",
+      "segmento": "0DTE",
+      "pares_comunes": 91,
+      "fuera_0945": 40,
+      "fuera_1000": 32,
+      "persisten_mismo_signo": 9,
+      "regresan_a_banda": 22,
+      "cambian_signo_fuera": 9,
+      "delta_abs_mediana": 1.483305714806903,
+      "cambio_supera_bandas": 17,
+      "frescos_en_ambos": 79,
+      "fraccion_persistente_condicional": 0.225
+    },
+    {
+      "fecha": "2026-10-05",
+      "segmento": "plazo_mensual",
+      "pares_comunes": 216,
+      "fuera_0945": 62,
+      "fuera_1000": 55,
+      "persisten_mismo_signo": 8,
+      "regresan_a_banda": 47,
+      "cambian_signo_fuera": 7,
+      "delta_abs_mediana": 2.349970411763838,
+      "cambio_supera_bandas": 21,
+      "frescos_en_ambos": 43,
+      "fraccion_persistente_condicional": 0.12903225806451613
+    },
+    {
+      "fecha": "2026-10-06",
+      "segmento": "0DTE",
+      "pares_comunes": 87,
+      "fuera_0945": 46,
+      "fuera_1000": 48,
+      "persisten_mismo_signo": 15,
+      "regresan_a_banda": 22,
+      "cambian_signo_fuera": 9,
+      "delta_abs_mediana": 0.7576756505843321,
+      "cambio_supera_bandas": 31,
+      "frescos_en_ambos": 65,
+      "fraccion_persistente_condicional": 0.32608695652173914
+    },
+    {
+      "fecha": "2026-10-06",
+      "segmento": "plazo_mensual",
+      "pares_comunes": 270,
+      "fuera_0945": 98,
+      "fuera_1000": 85,
+      "persisten_mismo_signo": 13,
+      "regresan_a_banda": 68,
+      "cambian_signo_fuera": 17,
+      "delta_abs_mediana": 2.6160344219569183,
+      "cambio_supera_bandas": 43,
+      "frescos_en_ambos": 153,
+      "fraccion_persistente_condicional": 0.1326530612244898
+    }
+  ],
+  "sensibilidad": [
+    {
+      "escenario": "base",
+      "segmento": "0DTE",
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.784564466646259,
+      "multiplo_medio_ancho_mediana": 0.7579369202108048,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "escenario": "base",
+      "segmento": "plazo_mensual",
+      "n": 1624,
+      "fuera": 575,
+      "fraccion_fuera": 0.354064039408867,
+      "residuo_abs_mediana": 1.8706905800912956,
+      "multiplo_medio_ancho_mediana": 0.6467731464754529,
+      "ancho_mediana": 5.530000000000017,
+      "edad_mediana": 6.078269500001625,
+      "desfase_patas_mediana": 0.5526964999990014,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "edad10_gap2",
+      "segmento": "0DTE",
+      "n": 502,
+      "fuera": 243,
+      "fraccion_fuera": 0.48406374501992033,
+      "residuo_abs_mediana": 0.6233301342704145,
+      "multiplo_medio_ancho_mediana": 0.9310235138929097,
+      "ancho_mediana": 1.2499999999999887,
+      "edad_mediana": 5.643675499999517,
+      "desfase_patas_mediana": 0.38093900000239955,
+      "excluidos_estimacion": 4
+    },
+    {
+      "escenario": "edad10_gap2",
+      "segmento": "plazo_mensual",
+      "n": 1219,
+      "fuera": 449,
+      "fraccion_fuera": 0.36833470057424117,
+      "residuo_abs_mediana": 1.8085754395088145,
+      "multiplo_medio_ancho_mediana": 0.6483654630817568,
+      "ancho_mediana": 5.099999999999994,
+      "edad_mediana": 5.851285999997344,
+      "desfase_patas_mediana": 0.30176299999584444,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "edad30_gap5",
+      "segmento": "0DTE",
+      "n": 542,
+      "fuera": 252,
+      "fraccion_fuera": 0.46494464944649444,
+      "residuo_abs_mediana": 0.7011054888768715,
+      "multiplo_medio_ancho_mediana": 0.8631006569769955,
+      "ancho_mediana": 1.3250000000000017,
+      "edad_mediana": 5.69984100000147,
+      "desfase_patas_mediana": 0.4265294999968319,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "edad30_gap5",
+      "segmento": "plazo_mensual",
+      "n": 1415,
+      "fuera": 503,
+      "fraccion_fuera": 0.35547703180212015,
+      "residuo_abs_mediana": 1.805889782793571,
+      "multiplo_medio_ancho_mediana": 0.6451572035737864,
+      "ancho_mediana": 5.339000000000027,
+      "edad_mediana": 6.00803299999825,
+      "desfase_patas_mediana": 0.4219730000040727,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "tasa_fija_3",
+      "segmento": "0DTE",
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.7842230315569481,
+      "multiplo_medio_ancho_mediana": 0.7575858439668322,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "escenario": "tasa_fija_3",
+      "segmento": "plazo_mensual",
+      "n": 1625,
+      "fuera": 631,
+      "fraccion_fuera": 0.3883076923076923,
+      "residuo_abs_mediana": 2.025166336018742,
+      "multiplo_medio_ancho_mediana": 0.6985748160467922,
+      "ancho_mediana": 5.530000000000001,
+      "edad_mediana": 6.07809200000338,
+      "desfase_patas_mediana": 0.553937999997288,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "tasa_fija_4",
+      "segmento": "0DTE",
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.784564466646259,
+      "multiplo_medio_ancho_mediana": 0.7579369202108048,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "escenario": "tasa_fija_4",
+      "segmento": "plazo_mensual",
+      "n": 1625,
+      "fuera": 621,
+      "fraccion_fuera": 0.3821538461538462,
+      "residuo_abs_mediana": 1.953112620705312,
+      "multiplo_medio_ancho_mediana": 0.6776177061739475,
+      "ancho_mediana": 5.530000000000001,
+      "edad_mediana": 6.07809200000338,
+      "desfase_patas_mediana": 0.553937999997288,
+      "excluidos_estimacion": 0
+    },
+    {
+      "escenario": "tasa_fija_5",
+      "segmento": "0DTE",
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.7859843461130822,
+      "multiplo_medio_ancho_mediana": 0.7582879939526914,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "escenario": "tasa_fija_5",
+      "segmento": "plazo_mensual",
+      "n": 1625,
+      "fuera": 614,
+      "fraccion_fuera": 0.37784615384615383,
+      "residuo_abs_mediana": 1.8959253515975547,
+      "multiplo_medio_ancho_mediana": 0.6608166578398207,
+      "ancho_mediana": 5.530000000000001,
+      "edad_mediana": 6.07809200000338,
+      "desfase_patas_mediana": 0.5536409999986063,
+      "excluidos_estimacion": 0
+    }
+  ],
+  "seleccion_vs_reajuste": [
+    {
+      "segmento": "0DTE",
+      "todos_base": {
+        "n": 591,
+        "fuera": 260,
+        "fraccion_fuera": 0.43993231810490696,
+        "residuo_abs_mediana": 0.784564466646259,
+        "multiplo_medio_ancho_mediana": 0.7579369202108048,
+        "ancho_mediana": 1.3900000000000114,
+        "edad_mediana": 5.723385999997845,
+        "desfase_patas_mediana": 0.4690919999993639,
+        "excluidos_estimacion": 1
+      },
+      "seleccion_frescos_sin_reajustar": {
+        "n": 502,
+        "fuera": 239,
+        "fraccion_fuera": 0.4760956175298805,
+        "residuo_abs_mediana": 0.6275524247072539,
+        "multiplo_medio_ancho_mediana": 0.9199138046408577,
+        "ancho_mediana": 1.2499999999999887,
+        "edad_mediana": 5.643675499999517,
+        "desfase_patas_mediana": 0.38093900000239955,
+        "excluidos_estimacion": 0
+      },
+      "cohorte_comun_base": {
+        "n": 502,
+        "fuera": 239,
+        "fraccion_fuera": 0.4760956175298805,
+        "residuo_abs_mediana": 0.6275524247072539,
+        "multiplo_medio_ancho_mediana": 0.9199138046408577,
+        "ancho_mediana": 1.2499999999999887,
+        "edad_mediana": 5.643675499999517,
+        "desfase_patas_mediana": 0.38093900000239955,
+        "excluidos_estimacion": 0
+      },
+      "cohorte_comun_reajustada": {
+        "n": 502,
+        "fuera": 243,
+        "fraccion_fuera": 0.48406374501992033,
+        "residuo_abs_mediana": 0.6233301342704145,
+        "multiplo_medio_ancho_mediana": 0.9310235138929097,
+        "ancho_mediana": 1.2499999999999887,
+        "edad_mediana": 5.643675499999517,
+        "desfase_patas_mediana": 0.38093900000239955,
+        "excluidos_estimacion": 4
+      },
+      "frescos_sin_estimacion_estricta": 0
+    },
+    {
+      "segmento": "plazo_mensual",
+      "todos_base": {
+        "n": 1624,
+        "fuera": 575,
+        "fraccion_fuera": 0.354064039408867,
+        "residuo_abs_mediana": 1.8706905800912956,
+        "multiplo_medio_ancho_mediana": 0.6467731464754529,
+        "ancho_mediana": 5.530000000000017,
+        "edad_mediana": 6.078269500001625,
+        "desfase_patas_mediana": 0.5526964999990014,
+        "excluidos_estimacion": 0
+      },
+      "seleccion_frescos_sin_reajustar": {
+        "n": 1219,
+        "fuera": 451,
+        "fraccion_fuera": 0.3699753896636587,
+        "residuo_abs_mediana": 1.8079493149610926,
+        "multiplo_medio_ancho_mediana": 0.6745168566269384,
+        "ancho_mediana": 5.099999999999994,
+        "edad_mediana": 5.851285999997344,
+        "desfase_patas_mediana": 0.30176299999584444,
+        "excluidos_estimacion": 0
+      },
+      "cohorte_comun_base": {
+        "n": 1219,
+        "fuera": 451,
+        "fraccion_fuera": 0.3699753896636587,
+        "residuo_abs_mediana": 1.8079493149610926,
+        "multiplo_medio_ancho_mediana": 0.6745168566269384,
+        "ancho_mediana": 5.099999999999994,
+        "edad_mediana": 5.851285999997344,
+        "desfase_patas_mediana": 0.30176299999584444,
+        "excluidos_estimacion": 0
+      },
+      "cohorte_comun_reajustada": {
+        "n": 1219,
+        "fuera": 449,
+        "fraccion_fuera": 0.36833470057424117,
+        "residuo_abs_mediana": 1.8085754395088145,
+        "multiplo_medio_ancho_mediana": 0.6483654630817568,
+        "ancho_mediana": 5.099999999999994,
+        "edad_mediana": 5.851285999997344,
+        "desfase_patas_mediana": 0.30176299999584444,
+        "excluidos_estimacion": 0
+      },
+      "frescos_sin_estimacion_estricta": 0
+    }
+  ],
+  "sensibilidad_tasa_cohorte_fija": [
+    {
+      "segmento": "0DTE",
+      "tasa_fija_porcentaje": 3,
+      "cohorte_base": 591,
+      "sin_estimacion": 0,
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.7842230315569481,
+      "multiplo_medio_ancho_mediana": 0.7575858439668322,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "segmento": "0DTE",
+      "tasa_fija_porcentaje": 4,
+      "cohorte_base": 591,
+      "sin_estimacion": 0,
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.784564466646259,
+      "multiplo_medio_ancho_mediana": 0.7579369202108048,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "segmento": "0DTE",
+      "tasa_fija_porcentaje": 5,
+      "cohorte_base": 591,
+      "sin_estimacion": 0,
+      "n": 591,
+      "fuera": 260,
+      "fraccion_fuera": 0.43993231810490696,
+      "residuo_abs_mediana": 0.7859843461130822,
+      "multiplo_medio_ancho_mediana": 0.7582879939526914,
+      "ancho_mediana": 1.3900000000000114,
+      "edad_mediana": 5.723385999997845,
+      "desfase_patas_mediana": 0.4690919999993639,
+      "excluidos_estimacion": 1
+    },
+    {
+      "segmento": "plazo_mensual",
+      "tasa_fija_porcentaje": 3,
+      "cohorte_base": 1624,
+      "sin_estimacion": 0,
+      "n": 1624,
+      "fuera": 629,
+      "fraccion_fuera": 0.3873152709359606,
+      "residuo_abs_mediana": 2.0216471975871713,
+      "multiplo_medio_ancho_mediana": 0.6967078100115063,
+      "ancho_mediana": 5.530000000000017,
+      "edad_mediana": 6.078269500001625,
+      "desfase_patas_mediana": 0.5526964999990014,
+      "excluidos_estimacion": 0
+    },
+    {
+      "segmento": "plazo_mensual",
+      "tasa_fija_porcentaje": 4,
+      "cohorte_base": 1624,
+      "sin_estimacion": 0,
+      "n": 1624,
+      "fuera": 619,
+      "fraccion_fuera": 0.3811576354679803,
+      "residuo_abs_mediana": 1.9501659673810021,
+      "multiplo_medio_ancho_mediana": 0.6774649508070714,
+      "ancho_mediana": 5.530000000000017,
+      "edad_mediana": 6.078269500001625,
+      "desfase_patas_mediana": 0.5526964999990014,
+      "excluidos_estimacion": 0
+    },
+    {
+      "segmento": "plazo_mensual",
+      "tasa_fija_porcentaje": 5,
+      "cohorte_base": 1624,
+      "sin_estimacion": 0,
+      "n": 1624,
+      "fuera": 612,
+      "fraccion_fuera": 0.3768472906403941,
+      "residuo_abs_mediana": 1.8957639711135528,
+      "multiplo_medio_ancho_mediana": 0.6603838325335423,
+      "ancho_mediana": 5.530000000000017,
+      "edad_mediana": 6.078269500001625,
+      "desfase_patas_mediana": 0.5526964999990014,
+      "excluidos_estimacion": 0
+    }
+  ],
+  "correlaciones_por_cadena": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "n": 110,
+      "rho_absres_edad": 0.476735170806937,
+      "rho_absres_desfase": 0.37465004620967923,
+      "rho_absres_ancho": 0.3624945336985139,
+      "rho_absz_ancho": -0.7120051575264744
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "n": 66,
+      "rho_absres_edad": 0.3702559399353369,
+      "rho_absres_desfase": 0.3967644296002506,
+      "rho_absres_ancho": 0.18288278885293813,
+      "rho_absz_ancho": -0.5046028598267406
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "n": 155,
+      "rho_absres_edad": 0.3348812627651209,
+      "rho_absres_desfase": 0.2940575553478779,
+      "rho_absres_ancho": 0.32745533088781337,
+      "rho_absz_ancho": -0.38183490998552677
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "n": 50,
+      "rho_absres_edad": 0.24207645052883398,
+      "rho_absres_desfase": 0.2569507803121248,
+      "rho_absres_ancho": -0.08388955582232892,
+      "rho_absz_ancho": -0.6749099639855942
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "n": 50,
+      "rho_absres_edad": 0.16275663462246112,
+      "rho_absres_desfase": 0.1000744315878269,
+      "rho_absres_ancho": 0.08264502506647954,
+      "rho_absz_ancho": -0.5180560897252651
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "n": 110,
+      "rho_absres_edad": 0.2215900383238531,
+      "rho_absres_desfase": 0.2341275387146947,
+      "rho_absres_ancho": 0.29797756661517505,
+      "rho_absz_ancho": -0.7104079130723873
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "n": 67,
+      "rho_absres_edad": 0.4004788986131019,
+      "rho_absres_desfase": 0.22763189400590633,
+      "rho_absres_ancho": 0.33855793119582656,
+      "rho_absz_ancho": -0.5184823058992372
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "n": 155,
+      "rho_absres_edad": 0.2991515585620793,
+      "rho_absres_desfase": 0.17951725693661175,
+      "rho_absres_ancho": 0.3058905042180413,
+      "rho_absz_ancho": -0.5019242931475947
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "n": 50,
+      "rho_absres_edad": 0.13891956782713086,
+      "rho_absres_desfase": -0.0757262905162065,
+      "rho_absres_ancho": -0.06597997552863444,
+      "rho_absz_ancho": -0.6849144039045946
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "n": 50,
+      "rho_absres_edad": 0.35357391544201994,
+      "rho_absres_desfase": 0.060168067226890755,
+      "rho_absres_ancho": 0.2023049219687875,
+      "rho_absz_ancho": -0.413781512605042
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "n": 94,
+      "rho_absres_edad": 0.37983938889572605,
+      "rho_absres_desfase": 0.18907701144150904,
+      "rho_absres_ancho": 0.3757436955430935,
+      "rho_absz_ancho": -0.6431814816129039
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "n": 54,
+      "rho_absres_edad": 0.38706234458226385,
+      "rho_absres_desfase": 0.0952544311034877,
+      "rho_absres_ancho": 0.3138174194777968,
+      "rho_absz_ancho": -0.5731656184486373
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "n": 54,
+      "rho_absres_edad": 0.1513389885839537,
+      "rho_absres_desfase": 0.107451877263198,
+      "rho_absres_ancho": 0.39066133028397176,
+      "rho_absz_ancho": -0.41764817991233083
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "n": 54,
+      "rho_absres_edad": 0.06115718484726982,
+      "rho_absres_desfase": 0.1398513436249285,
+      "rho_absres_ancho": 0.18955593672574803,
+      "rho_absz_ancho": -0.6093767867352772
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "n": 54,
+      "rho_absres_edad": 0.2173979345318639,
+      "rho_absres_desfase": 0.17186963979416808,
+      "rho_absres_ancho": 0.0678101772441395,
+      "rho_absz_ancho": -0.6869068038879359
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "n": 96,
+      "rho_absres_edad": 0.21459828025045516,
+      "rho_absres_desfase": 0.3107961000870705,
+      "rho_absres_ancho": 0.5586152637775775,
+      "rho_absz_ancho": -0.6050082749995133
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "n": 54,
+      "rho_absres_edad": 0.1112720622301439,
+      "rho_absres_desfase": 0.09205260148656375,
+      "rho_absres_ancho": 0.04021345530779493,
+      "rho_absz_ancho": -0.6192109777015437
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "n": 54,
+      "rho_absres_edad": -0.15579316548234318,
+      "rho_absres_desfase": -0.12243419926369341,
+      "rho_absres_ancho": 0.006899180484086144,
+      "rho_absz_ancho": -0.5836096817228891
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "n": 54,
+      "rho_absres_edad": 0.21445861243055117,
+      "rho_absres_desfase": 0.11629502572898798,
+      "rho_absres_ancho": 0.15456451305507907,
+      "rho_absz_ancho": -0.3153421002477606
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "n": 54,
+      "rho_absres_edad": 0.3697322040996894,
+      "rho_absres_desfase": 0.38796241597318537,
+      "rho_absres_ancho": 0.11644749380598435,
+      "rho_absz_ancho": -0.45858585858585854
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "n": 87,
+      "rho_absres_edad": 0.37183232416851175,
+      "rho_absres_desfase": 0.39274437169783133,
+      "rho_absres_ancho": 0.2763834215569568,
+      "rho_absz_ancho": -0.6525772837408068
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "n": 57,
+      "rho_absres_edad": 0.10371594828803476,
+      "rho_absres_desfase": 0.12561576354679804,
+      "rho_absres_ancho": -0.02268602540834846,
+      "rho_absz_ancho": -0.6718304381643765
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "n": 57,
+      "rho_absres_edad": 0.06242707170321193,
+      "rho_absres_desfase": 0.14253305677988076,
+      "rho_absres_ancho": -0.06235416126523205,
+      "rho_absz_ancho": -0.6395514648690693
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "n": 58,
+      "rho_absres_edad": -0.06109735310985996,
+      "rho_absres_desfase": -0.03485188716970686,
+      "rho_absres_ancho": 0.2544257655990989,
+      "rho_absz_ancho": -0.5656059185189978
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "n": 104,
+      "rho_absres_edad": 0.14464965950527267,
+      "rho_absres_desfase": 0.18223621039155022,
+      "rho_absres_ancho": 0.19874904980229244,
+      "rho_absz_ancho": -0.4748489658078015
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "n": 94,
+      "rho_absres_edad": 0.3607696966671547,
+      "rho_absres_desfase": 0.3418873813431807,
+      "rho_absres_ancho": 0.3087983484126286,
+      "rho_absz_ancho": -0.7114833021711717
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "n": 56,
+      "rho_absres_edad": -0.19503358367649212,
+      "rho_absres_desfase": 0.013875598086124404,
+      "rho_absres_ancho": 0.21278195488721807,
+      "rho_absz_ancho": -0.456390977443609
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "n": 56,
+      "rho_absres_edad": -0.28578287804315283,
+      "rho_absres_desfase": -0.16842105263157894,
+      "rho_absres_ancho": 0.14121667805878332,
+      "rho_absz_ancho": -0.4795625427204375
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "n": 58,
+      "rho_absres_edad": -0.05802362854768748,
+      "rho_absres_desfase": 0.0029222676797194622,
+      "rho_absres_ancho": 0.2514688240179643,
+      "rho_absz_ancho": -0.4804515672582977
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "n": 103,
+      "rho_absres_edad": -0.25960118078727995,
+      "rho_absres_desfase": -0.06974036814128191,
+      "rho_absres_ancho": 0.22819989731200466,
+      "rho_absz_ancho": -0.6095874049670569
+    }
+  ],
+  "rr25": [
+    {
+      "fecha": "2026-10-02",
+      "hora_a": "09:45",
+      "raiz": "SPXW",
+      "valor_a": -3.3649957235097756,
+      "inferior_a": -3.461431423238384,
+      "superior_a": -3.268546774515628,
+      "hora_b": "10:00",
+      "valor_b": -3.3609767147317435,
+      "inferior_b": -3.4537968505647694,
+      "superior_b": -3.268180322433613,
+      "cambio": 0.004019008778032074,
+      "cambio_inferior": -0.18525007604914157,
+      "cambio_superior": 0.19325110080477126,
+      "intervalos_separados": false
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora_a": "09:45",
+      "raiz": "SPY",
+      "valor_a": -3.497073003217345,
+      "inferior_a": -3.5437536379300956,
+      "superior_a": -3.4503985791757827,
+      "hora_b": "10:00",
+      "valor_b": -3.387707785805516,
+      "inferior_b": -3.467014486872609,
+      "superior_b": -3.3083675438131124,
+      "cambio": 0.10936521741182892,
+      "cambio_inferior": -0.016615907696826415,
+      "cambio_superior": 0.2353860941169832,
+      "intervalos_separados": false
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora_a": "09:45",
+      "raiz": "SPXW",
+      "valor_a": -3.590298873021375,
+      "inferior_a": -3.7831012318905914,
+      "superior_a": -3.397240665269384,
+      "hora_b": "10:00",
+      "valor_b": -3.537960253194479,
+      "inferior_b": -3.748791961087018,
+      "superior_b": -3.3276002152791238,
+      "cambio": 0.052338619826895805,
+      "cambio_inferior": -0.3515512958176341,
+      "cambio_superior": 0.4555010166114677,
+      "intervalos_separados": false
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora_a": "09:45",
+      "raiz": "SPY",
+      "valor_a": -3.5474618465029097,
+      "inferior_a": -3.6719606899697195,
+      "superior_a": -3.4229339537492716,
+      "hora_b": "10:00",
+      "valor_b": -3.2407307898929454,
+      "inferior_b": -3.3802264287316417,
+      "superior_b": -3.1010692320627475,
+      "cambio": 0.30673105660996436,
+      "cambio_inferior": 0.042707525017629866,
+      "cambio_superior": 0.5708914579069719,
+      "intervalos_separados": true
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora_a": "09:45",
+      "raiz": "SPXW",
+      "valor_a": -2.951641591303637,
+      "inferior_a": -3.078393318869388,
+      "superior_a": -2.8248859526856367,
+      "hora_b": "10:00",
+      "valor_b": -2.8950146914972956,
+      "inferior_b": -3.0198123544736473,
+      "superior_b": -2.77038408389048,
+      "cambio": 0.0566268998063415,
+      "cambio_inferior": -0.19492640178801057,
+      "cambio_superior": 0.3080092349789081,
+      "intervalos_separados": false
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora_a": "09:45",
+      "raiz": "SPY",
+      "valor_a": -3.0569182607929344,
+      "inferior_a": -3.158502355562301,
+      "superior_a": -2.9551355592548454,
+      "hora_b": "10:00",
+      "valor_b": -2.8872152388185315,
+      "inferior_b": -2.9902431512986993,
+      "superior_b": -2.784416286116219,
+      "cambio": 0.1697030219744029,
+      "cambio_inferior": -0.03510759204385394,
+      "cambio_superior": 0.3740860694460819,
+      "intervalos_separados": false
+    }
+  ],
+  "ajustes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 115,
+      "pares_estimables": 115,
+      "forward_global": 7743.685522229147,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7743.6881453321,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 80,
+      "pares_estimables": 80,
+      "forward_global": 7743.679885105552,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 115,
+      "pares_estimables": 115,
+      "forward_global": 7743.685331186259,
+      "tasa_estimada": 0.030000000000027276,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 115,
+      "pares_estimables": 115,
+      "forward_global": 7743.685522229147,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 115,
+      "pares_estimables": 115,
+      "forward_global": 7743.685713273397,
+      "tasa_estimada": 0.04999999999998433,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 121,
+      "pares_estimables": 121,
+      "forward_global": 7761.863169712281,
+      "tasa_estimada": 0.004321730862574182,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 83,
+      "pares_estimables": 83,
+      "forward_global": 7762.120355878901,
+      "tasa_estimada": 0.042001341387014585,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 53,
+      "pares_estimables": 53,
+      "forward_global": 7762.203160001387,
+      "tasa_estimada": 0.0535404324986194,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 121,
+      "pares_estimables": 121,
+      "forward_global": 7762.1350621228385,
+      "tasa_estimada": 0.02999999999999929,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 121,
+      "pares_estimables": 121,
+      "forward_global": 7762.234389544374,
+      "tasa_estimada": 0.03999999999999995,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 121,
+      "pares_estimables": 121,
+      "forward_global": 7762.3335053627225,
+      "tasa_estimada": 0.05,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 468,
+      "pares_estimables": 468,
+      "forward_global": 7765.719476982438,
+      "tasa_estimada": 0.14921016096373463,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 229,
+      "pares_estimables": 229,
+      "forward_global": 7766.44176514895,
+      "tasa_estimada": 0.075927068538364,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 148,
+      "pares_estimables": 148,
+      "forward_global": 7766.497830219197,
+      "tasa_estimada": 0.07838679218407131,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 468,
+      "pares_estimables": 468,
+      "forward_global": 7762.296320805138,
+      "tasa_estimada": 0.03000000000000017,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 468,
+      "pares_estimables": 468,
+      "forward_global": 7762.658878753255,
+      "tasa_estimada": 0.04000000000000045,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 468,
+      "pares_estimables": 468,
+      "forward_global": 7763.0287896813215,
+      "tasa_estimada": 0.04999999999999985,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 97,
+      "pares_estimables": 97,
+      "forward_global": 7766.446778284803,
+      "tasa_estimada": -0.004711581634678807,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 52,
+      "pares_estimables": 52,
+      "forward_global": 7766.245864076608,
+      "tasa_estimada": -0.029022949627786034,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 43,
+      "pares_estimables": 43,
+      "forward_global": 7766.327462852402,
+      "tasa_estimada": -0.02819521449573982,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 97,
+      "pares_estimables": 97,
+      "forward_global": 7766.825662576157,
+      "tasa_estimada": 0.030000000000000554,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 97,
+      "pares_estimables": 97,
+      "forward_global": 7766.939807433033,
+      "tasa_estimada": 0.040000000000000646,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 97,
+      "pares_estimables": 97,
+      "forward_global": 7767.054050221533,
+      "tasa_estimada": 0.04999999999999954,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7767.566218103907,
+      "tasa_estimada": 0.0730850526640077,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 63,
+      "pares_estimables": 63,
+      "forward_global": 7767.499047923619,
+      "tasa_estimada": 0.0566399738737748,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 51,
+      "pares_estimables": 51,
+      "forward_global": 7767.275644904611,
+      "tasa_estimada": 0.03923423577138265,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7767.071227158666,
+      "tasa_estimada": 0.030000000000000304,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7767.192460511953,
+      "tasa_estimada": 0.03999999999999953,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7767.286938500842,
+      "tasa_estimada": 0.05000000000000041,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 111,
+      "pares_estimables": 111,
+      "forward_global": 7734.6031928435805,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 110,
+      "pares_estimables": 110,
+      "forward_global": 7734.601547376234,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 97,
+      "pares_estimables": 97,
+      "forward_global": 7734.841120692363,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 111,
+      "pares_estimables": 111,
+      "forward_global": 7734.603149554865,
+      "tasa_estimada": 0.029999999999965186,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 111,
+      "pares_estimables": 111,
+      "forward_global": 7734.6031928435805,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 111,
+      "pares_estimables": 111,
+      "forward_global": 7734.603236132595,
+      "tasa_estimada": 0.05000000000000181,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 122,
+      "pares_estimables": 122,
+      "forward_global": 7753.910528721279,
+      "tasa_estimada": 0.08188792238095405,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 107,
+      "pares_estimables": 107,
+      "forward_global": 7753.950757329561,
+      "tasa_estimada": 0.09324948385363901,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 103,
+      "pares_estimables": 103,
+      "forward_global": 7753.950060036505,
+      "tasa_estimada": 0.09331243454358744,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 122,
+      "pares_estimables": 122,
+      "forward_global": 7753.763745404506,
+      "tasa_estimada": 0.0300000000000001,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 122,
+      "pares_estimables": 122,
+      "forward_global": 7753.806505884508,
+      "tasa_estimada": 0.03999999999999928,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 122,
+      "pares_estimables": 122,
+      "forward_global": 7753.849298300348,
+      "tasa_estimada": 0.049999999999999926,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 469,
+      "pares_estimables": 469,
+      "forward_global": 7755.956868109276,
+      "tasa_estimada": 0.12385767446741108,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 411,
+      "pares_estimables": 411,
+      "forward_global": 7756.20009426076,
+      "tasa_estimada": 0.12365770444128947,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 388,
+      "pares_estimables": 388,
+      "forward_global": 7756.359164687119,
+      "tasa_estimada": 0.1403263051860611,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 469,
+      "pares_estimables": 469,
+      "forward_global": 7751.802068480883,
+      "tasa_estimada": 0.030000000000000374,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 469,
+      "pares_estimables": 469,
+      "forward_global": 7752.249235251383,
+      "tasa_estimada": 0.03999999999999943,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 469,
+      "pares_estimables": 469,
+      "forward_global": 7752.695655103689,
+      "tasa_estimada": 0.0500000000000002,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 98,
+      "pares_estimables": 98,
+      "forward_global": 7757.244202833841,
+      "tasa_estimada": 0.0750763614357887,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 91,
+      "pares_estimables": 91,
+      "forward_global": 7757.249723456328,
+      "tasa_estimada": 0.07667901849842167,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 83,
+      "pares_estimables": 83,
+      "forward_global": 7757.28025986047,
+      "tasa_estimada": 0.07903889590124606,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 98,
+      "pares_estimables": 98,
+      "forward_global": 7756.70387443495,
+      "tasa_estimada": 0.030000000000000335,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 98,
+      "pares_estimables": 98,
+      "forward_global": 7756.831281686812,
+      "tasa_estimada": 0.03999999999999948,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 98,
+      "pares_estimables": 98,
+      "forward_global": 7756.948060483598,
+      "tasa_estimada": 0.05000000000000051,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7758.215505022573,
+      "tasa_estimada": 0.12642764985035201,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7758.2342442730505,
+      "tasa_estimada": 0.12870155666020916,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 90,
+      "pares_estimables": 90,
+      "forward_global": 7758.243684521683,
+      "tasa_estimada": 0.1301525919013629,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7757.350119252186,
+      "tasa_estimada": 0.029999999999999635,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7757.376747565872,
+      "tasa_estimada": 0.039999999999999925,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 99,
+      "pares_estimables": 99,
+      "forward_global": 7757.484223315687,
+      "tasa_estimada": 0.05000000000000024,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7733.950618797701,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7733.950618797701,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 85,
+      "pares_estimables": 85,
+      "forward_global": 7733.944054012583,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7733.950421285766,
+      "tasa_estimada": 0.030000000000027276,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7733.950618797701,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7733.950816311047,
+      "tasa_estimada": 0.04999999999998433,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7756.477421218677,
+      "tasa_estimada": 0.15973923109555865,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7756.477421218677,
+      "tasa_estimada": 0.15973923109555865,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 88,
+      "pares_estimables": 88,
+      "forward_global": 7755.603410840046,
+      "tasa_estimada": 0.07866512556883472,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7752.579410230115,
+      "tasa_estimada": 0.029999999999999503,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7752.881348175033,
+      "tasa_estimada": 0.03999999999999953,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7753.162848880978,
+      "tasa_estimada": 0.05,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.142564465532,
+      "tasa_estimada": 0.04308825222176709,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 102,
+      "pares_estimables": 102,
+      "forward_global": 7756.142556999725,
+      "tasa_estimada": 0.043024526765782375,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 84,
+      "pares_estimables": 84,
+      "forward_global": 7756.372454530134,
+      "tasa_estimada": 0.04671098337096594,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7755.549201728938,
+      "tasa_estimada": 0.030000000000000512,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.002500737347,
+      "tasa_estimada": 0.03999999999999945,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.456163798859,
+      "tasa_estimada": 0.050000000000000204,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.919559386803,
+      "tasa_estimada": 0.038423586489902184,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.919559386803,
+      "tasa_estimada": 0.038423586489902184,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 90,
+      "pares_estimables": 90,
+      "forward_global": 7758.070515968018,
+      "tasa_estimada": 0.012106094696040383,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.793627535986,
+      "tasa_estimada": 0.029999999999999485,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.943136409459,
+      "tasa_estimada": 0.03999999999999942,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7758.092769455848,
+      "tasa_estimada": 0.05000000000000022,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.658124904953,
+      "tasa_estimada": 0.08974885399805174,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 102,
+      "pares_estimables": 102,
+      "forward_global": 7757.689222833533,
+      "tasa_estimada": 0.095929078850508,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 90,
+      "pares_estimables": 90,
+      "forward_global": 7757.740261016906,
+      "tasa_estimada": 0.10502437861718307,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.179164401068,
+      "tasa_estimada": 0.030000000000000554,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.262874035079,
+      "tasa_estimada": 0.040000000000000646,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 106,
+      "pares_estimables": 106,
+      "forward_global": 7757.346655488537,
+      "tasa_estimada": 0.04999999999999954,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7735.167292644565,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7735.167292644565,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 91,
+      "pares_estimables": 91,
+      "forward_global": 7735.167557712449,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7735.166999088207,
+      "tasa_estimada": 0.029999999999965186,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7735.167292644565,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 96,
+      "pares_estimables": 96,
+      "forward_global": 7735.167586202932,
+      "tasa_estimada": 0.05000000000000181,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.7799478388015,
+      "tasa_estimada": 0.0053913398366094364,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 86,
+      "pares_estimables": 86,
+      "forward_global": 7756.708377819605,
+      "tasa_estimada": 0.020067743454130402,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 23,
+      "pares_estimables": 23,
+      "forward_global": 7757.221049758325,
+      "tasa_estimada": 0.027530333609457783,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.935695881218,
+      "tasa_estimada": 0.030000000000000526,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7756.999070751701,
+      "tasa_estimada": 0.039999999999999404,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 104,
+      "pares_estimables": 104,
+      "forward_global": 7757.062494763985,
+      "tasa_estimada": 0.050000000000000676,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.239576136043,
+      "tasa_estimada": 0.055893509596860735,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7757.714933532443,
+      "tasa_estimada": 0.0879691305536179,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 43,
+      "pares_estimables": 43,
+      "forward_global": 7757.690042369657,
+      "tasa_estimada": 0.10848055797591248,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.06011965456,
+      "tasa_estimada": 0.02999999999999975,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.129381043774,
+      "tasa_estimada": 0.04000000000000069,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.198698038353,
+      "tasa_estimada": 0.05000000000000023,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7758.113359432647,
+      "tasa_estimada": 0.06188206034503541,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7758.175704499308,
+      "tasa_estimada": 0.06079291381275653,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 6,
+      "pares_estimables": 6,
+      "forward_global": 7759.931901560782,
+      "tasa_estimada": 0.22544881063981095,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.6840759001525,
+      "tasa_estimada": 0.029999999999999697,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.822262111727,
+      "tasa_estimada": 0.03999999999999936,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7757.960563052841,
+      "tasa_estimada": 0.04999999999999995,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7759.512482630716,
+      "tasa_estimada": 0.12592870916872811,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 80,
+      "pares_estimables": 80,
+      "forward_global": 7759.343254987024,
+      "tasa_estimada": 0.11132813058622638,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 14,
+      "pares_estimables": 14,
+      "forward_global": 7760.357253565009,
+      "tasa_estimada": -0.022251827377373308,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7758.945473263006,
+      "tasa_estimada": 0.030000000000000335,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7759.0116219742495,
+      "tasa_estimada": 0.03999999999999948,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 105,
+      "pares_estimables": 105,
+      "forward_global": 7759.077827419488,
+      "tasa_estimada": 0.05000000000000051,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7814.429273224221,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 73,
+      "pares_estimables": 73,
+      "forward_global": 7814.447394901154,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 70,
+      "pares_estimables": 70,
+      "forward_global": 7814.450079993437,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7814.429104736155,
+      "tasa_estimada": 0.030000000000027276,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7814.429273224221,
+      "tasa_estimada": 0.0400000000000608,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7814.429441713488,
+      "tasa_estimada": 0.04999999999998433,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7834.875284970118,
+      "tasa_estimada": 0.036700301121438086,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 53,
+      "pares_estimables": 53,
+      "forward_global": 7834.965441645865,
+      "tasa_estimada": 0.05692390841717281,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 50,
+      "pares_estimables": 50,
+      "forward_global": 7835.015824602631,
+      "tasa_estimada": 0.09142111696876451,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7834.82133542084,
+      "tasa_estimada": 0.029999999999999503,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7834.901863819805,
+      "tasa_estimada": 0.03999999999999953,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7834.982454684664,
+      "tasa_estimada": 0.05,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 78,
+      "pares_estimables": 78,
+      "forward_global": 7835.725075314689,
+      "tasa_estimada": 0.060179846093269096,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 33,
+      "pares_estimables": 33,
+      "forward_global": 7836.02073894965,
+      "tasa_estimada": 0.06203814841942143,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 24,
+      "pares_estimables": 24,
+      "forward_global": 7835.98556758676,
+      "tasa_estimada": 0.10623794283686872,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 78,
+      "pares_estimables": 78,
+      "forward_global": 7835.568407672877,
+      "tasa_estimada": 0.030000000000000512,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 78,
+      "pares_estimables": 78,
+      "forward_global": 7835.620276975112,
+      "tasa_estimada": 0.03999999999999945,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 78,
+      "pares_estimables": 78,
+      "forward_global": 7835.6721879345805,
+      "tasa_estimada": 0.050000000000000204,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7837.199761370233,
+      "tasa_estimada": 0.07240139255725463,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 44,
+      "pares_estimables": 44,
+      "forward_global": 7837.140716192663,
+      "tasa_estimada": 0.10111835835656006,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 36,
+      "pares_estimables": 36,
+      "forward_global": 7837.155958989514,
+      "tasa_estimada": 0.12960473841805648,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7837.55510215634,
+      "tasa_estimada": 0.029999999999999485,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7837.471410798706,
+      "tasa_estimada": 0.03999999999999942,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7837.387649932159,
+      "tasa_estimada": 0.05000000000000022,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 181,
+      "pares_estimables": 181,
+      "forward_global": 7840.316978466164,
+      "tasa_estimada": 0.15985303900145892,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7840.231380905122,
+      "tasa_estimada": 0.035569211155475296,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 84,
+      "pares_estimables": 84,
+      "forward_global": 7840.227697825319,
+      "tasa_estimada": 0.03751556535000751,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 181,
+      "pares_estimables": 181,
+      "forward_global": 7839.9649152727125,
+      "tasa_estimada": 0.030000000000000554,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 181,
+      "pares_estimables": 181,
+      "forward_global": 7840.0025195941835,
+      "tasa_estimada": 0.040000000000000646,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 181,
+      "pares_estimables": 181,
+      "forward_global": 7840.040156178629,
+      "tasa_estimada": 0.04999999999999954,
+      "alertas": [
+        "subyacente desfasado 5 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "base",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7826.097016380294,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "edad30_gap5",
+      "pares_validos": 79,
+      "pares_estimables": 79,
+      "forward_global": 7826.096909339817,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "edad10_gap2",
+      "pares_validos": 79,
+      "pares_estimables": 79,
+      "forward_global": 7826.096909339817,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7826.097077937643,
+      "tasa_estimada": 0.029999999999965186,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7826.097016380294,
+      "tasa_estimada": 0.03999999999996608,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "segmento": "0DTE",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 94,
+      "pares_estimables": 94,
+      "forward_global": 7826.096954822522,
+      "tasa_estimada": 0.05000000000000181,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7846.791482103774,
+      "tasa_estimada": 0.058731820629066844,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 65,
+      "pares_estimables": 65,
+      "forward_global": 7847.0642171695135,
+      "tasa_estimada": 0.10320692801034533,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 64,
+      "pares_estimables": 64,
+      "forward_global": 7847.063976427317,
+      "tasa_estimada": 0.10316546996248817,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7846.543253417732,
+      "tasa_estimada": 0.030000000000000526,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7846.622343384684,
+      "tasa_estimada": 0.039999999999999404,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 95,
+      "pares_estimables": 95,
+      "forward_global": 7846.712607691412,
+      "tasa_estimada": 0.050000000000000676,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7846.474396246379,
+      "tasa_estimada": -0.09846720890538582,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 62,
+      "pares_estimables": 62,
+      "forward_global": 7848.218035188329,
+      "tasa_estimada": 0.14473912411734002,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 61,
+      "pares_estimables": 61,
+      "forward_global": 7848.224168501925,
+      "tasa_estimada": 0.1453533788396698,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7847.300916702468,
+      "tasa_estimada": 0.02999999999999975,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7847.373284116594,
+      "tasa_estimada": 0.04000000000000069,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 87,
+      "pares_estimables": 87,
+      "forward_global": 7847.4667216532025,
+      "tasa_estimada": 0.05000000000000023,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7847.87398885531,
+      "tasa_estimada": 0.1218701660885483,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 68,
+      "pares_estimables": 68,
+      "forward_global": 7847.951716496225,
+      "tasa_estimada": 0.05773479372309091,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 68,
+      "pares_estimables": 68,
+      "forward_global": 7847.951716496225,
+      "tasa_estimada": 0.05773479372309091,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7846.878850528428,
+      "tasa_estimada": 0.029999999999999697,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7846.986802980204,
+      "tasa_estimada": 0.03999999999999936,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 92,
+      "pares_estimables": 92,
+      "forward_global": 7847.094845059841,
+      "tasa_estimada": 0.04999999999999995,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "base",
+      "pares_validos": 168,
+      "pares_estimables": 168,
+      "forward_global": 7850.766015544079,
+      "tasa_estimada": 0.08405648883106244,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "edad30_gap5",
+      "pares_validos": 134,
+      "pares_estimables": 134,
+      "forward_global": 7850.779510539424,
+      "tasa_estimada": 0.10241374701818773,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "edad10_gap2",
+      "pares_validos": 132,
+      "pares_estimables": 132,
+      "forward_global": 7850.6586962985175,
+      "tasa_estimada": 0.07760028216370687,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_3",
+      "pares_validos": 168,
+      "pares_estimables": 168,
+      "forward_global": 7850.532744439298,
+      "tasa_estimada": 0.030000000000000335,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_4",
+      "pares_validos": 168,
+      "pares_estimables": 168,
+      "forward_global": 7850.577796144157,
+      "tasa_estimada": 0.03999999999999948,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "segmento": "plazo_mensual",
+      "escenario": "tasa_fija_5",
+      "pares_validos": 168,
+      "pares_estimables": 168,
+      "forward_global": 7850.622886488668,
+      "tasa_estimada": 0.05000000000000051,
+      "alertas": [
+        "subyacente desfasado 6 s respecto del corte"
+      ]
+    }
+  ],
+  "sha_tablas": {
+    "cobertura_dividendos.parquet": "373262a6422cc406f3947722c8f62e74b867897a6dfdef5f5d2096be66812984",
+    "cotizaciones.parquet": "292d650ab8e6a21bbadd8078007b0107cbae9ea64a47bc1effc63eafbcd17565",
+    "dividendos.parquet": "92176ceeb7f2008b411b51edc9161c8835e08700033979e9fb67aa3842d3f172",
+    "subyacente.parquet": "000a26c08028fc73d3d72fd9fb874aca4aa8ef28c62cd5fd4104658c0dd81905"
+  },
+  "versiones": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "pandas": "3.0.6"
+  },
+  "verificaciones": {
+    "cadenas_procesadas": 30,
+    "identidad_residuo": true,
+    "banda_equivale_z_mayor_1": true,
+    "pares_unicos": true,
+    "marcas_antes_del_corte": true
+  }
+}

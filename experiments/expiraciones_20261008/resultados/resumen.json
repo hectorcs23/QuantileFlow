@@ -1,0 +1,1333 @@
+{
+  "version": "expiraciones-0.1",
+  "fechas": [
+    "2026-10-02",
+    "2026-10-05",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08"
+  ],
+  "instrumento": "SPXW europeo PM",
+  "feed": "alpaca/indicative",
+  "referencia": "SPX inferido, no independiente",
+  "codigo_script_sha256": "4c06e6acc322f468e2721437557a7b1a96cb07e4f897a7e6b39c65347a76c9c6",
+  "config_base_sha256": "f28539e3fa4512ea40c819afffd7318c09e8802286b40c8f5cd3691eb1b7bd34",
+  "protocolo_sha256": "698bc9cdc3fa4dbac981106fc625b74adc04e2b0bc006c3c9ec24b1f9146a8f2",
+  "entradas_sha256": {
+    "cotizaciones.parquet": "9b0fb0aa8e1f2c042e04ee01d08a7aa1f4e282bfed43b8b2f4a8452c02fea999",
+    "subyacente.parquet": "d4bac0414878aa525524777a0f0a78729f877a484e5a1c368f3e0a31065857c3"
+  },
+  "cobertura": [
+    {
+      "objetivo_dias": 7.0,
+      "cortes": 10,
+      "identificados": 0,
+      "cambios_identificados": 0
+    },
+    {
+      "objetivo_dias": 14.0,
+      "cortes": 10,
+      "identificados": 0,
+      "cambios_identificados": 0
+    },
+    {
+      "objetivo_dias": 30.0,
+      "cortes": 10,
+      "identificados": 10,
+      "cambios_identificados": 5
+    },
+    {
+      "objetivo_dias": 60.0,
+      "cortes": 10,
+      "identificados": 0,
+      "cambios_identificados": 0
+    },
+    {
+      "objetivo_dias": 90.0,
+      "cortes": 10,
+      "identificados": 0,
+      "cambios_identificados": 0
+    }
+  ],
+  "rr25": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.033649957235097755,
+      "inferior": -0.03461431423238384,
+      "superior": -0.03268546774515628,
+      "iv_call": 0.11497470495697107,
+      "iv_put": 0.14862466219206882,
+      "vencimientos": [
+        "2026-10-30",
+        "2026-11-02"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.033609767147317435,
+      "inferior": -0.03453796850564769,
+      "superior": -0.03268180322433613,
+      "iv_call": 0.1137448985143754,
+      "iv_put": 0.14735466566169284,
+      "vencimientos": [
+        "2026-10-30",
+        "2026-11-02"
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.03590298873021375,
+      "inferior": -0.03783101231890591,
+      "superior": -0.03397240665269384,
+      "iv_call": 0.1144174210347233,
+      "iv_put": 0.15032040976493705,
+      "vencimientos": [
+        "2026-11-03",
+        "2026-11-04"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.03537960253194479,
+      "inferior": -0.03748791961087018,
+      "superior": -0.03327600215279124,
+      "iv_call": 0.11509296791885128,
+      "iv_put": 0.15047257045079607,
+      "vencimientos": [
+        "2026-11-03",
+        "2026-11-04"
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.029516415913036373,
+      "inferior": -0.03078393318869388,
+      "superior": -0.028248859526856365,
+      "iv_call": 0.115708900753612,
+      "iv_put": 0.14522531666664837,
+      "vencimientos": [
+        "2026-11-04",
+        "2026-11-05"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.028950146914972955,
+      "inferior": -0.03019812354473647,
+      "superior": -0.0277038408389048,
+      "iv_call": 0.11727118739317215,
+      "iv_put": 0.1462213343081451,
+      "vencimientos": [
+        "2026-11-04",
+        "2026-11-05"
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.03359422739286662,
+      "inferior": -0.03529524243193406,
+      "superior": -0.031893227731912346,
+      "iv_call": 0.11680547975247764,
+      "iv_put": 0.15039970714534426,
+      "vencimientos": [
+        "2026-11-05",
+        "2026-11-06"
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.03498167942496867,
+      "inferior": -0.03675108056778449,
+      "superior": -0.03320984355482465,
+      "iv_call": 0.11502917987240628,
+      "iv_put": 0.15001085929737495,
+      "vencimientos": [
+        "2026-11-05",
+        "2026-11-06"
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.0361907554308592,
+      "inferior": -0.03716413848398156,
+      "superior": -0.035216746895494866,
+      "iv_call": 0.11421025410146335,
+      "iv_put": 0.15040100953232255,
+      "vencimientos": [
+        "2026-11-06",
+        "2026-11-09"
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 7 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 14 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "motivo": "",
+      "valor": -0.036420442724179575,
+      "inferior": -0.03768924026925474,
+      "superior": -0.03515431460978148,
+      "iv_call": 0.11341531249979081,
+      "iv_put": 0.14983575522397038,
+      "vencimientos": [
+        "2026-11-06",
+        "2026-11-09"
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 60 días",
+      "vencimientos": []
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada",
+      "motivo": "no hay vencimientos a ambos lados de 90 días",
+      "vencimientos": []
+    }
+  ],
+  "cambios": [
+    {
+      "fecha": "2026-10-02",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-02",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-02",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "delta": 4.019008778032018e-05,
+      "inferior": -0.0018525007604914129,
+      "superior": 0.0019325110080477131,
+      "excluye_cero": false
+    },
+    {
+      "fecha": "2026-10-02",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-02",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-05",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-05",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-05",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "delta": 0.0005233861982689575,
+      "inferior": -0.0035155129581763422,
+      "superior": 0.004555010166114676,
+      "excluye_cero": false
+    },
+    {
+      "fecha": "2026-10-05",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-05",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-06",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-06",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-06",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "delta": 0.0005662689980634183,
+      "inferior": -0.0019492640178801063,
+      "superior": 0.003080092349789079,
+      "excluye_cero": false
+    },
+    {
+      "fecha": "2026-10-06",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-06",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-07",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-07",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-07",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "delta": -0.0013874520321020545,
+      "inferior": -0.004857852835872145,
+      "superior": 0.002085398877109415,
+      "excluye_cero": false
+    },
+    {
+      "fecha": "2026-10-07",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-07",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-08",
+      "objetivo_dias": 7.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-08",
+      "objetivo_dias": 14.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-08",
+      "objetivo_dias": 30.0,
+      "estado": "identificada",
+      "delta": -0.00022968729332037419,
+      "inferior": -0.0024724933737598764,
+      "superior": 0.0020098238742000812,
+      "excluye_cero": false
+    },
+    {
+      "fecha": "2026-10-08",
+      "objetivo_dias": 60.0,
+      "estado": "no identificada"
+    },
+    {
+      "fecha": "2026-10-08",
+      "objetivo_dias": 90.0,
+      "estado": "no identificada"
+    }
+  ],
+  "calidad_cadenas": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-02",
+      "dias": 0.26041666666666663,
+      "segmento": "0DTE",
+      "filas": 602,
+      "filas_validas": 416,
+      "pares_completos": 115,
+      "edad_mediana_s": 6.314674000001105,
+      "ancho_relativo_mediano": 0.02750351961893179,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-29",
+      "dias": 27.260416666666668,
+      "segmento": "otros",
+      "filas": 270,
+      "filas_validas": 256,
+      "pares_completos": 121,
+      "edad_mediana_s": 7.329530999999406,
+      "ancho_relativo_mediano": 0.020433959562894295,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-10-30",
+      "dias": 28.260416666666668,
+      "segmento": "otros",
+      "filas": 974,
+      "filas_validas": 955,
+      "pares_completos": 468,
+      "edad_mediana_s": 9.32748900000297,
+      "ancho_relativo_mediano": 0.024198683931224804,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "dias": 31.302083333333332,
+      "segmento": "otros",
+      "filas": 226,
+      "filas_validas": 210,
+      "pares_completos": 97,
+      "edad_mediana_s": 6.049115999998321,
+      "ancho_relativo_mediano": 0.022335610848036754,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "dias": 32.302083333333336,
+      "segmento": "otros",
+      "filas": 228,
+      "filas_validas": 213,
+      "pares_completos": 99,
+      "edad_mediana_s": 7.3758210000014515,
+      "ancho_relativo_mediano": 0.021188076345700038,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-02",
+      "dias": 0.25,
+      "segmento": "0DTE",
+      "filas": 602,
+      "filas_validas": 412,
+      "pares_completos": 111,
+      "edad_mediana_s": 5.9919559999980265,
+      "ancho_relativo_mediano": 0.02857869253586542,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-29",
+      "dias": 27.25,
+      "segmento": "otros",
+      "filas": 270,
+      "filas_validas": 257,
+      "pares_completos": 122,
+      "edad_mediana_s": 6.0462530000004335,
+      "ancho_relativo_mediano": 0.01939807194921239,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-10-30",
+      "dias": 28.25,
+      "segmento": "otros",
+      "filas": 974,
+      "filas_validas": 956,
+      "pares_completos": 469,
+      "edad_mediana_s": 6.640053999999509,
+      "ancho_relativo_mediano": 0.02350834515141057,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "dias": 31.291666666666668,
+      "segmento": "otros",
+      "filas": 226,
+      "filas_validas": 211,
+      "pares_completos": 98,
+      "edad_mediana_s": 6.637753000002704,
+      "ancho_relativo_mediano": 0.022549869904596682,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "dias": 32.291666666666664,
+      "segmento": "otros",
+      "filas": 228,
+      "filas_validas": 213,
+      "pares_completos": 99,
+      "edad_mediana_s": 6.163701999998011,
+      "ancho_relativo_mediano": 0.022280303354899597,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-10-05",
+      "dias": 0.26041666666666663,
+      "segmento": "0DTE",
+      "filas": 484,
+      "filas_validas": 336,
+      "pares_completos": 94,
+      "edad_mediana_s": 5.679336000001058,
+      "ancho_relativo_mediano": 0.028480533465210286,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-02",
+      "dias": 28.302083333333336,
+      "segmento": "otros",
+      "filas": 238,
+      "filas_validas": 224,
+      "pares_completos": 105,
+      "edad_mediana_s": 5.752524000003177,
+      "ancho_relativo_mediano": 0.02522105548507897,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "dias": 29.302083333333332,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 224,
+      "pares_completos": 104,
+      "edad_mediana_s": 5.752642499999638,
+      "ancho_relativo_mediano": 0.028938683323618937,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "dias": 30.302083333333332,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 226,
+      "pares_completos": 106,
+      "edad_mediana_s": 5.755557999997109,
+      "ancho_relativo_mediano": 0.027350296314192876,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "dias": 31.302083333333332,
+      "segmento": "otros",
+      "filas": 238,
+      "filas_validas": 225,
+      "pares_completos": 106,
+      "edad_mediana_s": 5.752649000001838,
+      "ancho_relativo_mediano": 0.0267653407338884,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-10-05",
+      "dias": 0.25,
+      "segmento": "0DTE",
+      "filas": 484,
+      "filas_validas": 338,
+      "pares_completos": 96,
+      "edad_mediana_s": 5.224683000000368,
+      "ancho_relativo_mediano": 0.04708159696296664,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-02",
+      "dias": 28.291666666666668,
+      "segmento": "otros",
+      "filas": 238,
+      "filas_validas": 223,
+      "pares_completos": 104,
+      "edad_mediana_s": 8.961558000002697,
+      "ancho_relativo_mediano": 0.03017832647462271,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "dias": 29.291666666666664,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 225,
+      "pares_completos": 105,
+      "edad_mediana_s": 9.05092799999693,
+      "ancho_relativo_mediano": 0.027441334840124953,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "dias": 30.291666666666664,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 225,
+      "pares_completos": 105,
+      "edad_mediana_s": 9.087637999997241,
+      "ancho_relativo_mediano": 0.03186553444804343,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "dias": 31.291666666666668,
+      "segmento": "otros",
+      "filas": 238,
+      "filas_validas": 224,
+      "pares_completos": 105,
+      "edad_mediana_s": 8.351464499999565,
+      "ancho_relativo_mediano": 0.027319308631226287,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-10-06",
+      "dias": 0.26041666666666663,
+      "segmento": "0DTE",
+      "filas": 496,
+      "filas_validas": 257,
+      "pares_completos": 87,
+      "edad_mediana_s": 5.597344000001613,
+      "ancho_relativo_mediano": 0.025842810617871272,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-03",
+      "dias": 28.302083333333336,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 208,
+      "pares_completos": 94,
+      "edad_mediana_s": 5.930970000001253,
+      "ancho_relativo_mediano": 0.02270377107052301,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "dias": 29.302083333333332,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 191,
+      "pares_completos": 78,
+      "edad_mediana_s": 6.411785999996937,
+      "ancho_relativo_mediano": 0.025428822414351102,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "dias": 30.302083333333332,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 219,
+      "pares_completos": 95,
+      "edad_mediana_s": 6.013773999999103,
+      "ancho_relativo_mediano": 0.019893718490257638,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "dias": 31.302083333333332,
+      "segmento": "otros",
+      "filas": 434,
+      "filas_validas": 391,
+      "pares_completos": 181,
+      "edad_mediana_s": 5.993069999996806,
+      "ancho_relativo_mediano": 0.017319300259277075,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-10-06",
+      "dias": 0.25,
+      "segmento": "0DTE",
+      "filas": 496,
+      "filas_validas": 333,
+      "pares_completos": 94,
+      "edad_mediana_s": 5.737062000000151,
+      "ancho_relativo_mediano": 0.029086213667192516,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-03",
+      "dias": 28.291666666666668,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 216,
+      "pares_completos": 95,
+      "edad_mediana_s": 5.264592999999877,
+      "ancho_relativo_mediano": 0.026112925059290013,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "dias": 29.291666666666664,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 208,
+      "pares_completos": 87,
+      "edad_mediana_s": 5.261898000000656,
+      "ancho_relativo_mediano": 0.034226349386077486,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "dias": 30.291666666666664,
+      "segmento": "otros",
+      "filas": 250,
+      "filas_validas": 216,
+      "pares_completos": 92,
+      "edad_mediana_s": 5.3223119999966,
+      "ancho_relativo_mediano": 0.023191562136397323,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "dias": 31.291666666666668,
+      "segmento": "otros",
+      "filas": 434,
+      "filas_validas": 382,
+      "pares_completos": 168,
+      "edad_mediana_s": 5.3007309999993595,
+      "ancho_relativo_mediano": 0.02097808013757779,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "vencimiento": "2026-10-07",
+      "dias": 0.26041666666666663,
+      "segmento": "0DTE",
+      "filas": 516,
+      "filas_validas": 365,
+      "pares_completos": 107,
+      "edad_mediana_s": 5.756047000002582,
+      "ancho_relativo_mediano": 0.03234540797658249,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "vencimiento": "2026-11-04",
+      "dias": 28.302083333333336,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 247,
+      "pares_completos": 116,
+      "edad_mediana_s": 5.899547000000894,
+      "ancho_relativo_mediano": 0.024187811240218238,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "dias": 29.302083333333332,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 245,
+      "pares_completos": 114,
+      "edad_mediana_s": 6.063180999997712,
+      "ancho_relativo_mediano": 0.024407183252306716,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "dias": 30.302083333333332,
+      "segmento": "otros",
+      "filas": 454,
+      "filas_validas": 442,
+      "pares_completos": 215,
+      "edad_mediana_s": 5.823711999997613,
+      "ancho_relativo_mediano": 0.018941872438011827,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "vencimiento": "2026-11-09",
+      "dias": 33.302083333333336,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 224,
+      "pares_completos": 104,
+      "edad_mediana_s": 5.895688999997219,
+      "ancho_relativo_mediano": 0.023006418797495362,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "vencimiento": "2026-10-07",
+      "dias": 0.25,
+      "segmento": "0DTE",
+      "filas": 516,
+      "filas_validas": 361,
+      "pares_completos": 103,
+      "edad_mediana_s": 5.6159199999965494,
+      "ancho_relativo_mediano": 0.02781332650797706,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "vencimiento": "2026-11-04",
+      "dias": 28.291666666666668,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 224,
+      "pares_completos": 93,
+      "edad_mediana_s": 9.882409999998345,
+      "ancho_relativo_mediano": 0.021861765098926626,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "dias": 29.291666666666664,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 229,
+      "pares_completos": 99,
+      "edad_mediana_s": 9.879757000002428,
+      "ancho_relativo_mediano": 0.019837570217392055,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "dias": 30.291666666666664,
+      "segmento": "otros",
+      "filas": 454,
+      "filas_validas": 386,
+      "pares_completos": 168,
+      "edad_mediana_s": 6.86818349999885,
+      "ancho_relativo_mediano": 0.018492715369193048,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "vencimiento": "2026-11-09",
+      "dias": 33.29166666666667,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 213,
+      "pares_completos": 93,
+      "edad_mediana_s": 9.97560599999997,
+      "ancho_relativo_mediano": 0.019417475728155345,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "vencimiento": "2026-10-08",
+      "dias": 0.26041666666666663,
+      "segmento": "0DTE",
+      "filas": 516,
+      "filas_validas": 353,
+      "pares_completos": 95,
+      "edad_mediana_s": 5.303902999999991,
+      "ancho_relativo_mediano": 0.026683508328728265,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "vencimiento": "2026-11-05",
+      "dias": 28.302083333333336,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 236,
+      "pares_completos": 105,
+      "edad_mediana_s": 7.410350500002096,
+      "ancho_relativo_mediano": 0.029190176051792284,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "vencimiento": "2026-11-06",
+      "dias": 29.302083333333332,
+      "segmento": "otros",
+      "filas": 454,
+      "filas_validas": 433,
+      "pares_completos": 207,
+      "edad_mediana_s": 6.895614000000933,
+      "ancho_relativo_mediano": 0.02163140467458673,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "vencimiento": "2026-11-09",
+      "dias": 32.302083333333336,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 215,
+      "pares_completos": 95,
+      "edad_mediana_s": 7.430072000002838,
+      "ancho_relativo_mediano": 0.02002157665056519,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "vencimiento": "2026-11-10",
+      "dias": 33.302083333333336,
+      "segmento": "otros",
+      "filas": 234,
+      "filas_validas": 213,
+      "pares_completos": 96,
+      "edad_mediana_s": 7.430346000001009,
+      "ancho_relativo_mediano": 0.022514426260524165,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "vencimiento": "2026-10-08",
+      "dias": 0.25,
+      "segmento": "0DTE",
+      "filas": 516,
+      "filas_validas": 351,
+      "pares_completos": 93,
+      "edad_mediana_s": 5.284090000001015,
+      "ancho_relativo_mediano": 0.025579741072698847,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "vencimiento": "2026-11-05",
+      "dias": 28.291666666666668,
+      "segmento": "otros",
+      "filas": 262,
+      "filas_validas": 245,
+      "pares_completos": 114,
+      "edad_mediana_s": 5.717995999999403,
+      "ancho_relativo_mediano": 0.026636025586508325,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "vencimiento": "2026-11-06",
+      "dias": 29.291666666666664,
+      "segmento": "otros",
+      "filas": 454,
+      "filas_validas": 441,
+      "pares_completos": 214,
+      "edad_mediana_s": 5.6479659999968135,
+      "ancho_relativo_mediano": 0.02077531050056448,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "vencimiento": "2026-11-09",
+      "dias": 32.291666666666664,
+      "segmento": "otros",
+      "filas": 240,
+      "filas_validas": 223,
+      "pares_completos": 103,
+      "edad_mediana_s": 5.57918200000131,
+      "ancho_relativo_mediano": 0.020975903188139043,
+      "alertas": 1
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "vencimiento": "2026-11-10",
+      "dias": 33.29166666666667,
+      "segmento": "otros",
+      "filas": 234,
+      "filas_validas": 220,
+      "pares_completos": 103,
+      "edad_mediana_s": 5.667961500003003,
+      "ancho_relativo_mediano": 0.023120271381088745,
+      "alertas": 1
+    }
+  ]
+}

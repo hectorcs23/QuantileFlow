@@ -1,0 +1,17 @@
+{
+  "version": "expiraciones-0.1",
+  "archivos": {
+    ".gitattributes": "2ee8b8d504eb6037f52b4367fc7df50bed49c4e5f3f1b59570750a6bd5998d69",
+    ".gitignore": "436e5991f5c4df70f21169034db2893921ab8435e4d7bd0448eef13ab56efa6c",
+    "captura_propuesta.toml": "c6385f9d406d9c53760295030a345622a82289234640e9261c2632a7730f5fb9",
+    "comparar_expiraciones.py": "4c06e6acc322f468e2721437557a7b1a96cb07e4f897a7e6b39c65347a76c9c6",
+    "PLAN_DATOS_Y_EXPIRACIONES.md": "103d7d6ae6ae0420a92690c6020d28b1fb725f209133c174e4355736b5e39ff3",
+    "protocolo.toml": "698bc9cdc3fa4dbac981106fc625b74adc04e2b0bc006c3c9ec24b1f9146a8f2",
+    "README.md": "c1d88e3ea2dc6b2d4c2c45a47d02892142e100c420159ec14d5e241e431367a4",
+    "resultados/COBERTURA.md": "07da812a722a25290648b4861106d3e433559085872a7a36efbe12b02a07b251",
+    "resultados/resumen.json": "e79f8be902b34dd2fdaddcd5687d6c9fbe662287f9f8e5cad3966405f8ad837f",
+    "test_expiraciones.py": "f82df315865a033f4709b6ecda627ee21099fc442519ea094d289c77be87699c",
+    "VERIFICACION.md": "ef64a2bcf96e3ebb5676e1f3e29a75508e33434a1c4f226da59c10aea5e229c6",
+    "VERIFICACION.txt": "a687d66d60f6de8efbb9e0946d5be4933f1e211996fbb591e7a356e2358ce226"
+  }
+}

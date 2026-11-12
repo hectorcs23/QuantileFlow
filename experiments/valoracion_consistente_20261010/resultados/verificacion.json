@@ -1,0 +1,106 @@
+{
+  "presupuesto_datos_usd": 0,
+  "naturaleza": "sintético europeo Q, sigma relativa estática",
+  "casos": 90,
+  "malla": {
+    "nodos": 1601,
+    "pasos": 2400,
+    "semiancho": 1.5
+  },
+  "maximos": {
+    "error_precio": 0.00044545144367447165,
+    "error_delta": 3.7864014092878207e-05,
+    "error_gamma": 0.00022654995772747322,
+    "error_vega": 0.002155431527402385,
+    "error_paridad": 4.796163466380676e-14,
+    "error_media": 3.0733020025763835e-05,
+    "error_dualidad": 2.1316282072803006e-14,
+    "error_adjunto_tangente": 2.1316282072803006e-13,
+    "masa_fronteras": 2.7236157334106667e-12
+  },
+  "integral_independiente": [
+    {
+      "strike": 90.0,
+      "tipo": "C",
+      "precio": 10.388874977859949,
+      "integral_independiente": 10.388874977859908,
+      "error": 4.085620730620576e-14
+    },
+    {
+      "strike": 90.0,
+      "tipo": "P",
+      "precio": 0.1997929402092702,
+      "integral_independiente": 0.1997929402092663,
+      "error": 3.885780586188048e-15
+    },
+    {
+      "strike": 100.0,
+      "tipo": "C",
+      "precio": 2.965250570478947,
+      "integral_independiente": 2.9652505704789474,
+      "error": 4.440892098500626e-16
+    },
+    {
+      "strike": 100.0,
+      "tipo": "P",
+      "precio": 2.743345805232624,
+      "integral_independiente": 2.7433458052325808,
+      "error": 4.3076653355456074e-14
+    },
+    {
+      "strike": 110.0,
+      "tipo": "C",
+      "precio": 0.34425666856147485,
+      "integral_independiente": 0.34425666856147663,
+      "error": 1.7763568394002505e-15
+    },
+    {
+      "strike": 110.0,
+      "tipo": "P",
+      "precio": 10.089529175719505,
+      "integral_independiente": 10.089529175719385,
+      "error": 1.2079226507921703e-13
+    }
+  ],
+  "refinamiento": [
+    {
+      "nodos": 201,
+      "pasos": 100,
+      "precio": 5.252903883207077,
+      "error_precio": 0.0019845612318958317,
+      "error_media": 0.0019204387105133947
+    },
+    {
+      "nodos": 401,
+      "pasos": 400,
+      "precio": 5.254390046505511,
+      "error_precio": 0.0004983979334616251,
+      "error_media": 0.0004801065766599777
+    },
+    {
+      "nodos": 801,
+      "pasos": 1600,
+      "precio": 5.254763703657889,
+      "error_precio": 0.00012474078108404285,
+      "error_media": 0.00012002645036091053
+    },
+    {
+      "nodos": 1601,
+      "pasos": 6400,
+      "precio": 5.254857250409896,
+      "error_precio": 3.119402907714175e-05,
+      "error_media": 3.0006600482579415e-05
+    }
+  ],
+  "error_bl_finito": 1.460206334319425e-09,
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  },
+  "sha256_fuentes_lf": {
+    "experiments/valoracion_consistente_20261010/benchmark.py": "1c2a53de5df2ddeb370f5348b57bb2a52fece3b46db93e64baff093cbe0b3414",
+    "quantileflow/pde.py": "48f9aea807f1c914c6f14c46b719529a4338652208a3d5deda1ee47496b91315",
+    "quantileflow/distribucion_pde.py": "d08defd8471e78bd143a63c40e22b09f6251444434eeab81b34b0f7287ec5845"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "fecha_informe": "2026-10-07",
+  "ultima_sesion": "2026-10-06",
+  "base_rama": "e20bded6f76760f0f8a2d49970f083f1cd29f61a",
+  "pruebas_pasadas": 9,
+  "agregados_originales_identicos": 6,
+  "sha256": {
+    ".gitattributes": "4958b252a1fef5fb11b744514c6339b1ac3d0eeec7204d50198d3a8b2c3bce33",
+    ".gitignore": "038020d1b7948ff33c9866c825d9fcdcd251bb2536bf61277378df170529d43d",
+    "ejecucion.log": "86a69fde3bb3fac3aff15d5224c3580a6ca7fe48615d630a9876793cd559981c",
+    "explorar_intradia.py": "8de6a3bea281f14012a300bbb64270fed7b3cba877c4bbeffae2d3e2e7efe14c",
+    "HALLAZGOS_INTRADIA.png": "a70759fa4fc96cfff22300e5f8b439453a86c1dad624c2dc25d29a74870ab2ea",
+    "presentar_resultados.py": "bb51b4835eba38ce0d674ae90d969f906a8d700a304f0ef139760ef64aa51068",
+    "pruebas.txt": "7f60cdf06c2ff313717d304c71bb9f1e19e01fddc1ce246f4a60584b338d21ec",
+    "README.md": "2f850c5d1add8dc0d8a7fc9e057200e5fa2ad60f40a079ac515124b5db5bfdfc",
+    "resultados/calidad.csv": "71e219bea951db0a5afe70abd94bc6068af634ad8c94754b3b52367d5671b495",
+    "resultados/cambios.csv": "8abd2d0e5e02e46de044c2026e9d71aa16c877f7076711e641ed93dc9ba71716",
+    "resultados/resultados.json": "0ca4b31fd86ea74cb75a56f3aa6581c7e69c4bd95c7a91243288b7c38c723ecb",
+    "resultados/resumen_cortes.csv": "1d76b2222bab375625dee23ed2150fa5a38776f86434807f98165f4f1111922d",
+    "resultados/rr25.csv": "dcab5cdcb50570f38bf5c61378dc76aa49d2431a3761de017e92916ad8707062",
+    "resultados/sensibilidad.csv": "8c16396b0bf6d0a5b4ee7be96ff5ea7ebd2a3409368612b74d9c053183c58c6e",
+    "RESULTADOS_Y_SIGUIENTE_PRUEBA.md": "b1e7c98eddfcfe36935cd8b9e0f9ca12d160ba072dee54fde731216cd5195597",
+    "test_exploracion.py": "81dbb5c263bdc06418487901d896563790f9e5484fe6a12dec375c9534662d88"
+  }
+}

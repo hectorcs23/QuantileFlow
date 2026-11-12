@@ -1,0 +1,35 @@
+{
+  "precios_reproducidos": 26877,
+  "cuantiles_verificados": 720,
+  "max_error_precio": 1.8189894035458565e-12,
+  "max_error_cdf_cuantil": 3.6167735473213725e-12,
+  "reservas_historicas_intactas": true,
+  "pares_sin_fuga": true,
+  "conteos_y_cobertura_reproducidos": true,
+  "huellas_correctas": true,
+  "resumen_sha256": "d6f0e68e51e993bfdf2eea177cd2178f67ecd205cc9b2235acd6d892e1302d0e",
+  "sensibilidad_vs_ventana_central": [
+    {
+      "ancho": 0.03,
+      "max_cdf_centro_pp": 1.5543122344752192e-13,
+      "max_mediana_bp": 0.0,
+      "max_forward_bp": 0.0
+    },
+    {
+      "ancho": 0.06,
+      "max_cdf_centro_pp": 2.22760590012695,
+      "max_mediana_bp": 7.588880391273811,
+      "max_forward_bp": 3.7408420830853384
+    },
+    {
+      "ancho": 0.1,
+      "max_cdf_centro_pp": 1.7031739770875798,
+      "max_mediana_bp": 11.301702369395095,
+      "max_forward_bp": 4.577947866406529
+    }
+  ],
+  "fuentes_verificacion_sha256_lf": {
+    "verificar.py": "b519736d8a8fbaf8318b2495afbd62ff381beff05e31ffea076870d1bee4c18b",
+    "graficas.py": "8000e7ab8055c57302647e03eeaf0f79266d150189e4ceab715aa9c88c7e89d6"
+  }
+}

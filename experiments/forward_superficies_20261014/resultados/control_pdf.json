@@ -1,0 +1,14 @@
+{
+  "rebanadas": 48,
+  "rango_integracion_k": [
+    -20,
+    20
+  ],
+  "max_error_masa": 3.3306690738754696e-16,
+  "max_error_media_S_sobre_F": 4.696243394164412e-13,
+  "max_error_call_sobre_F": 1.1711985548057413e-13,
+  "precio_vs_integral_PDF": true,
+  "naturaleza": "comprobaci\u00f3n num\u00e9rica de superficies estimadas; no validaci\u00f3n de mercado",
+  "resumen_sha256": "22c7b73ec60e56e5513503863291bd6ccb2bd0232d1e2d8ec33a9a6d86914bb9",
+  "codigo_sha256_lf": "9a465a70d004a32f801e3a2ee76d2c2c891166a0501abf3dc6f9333c8966ce23"
+}

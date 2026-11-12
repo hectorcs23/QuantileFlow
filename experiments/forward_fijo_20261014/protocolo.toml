@@ -1,0 +1,9 @@
+version = "forward-fijo-0.1"
+fecha = "2026-10-14"
+anchos = [0.03, 0.06, 0.10]
+peso_mid = 0.02
+forward = "Congelar F por vencimiento al estimado con training central; reestimar únicamente SSVI en ventanas amplias"
+comparacion = "Contraste condicional con variantes anteriores que reestiman F; mismas filas, reservas, pérdida, inicios y descuento"
+paridad = "Pares C/P completos por strike/vencimiento, separados por training/holdout y región; F libre es diagnóstico posterior, nunca ancla de ajuste"
+alcance = "Seis sesiones conocidas de indicative; no predicción ni precios ejecutables"
+presupuesto_datos = 0

@@ -1,0 +1,985 @@
+{
+  "grupos": {
+    "previas": {
+      "central": {
+        "plan": 44,
+        "pareados": 44,
+        "interpretables": 44,
+        "faltantes": {},
+        "signos": {
+          "sube": 7,
+          "incluye_cero": 33,
+          "baja": 4
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-12",
+          "2026-10-14"
+        ],
+        "con_calls": 44,
+        "mismo_signo": 6,
+        "mismo_signo_y_coherente": 6,
+        "coherentes_ambos": 39,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 7,
+          "incluye_cero": 33,
+          "baja": 4
+        },
+        "ancho_mediano_pp": 3.5969366223653267,
+        "abs_mid_mediano_pp": 0.8738534128946083
+      },
+      "z1": {
+        "plan": 44,
+        "pareados": 44,
+        "interpretables": 44,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 31,
+          "baja": 4,
+          "sube": 9
+        },
+        "dias_con_signo": [
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16"
+        ],
+        "con_calls": 44,
+        "mismo_signo": 1,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 33,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 31,
+          "baja": 4,
+          "sube": 9
+        },
+        "ancho_mediano_pp": 1.3254092247678546,
+        "abs_mid_mediano_pp": 0.38533942062155857
+      },
+      "z2": {
+        "plan": 44,
+        "pareados": 44,
+        "interpretables": 44,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 31,
+          "sube": 9,
+          "baja": 4
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-06",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16"
+        ],
+        "con_calls": 44,
+        "mismo_signo": 3,
+        "mismo_signo_y_coherente": 1,
+        "coherentes_ambos": 35,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 31,
+          "sube": 9,
+          "baja": 4
+        },
+        "ancho_mediano_pp": 2.290893774251754,
+        "abs_mid_mediano_pp": 0.7734579970808773
+      },
+      "z3": {
+        "plan": 44,
+        "pareados": 44,
+        "interpretables": 44,
+        "faltantes": {},
+        "signos": {
+          "sube": 4,
+          "incluye_cero": 39,
+          "baja": 1
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-07",
+          "2026-10-12",
+          "2026-10-14"
+        ],
+        "con_calls": 44,
+        "mismo_signo": 4,
+        "mismo_signo_y_coherente": 1,
+        "coherentes_ambos": 36,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 4,
+          "incluye_cero": 39,
+          "baja": 1
+        },
+        "ancho_mediano_pp": 7.9013673436215015,
+        "abs_mid_mediano_pp": 1.5179248063930255
+      },
+      "z4": {
+        "plan": 44,
+        "pareados": 0,
+        "interpretables": 0,
+        "faltantes": {
+          "sin_dos_strikes_0945": 44
+        },
+        "signos": {},
+        "dias_con_signo": [],
+        "con_calls": 0,
+        "mismo_signo": 0,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 0,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {},
+        "ancho_mediano_pp": null,
+        "abs_mid_mediano_pp": null
+      }
+    },
+    "adicionales": {
+      "central": {
+        "plan": 16,
+        "pareados": 16,
+        "interpretables": 16,
+        "faltantes": {},
+        "signos": {
+          "sube": 2,
+          "incluye_cero": 9,
+          "baja": 5
+        },
+        "dias_con_signo": [
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21"
+        ],
+        "con_calls": 16,
+        "mismo_signo": 4,
+        "mismo_signo_y_coherente": 3,
+        "coherentes_ambos": 10,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 2,
+          "incluye_cero": 9,
+          "baja": 5
+        },
+        "ancho_mediano_pp": 3.5773215115316144,
+        "abs_mid_mediano_pp": 1.8786224885083123
+      },
+      "z1": {
+        "plan": 16,
+        "pareados": 16,
+        "interpretables": 16,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 8,
+          "baja": 8
+        },
+        "dias_con_signo": [
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22"
+        ],
+        "con_calls": 16,
+        "mismo_signo": 0,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 12,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 8,
+          "baja": 8
+        },
+        "ancho_mediano_pp": 1.362945009332995,
+        "abs_mid_mediano_pp": 0.443470412167029
+      },
+      "z2": {
+        "plan": 16,
+        "pareados": 16,
+        "interpretables": 16,
+        "faltantes": {},
+        "signos": {
+          "sube": 2,
+          "incluye_cero": 6,
+          "baja": 8
+        },
+        "dias_con_signo": [
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22"
+        ],
+        "con_calls": 16,
+        "mismo_signo": 1,
+        "mismo_signo_y_coherente": 1,
+        "coherentes_ambos": 6,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 2,
+          "incluye_cero": 6,
+          "baja": 8
+        },
+        "ancho_mediano_pp": 1.526429342300499,
+        "abs_mid_mediano_pp": 0.8765518237418973
+      },
+      "z3": {
+        "plan": 16,
+        "pareados": 16,
+        "interpretables": 16,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 12,
+          "sube": 1,
+          "baja": 3
+        },
+        "dias_con_signo": [
+          "2026-10-19",
+          "2026-10-20"
+        ],
+        "con_calls": 16,
+        "mismo_signo": 3,
+        "mismo_signo_y_coherente": 1,
+        "coherentes_ambos": 8,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 12,
+          "sube": 1,
+          "baja": 3
+        },
+        "ancho_mediano_pp": 7.4615092999147645,
+        "abs_mid_mediano_pp": 3.3579376953331543
+      },
+      "z4": {
+        "plan": 16,
+        "pareados": 0,
+        "interpretables": 0,
+        "faltantes": {
+          "sin_dos_strikes_0945": 12,
+          "pata_put_no_elegible_1000": 4
+        },
+        "signos": {},
+        "dias_con_signo": [],
+        "con_calls": 0,
+        "mismo_signo": 0,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 0,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {},
+        "ancho_mediano_pp": null,
+        "abs_mid_mediano_pp": null
+      }
+    },
+    "total": {
+      "central": {
+        "plan": 60,
+        "pareados": 60,
+        "interpretables": 60,
+        "faltantes": {},
+        "signos": {
+          "sube": 9,
+          "incluye_cero": 42,
+          "baja": 9
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-12",
+          "2026-10-14",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21"
+        ],
+        "con_calls": 60,
+        "mismo_signo": 10,
+        "mismo_signo_y_coherente": 9,
+        "coherentes_ambos": 49,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 9,
+          "incluye_cero": 42,
+          "baja": 9
+        },
+        "ancho_mediano_pp": 3.5773215115316144,
+        "abs_mid_mediano_pp": 0.9750825735599017
+      },
+      "z1": {
+        "plan": 60,
+        "pareados": 60,
+        "interpretables": 60,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 39,
+          "baja": 12,
+          "sube": 9
+        },
+        "dias_con_signo": [
+          "2026-10-06",
+          "2026-10-07",
+          "2026-10-08",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22"
+        ],
+        "con_calls": 60,
+        "mismo_signo": 1,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 45,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 39,
+          "baja": 12,
+          "sube": 9
+        },
+        "ancho_mediano_pp": 1.3378408612958506,
+        "abs_mid_mediano_pp": 0.39796454804683357
+      },
+      "z2": {
+        "plan": 60,
+        "pareados": 60,
+        "interpretables": 60,
+        "faltantes": {},
+        "signos": {
+          "incluye_cero": 37,
+          "sube": 11,
+          "baja": 12
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-06",
+          "2026-10-08",
+          "2026-10-09",
+          "2026-10-12",
+          "2026-10-13",
+          "2026-10-14",
+          "2026-10-15",
+          "2026-10-16",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21",
+          "2026-10-22"
+        ],
+        "con_calls": 60,
+        "mismo_signo": 4,
+        "mismo_signo_y_coherente": 2,
+        "coherentes_ambos": 41,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "incluye_cero": 37,
+          "sube": 11,
+          "baja": 12
+        },
+        "ancho_mediano_pp": 2.01626534011784,
+        "abs_mid_mediano_pp": 0.7734579970808773
+      },
+      "z3": {
+        "plan": 60,
+        "pareados": 60,
+        "interpretables": 60,
+        "faltantes": {},
+        "signos": {
+          "sube": 5,
+          "incluye_cero": 51,
+          "baja": 4
+        },
+        "dias_con_signo": [
+          "2026-10-02",
+          "2026-10-07",
+          "2026-10-12",
+          "2026-10-14",
+          "2026-10-19",
+          "2026-10-20"
+        ],
+        "con_calls": 60,
+        "mismo_signo": 7,
+        "mismo_signo_y_coherente": 2,
+        "coherentes_ambos": 44,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {
+          "sube": 5,
+          "incluye_cero": 51,
+          "baja": 4
+        },
+        "ancho_mediano_pp": 7.818051008517263,
+        "abs_mid_mediano_pp": 1.7476607203012722
+      },
+      "z4": {
+        "plan": 60,
+        "pareados": 0,
+        "interpretables": 0,
+        "faltantes": {
+          "sin_dos_strikes_0945": 56,
+          "pata_put_no_elegible_1000": 4
+        },
+        "signos": {},
+        "dias_con_signo": [],
+        "con_calls": 0,
+        "mismo_signo": 0,
+        "mismo_signo_y_coherente": 0,
+        "coherentes_ambos": 0,
+        "recientes_todas": 0,
+        "recientes_put": 0,
+        "corroborados": 0,
+        "dias_corroborados": [],
+        "signos_prima": {},
+        "ancho_mediano_pp": null,
+        "abs_mid_mediano_pp": null
+      }
+    }
+  },
+  "diarios_central": [
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-02",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "sube": 3,
+        "incluye_cero": 1
+      },
+      "dias_con_signo": [
+        "2026-10-02"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 2,
+      "mismo_signo_y_coherente": 2,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "sube": 3,
+        "incluye_cero": 1
+      },
+      "ancho_mediano_pp": 2.8432176959961835,
+      "abs_mid_mediano_pp": 1.9246868334432787
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-05",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 4
+      },
+      "dias_con_signo": [],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 4
+      },
+      "ancho_mediano_pp": 4.065848190457782,
+      "abs_mid_mediano_pp": 0.5713445149496399
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-06",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "baja": 1,
+        "incluye_cero": 3
+      },
+      "dias_con_signo": [
+        "2026-10-06"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 1,
+      "mismo_signo_y_coherente": 1,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "baja": 1,
+        "incluye_cero": 3
+      },
+      "ancho_mediano_pp": 2.518330005965444,
+      "abs_mid_mediano_pp": 0.73997361686267
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-07",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "dias_con_signo": [
+        "2026-10-07"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 2,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "ancho_mediano_pp": 3.4833215282842915,
+      "abs_mid_mediano_pp": 0.9744285718270462
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-08",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "dias_con_signo": [
+        "2026-10-08"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 2,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "ancho_mediano_pp": 3.3510912182742714,
+      "abs_mid_mediano_pp": 0.9314858133764523
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-09",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "dias_con_signo": [
+        "2026-10-09"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 3,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 3,
+        "baja": 1
+      },
+      "ancho_mediano_pp": 4.5843396012559685,
+      "abs_mid_mediano_pp": 0.45713612366431455
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-12",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 3,
+        "sube": 1
+      },
+      "dias_con_signo": [
+        "2026-10-12"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 3,
+        "sube": 1
+      },
+      "ancho_mediano_pp": 3.090757170083541,
+      "abs_mid_mediano_pp": 0.39123162986287874
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-13",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 4
+      },
+      "dias_con_signo": [],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 4
+      },
+      "ancho_mediano_pp": 5.209022424573545,
+      "abs_mid_mediano_pp": 0.64391451607098
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-14",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "sube": 3,
+        "incluye_cero": 1
+      },
+      "dias_con_signo": [
+        "2026-10-14"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 3,
+      "mismo_signo_y_coherente": 3,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "sube": 3,
+        "incluye_cero": 1
+      },
+      "ancho_mediano_pp": 2.5649049110368667,
+      "abs_mid_mediano_pp": 1.9142988393547764
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-15",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 4
+      },
+      "dias_con_signo": [],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 4
+      },
+      "ancho_mediano_pp": 5.152948046324821,
+      "abs_mid_mediano_pp": 1.1103082551262273
+    },
+    {
+      "cohorte": "previas",
+      "fecha": "2026-10-16",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 4
+      },
+      "dias_con_signo": [],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 4,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 4
+      },
+      "ancho_mediano_pp": 3.490542990917911,
+      "abs_mid_mediano_pp": 0.7464106117353958
+    },
+    {
+      "cohorte": "adicionales",
+      "fecha": "2026-10-19",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "sube": 2,
+        "incluye_cero": 2
+      },
+      "dias_con_signo": [
+        "2026-10-19"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 3,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "sube": 2,
+        "incluye_cero": 2
+      },
+      "ancho_mediano_pp": 3.8008492497505295,
+      "abs_mid_mediano_pp": 1.8372772624841966
+    },
+    {
+      "cohorte": "adicionales",
+      "fecha": "2026-10-20",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "baja": 4
+      },
+      "dias_con_signo": [
+        "2026-10-20"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 4,
+      "mismo_signo_y_coherente": 3,
+      "coherentes_ambos": 3,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "baja": 4
+      },
+      "ancho_mediano_pp": 3.061145496064402,
+      "abs_mid_mediano_pp": 3.559811704549647
+    },
+    {
+      "cohorte": "adicionales",
+      "fecha": "2026-10-21",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "baja": 1,
+        "incluye_cero": 3
+      },
+      "dias_con_signo": [
+        "2026-10-21"
+      ],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 2,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "baja": 1,
+        "incluye_cero": 3
+      },
+      "ancho_mediano_pp": 6.463284063778307,
+      "abs_mid_mediano_pp": 2.0100779599619436
+    },
+    {
+      "cohorte": "adicionales",
+      "fecha": "2026-10-22",
+      "plan": 4,
+      "pareados": 4,
+      "interpretables": 4,
+      "faltantes": {},
+      "signos": {
+        "incluye_cero": 4
+      },
+      "dias_con_signo": [],
+      "con_calls": 4,
+      "mismo_signo": 0,
+      "mismo_signo_y_coherente": 0,
+      "coherentes_ambos": 2,
+      "recientes_todas": 0,
+      "recientes_put": 0,
+      "corroborados": 0,
+      "dias_corroborados": [],
+      "signos_prima": {
+        "incluye_cero": 4
+      },
+      "ancho_mediano_pp": 2.780319301604978,
+      "abs_mid_mediano_pp": 0.6991605522195312
+    }
+  ],
+  "protocolo": {
+    "fecha": "2026-11-04",
+    "base": "0d0e7c10cb5e5b8dfa592b314eda29a6745f2699",
+    "raw_commit": "43b286c0df2de41d63d0475260517c01d6f36f54",
+    "previas": [
+      "2026-10-02",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+    ],
+    "adicionales": [
+      "2026-10-19",
+      "2026-10-20",
+      "2026-10-21",
+      "2026-10-22"
+    ],
+    "horas": [
+      "09:45",
+      "10:00"
+    ],
+    "dte_0945": [
+      27.0,
+      34.0
+    ],
+    "principal": [
+      0.97,
+      1.03
+    ],
+    "secundarias": [
+      [
+        0.94,
+        0.97
+      ],
+      [
+        0.97,
+        1.0
+      ],
+      [
+        1.0,
+        1.03
+      ],
+      [
+        1.03,
+        1.06
+      ]
+    ],
+    "distancia_max_F": 0.005,
+    "seleccion": "Put elegible mas cercano al objetivo en F_0945, maximo 0.005F, desempate strike menor. Todos los puts publicados en el snapshot filtrado, incluidas reservas; estudio descriptivo sin ajuste a ellas. Sin reemplazar si falta despues.",
+    "medicion": "Mismo ID, strike, expiracion, SPXW europeo PM y multiplicador; diferencia de bid/ask cruzados entre patas en cada corte, despues diferencia entre cortes. Dividir por D_t*(K_alto-K_bajo). Reportar tambien signo del precio sin descuento.",
+    "probabilidad": "Intersecar la banda por corte con [0,1] solo para interpretarla como CDF media; sin interseccion es incompatible, no senal. Mostrar cambio raw no recortado.",
+    "tolerancia": 1e-07,
+    "edad_max_s": 5.0,
+    "desfase_patas_max_s": 2.0,
+    "confirmacion": "Signo de puts distinto de cero; mismo signo via complemento del call vertical a los mismos strikes; bandas de puts y calls compatibles entre si en ambos cortes; las cuatro cotizaciones de cada foto tienen antiguedad [0,5] s al corte y dispersion temporal <=2 s.",
+    "decision": "Central prefijada: si no hay evidencia corroborada en al menos dos sesiones distintas del grupo adicional, no promover a predictor; informar cobertura y distinguir ausencia de evidencia y falta de observaciones. Las zonas secundarias no sustituyen a la principal.",
+    "costo_datos_usd": 0
+  },
+  "testigos_sha256": {
+    "2026-10-02_verticales.json": "fe732de6ea52031ca6dfb958540a4c0a3b638d517407425dd75a43abad038114",
+    "2026-10-05_verticales.json": "9d6360053a48d1ff603fa753c02e4acff67d2a4c602ed5d2f92553578fbfb941",
+    "2026-10-06_verticales.json": "7bbf3de6367cc7d810d8ca2f74c8e9a13c7faa484abdbebece5b0bdeb0d604ad",
+    "2026-10-07_verticales.json": "27eb5b86057a836fdac3c4cca7e8d9df637349c0a4308242846db9e72c60e28c",
+    "2026-10-08_verticales.json": "59f8847592dcbff4d884deeefdb674724bc3dd3e14ae622c55f8d64305911d69",
+    "2026-10-09_verticales.json": "17d809f0d3b224ca51a1ecdde3c2b6211a0f458cd90ea4b2a666abc4658c63fa",
+    "2026-10-12_verticales.json": "063057e23cc39652a139455e020f534196a51e6200adee6641dc3fd2df340816",
+    "2026-10-13_verticales.json": "695e82608c57d92fd80661f2f7a5c5d41cf98ee5ed24e88c1ab32ebc5294516f",
+    "2026-10-14_verticales.json": "06ebe1ec17fc2bc4cd368822fd6f7a1a8cade25b7171aaca6f0cac5ea2399bd6",
+    "2026-10-15_verticales.json": "774dd975c2354c775d07c1a03b2be962e1bf94d0480102de7f0454ba2b74ab48",
+    "2026-10-16_verticales.json": "1dd22e72ffe2cf58eebe68a79f223513979de4e86c1076ff8255960c006ec4e4",
+    "2026-10-19_verticales.json": "edb83fdbf8be026b7d65814e12b0832474fd67c602c6cc24b98c770c3f64a601",
+    "2026-10-20_verticales.json": "b3d31d65502343a68d7547a3f20a8121a36236fbad6a7e150365af492f78b6c0",
+    "2026-10-21_verticales.json": "a1ef0fcd78cba5f6dfe75f625e72c7eac6be49f23e748d6faaa4f149c0105041",
+    "2026-10-22_verticales.json": "49dbbd2303eab66eb93dbb32a99324947190e9c5ccd1c25925339e46d9ba1601"
+  },
+  "hash_entrada_adicional": "1187dfa6c65f835200e7cd566da163a9760cbc311bb541a243332779809c3694",
+  "sha_origen": "a27818566e03759f5e9e3667b45b04036a7e31bb93790ad42895194caf1df0cb"
+}

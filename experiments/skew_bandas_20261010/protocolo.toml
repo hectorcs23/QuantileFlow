@@ -1,0 +1,17 @@
+version = "skew-bandas-0.1"
+fechas = ["2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09"]
+horas = ["09:45", "10:00"]
+minimo_dias = 1.0
+maximo_dias = 45.0
+ancho_evaluacion = 0.03
+minimo_entrenamiento = 6
+objetivos_moneyness = [-0.015, 0.0, 0.015]
+peso_mid = 0.02
+preferencias_banda = [0.0, 0.5, 1.0]
+entradas = ["bid", "mid", "ask"]
+presupuesto_ficticio = 10000.0
+comision = 0.65
+dias_salida = 7.0
+movimientos = [0.01, 0.0, -0.01]
+dinamica_nominal = "tasa_congelada"
+dinamica_alternativa = "plazo_restante"

@@ -1,0 +1,407 @@
+{
+  "origen": "sintético, no cotizaciones de mercado",
+  "spot": 100,
+  "iv": 0.25,
+  "presupuesto": 500,
+  "griegas_call_atm_30d": {
+    "valor": 3.0211408989744375,
+    "delta": 0.5325601284118952,
+    "gamma": 0.05547613305250608,
+    "vega_por_punto_iv": 0.11399205421747824,
+    "theta_por_dia": -0.05300227908566768
+  },
+  "escenarios": [
+    {
+      "nombre": "esperado",
+      "dias": 14,
+      "retorno_spot": 0.05,
+      "cambio_iv": 0
+    },
+    {
+      "nombre": "adverso",
+      "dias": 21,
+      "retorno_spot": -0.02,
+      "cambio_iv": -0.05
+    }
+  ],
+  "resultado": {
+    "contratos": [
+      {
+        "contrato": "C105_30d_SINTETICO",
+        "strike": 105,
+        "dte": 30,
+        "contratos": 4,
+        "desembolso": 485.67973466697015,
+        "efectivo_sobrante": 14.320265333029852,
+        "reserva_comision_cierre": 2.6,
+        "efectivo_libre": 11.720265333029852,
+        "perdida_maxima_prima_y_entrada": 485.67973466697015,
+        "perdida_maxima_costos_asumidos": 488.27973466697017,
+        "pnl_minimo_escenarios": -488.27973466697017,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 2.2835994477656016,
+            "precio_salida_asumido": 2.2435994477656016,
+            "pnl": 409.16004443927045,
+            "retorno_desembolso": 0.8424482539297854
+          },
+          "adverso": {
+            "valor_teorico": 0.017158670154023448,
+            "precio_salida_asumido": 0.0,
+            "pnl": -488.27973466697017,
+            "retorno_desembolso": -1.0053533219824022
+          }
+        }
+      },
+      {
+        "contrato": "C105_60d_SINTETICO",
+        "strike": 105,
+        "dte": 60,
+        "contratos": 2,
+        "desembolso": 474.4687983509785,
+        "efectivo_sobrante": 25.53120164902151,
+        "reserva_comision_cierre": 1.3,
+        "efectivo_libre": 24.23120164902151,
+        "perdida_maxima_prima_y_entrada": 474.4687983509785,
+        "perdida_maxima_costos_asumidos": 475.7687983509785,
+        "pnl_minimo_escenarios": -371.4128000473596,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 3.977081184955359,
+            "precio_salida_asumido": 3.937081184955359,
+            "pnl": 311.6474386400934,
+            "retorno_desembolso": 0.6568344214060597
+          },
+          "adverso": {
+            "valor_teorico": 0.5617799915180943,
+            "precio_salida_asumido": 0.5217799915180943,
+            "pnl": -371.4128000473596,
+            "retorno_desembolso": -0.7827971013862426
+          }
+        }
+      },
+      {
+        "contrato": "C110_60d_SINTETICO",
+        "strike": 110,
+        "dte": 60,
+        "contratos": 4,
+        "desembolso": 463.42051399039036,
+        "efectivo_sobrante": 36.57948600960964,
+        "reserva_comision_cierre": 2.6,
+        "efectivo_libre": 33.97948600960964,
+        "perdida_maxima_prima_y_entrada": 463.42051399039036,
+        "perdida_maxima_costos_asumidos": 466.0205139903904,
+        "pnl_minimo_escenarios": -432.6782319146969,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 1.9784827071459306,
+            "precio_salida_asumido": 1.9384827071459305,
+            "pnl": 309.3725688679818,
+            "retorno_desembolso": 0.6675849677090406
+          },
+          "adverso": {
+            "valor_teorico": 0.12335570518923367,
+            "precio_salida_asumido": 0.08335570518923366,
+            "pnl": -432.6782319146969,
+            "retorno_desembolso": -0.9336622330095405
+          }
+        }
+      },
+      {
+        "contrato": "C115_60d_SINTETICO",
+        "strike": 115,
+        "dte": 60,
+        "contratos": 9,
+        "desembolso": 472.3526418468617,
+        "efectivo_sobrante": 27.647358153138327,
+        "reserva_comision_cierre": 5.8500000000000005,
+        "efectivo_libre": 21.797358153138326,
+        "perdida_maxima_prima_y_entrada": 472.3526418468617,
+        "perdida_maxima_costos_asumidos": 478.2026418468617,
+        "pnl_minimo_escenarios": -478.2026418468617,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 0.8602008128933724,
+            "precio_salida_asumido": 0.8202008128933723,
+            "pnl": 259.97808975717334,
+            "retorno_desembolso": 0.5503898289648164
+          },
+          "adverso": {
+            "valor_teorico": 0.019910100105832697,
+            "precio_salida_asumido": 0.0,
+            "pnl": -478.2026418468617,
+            "retorno_desembolso": -1.0123848148220935
+          }
+        }
+      },
+      {
+        "contrato": "C100_60d_SINTETICO",
+        "strike": 100,
+        "dte": 60,
+        "contratos": 1,
+        "desembolso": 441.1382937971565,
+        "efectivo_sobrante": 58.86170620284349,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 58.211706202843494,
+        "perdida_maxima_prima_y_entrada": 441.1382937971565,
+        "perdida_maxima_costos_asumidos": 441.7882937971565,
+        "pnl_minimo_escenarios": -259.2574307556648,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 7.015912374047352,
+            "precio_salida_asumido": 6.975912374047352,
+            "pnl": 255.80294360757875,
+            "retorno_desembolso": 0.5798701840316807
+          },
+          "adverso": {
+            "valor_teorico": 1.8653086304149171,
+            "precio_salida_asumido": 1.825308630414917,
+            "pnl": -259.2574307556648,
+            "retorno_desembolso": -0.5877010325357883
+          }
+        }
+      },
+      {
+        "contrato": "C100_30d_SINTETICO",
+        "strike": 100,
+        "dte": 30,
+        "contratos": 1,
+        "desembolso": 306.76408989744374,
+        "efectivo_sobrante": 193.23591010255626,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 192.58591010255626,
+        "perdida_maxima_prima_y_entrada": 306.76408989744374,
+        "perdida_maxima_costos_asumidos": 307.4140898974437,
+        "pnl_minimo_escenarios": -260.00865644752844,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 5.651549891651435,
+            "precio_salida_asumido": 5.611549891651435,
+            "pnl": 253.74089926769972,
+            "retorno_desembolso": 0.827153202164339
+          },
+          "adverso": {
+            "valor_teorico": 0.5140543344991529,
+            "precio_salida_asumido": 0.47405433449915296,
+            "pnl": -260.00865644752844,
+            "retorno_desembolso": -0.8475850499139375
+          }
+        }
+      },
+      {
+        "contrato": "C115_90d_SINTETICO",
+        "strike": 115,
+        "dte": 90,
+        "contratos": 4,
+        "desembolso": 421.93970754006904,
+        "efectivo_sobrante": 78.06029245993096,
+        "reserva_comision_cierre": 2.6,
+        "efectivo_libre": 75.46029245993097,
+        "perdida_maxima_prima_y_entrada": 421.93970754006904,
+        "perdida_maxima_costos_asumidos": 424.53970754006906,
+        "pnl_minimo_escenarios": -381.46797158670677,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 1.70936029050371,
+            "precio_salida_asumido": 1.66936029050371,
+            "pnl": 243.2044086614149,
+            "retorno_desembolso": 0.5763961161164697
+          },
+          "adverso": {
+            "valor_teorico": 0.14767933988340567,
+            "precio_salida_asumido": 0.10767933988340567,
+            "pnl": -381.46797158670677,
+            "retorno_desembolso": -0.9040817082864406
+          }
+        }
+      },
+      {
+        "contrato": "C110_90d_SINTETICO",
+        "strike": 110,
+        "dte": 90,
+        "contratos": 2,
+        "desembolso": 386.5051491018717,
+        "efectivo_sobrante": 113.49485089812828,
+        "reserva_comision_cierre": 1.3,
+        "efectivo_libre": 112.19485089812828,
+        "perdida_maxima_prima_y_entrada": 386.5051491018717,
+        "perdida_maxima_costos_asumidos": 387.80514910187173,
+        "pnl_minimo_escenarios": -303.2220325940359,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 3.0951460664374904,
+            "precio_salida_asumido": 3.0551460664374903,
+            "pnl": 223.22406418562633,
+            "retorno_desembolso": 0.5775448650667028
+          },
+          "adverso": {
+            "valor_teorico": 0.4629155825391789,
+            "precio_salida_asumido": 0.42291558253917894,
+            "pnl": -303.2220325940359,
+            "retorno_desembolso": -0.7845226209757822
+          }
+        }
+      },
+      {
+        "contrato": "C110_30d_SINTETICO",
+        "strike": 110,
+        "dte": 30,
+        "contratos": 12,
+        "desembolso": 479.83775017056047,
+        "efectivo_sobrante": 20.16224982943953,
+        "reserva_comision_cierre": 7.800000000000001,
+        "efectivo_libre": 12.36224982943953,
+        "perdida_maxima_prima_y_entrada": 479.83775017056047,
+        "perdida_maxima_costos_asumidos": 487.6377501705605,
+        "pnl_minimo_escenarios": -487.6377501705605,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 0.6121268882944186,
+            "precio_salida_asumido": 0.5721268882944186,
+            "pnl": 198.91451578274183,
+            "retorno_desembolso": 0.4145453660368255
+          },
+          "adverso": {
+            "valor_teorico": 0.00010529132776041373,
+            "precio_salida_asumido": 0.0,
+            "pnl": -487.6377501705605,
+            "retorno_desembolso": -1.0162554946900852
+          }
+        }
+      },
+      {
+        "contrato": "C105_90d_SINTETICO",
+        "strike": 105,
+        "dte": 90,
+        "contratos": 1,
+        "desembolso": 335.5109459541524,
+        "efectivo_sobrante": 164.48905404584758,
+        "reserva_comision_cierre": 0.65,
+        "efectivo_libre": 163.83905404584758,
+        "perdida_maxima_prima_y_entrada": 335.5109459541524,
+        "perdida_maxima_costos_asumidos": 336.1609459541524,
+        "pnl_minimo_escenarios": -216.03540355012387,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 5.204294455557794,
+            "precio_salida_asumido": 5.164294455557794,
+            "pnl": 180.26849960162707,
+            "retorno_desembolso": 0.5372954348448017
+          },
+          "adverso": {
+            "valor_teorico": 1.2412554240402855,
+            "precio_salida_asumido": 1.2012554240402855,
+            "pnl": -216.03540355012387,
+            "retorno_desembolso": -0.6438997181917431
+          }
+        }
+      },
+      {
+        "contrato": "C115_30d_SINTETICO",
+        "strike": 115,
+        "dte": 30,
+        "contratos": 36,
+        "desembolso": 469.35781792663903,
+        "efectivo_sobrante": 30.64218207336097,
+        "reserva_comision_cierre": 23.400000000000002,
+        "efectivo_libre": 7.2421820733609685,
+        "perdida_maxima_prima_y_entrada": 469.35781792663903,
+        "perdida_maxima_costos_asumidos": 492.757817926639,
+        "pnl_minimo_escenarios": -492.757817926639,
+        "escenarios": {
+          "esperado": {
+            "valor_teorico": 0.10391656088620917,
+            "precio_salida_asumido": 0.06391656088620917,
+            "pnl": -262.65819873628607,
+            "retorno_desembolso": -0.5596118541213683
+          },
+          "adverso": {
+            "valor_teorico": 1.2743355848679819e-07,
+            "precio_salida_asumido": 0.0,
+            "pnl": -492.757817926639,
+            "retorno_desembolso": -1.0498553536476032
+          }
+        }
+      }
+    ],
+    "excluidos": [
+      {
+        "contrato": "C90_7d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C95_7d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C100_7d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C105_7d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C110_7d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C115_7d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C90_14d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C95_14d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C100_14d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C105_14d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C110_14d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C115_14d_SINTETICO",
+        "motivo": "vence antes de un escenario"
+      },
+      {
+        "contrato": "C90_30d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C95_30d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C90_60d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C95_60d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C90_90d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C95_90d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      },
+      {
+        "contrato": "C100_90d_SINTETICO",
+        "motivo": "no cabe en presupuesto"
+      }
+    ],
+    "probabilidades": "no estimadas"
+  }
+}

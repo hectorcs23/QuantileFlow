@@ -1,0 +1,13 @@
+{
+  "pruebas": 374,
+  "nuevas": 6,
+  "estado": "pasaron",
+  "alcance": "tests + expiraciones + intradia + evaluar_cadena + control_forward + metodo_forward + modelos_ml",
+  "codigo_sha256_lf": {
+    "evaluar.py": "74475f15d9cb491683877e219ebfed0604109e323f77225518a66b7cb2fc3ba2",
+    "graficas.py": "fc2ac85d0abfc7f6d180bfb7f199605834521b51fed54283e8941c549dc39b61",
+    "modelos.py": "4a1aa091bb61c8e2b6422b965e876eabefaefecc87ef63225eab6bda0c5cde2a",
+    "test_modelos.py": "7f522029b1d31862ec1957da3478a044aa1a2f9ca0ef5424202c76c35e35a574",
+    "verificar.py": "3c874546b608ebfb9550c1215ada7422e3d0db1212a6a2bbfc1e70743590ddd5"
+  }
+}

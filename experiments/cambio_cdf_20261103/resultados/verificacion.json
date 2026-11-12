@@ -1,0 +1,20 @@
+{
+  "lp_marginales": 7040,
+  "lp_conjuntos": 44,
+  "mezclas_puntuales_de_cambio_cero": 876,
+  "pares": 44,
+  "errores_max": {
+    "masa": 1.7763568394002505e-15,
+    "negatividad": 0.0,
+    "F_D": 2.9976021664879227e-15,
+    "cap_spreads": 3.5634606376788724e-11,
+    "media_spreads": 4.5419223937415154e-13,
+    "objetivo": 1.3100631690576847e-14,
+    "mezcla_cero": 6.661338147750939e-16
+  },
+  "fuentes_publicas": {
+    "resumen.json": "f735922baa14e65190f59cc28fc972f9076f4a84612c0faf23681f2d096bfbe1",
+    "por_vencimiento.json": "1577db825480007e5c299a1c332bd0ecadf48628612378bdb70e262894be7c2e"
+  },
+  "verificador_sha256_lf": "fc3b36b98c7d11d66c35fd022a819c9c053c1b5ba56c4d4b650fefffb78a9263"
+}

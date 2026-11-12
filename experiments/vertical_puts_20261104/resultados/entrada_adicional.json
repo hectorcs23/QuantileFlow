@@ -1,0 +1,121 @@
+{
+  "raw_commit": "43b286c0df2de41d63d0475260517c01d6f36f54",
+  "privados_sha256": {
+    "2026-10-19_0945_evaluacion.parquet": "78554042f75a44d1dff0fea76dbff88e92316733ee05d5b88f8a8721a63491b4",
+    "2026-10-19_0945_modelos.json": "3748753a51a2a6a7a8029643b304ba25f4d41d1ac8e629c0b5801928e707838d",
+    "2026-10-19_1000_evaluacion.parquet": "b429225e0596844b8ea4b187b9ebcb6fe17873cc5b016bd09593774dccc7cc7e",
+    "2026-10-19_1000_modelos.json": "d0276038ad799e77a87df377064846b74e78cbc19f2eb2eee412051d6443bda4",
+    "2026-10-20_0945_evaluacion.parquet": "b0c28c6ea1bb546a5c59a221d323b39ae6e48acbb0ca6e2b9872320169d8a077",
+    "2026-10-20_0945_modelos.json": "af4537300c340ab08b469ac029f267abddc3d0c6497baaacd9b1f49026c72b3a",
+    "2026-10-20_1000_evaluacion.parquet": "2d8b8cdd53892d111e1887048210b5a001cf209bf6325151619810ebb0721022",
+    "2026-10-20_1000_modelos.json": "345fe88ac8b5e26acbcb704728836af5580bda28760f2b327ba2a52ef53f5980",
+    "2026-10-21_0945_evaluacion.parquet": "3b23d656b925926d44b4caa4c68f9454cf1c5f59dfc525670c510e737b4993f7",
+    "2026-10-21_0945_modelos.json": "075783c42a20f55be20115e716d6d08369f63510825bc96b793557ce4440beea",
+    "2026-10-21_1000_evaluacion.parquet": "3b8dafe790b04efd2714a41293ea2002acca601f7d306a74c1a94324181469d1",
+    "2026-10-21_1000_modelos.json": "0ffceb2f2bb2b0c8e0c7447a2daed3b943c23a691bac86b2910bdc420217e49d",
+    "2026-10-22_0945_evaluacion.parquet": "fe62072b5709e7434244072c6d8ecfb347be143cb645a92b17515de51025c932",
+    "2026-10-22_0945_modelos.json": "bbd3f88d6e3b74877ff400c4d66eec4c0e9bc74de9cd1c9a59d3a611af144e60",
+    "2026-10-22_1000_evaluacion.parquet": "57cf9e950f02c16a6c0bbf3af50ae2ea145beab3e3f12bc125ac1ee9c28fd7e9",
+    "2026-10-22_1000_modelos.json": "760b57a255dc82422016ad903728f0f4729cba561cb018240469509d783f0e28"
+  },
+  "integridad": {
+    "manifiestos": 33,
+    "paginas_unicas": 109,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "3ed17f1512e0b26224edee09dc820b038c96fab38e6fc696f2346aac6039f9cc",
+      "subyacente": "7f9c378c3f26e76e4870855f1dc959c5b47d441c4d1729851634921bbfdcef64"
+    },
+    "manifiesto_normalizacion_sha256": "f622e064aa5a7e8f48b17efae1e19bf758f9c1519e9e61ce8a89da4612e35e18"
+  },
+  "cortes": [
+    {
+      "fecha": "2026-10-19",
+      "hora": "09:45",
+      "filas": 600,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-19",
+      "hora": "10:00",
+      "filas": 611,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-20",
+      "hora": "09:45",
+      "filas": 957,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-20",
+      "hora": "10:00",
+      "filas": 959,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-21",
+      "hora": "09:45",
+      "filas": 919,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-21",
+      "hora": "10:00",
+      "filas": 909,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-22",
+      "hora": "09:45",
+      "filas": 946,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    },
+    {
+      "fecha": "2026-10-22",
+      "hora": "10:00",
+      "filas": 942,
+      "anclas": 4,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ]
+    }
+  ]
+}

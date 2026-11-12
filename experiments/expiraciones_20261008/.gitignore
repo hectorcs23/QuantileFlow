@@ -1,0 +1,5 @@
+__pycache__/
+*.parquet
+*.gz
+*.zip
+privado/

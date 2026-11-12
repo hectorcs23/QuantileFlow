@@ -1,0 +1,2162 @@
+[
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filtro": "todos",
+    "filas": 111,
+    "rho": 3.9681162531741982
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filtro": "frescas_5s",
+    "filas": 88,
+    "rho": 3.9681162531742364
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filtro": "otm",
+    "filas": 60,
+    "rho": 0.5123966942148765
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filtro": "otm_frescas_5s",
+    "filas": 54,
+    "rho": 0.5123966942148783
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 27.260416666666668,
+    "vencimiento": "2026-10-29",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 111,
+    "rho": 3.234521007613953
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filtro": "todos",
+    "filas": 328,
+    "rho": 2.782476968275867
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filtro": "frescas_5s",
+    "filas": 244,
+    "rho": 2.7824769682759016
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filtro": "otm",
+    "filas": 188,
+    "rho": 1.6813186813187608
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filtro": "otm_frescas_5s",
+    "filas": 163,
+    "rho": 1.681318681318775
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 28.260416666666668,
+    "vencimiento": "2026-10-30",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 328,
+    "rho": 2.5748256963954863
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos",
+    "filas": 84,
+    "rho": 2.3839440299323864
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filtro": "frescas_5s",
+    "filas": 71,
+    "rho": 2.383944029932417
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm",
+    "filas": 45,
+    "rho": 0.3222500935366068
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm_frescas_5s",
+    "filas": 45,
+    "rho": 0.3222500935366068
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 84,
+    "rho": 1.671741728381702
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 86,
+    "rho": 3.938625696545247
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 72,
+    "rho": 3.9386256965452344
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 46,
+    "rho": 0.669441141498217
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 37,
+    "rho": 0.6694411414982157
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 86,
+    "rho": 3.846703081988631
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filtro": "todos",
+    "filas": 113,
+    "rho": 12.646568884479287
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filtro": "frescas_5s",
+    "filas": 112,
+    "rho": 12.646568884478897
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filtro": "otm",
+    "filas": 60,
+    "rho": 0.5259863250052618
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filtro": "otm_frescas_5s",
+    "filas": 59,
+    "rho": 0.5259863250052508
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 27.25,
+    "vencimiento": "2026-10-29",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 113,
+    "rho": 11.775956284153738
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filtro": "todos",
+    "filas": 324,
+    "rho": 4.615319443535411
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filtro": "frescas_5s",
+    "filas": 317,
+    "rho": 4.615319443535537
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filtro": "otm",
+    "filas": 188,
+    "rho": 2.3644067796610324
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filtro": "otm_frescas_5s",
+    "filas": 181,
+    "rho": 2.3644067796610484
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 28.25,
+    "vencimiento": "2026-10-30",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 324,
+    "rho": 4.209714018659743
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos",
+    "filas": 84,
+    "rho": 2.61978398894665
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "frescas_5s",
+    "filas": 84,
+    "rho": 2.61978398894665
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm",
+    "filas": 45,
+    "rho": 0.2885709176313122
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm_frescas_5s",
+    "filas": 45,
+    "rho": 0.2885709176313122
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 84,
+    "rho": 2.2793139048971907
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 87,
+    "rho": 1.5780360779345368
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 87,
+    "rho": 1.5780360779345368
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 46,
+    "rho": 0.34842670759782995
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 46,
+    "rho": 0.34842670759782995
+  },
+  {
+    "fecha": "2026-10-02",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 87,
+    "rho": 1.3119568227315304
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos",
+    "filas": 89,
+    "rho": 3.8591344558442766
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filtro": "frescas_5s",
+    "filas": 89,
+    "rho": 3.8591344558442766
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm",
+    "filas": 49,
+    "rho": 0.23687423687426573
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.23687423687426573
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 89,
+    "rho": 1.6514536513624303
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 91,
+    "rho": 1.6606851549752872
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 91,
+    "rho": 1.6606851549752872
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.4165430020566774
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 50,
+    "rho": 0.4165430020566774
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 91,
+    "rho": 1.6606851549752963
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 1.1542272564136158
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 92,
+    "rho": 1.1542272564136158
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.7250361794501492
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 50,
+    "rho": 0.7250361794501492
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 0.8995737296948585
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 1.8334496626784074
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 92,
+    "rho": 1.8334496626784074
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 49,
+    "rho": 0.6339820359282163
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.6339820359282163
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 1.6365065496590838
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos",
+    "filas": 91,
+    "rho": 1.0837585900823212
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "frescas_5s",
+    "filas": 78,
+    "rho": 0.8238200085235469
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm",
+    "filas": 49,
+    "rho": 0.25731716486041767
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.25731716486041767
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-02",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 91,
+    "rho": 0.8921534805164045
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 0.7060543755292464
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 74,
+    "rho": 0.7060543755292473
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.22371740958790703
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.22371740958790745
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 0.593883113456903
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 0.924617200925491
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 51,
+    "rho": 0.9246172009254755
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.3162308830780853
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 31,
+    "rho": 0.30354505169830226
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 0.7596439485229135
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 3.8521086082481424
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 72,
+    "rho": 2.4305463464262242
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 49,
+    "rho": 0.5861812778603122
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.5861812778603122
+  },
+  {
+    "fecha": "2026-10-05",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 3.121645308953612
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 97,
+    "rho": 2.405900991327391
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 73,
+    "rho": 2.4059009913273752
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 51,
+    "rho": 0.6144004760487362
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 44,
+    "rho": 0.6144004760487308
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 97,
+    "rho": 2.1820569024192813
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 94,
+    "rho": 0.6652332719851078
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 56,
+    "rho": 0.5559284116331302
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.2018018018017994
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 39,
+    "rho": 0.2018018018017962
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 94,
+    "rho": 0.5622258227380568
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 98,
+    "rho": 2.34674302934154
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 64,
+    "rho": 2.346743029341553
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 51,
+    "rho": 0.5262757044935121
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 44,
+    "rho": 0.5262757044934915
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 98,
+    "rho": 2.015157824827613
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 194,
+    "rho": 13.170967599896834
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 141,
+    "rho": 3.686939905015829
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 103,
+    "rho": 2.736263736264088
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 90,
+    "rho": 2.736263736264085
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 194,
+    "rho": 5.52351715798746
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos",
+    "filas": 94,
+    "rho": 2.6379983026025746
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filtro": "frescas_5s",
+    "filas": 92,
+    "rho": 2.6379983026024236
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm",
+    "filas": 52,
+    "rho": 0.15843997562457035
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filtro": "otm_frescas_5s",
+    "filas": 52,
+    "rho": 0.15843997562457035
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-03",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 94,
+    "rho": 1.671964479662697
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 94,
+    "rho": 3.288122564255749
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 93,
+    "rho": 3.2881225642557683
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 52,
+    "rho": 0.36986301369868824
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 52,
+    "rho": 0.36986301369868824
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 94,
+    "rho": 1.8124912473785473
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 96,
+    "rho": 1.5689149560118603
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 92,
+    "rho": 1.5689149560118596
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 52,
+    "rho": 1.5689149560118743
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 52,
+    "rho": 1.5689149560118743
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 96,
+    "rho": 1.5689149560118398
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 188,
+    "rho": 3.3588642424827464
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 183,
+    "rho": 3.35886424248274
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 104,
+    "rho": 2.380733944954366
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 104,
+    "rho": 2.380733944954366
+  },
+  {
+    "fecha": "2026-10-06",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 188,
+    "rho": 2.405639516821879
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 102,
+    "rho": 2.393363416864876
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 95,
+    "rho": 2.393363416865069
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 56,
+    "rho": 0.8177681503550412
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 54,
+    "rho": 0.8177681503550536
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 102,
+    "rho": 2.1994202345240086
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 104,
+    "rho": 0.9953956958057065
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 99,
+    "rho": 0.995395695805717
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 56,
+    "rho": 0.918210598975441
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 56,
+    "rho": 0.918210598975441
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 104,
+    "rho": 0.9948630136986548
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 211,
+    "rho": 3.1668549650324893
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 196,
+    "rho": 3.166854965032493
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 111,
+    "rho": 1.7253446447507756
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 109,
+    "rho": 1.7253446447507788
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 30.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 211,
+    "rho": 3.1057263536724684
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 95,
+    "rho": 5.652466130447576
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 89,
+    "rho": 5.652466130447718
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 51,
+    "rho": 1.2874631573637438
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 1.287463157363751
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 95,
+    "rho": 2.2592847050384006
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos",
+    "filas": 101,
+    "rho": 1.6692393009599804
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filtro": "frescas_5s",
+    "filas": 49,
+    "rho": 0.48063127690105906
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm",
+    "filas": 54,
+    "rho": 0.48063127690106283
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filtro": "otm_frescas_5s",
+    "filas": 39,
+    "rho": 0.4806312769010647
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-04",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 101,
+    "rho": 1.468590471416992
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 101,
+    "rho": 1.716632197171152
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 53,
+    "rho": 1.2254889215280422
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 55,
+    "rho": 0.9999999999996019
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 40,
+    "rho": 0.9999999999996017
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 101,
+    "rho": 1.5033827024888322
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 206,
+    "rho": 4.800085553178522
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 136,
+    "rho": 4.800085553178447
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 111,
+    "rho": 3.4835164835165195
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 98,
+    "rho": 3.4835164835164747
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 30.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 206,
+    "rho": 4.417611436897006
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 1.9926876161198888
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 49,
+    "rho": 1.3235294117646856
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 1.3235294117646754
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 38,
+    "rho": 1.3235294117646927
+  },
+  {
+    "fecha": "2026-10-07",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 1.9015396347664355
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 103,
+    "rho": 1.5325910740528639
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 91,
+    "rho": 1.532591074052863
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 55,
+    "rho": 0.04799216454465043
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 47,
+    "rho": 0.04799216454464978
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 103,
+    "rho": 1.2873556996695124
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 209,
+    "rho": 4.471452200287013
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 194,
+    "rho": 4.471452200287106
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 112,
+    "rho": 0.8983852595412115
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 104,
+    "rho": 0.8983852595412275
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 29.302083333333332,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 209,
+    "rho": 3.39982926750296
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 91,
+    "rho": 6.767218409066683
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 85,
+    "rho": 6.767218409066622
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 1.4257425742569891
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 46,
+    "rho": 1.4257425742569925
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 91,
+    "rho": 2.887744901015444
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos",
+    "filas": 88,
+    "rho": 1.3003518857247789
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "frescas_5s",
+    "filas": 81,
+    "rho": 1.3003518857247636
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm",
+    "filas": 48,
+    "rho": 0.198689956331924
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm_frescas_5s",
+    "filas": 44,
+    "rho": 0.19868995633191688
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "09:45",
+    "dias": 33.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 88,
+    "rho": 0.9397362449677514
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 103,
+    "rho": 1.3522117962464408
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 85,
+    "rho": 0.9315683118163636
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 56,
+    "rho": 0.43007662835253596
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 50,
+    "rho": 0.430076628352534
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 103,
+    "rho": 1.3522117962464526
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 210,
+    "rho": 6.1897954721013235
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 177,
+    "rho": 1.8571428571427453
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 111,
+    "rho": 1.6687828562329121
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 104,
+    "rho": 1.6687828562329081
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 29.291666666666664,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 210,
+    "rho": 2.875998768467044
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 93,
+    "rho": 1.1370439727038375
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 85,
+    "rho": 1.1370439727038306
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 51,
+    "rho": 1.0945986601124893
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 51,
+    "rho": 1.0945986601124893
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 93,
+    "rho": 1.0472210561662805
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos",
+    "filas": 92,
+    "rho": 7.8213724165849134
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filtro": "frescas_5s",
+    "filas": 78,
+    "rho": 7.821372416584918
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.29335585585593377
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm_frescas_5s",
+    "filas": 46,
+    "rho": 0.2933558558559399
+  },
+  {
+    "fecha": "2026-10-08",
+    "hora": "10:00",
+    "dias": 33.29166666666667,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 92,
+    "rho": 3.384587079855931
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 107,
+    "rho": 0.9808346025888569
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 100,
+    "rho": 0.9808346025888873
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 59,
+    "rho": 0.0
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 55,
+    "rho": 0.0
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 27.302083333333336,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 107,
+    "rho": 0.6150581392066945
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 205,
+    "rho": 17.425034543613094
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 189,
+    "rho": 17.42503454361351
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 111,
+    "rho": 0.6033962616152619
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 109,
+    "rho": 0.603396261615212
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 28.302083333333336,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 205,
+    "rho": 5.655920421374117
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 93,
+    "rho": 1.1977989456996483
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 85,
+    "rho": 1.1977989456996871
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.3024911032027904
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 47,
+    "rho": 0.30249110320278993
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 31.302083333333332,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 93,
+    "rho": 0.9701897275108554
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos",
+    "filas": 93,
+    "rho": 9.34825585072257
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "frescas_5s",
+    "filas": 84,
+    "rho": 9.348255850722566
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm",
+    "filas": 50,
+    "rho": 0.2087198515770764
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm_frescas_5s",
+    "filas": 46,
+    "rho": 0.2087198515770711
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "09:45",
+    "dias": 32.302083333333336,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 93,
+    "rho": 4.411732434144962
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos",
+    "filas": 110,
+    "rho": 0.8269239843630581
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "frescas_5s",
+    "filas": 109,
+    "rho": 0.8269239843630922
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm",
+    "filas": 59,
+    "rho": 0.07879088206153528
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "otm_frescas_5s",
+    "filas": 58,
+    "rho": 0.07879088206153688
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 27.291666666666668,
+    "vencimiento": "2026-11-05",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 110,
+    "rho": 0.7239617632385301
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos",
+    "filas": 209,
+    "rho": 2.3459242784741394
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "frescas_5s",
+    "filas": 208,
+    "rho": 2.3459242784741647
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm",
+    "filas": 110,
+    "rho": 0.9715189873418306
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "otm_frescas_5s",
+    "filas": 109,
+    "rho": 0.9715189873418338
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 28.291666666666668,
+    "vencimiento": "2026-11-06",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 209,
+    "rho": 1.804207927020597
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos",
+    "filas": 95,
+    "rho": 0.7218990290785371
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filtro": "frescas_5s",
+    "filas": 94,
+    "rho": 0.7218990290785294
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm",
+    "filas": 51,
+    "rho": 0.2747065013115738
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filtro": "otm_frescas_5s",
+    "filas": 50,
+    "rho": 0.27470650131157526
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 31.291666666666668,
+    "vencimiento": "2026-11-09",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 95,
+    "rho": 0.48687093916363283
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos",
+    "filas": 96,
+    "rho": 1.9701590682754315
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filtro": "frescas_5s",
+    "filas": 93,
+    "rho": 1.9701590682753198
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm",
+    "filas": 52,
+    "rho": 0.8892617449663747
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filtro": "otm_frescas_5s",
+    "filas": 49,
+    "rho": 0.8892617449663747
+  },
+  {
+    "fecha": "2026-10-09",
+    "hora": "10:00",
+    "dias": 32.291666666666664,
+    "vencimiento": "2026-11-10",
+    "filtro": "todos_referencias_en_banda",
+    "filas": 96,
+    "rho": 1.3255565121499742
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "cuantiles_verificados": 2160,
+  "precios_holdout_reproducidos": 14778,
+  "max_error_cdf_en_cuantil": 3.3274494271040567e-12,
+  "max_error_movimiento_cdf_pp": 1.1102230246251565e-14,
+  "conteos_precio_reproducidos": true,
+  "distancia_cdf_entre_modelos_reproducida": true,
+  "huellas_correctas": true,
+  "resumen_sha256": "ce2ca32e1270f04e70f2e51ed2453684510ffcf3b5b1dd7808c52a3c196c6339",
+  "codigo_sha256_lf": "4e1d600bcdaa488a853d543760e9e12d925873e425fdba4df89b159896078782"
+}

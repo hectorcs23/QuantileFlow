@@ -259,9 +259,16 @@ def main() -> int:
         seleccion, solicitudes = {}, []
         for o in cfg["opciones"]:
             vencimientos = {c["expiration_date"] for c in meta.values() if c["root_symbol"] == o["raiz"]}
-            elegidos, plazos = alpaca.elegir_vencimientos(
-                vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivo_dias"],
-                o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
+            if "objetivos_dias" in o:
+                if "objetivo_dias" in o:
+                    raise ValueError("usar objetivo_dias u objetivos_dias, no ambos")
+                elegidos, plazos = alpaca.elegir_vencimientos_multiples(
+                    vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivos_dias"],
+                    o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
+            else:
+                elegidos, plazos = alpaca.elegir_vencimientos(
+                    vencimientos, alpaca.LIQUIDACION[o["raiz"]], pendientes[0]["corte_utc"], o["objetivo_dias"],
+                    o["vencimientos_por_lado"], o["cercano"], codigo=codigo)
             seleccion[o["raiz"]] = {"vencimientos": [str(v) for v in elegidos],
                                     "dias": {str(v): round(plazos[v], 4) for v in elegidos}}
             print(f"{o['raiz']}: " + ", ".join(f"{v} ({plazos[v]:.1f} d)" for v in elegidos))

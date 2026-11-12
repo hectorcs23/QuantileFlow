@@ -1,0 +1,9 @@
+{
+  "fecha": "2026-10-14",
+  "comando": "python -X utf8 -m pytest tests experiments/expiraciones_20261008/test_expiraciones.py experiments/intradia_20261007/test_exploracion.py experiments/cadena_comparador_20261010/test_evaluar_cadena.py experiments/skew_bandas_20261010/test_control_forward.py experiments/forward_superficies_20261014/test_metodo.py experiments/ml_superficie_20261014/test_modelos.py experiments/estabilidad_superficie_20261014/test_estabilidad.py -q",
+  "pasadas": 380,
+  "nuevas": 6,
+  "duracion_segundos": 84.52,
+  "alcance": "Pruebas del código; no validación predictiva ni prueba de operación en vivo",
+  "test_estabilidad_sha256_lf": "f2d85d8a02b125d58b65375ac645a0958be12244f441e916dd3992e811dd1541"
+}

@@ -1,0 +1,11 @@
+{
+  "fecha": "2026-10-14",
+  "comando": "python -X utf8 -m pytest experiments/ventana_superficie_20261014/test_ventana.py -q",
+  "pasadas": 3,
+  "duracion_segundos": 0.45,
+  "alcance": "Pruebas nuevas del split; no prueba predictiva ni de operación en vivo",
+  "codigo_sha256_lf": {
+    "metodo.py": "55f547b3ec5fe38356aa90317f169f0cc5c14dfbff62bda1fb6045f7e04eaed7",
+    "test_ventana.py": "999ee219617cb15d506e83f9007bbf874f62a73352b0a19c521c14c81ba1be24"
+  }
+}

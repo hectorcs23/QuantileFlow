@@ -1,0 +1,17 @@
+version = "cambio-cdf-1"
+fecha = "2026-11-03"
+origen = "f0e578a7dd6a62909402e6c5b630dca5cab683ba"
+costo_datos_usd = 0
+horas = ["09:45", "10:00"]
+fechas = ["2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16"]
+ratios = [0.94,0.97,1.0,1.03,1.06]
+ancla = "K = ratio * F_0945 de cada vencimiento. Reexpresar ese mismo K en unidades de F de cada corte."
+pareo = "Fecha y vencimiento exactos, SPXW europeo PM; documentar faltantes. No emparejar por DTE redondeado."
+principal = "tope y minimo L1 verificados por corte, margen medio +0.1; F/D fijos propios, soporte original 2F de cada corte"
+controles = ["margen medio +0.05", "F +/-0.25%, tasa +/-1pp, presupuesto principal", "uniforme al mismo tope"]
+epsilon = 0.0025
+rampa = "Ancho absoluto comun epsilon * F_0945 en ambas fotos"
+tolerancia = 1e-7
+regla = "Cambio = CDF_1000 - CDF_0945. Signo identificado solo si la banda exterior excluye 0 por mas de la tolerancia. Si el rango interior cruza 0 hay un cambio nulo alcanzable en ese umbral; en otro caso, indeterminado."
+conjunto = "Principal: minimizar maxima diferencia de cinco CDF discretas en dos medidas simultaneas. Valor <= tolerancia con testigos factibles certifica igualdad numerica en esos cinco niveles; valor positivo en malla no prueba imposibilidad en continuo."
+alcance = "Dos conjuntos marginales sin acoplamiento dinamico. Cambios neutrales al riesgo en 15 minutos: ni derivada instantanea ni prediccion de retornos."

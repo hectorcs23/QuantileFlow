@@ -1,0 +1,24 @@
+version = "distribuciones-ruido-0.1"
+fecha = "2026-10-22"
+presupuesto_datos = 0
+universo = "SPXW europeo; snapshot original, seis sesiones conocidas, training ancho 0.10"
+filtros = ["todos", "frescas_5s", "otm", "otm_frescas_5s"]
+edad_maxima_segundos = 5.0
+edad = "recibido_utc - sello_evento_utc; 0 <= edad <= 5 y disponible_utc <= recibido_utc"
+otm = "Call K>=F_ancla; put K<F_ancla. F anclado al training central previo."
+margenes_spreads = [0.1, 0.5, 1.0]
+tolerancia = "rho mínimo del training + margen predefinido; modelo determinista, no estimador de ruido verdadero"
+comparacion_filtros = ["rho_propio+0.5", "rho_todos+0.5"]
+ratios_cdf = [0.94, 0.97, 1.0, 1.03, 1.06]
+soporte_maximo = 2.0
+control_soporte_maximo = 4.0
+epsilon_cdf = 0.0025
+control_epsilon_cdf = 0.00125
+forward_banda_relativa = 0.0025
+shock_tasa_anual = 0.01
+referencias = "Principal F/D fijos; control continuo F +/-0.25% y tasa implícita +/-1 punto, sin recalibrar rho"
+holdout = "Tres calls reservados más cercanos a K/F=0.97,1,1.03 por vencimiento; solo diagnóstico de solapamiento"
+calendario = "Cada vencimiento independiente; no imponer calendario, dinámica ni transición entre capturas"
+salida = "CDF neutral al riesgo, envolventes puntuales y medidas extremas; no PDF suavizada ni confianza física"
+control_cdf_alcanzada = "Además de rampas exteriores, optimizar el indicador exacto en los estados declarados y guardar dos medidas que alcancen esos valores. Cotas interiores discretas, no extremos globales de la CDF continua."
+regla_decision = "No promover al comparador ni cambiar filtros de producción. Reportar sensibilidad completa, sin escoger margen por resultado atractivo."

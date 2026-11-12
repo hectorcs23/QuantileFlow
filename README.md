@@ -1,15 +1,70 @@
 # QuantileFlow
 
 Seguimiento de distribuciones implícitas en opciones y gestión diaria de posiciones.
-**Versión de investigación (27 de septiembre de 2026).**
+**Versión de investigación; simulador y análisis de distribuciones, avances al 6 de noviembre de 2026.**
 
 Este repositorio contiene la propuesta técnica del sistema, un núcleo matemático de referencia con el
 que se generan sus figuras, el pipeline del piloto de medición (ingesta, controles, etiquetas, informe
 y manifiesto) y la captura diaria de cadenas de opciones en Alpaca. Los datos de mercado no están en
-Git. Todavía no hay modelos entrenados ni resultados empíricos: las figuras y la plantilla del informe
-usan datos **sintéticos** con semillas fijas.
+Git. Hay revisiones operativas y experimentos descriptivos de capturas reales, pero aún no hay un
+predictor validado. Las figuras de la propuesta, la plantilla del informe y los benchmarks PDE
+usan datos **sintéticos**.
+
+## Simulador condicional: presupuesto, plazo y contratos
+
+[Captura histórica con US$300](docs/CONTRATOS_OBSERVADOS_2026-11-06.md): 57 calls
+SPXW calculables en la foto del 22 de octubre, con filtros, cantidades enteras,
+comparación A/B y mapas según movimiento, tiempo e IV. El feed indicativo y la
+referencia implícita bloquean recomendaciones de compra. Se abre en `/observadas`
+tras configurar una captura privada; el ejemplo sintético sigue separado.
+
+[Comparación A/B de dos compras](docs/DOS_COMPRAS_2026-11-04.md): elige las dos
+series y cantidades, consulta su efectivo libre y compara las ganancias netas
+si cambia el movimiento, el plazo o la IV. Incluye el ejemplo de tres calls
+cortos frente a uno largo bajo el mismo presupuesto de US$300.
+
+Ejecuta `python scripts/simulador_opciones.py` y abre <http://127.0.0.1:8791>.
+Compara posiciones completas con contratos enteros, costos, caja y sensibilidad
+a movimiento, tiempo e IV. Incluye gráficas y descarga de escenarios.
+**Esta versión usa calls europeos sintéticos; no estima probabilidades de ganar.**
+
+[Guía de uso](apps/simulador/README.md) ·
+[Resultados y siguiente paso](docs/SIMULADOR_CONDICIONAL_2026-10-21.md) ·
+[Diagnóstico de factibilidad de las superficies](docs/FACTIBILIDAD_Y_DECISION_2026-10-20.md)
 
 ## Documentos
+
+- [Prueba directa de verticales de puts](docs/VERTICAL_PUTS_2026-11-04.md): 18 de 60 cambios centrales superan el bid/ask; ninguno supera todos los controles de paridad y tiempo. Se prioriza el simulador por presupuesto.
+
+- [Cambio intradía de la CDF a precios fijos de SPX](docs/CAMBIO_CDF_2026-11-03.md): en once sesiones, cada uno de los 44 pares de capturas y vencimientos admite igualdad simultánea en los cinco niveles estudiados.
+
+- [Error concentrado y contraste con otras sesiones, 26 de octubre](docs/RUIDO_CONCENTRADO_2026-10-26.md):
+  límites de error total y por cotización, cinco sesiones adicionales y verificación
+  independiente; mejora de los extremos, con ambigüedad de distribución persistente.
+
+- [Distribuciones bajo cotizaciones ruidosas, 22 de octubre](docs/DISTRIBUCIONES_RUIDOSAS_2026-10-22.md):
+  camino B, conjuntos de medidas admisibles, filtros y bandas de CDF;
+  incertidumbre de la reparación comprobada con distribuciones extremas.
+
+- [`docs/SKEW_BANDAS_2026-10-10.md`](docs/SKEW_BANDAS_2026-10-10.md):
+  contraste justo de IV plana y SSVI, sensibilidad del ranking y control independiente
+  de forward; seis sesiones del feed gratuito, datos US$0.
+
+- [`docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md`](docs/VALIDACION_CADENAS_GRATIS_2026-10-10.md):
+  prueba del comparador con doce cortes privados; IV plana, holdout por strike,
+  bandas y límites de sincronía. Solo resultados agregados públicos; datos US$0.
+
+- [`docs/COMPARADOR_PDF_2026-10-10.md`](docs/COMPARADOR_PDF_2026-10-10.md):
+  comparador PDE, costos y límite de pérdida; rankings de ganancia, retorno y robustez,
+  barridos de spot/IV/plazo y comprobación con una malla más fina. Datos sintéticos, US$0.
+
+- [`docs/VALORACION_CONSISTENTE_2026-10-10.md`](docs/VALORACION_CONSISTENTE_2026-10-10.md):
+  valoración de calls/puts desde la misma PDF, identidades por strike, sensibilidades y convergencia.
+
+- [`docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md`](docs/SENSIBILIDAD_DISTRIBUCION_2026-10-09.md):
+  PDF, CDF, cuantiles y colas; tangentes y adjuntos, verificación y gráficos con presupuesto de datos US$0.
+- [`docs/AVANCE_PDE_GRATIS_2026-10-09.md`](docs/AVANCE_PDE_GRATIS_2026-10-09.md): primer benchmark
+  europeo de precios y sensibilidades, integridad del crudo y prueba aislada de captura ampliada.
 
 - [`docs/plan_de_trabajo.md`](docs/plan_de_trabajo.md): plan de investigación vigente (26 de septiembre
   de 2026). Pregunta inicial, fases con criterios de salida y correcciones previas del núcleo.
@@ -107,6 +162,8 @@ quantileflow/          núcleo de referencia (numpy, scipy, pandas)
   diagnostico.py       diagnóstico de capturas: elegibilidad estricta al corte y calidad del feed
   operacion.py         revisión de la operación: estado de cada corte, puntualidad, respaldo, SIP y dividendos
   opciones.py          Black, griegas, árbol binomial con dividendos
+  pde.py               difusión europea de referencia y adjunto discreto de precios
+  distribucion_pde.py  PDF/CDF reconstruidas, cuantiles, colas y sensibilidades de distribuciones Q
   superficies.py       SSVI con restricciones, función g, CDF anclada, ajuste convexo en precios
   distribuciones.py    Breeden–Litzenberger, controles, cuantiles con estado de identificación
   transporte.py        Wasserstein en 1-D, cambios firmados, PCA funcional, reordenamiento

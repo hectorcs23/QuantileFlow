@@ -1,0 +1,129 @@
+{
+  "naturaleza": "control analítico del mismo baseline de IV plana, no ajuste nuevo",
+  "dentro_banda_bs": 68,
+  "holdout": 1642,
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "holdout": 138,
+      "dentro_banda_bs": 2,
+      "max_error_pde_bs": 0.2771453167176361,
+      "max_error_fino_bs": 0.06879639353925882,
+      "mediana_error_pde_bs_en_semispreads": 0.28300235274048113,
+      "mediana_error_modelo_bs_en_semispreads": 8.975463480930827
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "holdout": 144,
+      "dentro_banda_bs": 2,
+      "max_error_pde_bs": 0.2949386732603152,
+      "max_error_fino_bs": 0.07340784487902852,
+      "mediana_error_pde_bs_en_semispreads": 0.40375301942804853,
+      "mediana_error_modelo_bs_en_semispreads": 12.524257703873069
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "holdout": 112,
+      "dentro_banda_bs": 5,
+      "max_error_pde_bs": 0.27831532099168754,
+      "max_error_fino_bs": 0.06877916815058427,
+      "mediana_error_pde_bs_en_semispreads": 0.21489278735242667,
+      "mediana_error_modelo_bs_en_semispreads": 5.951988124363697
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "holdout": 112,
+      "dentro_banda_bs": 5,
+      "max_error_pde_bs": 0.28215788556469334,
+      "max_error_fino_bs": 0.06975551644936218,
+      "mediana_error_pde_bs_en_semispreads": 0.17846301886020954,
+      "mediana_error_modelo_bs_en_semispreads": 6.466401115862277
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "holdout": 130,
+      "dentro_banda_bs": 8,
+      "max_error_pde_bs": 0.27501545201172917,
+      "max_error_fino_bs": 0.06760669081621273,
+      "mediana_error_pde_bs_en_semispreads": 0.30006783762736344,
+      "mediana_error_modelo_bs_en_semispreads": 8.118523363741307
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "holdout": 130,
+      "dentro_banda_bs": 7,
+      "max_error_pde_bs": 0.290219495852412,
+      "max_error_fino_bs": 0.07189382009961776,
+      "mediana_error_pde_bs_en_semispreads": 0.2515112505603205,
+      "mediana_error_modelo_bs_en_semispreads": 6.715914481397389
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "holdout": 148,
+      "dentro_banda_bs": 6,
+      "max_error_pde_bs": 0.2877603140215683,
+      "max_error_fino_bs": 0.07161615193704662,
+      "mediana_error_pde_bs_en_semispreads": 0.23329706323597038,
+      "mediana_error_modelo_bs_en_semispreads": 7.977791947566805
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "holdout": 148,
+      "dentro_banda_bs": 6,
+      "max_error_pde_bs": 0.28807579810831285,
+      "max_error_fino_bs": 0.07168495827044552,
+      "mediana_error_pde_bs_en_semispreads": 0.24557012262005173,
+      "mediana_error_modelo_bs_en_semispreads": 8.618235149029385
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "holdout": 142,
+      "dentro_banda_bs": 6,
+      "max_error_pde_bs": 0.29020848157961154,
+      "max_error_fino_bs": 0.07227003993140713,
+      "mediana_error_pde_bs_en_semispreads": 0.2509740741675198,
+      "mediana_error_modelo_bs_en_semispreads": 9.493450243422373
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "holdout": 142,
+      "dentro_banda_bs": 7,
+      "max_error_pde_bs": 0.29295446453901164,
+      "max_error_fino_bs": 0.07290495959457388,
+      "mediana_error_pde_bs_en_semispreads": 0.22876541062009004,
+      "mediana_error_modelo_bs_en_semispreads": 8.02274072327462
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "holdout": 148,
+      "dentro_banda_bs": 7,
+      "max_error_pde_bs": 0.3021720105562977,
+      "max_error_fino_bs": 0.07492712449386119,
+      "mediana_error_pde_bs_en_semispreads": 0.18038834055809663,
+      "mediana_error_modelo_bs_en_semispreads": 5.55798064062834
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "holdout": 148,
+      "dentro_banda_bs": 7,
+      "max_error_pde_bs": 0.3153167119881175,
+      "max_error_fino_bs": 0.0786002832527899,
+      "mediana_error_pde_bs_en_semispreads": 0.1654048121639088,
+      "mediana_error_modelo_bs_en_semispreads": 5.652757522764926
+    }
+  ],
+  "sha256_resumen": "45c7c1ae1ed3e674e491baedcf7bb20a4a056ba75e73331fdbfd90aceccc3540",
+  "fuente_sha256_lf": "1bf51d173c0e51b193159acaaeb42eb7e57e72039b2f768aa4f7bbc19da7fbd8"
+}

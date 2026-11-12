@@ -1,0 +1,28 @@
+version = "expiraciones-0.1"
+presupuesto_mensual_usd = 250
+# Días naturales desde el corte hasta la liquidación; sin extrapolación.
+# Máxima separación entre contratos que encierran el plazo objetivo.
+[[horizontes]]
+dias = 7
+separacion_maxima_dias = 7
+[[horizontes]]
+dias = 14
+separacion_maxima_dias = 7
+[[horizontes]]
+dias = 30
+separacion_maxima_dias = 14
+[[horizontes]]
+dias = 60
+separacion_maxima_dias = 30
+[[horizontes]]
+dias = 90
+separacion_maxima_dias = 30
+
+[comparacion_propuesta]
+sesiones_minimas = 20
+cobertura_rr25_minima = 0.90
+fraccion_cotizaciones_frescas_minima = 0.90
+edad_maxima_s = 10
+desfase_patas_maximo_s = 2
+# Umbrales operativos de propuesta: congelar antes de capturar OPRA.
+# Frescura: cohorte emparejada de calls/puts usada para RR25, no todos los strikes ilíquidos.

@@ -1,0 +1,864 @@
+{
+  "version": "skew-bandas-0.1",
+  "presupuesto_datos": 0,
+  "naturaleza": "holdout transversal de indicative; no pronóstico ni precios ejecutables",
+  "integridad": {
+    "manifiestos": 32,
+    "paginas_unicas": 163,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "76dacfbdf6281fc77ee8174d906bf0fbf73965b6fb61b2091f39099ddc887e66",
+      "subyacente": "c434779dfccfaf95b57272755f1d77a31a946831d6cbe95514f3646a956c775b"
+    },
+    "manifiesto_normalizacion_sha256": "0e3e6e6b915e1df30ca8447da5f981d3e259fd44b45ff6ec49820c1d644d5a34"
+  },
+  "config_sha256": "f28539e3fa4512ea40c819afffd7318c09e8802286b40c8f5cd3691eb1b7bd34",
+  "fuentes_sha256_lf": {
+    "experiments/skew_bandas_20261010/evaluar.py": "72e9f5e4c31cbcede22e33a44d8e6c3ac34f706228a67896c97caec17642777f",
+    "experiments/skew_bandas_20261010/protocolo.toml": "7de1754c36d503cab603e30772880a87a833d5487ee3e1e9581de30d2aa4222e",
+    "quantileflow/ajuste_bandas.py": "e95d092ff478bf21aae0e2ec16c184e2fec2a414f2cc5931c993d8791a11a5a0",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "quantileflow/escenarios.py": "455f2a2d7e011baf0492664181ddfa1f298b7a098ce9ad67de9a50d20c492364",
+    "quantileflow/adaptador_comparador.py": "edb1f339afb56d5473b9a1244411510d0338bd21ba97cc4b503316bb286216b9",
+    "quantileflow/opciones.py": "697647ff2abaad624138fbfac7d2b836d351a104a343941d16c9bfd9efe81ff4",
+    "quantileflow/cadenas.py": "32b97728c5b7e28b62ef98d2e7bbc74058afc8bfbe9396eae3e31e8ab120865c",
+    "quantileflow/contrato.py": "66b24c670355cc82717b461b060691eed88d29d4a4c903a58ab944a6b3e30cf9",
+    "quantileflow/calendario.py": "e43c66b06d013758f6c182b465bb2611b8676d1c3bcbb07b57ec3207275e6ceb",
+    "experiments/cadena_comparador_20261010/evaluar_cadena.py": "f80ee91ea02b893a1ecbdfe744bdc1c5cd61a545f59d53f6cbd174136894472e"
+  },
+  "salidas_privadas_sha256": {
+    "2026-10-02_0945_evaluacion.parquet": "3139f363fbc99f47fa85d0f0c8dd3b38e2f83d20c2361a2a1c431288a9c94f9a",
+    "2026-10-02_1000_evaluacion.parquet": "94623c7f4f56c59ef885ff942adf8f0cd25e6e5a89ebeea36f374c6e338882bc",
+    "2026-10-05_0945_evaluacion.parquet": "170fba1b86800a1cbc53dc78ed35a2c8956be180b52c863b1c43cb66b6b414b4",
+    "2026-10-05_1000_evaluacion.parquet": "ec36f82fdaa97272bb7a220659d26239e99d6f03813243d6d9b2a705949c4d54",
+    "2026-10-06_0945_evaluacion.parquet": "f24285d36f386b597b7ddaf5db80b761a4def3d051ff350588508741e8765cfe",
+    "2026-10-06_1000_evaluacion.parquet": "561a0147cce4b17ec31f35dc9026a0f6c0e801579905c644c32a71857ef9d887",
+    "2026-10-07_0945_evaluacion.parquet": "0f8192ff97fe813616c8640a645615347e5e196b0c286e3b92e38fcc4e758f4e",
+    "2026-10-07_1000_evaluacion.parquet": "c37835d2eb6448c1f72aefa4b2dc6c326e2e5b4abe4dac1a0227bfd01677f016",
+    "2026-10-08_0945_evaluacion.parquet": "5378f861bea8ccfb83ef6ecd96c3db8946fef1feea407012ca4310f66a86f9f4",
+    "2026-10-08_1000_evaluacion.parquet": "dc83dfbbfbd028963414a2dd0300a2717d16d0a90f89a2e6c7cf253289978e40",
+    "2026-10-09_0945_evaluacion.parquet": "856f17d1c86f58d1521ca502ba598f6b3647c42cd35e2a73bf622b3870d92b15",
+    "2026-10-09_1000_evaluacion.parquet": "2740d30ed42f7c97eb210d0d3af846e99d71a5b743fa5b32b9d39c06332aceff",
+    "2026-10-02_0945_ajustes.json": "96dcd55a0da7b753b9f72b77ceb900a7ede82af80ae65b78cf7d544bea46c9b1",
+    "2026-10-02_1000_ajustes.json": "1b774b4fc6ed36794719998c1f9094a2462a9b6f853e29fbc8516b4bb8e4f875",
+    "2026-10-05_0945_ajustes.json": "376699283f2eb43aabf6f8ad62e8f04434c0f3e1a87f87edca55dfb8bec4a617",
+    "2026-10-05_1000_ajustes.json": "16618a43ad1584707d2f449eac18981a520bf8b49084f0a2dab725bc0ff96479",
+    "2026-10-06_0945_ajustes.json": "6fbb608aff08400c4f6be1415e16a74835982b2a2a373065af817b788b819478",
+    "2026-10-06_1000_ajustes.json": "851218fe3645d36651f803934118f1aa360b3eadca4faa2db913685dbb645e03",
+    "2026-10-07_0945_ajustes.json": "9905ef8f17a627adba1c991c15d00262eb2f22fbac6acb406acaad75d0c213c8",
+    "2026-10-07_1000_ajustes.json": "d89c70d3064974d3aca11d8ea4c38a0ae9740d4e74409e4e745f216bd9a750db",
+    "2026-10-08_0945_ajustes.json": "630f8e4fa0968cf3e056a9b63a7850af1c3ced72fe012ad51d4553bd1a34ae55",
+    "2026-10-08_1000_ajustes.json": "432b8dd140efeee832d1ef94428ad3d72df7a81e826aa8cf6885ffe40d6b6d50",
+    "2026-10-09_0945_ajustes.json": "9ea6cce7cabc814a88d5c3bd63753e4db7b41c3813c7e4b9e0abf675d9d5e1da",
+    "2026-10-09_1000_ajustes.json": "890633e9003a359db5a32df5fa9fa6062f7c615a68a1ee142fb5472b17a3c997"
+  },
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.0.6"
+  },
+  "protocolo": {
+    "version": "skew-bandas-0.1",
+    "fechas": [
+      "2026-10-02",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09"
+    ],
+    "horas": [
+      "09:45",
+      "10:00"
+    ],
+    "minimo_dias": 1.0,
+    "maximo_dias": 45.0,
+    "ancho_evaluacion": 0.03,
+    "minimo_entrenamiento": 6,
+    "objetivos_moneyness": [
+      -0.015,
+      0.0,
+      0.015
+    ],
+    "peso_mid": 0.02,
+    "preferencias_banda": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "entradas": [
+      "bid",
+      "mid",
+      "ask"
+    ],
+    "presupuesto_ficticio": 10000.0,
+    "comision": 0.65,
+    "dias_salida": 7.0,
+    "movimientos": [
+      0.01,
+      0.0,
+      -0.01
+    ],
+    "dinamica_nominal": "tasa_congelada",
+    "dinamica_alternativa": "plazo_restante"
+  },
+  "total": {
+    "cortes": 12,
+    "sesiones": 6,
+    "aptos_puntuales": 0,
+    "pares_paridad_training": 1588,
+    "incompatibles_training": 1337,
+    "cortes_ganador_igual": 7,
+    "plano": {
+      "holdout": 1642,
+      "dentro": 107,
+      "cortes_primero_inestable": 3,
+      "cambios_entre_cortes": 6,
+      "cambios_dinamica": 0,
+      "cortes_robusto_efectivo": 12
+    },
+    "ssvi": {
+      "holdout": 1642,
+      "dentro": 357,
+      "cortes_primero_inestable": 4,
+      "cambios_entre_cortes": 5,
+      "cambios_dinamica": 6,
+      "cortes_robusto_efectivo": 12
+    }
+  },
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 27.260416666666668,
+      "dias_max": 32.302083333333336,
+      "paridad_training": {
+        "pares": 136,
+        "incompatibles": 120
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.25718287894458236,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 272,
+            "dentro": 11,
+            "mediana_error_semispreads": 10.671923894291474
+          },
+          "holdout": {
+            "filas": 138,
+            "dentro": 8,
+            "mediana_error_semispreads": 8.43216822389719
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 272,
+            "dentro": 52,
+            "mediana_error_semispreads": 2.6250377098858
+          },
+          "holdout": {
+            "filas": 138,
+            "dentro": 24,
+            "mediana_error_semispreads": 2.434266145949227
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 27.25,
+      "dias_max": 32.291666666666664,
+      "paridad_training": {
+        "pares": 138,
+        "incompatibles": 118
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2557379552960879,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 276,
+            "dentro": 13,
+            "mediana_error_semispreads": 10.069681199755692
+          },
+          "holdout": {
+            "filas": 144,
+            "dentro": 6,
+            "mediana_error_semispreads": 12.6721702785153
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 276,
+            "dentro": 35,
+            "mediana_error_semispreads": 4.520810314641565
+          },
+          "holdout": {
+            "filas": 144,
+            "dentro": 13,
+            "mediana_error_semispreads": 4.451254959975175
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.302083333333336,
+      "dias_max": 31.302083333333332,
+      "paridad_training": {
+        "pares": 108,
+        "incompatibles": 86
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2568560928131315,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 216,
+            "dentro": 18,
+            "mediana_error_semispreads": 6.053833324759513
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 5,
+            "mediana_error_semispreads": 6.173969325382668
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 216,
+            "dentro": 51,
+            "mediana_error_semispreads": 2.149513483623731
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 30,
+            "mediana_error_semispreads": 2.2553805340751603
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": false,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.291666666666668,
+      "dias_max": 31.291666666666668,
+      "paridad_training": {
+        "pares": 108,
+        "incompatibles": 87
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.25686347720364994,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 216,
+            "dentro": 18,
+            "mediana_error_semispreads": 5.647915705975029
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 5,
+            "mediana_error_semispreads": 5.87491632965852
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 216,
+            "dentro": 54,
+            "mediana_error_semispreads": 2.684694262534701
+          },
+          "holdout": {
+            "filas": 112,
+            "dentro": 22,
+            "mediana_error_semispreads": 3.1239364714879407
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.302083333333336,
+      "dias_max": 31.302083333333332,
+      "paridad_training": {
+        "pares": 127,
+        "incompatibles": 117
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2638269931571485,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 254,
+            "dentro": 10,
+            "mediana_error_semispreads": 11.070606065669175
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 4,
+            "mediana_error_semispreads": 9.42663287608903
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 254,
+            "dentro": 48,
+            "mediana_error_semispreads": 3.567880720223054
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 32,
+            "mediana_error_semispreads": 3.1567138581986782
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": false,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.291666666666668,
+      "dias_max": 31.291666666666668,
+      "paridad_training": {
+        "pares": 125,
+        "incompatibles": 89
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.256313136246673,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 250,
+            "dentro": 20,
+            "mediana_error_semispreads": 6.847452032989417
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 15,
+            "mediana_error_semispreads": 7.648360381778696
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 250,
+            "dentro": 60,
+            "mediana_error_semispreads": 2.2939108033690463
+          },
+          "holdout": {
+            "filas": 130,
+            "dentro": 43,
+            "mediana_error_semispreads": 1.9444975004565959
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.302083333333336,
+      "dias_max": 33.302083333333336,
+      "paridad_training": {
+        "pares": 143,
+        "incompatibles": 128
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2660867938030314,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 286,
+            "dentro": 17,
+            "mediana_error_semispreads": 9.901774758624367
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 10,
+            "mediana_error_semispreads": 8.400643615818124
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 286,
+            "dentro": 51,
+            "mediana_error_semispreads": 3.0116007222870644
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 28,
+            "mediana_error_semispreads": 3.2225898445071
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.291666666666668,
+      "dias_max": 33.29166666666667,
+      "paridad_training": {
+        "pares": 143,
+        "incompatibles": 133
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2672026448298329,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 286,
+            "dentro": 9,
+            "mediana_error_semispreads": 11.18744991160045
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 9,
+            "mediana_error_semispreads": 10.065778741510023
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 286,
+            "dentro": 43,
+            "mediana_error_semispreads": 3.8586736390846315
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 25,
+            "mediana_error_semispreads": 3.181395602755202
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": true,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": false,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.302083333333336,
+      "dias_max": 33.302083333333336,
+      "paridad_training": {
+        "pares": 138,
+        "incompatibles": 132
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.25432111496188325,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 276,
+            "dentro": 12,
+            "mediana_error_semispreads": 8.1264681575187
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 9,
+            "mediana_error_semispreads": 9.579131789562933
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 276,
+            "dentro": 46,
+            "mediana_error_semispreads": 3.641168817349751
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 23,
+            "mediana_error_semispreads": 3.9555216895942014
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": false,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 28.291666666666668,
+      "dias_max": 33.29166666666667,
+      "paridad_training": {
+        "pares": 139,
+        "incompatibles": 133
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.2582063493731008,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 278,
+            "dentro": 15,
+            "mediana_error_semispreads": 7.597149665434399
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 8,
+            "mediana_error_semispreads": 9.473060911638816
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 278,
+            "dentro": 39,
+            "mediana_error_semispreads": 3.074755859757877
+          },
+          "holdout": {
+            "filas": 142,
+            "dentro": 15,
+            "mediana_error_semispreads": 3.3174796124341706
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": false,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 27.302083333333336,
+      "dias_max": 32.302083333333336,
+      "paridad_training": {
+        "pares": 142,
+        "incompatibles": 103
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.25687694834446834,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 284,
+            "dentro": 19,
+            "mediana_error_semispreads": 7.306234562860833
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 13,
+            "mediana_error_semispreads": 6.996951171069357
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 284,
+            "dentro": 93,
+            "mediana_error_semispreads": 1.6075483241835011
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.5760527797613058
+          },
+          "ganadores_distintos": 2,
+          "mismo_primero": 6,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "vencimientos": 4,
+      "candidatos": 24,
+      "dias_min": 27.291666666666668,
+      "dias_max": 32.291666666666664,
+      "paridad_training": {
+        "pares": 141,
+        "incompatibles": 91
+      },
+      "convergencia": true,
+      "condiciones_todas": true,
+      "g_min_malla": 0.25506447852270003,
+      "medidas": {
+        "plano": {
+          "train": {
+            "filas": 282,
+            "dentro": 22,
+            "mediana_error_semispreads": 7.955794236059933
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 15,
+            "mediana_error_semispreads": 8.020063760929322
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        },
+        "ssvi": {
+          "train": {
+            "filas": 282,
+            "dentro": 93,
+            "mediana_error_semispreads": 1.5307605943494056
+          },
+          "holdout": {
+            "filas": 148,
+            "dentro": 51,
+            "mediana_error_semispreads": 1.460049177776146
+          },
+          "ganadores_distintos": 1,
+          "mismo_primero": 9,
+          "casos": 9,
+          "cambio_dinamica": false,
+          "robusto_efectivo": true,
+          "casos_robusto_efectivo": 9
+        }
+      },
+      "ganador_plano_ssvi_igual": true,
+      "candidatos_extrapolados_dinamica_alternativa": 24
+    }
+  ]
+}

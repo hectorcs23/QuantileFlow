@@ -1,0 +1,17 @@
+parametro,valor,candidatos,primero_ganancia,primero_retorno,alternativa_robusta
+dias,1.0,12,C105-14d,C105-14d,efectivo
+dias,3.0,12,C105-14d,C105-14d,efectivo
+dias,7.0,12,C100-14d,C100-14d,efectivo
+dias,14.0,8,C100-60d,C100-30d,efectivo
+dias,21.0,8,C100-60d,C100-60d,efectivo
+dias,30.0,4,C100-60d,C100-60d,efectivo
+presupuesto,100.0,3,C105-14d,C105-14d,efectivo
+presupuesto,250.0,8,C100-14d,C100-14d,efectivo
+presupuesto,500.0,12,C100-14d,C100-14d,efectivo
+presupuesto,750.0,18,C100-14d,C100-14d,efectivo
+presupuesto,1000.0,18,C100-14d,C100-14d,efectivo
+semispread_salida,0.0,12,C100-14d,C100-14d,efectivo
+semispread_salida,0.04,12,C100-14d,C100-14d,efectivo
+semispread_salida,0.1,12,C100-14d,C100-14d,efectivo
+semispread_salida,0.2,12,C100-14d,C100-14d,efectivo
+semispread_salida,0.4,12,C100-14d,C100-14d,efectivo

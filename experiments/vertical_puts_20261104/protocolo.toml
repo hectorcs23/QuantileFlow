@@ -1,0 +1,19 @@
+fecha = "2026-11-04"
+base = "0d0e7c10cb5e5b8dfa592b314eda29a6745f2699"
+raw_commit = "43b286c0df2de41d63d0475260517c01d6f36f54"
+previas = ["2026-10-02","2026-10-05","2026-10-06","2026-10-07","2026-10-08","2026-10-09","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16"]
+adicionales = ["2026-10-19","2026-10-20","2026-10-21","2026-10-22"]
+horas = ["09:45","10:00"]
+dte_0945 = [27.0,34.0]
+principal = [0.97,1.03]
+secundarias = [[0.94,0.97],[0.97,1.0],[1.0,1.03],[1.03,1.06]]
+distancia_max_F = 0.005
+seleccion = "Put elegible mas cercano al objetivo en F_0945, maximo 0.005F, desempate strike menor. Todos los puts publicados en el snapshot filtrado, incluidas reservas; estudio descriptivo sin ajuste a ellas. Sin reemplazar si falta despues."
+medicion = "Mismo ID, strike, expiracion, SPXW europeo PM y multiplicador; diferencia de bid/ask cruzados entre patas en cada corte, despues diferencia entre cortes. Dividir por D_t*(K_alto-K_bajo). Reportar tambien signo del precio sin descuento."
+probabilidad = "Intersecar la banda por corte con [0,1] solo para interpretarla como CDF media; sin interseccion es incompatible, no senal. Mostrar cambio raw no recortado."
+tolerancia = 1e-7
+edad_max_s = 5.0
+desfase_patas_max_s = 2.0
+confirmacion = "Signo de puts distinto de cero; mismo signo via complemento del call vertical a los mismos strikes; bandas de puts y calls compatibles entre si en ambos cortes; las cuatro cotizaciones de cada foto tienen antiguedad [0,5] s al corte y dispersion temporal <=2 s."
+decision = "Central prefijada: si no hay evidencia corroborada en al menos dos sesiones distintas del grupo adicional, no promover a predictor; informar cobertura y distinguir ausencia de evidencia y falta de observaciones. Las zonas secundarias no sustituyen a la principal."
+costo_datos_usd = 0

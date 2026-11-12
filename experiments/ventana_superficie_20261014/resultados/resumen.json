@@ -1,0 +1,2222 @@
+{
+  "protocolo": {
+    "version": "ventana-superficie-0.1",
+    "fecha": "2026-10-14",
+    "anchos_log_moneyness": [
+      0.03,
+      0.06,
+      0.1
+    ],
+    "minimo_dias": 1.0,
+    "maximo_dias": 90.0,
+    "peso_mid": 0.02,
+    "cuantiles": [
+      0.05,
+      0.25,
+      0.5,
+      0.75,
+      0.95
+    ],
+    "seleccion": "Mismos filtros e inversión de IV declarada del adaptador anterior; sin refiltrar con forward estimado",
+    "split": "Conservar todo strike histórico; extras ordenados por vencimiento/strike, cada tercero reservado, ambos lados juntos; anclar extras en ventana 0.10 para anidamiento",
+    "alcance": "Seis sesiones conocidas; contraste descriptivo de ventanas, no pronóstico ni probabilidad física",
+    "presupuesto_datos": 0
+  },
+  "integridad": {
+    "manifiestos": 32,
+    "paginas_unicas": 163,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "76dacfbdf6281fc77ee8174d906bf0fbf73965b6fb61b2091f39099ddc887e66",
+      "subyacente": "c434779dfccfaf95b57272755f1d77a31a946831d6cbe95514f3646a956c775b"
+    },
+    "manifiesto_normalizacion_sha256": "0e3e6e6b915e1df30ca8447da5f981d3e259fd44b45ff6ec49820c1d644d5a34"
+  },
+  "origen_sha256": "22c7b73ec60e56e5513503863291bd6ccb2bd0232d1e2d8ec33a9a6d86914bb9",
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 2300,
+        "validas": 2050,
+        "elegibles": 920,
+        "entrenamiento": 612,
+        "holdout": 308,
+        "edad_referencia_s": 5.772,
+        "motivos": {
+          "spread_ancho": 36,
+          "sin_bid": 213,
+          "sin_tamano": 213,
+          "desfasada": 87
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 602,
+            "validas": 416
+          },
+          {
+            "dias": 27.260416666666668,
+            "filas": 270,
+            "validas": 256
+          },
+          {
+            "dias": 28.260416666666668,
+            "filas": 974,
+            "validas": 955
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 226,
+            "validas": 210
+          },
+          {
+            "dias": 32.302083333333336,
+            "filas": 228,
+            "validas": 213
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 104
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 272,
+          "filas_en_ventana": 410,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 138,
+              "dentro": 52,
+              "mediana_error_semispreads": 1.4236294788556738
+            },
+            "alas_3_6": {
+              "filas": 97,
+              "dentro": 42,
+              "mediana_error_semispreads": 1.2795825199814026
+            },
+            "alas_6_10": {
+              "filas": 76,
+              "dentro": 21,
+              "mediana_error_semispreads": 3.883162527659125
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.3021189248009341,
+          "incremento_w_min_malla": 8.989963938207945e-12,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 459,
+          "filas_en_ventana": 694,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 138,
+              "dentro": 56,
+              "mediana_error_semispreads": 1.4870265961890188
+            },
+            "alas_3_6": {
+              "filas": 97,
+              "dentro": 45,
+              "mediana_error_semispreads": 1.307730932620028
+            },
+            "alas_6_10": {
+              "filas": 76,
+              "dentro": 23,
+              "mediana_error_semispreads": 3.1768887522209317
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.29742533721584863,
+          "incremento_w_min_malla": 0.0,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 609,
+          "filas_en_ventana": 920,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 138,
+              "dentro": 52,
+              "mediana_error_semispreads": 1.435264112153694
+            },
+            "alas_3_6": {
+              "filas": 97,
+              "dentro": 43,
+              "mediana_error_semispreads": 1.2715235585625608
+            },
+            "alas_6_10": {
+              "filas": 76,
+              "dentro": 24,
+              "mediana_error_semispreads": 2.2753678816607525
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.29462847912175366,
+          "incremento_w_min_malla": 1.369224525427093e-11,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 2300,
+        "validas": 2049,
+        "elegibles": 919,
+        "entrenamiento": 611,
+        "holdout": 308,
+        "edad_referencia_s": 5.655073,
+        "motivos": {
+          "spread_ancho": 34,
+          "sin_bid": 217,
+          "sin_tamano": 217,
+          "desfasada": 20
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 602,
+            "validas": 412
+          },
+          {
+            "dias": 27.25,
+            "filas": 270,
+            "validas": 257
+          },
+          {
+            "dias": 28.25,
+            "filas": 974,
+            "validas": 956
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 226,
+            "validas": 211
+          },
+          {
+            "dias": 32.291666666666664,
+            "filas": 228,
+            "validas": 213
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 105
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 276,
+          "filas_en_ventana": 420,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 144,
+              "dentro": 50,
+              "mediana_error_semispreads": 1.9496244811160666
+            },
+            "alas_3_6": {
+              "filas": 94,
+              "dentro": 29,
+              "mediana_error_semispreads": 2.471710389061554
+            },
+            "alas_6_10": {
+              "filas": 73,
+              "dentro": 17,
+              "mediana_error_semispreads": 6.61822806408687
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            2,
+            0
+          ],
+          "g_min_malla": 0.3041002543611308,
+          "incremento_w_min_malla": 3.301097961907291e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 460,
+          "filas_en_ventana": 698,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 144,
+              "dentro": 51,
+              "mediana_error_semispreads": 1.8556145556645076
+            },
+            "alas_3_6": {
+              "filas": 94,
+              "dentro": 38,
+              "mediana_error_semispreads": 1.3411135358559725
+            },
+            "alas_6_10": {
+              "filas": 73,
+              "dentro": 22,
+              "mediana_error_semispreads": 2.7060957373020487
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2962115768899069,
+          "incremento_w_min_malla": 3.1858278923902264e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 608,
+          "filas_en_ventana": 919,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 144,
+              "dentro": 43,
+              "mediana_error_semispreads": 2.0805233148557685
+            },
+            "alas_3_6": {
+              "filas": 94,
+              "dentro": 30,
+              "mediana_error_semispreads": 1.8484809801491653
+            },
+            "alas_6_10": {
+              "filas": 73,
+              "dentro": 25,
+              "mediana_error_semispreads": 1.9483730313079202
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2913000378147397,
+          "incremento_w_min_malla": 3.3475119744514475e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1440,
+        "validas": 1235,
+        "elegibles": 555,
+        "entrenamiento": 368,
+        "holdout": 187,
+        "edad_referencia_s": 5.466007,
+        "motivos": {
+          "sin_bid": 172,
+          "sin_tamano": 172,
+          "spread_ancho": 33,
+          "desfasada": 24
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 484,
+            "validas": 336
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 238,
+            "validas": 224
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 240,
+            "validas": 224
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 240,
+            "validas": 226
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 238,
+            "validas": 225
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 49
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 216,
+          "filas_en_ventana": 328,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 52,
+              "mediana_error_semispreads": 1.1618015668663766
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 15,
+              "mediana_error_semispreads": 2.1051354376783413
+            },
+            "alas_6_10": {
+              "filas": 33,
+              "dentro": 12,
+              "mediana_error_semispreads": 4.198143796666008
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.2984727864945497,
+          "incremento_w_min_malla": 4.7742085890350745e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 301,
+          "filas_en_ventana": 459,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 57,
+              "mediana_error_semispreads": 0.8941905919669877
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 20,
+              "mediana_error_semispreads": 1.5061438907267215
+            },
+            "alas_6_10": {
+              "filas": 33,
+              "dentro": 14,
+              "mediana_error_semispreads": 2.8095381887291397
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2943807600450219,
+          "incremento_w_min_malla": 4.729648982910355e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 364,
+          "filas_en_ventana": 555,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 56,
+              "mediana_error_semispreads": 0.9824420074980107
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 23,
+              "mediana_error_semispreads": 1.0344654162577818
+            },
+            "alas_6_10": {
+              "filas": 33,
+              "dentro": 13,
+              "mediana_error_semispreads": 1.7640512612662944
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2909087776996609,
+          "incremento_w_min_malla": 3.848144263668375e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1440,
+        "validas": 1235,
+        "elegibles": 557,
+        "entrenamiento": 370,
+        "holdout": 187,
+        "edad_referencia_s": 4.999179,
+        "motivos": {
+          "spread_ancho": 33,
+          "sin_bid": 172,
+          "sin_tamano": 172,
+          "desfasada": 20
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 484,
+            "validas": 338
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 238,
+            "validas": 223
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 240,
+            "validas": 225
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 240,
+            "validas": 225
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 238,
+            "validas": 224
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 47
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 216,
+          "filas_en_ventana": 328,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.0534928494214284
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 13,
+              "mediana_error_semispreads": 2.6366880053597894
+            },
+            "alas_6_10": {
+              "filas": 32,
+              "dentro": 10,
+              "mediana_error_semispreads": 3.1889995101683417
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.29353017617865595,
+          "incremento_w_min_malla": 6.48594783620891e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 299,
+          "filas_en_ventana": 457,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 54,
+              "mediana_error_semispreads": 1.034859640117384
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 18,
+              "mediana_error_semispreads": 1.2439873139934126
+            },
+            "alas_6_10": {
+              "filas": 32,
+              "dentro": 10,
+              "mediana_error_semispreads": 2.3265689191637686
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2944229204095752,
+          "incremento_w_min_malla": 5.7366012637893e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 367,
+          "filas_en_ventana": 557,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 112,
+              "dentro": 50,
+              "mediana_error_semispreads": 1.1756192794842941
+            },
+            "alas_3_6": {
+              "filas": 46,
+              "dentro": 18,
+              "mediana_error_semispreads": 1.3894308251996887
+            },
+            "alas_6_10": {
+              "filas": 32,
+              "dentro": 15,
+              "mediana_error_semispreads": 1.424951023449876
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2890709013561294,
+          "incremento_w_min_malla": 4.8819935705975235e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1680,
+        "validas": 1266,
+        "elegibles": 730,
+        "entrenamiento": 485,
+        "holdout": 245,
+        "edad_referencia_s": 5.481825,
+        "motivos": {
+          "desfasada": 267,
+          "sin_bid": 186,
+          "sin_tamano": 186,
+          "spread_ancho": 28,
+          "ventana_de_apertura": 23
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 496,
+            "validas": 257
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 250,
+            "validas": 208
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 250,
+            "validas": 191
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 250,
+            "validas": 219
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 434,
+            "validas": 391
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 34
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 254,
+          "filas_en_ventana": 384,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 49,
+              "mediana_error_semispreads": 1.3876099860196092
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 26,
+              "mediana_error_semispreads": 1.982876261886865
+            },
+            "alas_6_10": {
+              "filas": 43,
+              "dentro": 12,
+              "mediana_error_semispreads": 9.742058237068832
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.30135945136221504,
+          "incremento_w_min_malla": 7.016407875618793e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 395,
+          "filas_en_ventana": 599,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 54,
+              "mediana_error_semispreads": 1.226122067182013
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 28,
+              "mediana_error_semispreads": 1.6783102979535716
+            },
+            "alas_6_10": {
+              "filas": 43,
+              "dentro": 12,
+              "mediana_error_semispreads": 6.842053397064888
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.29322905375367625,
+          "incremento_w_min_malla": 6.760141448101898e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 483,
+          "filas_en_ventana": 730,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 49,
+              "mediana_error_semispreads": 1.3676484596429181
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 28,
+              "mediana_error_semispreads": 1.800113620123391
+            },
+            "alas_6_10": {
+              "filas": 43,
+              "dentro": 12,
+              "mediana_error_semispreads": 5.547677933724671
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2891282620119974,
+          "incremento_w_min_malla": 6.345722065300395e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1680,
+        "validas": 1355,
+        "elegibles": 718,
+        "entrenamiento": 474,
+        "holdout": 244,
+        "edad_referencia_s": 5.556987,
+        "motivos": {
+          "desfasada": 232,
+          "sin_bid": 183,
+          "sin_tamano": 183,
+          "spread_ancho": 25
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 496,
+            "validas": 333
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 250,
+            "validas": 216
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 250,
+            "validas": 208
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 250,
+            "validas": 216
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 434,
+            "validas": 382
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 24
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 250,
+          "filas_en_ventana": 380,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 64,
+              "mediana_error_semispreads": 1.0327679585534926
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 35,
+              "mediana_error_semispreads": 1.0158958261807713
+            },
+            "alas_6_10": {
+              "filas": 42,
+              "dentro": 13,
+              "mediana_error_semispreads": 10.322049229776196
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.30161489928509827,
+          "incremento_w_min_malla": 8.173431499309365e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 393,
+          "filas_en_ventana": 597,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 61,
+              "mediana_error_semispreads": 1.0973432999995083
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 39,
+              "mediana_error_semispreads": 0.9428953166837288
+            },
+            "alas_6_10": {
+              "filas": 42,
+              "dentro": 13,
+              "mediana_error_semispreads": 11.59086911142723
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.30625068341255224,
+          "incremento_w_min_malla": 7.585841286300013e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 472,
+          "filas_en_ventana": 718,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 130,
+              "dentro": 50,
+              "mediana_error_semispreads": 1.297324431925216
+            },
+            "alas_3_6": {
+              "filas": 74,
+              "dentro": 41,
+              "mediana_error_semispreads": 0.8223062584654295
+            },
+            "alas_6_10": {
+              "filas": 42,
+              "dentro": 13,
+              "mediana_error_semispreads": 5.018475264278105
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2965752150511301,
+          "incremento_w_min_malla": 5.87508368663143e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1734,
+        "validas": 1523,
+        "elegibles": 776,
+        "entrenamiento": 515,
+        "holdout": 261,
+        "edad_referencia_s": 5.754545,
+        "motivos": {
+          "sin_bid": 179,
+          "sin_tamano": 179,
+          "desfasada": 63,
+          "spread_ancho": 32
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 516,
+            "validas": 365
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 262,
+            "validas": 247
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 262,
+            "validas": 245
+          },
+          {
+            "dias": 30.302083333333332,
+            "filas": 454,
+            "validas": 442
+          },
+          {
+            "dias": 33.302083333333336,
+            "filas": 240,
+            "validas": 224
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 57
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 286,
+          "filas_en_ventana": 434,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.3529631648611022
+            },
+            "alas_3_6": {
+              "filas": 63,
+              "dentro": 22,
+              "mediana_error_semispreads": 1.7436388879843308
+            },
+            "alas_6_10": {
+              "filas": 53,
+              "dentro": 14,
+              "mediana_error_semispreads": 4.041408002229442
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.29213319759873413,
+          "incremento_w_min_malla": 2.546823047713505e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 415,
+          "filas_en_ventana": 626,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 57,
+              "mediana_error_semispreads": 1.4153193083898867
+            },
+            "alas_3_6": {
+              "filas": 63,
+              "dentro": 25,
+              "mediana_error_semispreads": 1.5371097562529212
+            },
+            "alas_6_10": {
+              "filas": 53,
+              "dentro": 19,
+              "mediana_error_semispreads": 2.454177703974576
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2963532766239093,
+          "incremento_w_min_malla": 2.184342208846673e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 512,
+          "filas_en_ventana": 776,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 46,
+              "mediana_error_semispreads": 1.759163559213361
+            },
+            "alas_3_6": {
+              "filas": 63,
+              "dentro": 16,
+              "mediana_error_semispreads": 2.551281395835542
+            },
+            "alas_6_10": {
+              "filas": 53,
+              "dentro": 15,
+              "mediana_error_semispreads": 2.054981773551967
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2857714687062449,
+          "incremento_w_min_malla": 1.8012381652289175e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1734,
+        "validas": 1413,
+        "elegibles": 758,
+        "entrenamiento": 506,
+        "holdout": 252,
+        "edad_referencia_s": 5.170892,
+        "motivos": {
+          "desfasada": 215,
+          "sin_bid": 183,
+          "sin_tamano": 183,
+          "spread_ancho": 25
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 516,
+            "validas": 361
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 262,
+            "validas": 224
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 262,
+            "validas": 229
+          },
+          {
+            "dias": 30.291666666666664,
+            "filas": 454,
+            "validas": 386
+          },
+          {
+            "dias": 33.29166666666667,
+            "filas": 240,
+            "validas": 213
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 48
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 286,
+          "filas_en_ventana": 434,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 61,
+              "mediana_error_semispreads": 1.2865161613822271
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 24,
+              "mediana_error_semispreads": 1.7178843114539362
+            },
+            "alas_6_10": {
+              "filas": 48,
+              "dentro": 10,
+              "mediana_error_semispreads": 5.816086822326488
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.3075230980438559,
+          "incremento_w_min_malla": 2.7740807535150784e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 414,
+          "filas_en_ventana": 624,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 55,
+              "mediana_error_semispreads": 1.3181004094028448
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 24,
+              "mediana_error_semispreads": 1.4172206440456638
+            },
+            "alas_6_10": {
+              "filas": 48,
+              "dentro": 10,
+              "mediana_error_semispreads": 5.3371998340593345
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.3042536555048657,
+          "incremento_w_min_malla": 2.7851593692126454e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 500,
+          "filas_en_ventana": 758,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.625932624354001
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 26,
+              "mediana_error_semispreads": 1.112566732761603
+            },
+            "alas_6_10": {
+              "filas": 48,
+              "dentro": 11,
+              "mediana_error_semispreads": 3.51217443711127
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2982763111165761,
+          "incremento_w_min_malla": 2.8520593694982693e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1706,
+        "validas": 1450,
+        "elegibles": 745,
+        "entrenamiento": 495,
+        "holdout": 250,
+        "edad_referencia_s": 5.287703,
+        "motivos": {
+          "sin_bid": 213,
+          "sin_tamano": 213,
+          "desfasada": 87,
+          "spread_ancho": 26
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 516,
+            "validas": 353
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 262,
+            "validas": 236
+          },
+          {
+            "dias": 29.302083333333332,
+            "filas": 454,
+            "validas": 433
+          },
+          {
+            "dias": 32.302083333333336,
+            "filas": 240,
+            "validas": 215
+          },
+          {
+            "dias": 33.302083333333336,
+            "filas": 234,
+            "validas": 213
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 56
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 276,
+          "filas_en_ventana": 418,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 56,
+              "mediana_error_semispreads": 1.4297995004270332
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 26,
+              "mediana_error_semispreads": 1.2647117721491756
+            },
+            "alas_6_10": {
+              "filas": 50,
+              "dentro": 11,
+              "mediana_error_semispreads": 3.318488489280746
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.2948547735674159,
+          "incremento_w_min_malla": 3.2995322546286194e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 397,
+          "filas_en_ventana": 601,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 54,
+              "mediana_error_semispreads": 1.6151249029160595
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 34,
+              "mediana_error_semispreads": 0.8185476230547171
+            },
+            "alas_6_10": {
+              "filas": 50,
+              "dentro": 10,
+              "mediana_error_semispreads": 3.8303969512233977
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2996091991387213,
+          "incremento_w_min_malla": 3.899480224269988e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 491,
+          "filas_en_ventana": 745,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.6188263095755813
+            },
+            "alas_3_6": {
+              "filas": 62,
+              "dentro": 18,
+              "mediana_error_semispreads": 1.6426834470426126
+            },
+            "alas_6_10": {
+              "filas": 50,
+              "dentro": 18,
+              "mediana_error_semispreads": 2.1917837245457643
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.292592657954226,
+          "incremento_w_min_malla": 4.190597631038243e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1706,
+        "validas": 1480,
+        "elegibles": 754,
+        "entrenamiento": 501,
+        "holdout": 253,
+        "edad_referencia_s": 5.281758,
+        "motivos": {
+          "sin_bid": 196,
+          "sin_tamano": 196,
+          "desfasada": 86,
+          "spread_ancho": 26
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 516,
+            "validas": 351
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 262,
+            "validas": 245
+          },
+          {
+            "dias": 29.291666666666664,
+            "filas": 454,
+            "validas": 441
+          },
+          {
+            "dias": 32.291666666666664,
+            "filas": 240,
+            "validas": 223
+          },
+          {
+            "dias": 33.29166666666667,
+            "filas": 234,
+            "validas": 220
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 56
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 278,
+          "filas_en_ventana": 420,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 63,
+              "mediana_error_semispreads": 1.1179196191593537
+            },
+            "alas_3_6": {
+              "filas": 60,
+              "dentro": 19,
+              "mediana_error_semispreads": 1.883358623330342
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 13,
+              "mediana_error_semispreads": 2.6105338186551936
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.2962678097911987,
+          "incremento_w_min_malla": 3.876493798596076e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 402,
+          "filas_en_ventana": 604,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 55,
+              "mediana_error_semispreads": 1.3895127329946384
+            },
+            "alas_3_6": {
+              "filas": 60,
+              "dentro": 22,
+              "mediana_error_semispreads": 1.5740863559242928
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 13,
+              "mediana_error_semispreads": 2.3559618587805624
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.29085283552399555,
+          "incremento_w_min_malla": 4.519884191804329e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 498,
+          "filas_en_ventana": 754,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 142,
+              "dentro": 44,
+              "mediana_error_semispreads": 1.9557464562708482
+            },
+            "alas_3_6": {
+              "filas": 60,
+              "dentro": 21,
+              "mediana_error_semispreads": 1.4336763399352561
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 13,
+              "mediana_error_semispreads": 1.5123022224911393
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.28540244593501424,
+          "incremento_w_min_malla": 6.065641708457616e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1832,
+        "validas": 1566,
+        "elegibles": 761,
+        "entrenamiento": 505,
+        "holdout": 256,
+        "edad_referencia_s": 5.379255,
+        "motivos": {
+          "sin_bid": 228,
+          "sin_tamano": 228,
+          "spread_ancho": 38
+        },
+        "vencimientos": [
+          {
+            "dias": 0.26041666666666663,
+            "filas": 616,
+            "validas": 424
+          },
+          {
+            "dias": 27.302083333333336,
+            "filas": 274,
+            "validas": 255
+          },
+          {
+            "dias": 28.302083333333336,
+            "filas": 454,
+            "validas": 436
+          },
+          {
+            "dias": 31.302083333333332,
+            "filas": 244,
+            "validas": 226
+          },
+          {
+            "dias": 32.302083333333336,
+            "filas": 244,
+            "validas": 225
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 69
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 284,
+          "filas_en_ventana": 432,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 98,
+              "mediana_error_semispreads": 0.6148105889432016
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 25,
+              "mediana_error_semispreads": 1.3160179145502924
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 23,
+              "mediana_error_semispreads": 1.9424206011839917
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.29378177871578287,
+          "incremento_w_min_malla": 3.265053942644097e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 411,
+          "filas_en_ventana": 620,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 61,
+              "mediana_error_semispreads": 1.453026117441588
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 23,
+              "mediana_error_semispreads": 1.6915194455333484
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 29,
+              "mediana_error_semispreads": 0.91444662101683
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2802847990429173,
+          "incremento_w_min_malla": 2.315014681828799e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 498,
+          "filas_en_ventana": 761,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 59,
+              "mediana_error_semispreads": 1.2682463739819623
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 28,
+              "mediana_error_semispreads": 1.1701960245138472
+            },
+            "alas_6_10": {
+              "filas": 54,
+              "dentro": 28,
+              "mediana_error_semispreads": 0.9457285548758793
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.286377055377676,
+          "incremento_w_min_malla": 1.473084210439719e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "calidad": {
+        "filas": 1832,
+        "validas": 1567,
+        "elegibles": 766,
+        "entrenamiento": 511,
+        "holdout": 255,
+        "edad_referencia_s": 4.982598,
+        "motivos": {
+          "sin_bid": 233,
+          "sin_tamano": 233,
+          "desfasada": 21,
+          "spread_ancho": 32
+        },
+        "vencimientos": [
+          {
+            "dias": 0.25,
+            "filas": 616,
+            "validas": 416
+          },
+          {
+            "dias": 27.291666666666668,
+            "filas": 274,
+            "validas": 256
+          },
+          {
+            "dias": 28.291666666666668,
+            "filas": 454,
+            "validas": 438
+          },
+          {
+            "dias": 31.291666666666668,
+            "filas": 244,
+            "validas": 229
+          },
+          {
+            "dias": 32.291666666666664,
+            "filas": 244,
+            "validas": 228
+          }
+        ],
+        "modo_descriptivo": true,
+        "iv_no_identificada": 65
+      },
+      "variantes": [
+        {
+          "ancho": 0.03,
+          "training": 282,
+          "filas_en_ventana": 430,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 93,
+              "mediana_error_semispreads": 0.6749179146557434
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 24,
+              "mediana_error_semispreads": 1.617290418790415
+            },
+            "alas_6_10": {
+              "filas": 47,
+              "dentro": 11,
+              "mediana_error_semispreads": 2.8042627401579368
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            0
+          ],
+          "g_min_malla": 0.2904989507820354,
+          "incremento_w_min_malla": 3.0439783089738614e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.06,
+          "training": 410,
+          "filas_en_ventana": 619,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 77,
+              "mediana_error_semispreads": 0.9540576700441195
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 19,
+              "mediana_error_semispreads": 1.7462354154130526
+            },
+            "alas_6_10": {
+              "filas": 47,
+              "dentro": 16,
+              "mediana_error_semispreads": 2.5913076268838298
+            }
+          },
+          "cuantiles_dentro_training": [
+            0,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.2811033452755859,
+          "incremento_w_min_malla": 3.153000853597888e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        },
+        {
+          "ancho": 0.1,
+          "training": 510,
+          "filas_en_ventana": 766,
+          "vencimientos": 4,
+          "holdout_por_anillo": {
+            "centro": {
+              "filas": 148,
+              "dentro": 75,
+              "mediana_error_semispreads": 0.9731820637417328
+            },
+            "alas_3_6": {
+              "filas": 61,
+              "dentro": 20,
+              "mediana_error_semispreads": 1.749244529420174
+            },
+            "alas_6_10": {
+              "filas": 47,
+              "dentro": 16,
+              "mediana_error_semispreads": 2.6293766449572984
+            }
+          },
+          "cuantiles_dentro_training": [
+            4,
+            4,
+            4,
+            4,
+            4
+          ],
+          "g_min_malla": 0.28159424297574737,
+          "incremento_w_min_malla": 3.2459357869616193e-06,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          }
+        }
+      ]
+    }
+  ],
+  "total": [
+    {
+      "ancho": 0.03,
+      "training": 3176,
+      "filas": 4818,
+      "rebanadas": 48,
+      "cuantiles_dentro_training": [
+        0,
+        48,
+        48,
+        46,
+        0
+      ],
+      "holdout_por_anillo": {
+        "centro": {
+          "filas": 1642,
+          "dentro": 744
+        },
+        "alas_3_6": {
+          "filas": 800,
+          "dentro": 300
+        },
+        "alas_6_10": {
+          "filas": 605,
+          "dentro": 167
+        }
+      }
+    },
+    {
+      "ancho": 0.06,
+      "training": 4756,
+      "filas": 7198,
+      "rebanadas": 48,
+      "cuantiles_dentro_training": [
+        0,
+        48,
+        48,
+        48,
+        48
+      ],
+      "holdout_por_anillo": {
+        "centro": {
+          "filas": 1642,
+          "dentro": 692
+        },
+        "alas_3_6": {
+          "filas": 800,
+          "dentro": 335
+        },
+        "alas_6_10": {
+          "filas": 605,
+          "dentro": 191
+        }
+      }
+    },
+    {
+      "ancho": 0.1,
+      "training": 5912,
+      "filas": 8959,
+      "rebanadas": 48,
+      "cuantiles_dentro_training": [
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      "holdout_por_anillo": {
+        "centro": {
+          "filas": 1642,
+          "dentro": 630
+        },
+        "alas_3_6": {
+          "filas": 800,
+          "dentro": 312
+        },
+        "alas_6_10": {
+          "filas": 605,
+          "dentro": 203
+        }
+      }
+    }
+  ],
+  "config_sha256": "f28539e3fa4512ea40c819afffd7318c09e8802286b40c8f5cd3691eb1b7bd34",
+  "codigo_sha256_lf": {
+    "experiments/ventana_superficie_20261014/evaluar.py": "9fb7890549d4bb0a2cca42dc735b5aae80cc9cdcdad809abe4265397b8d50403",
+    "experiments/ventana_superficie_20261014/metodo.py": "55f547b3ec5fe38356aa90317f169f0cc5c14dfbff62bda1fb6045f7e04eaed7",
+    "experiments/ventana_superficie_20261014/protocolo.toml": "b403d697ea9c6cf0c8acbf8185b23be8014a72147967365ad9c8809a50d3152b",
+    "quantileflow/adaptador_comparador.py": "edb1f339afb56d5473b9a1244411510d0338bd21ba97cc4b503316bb286216b9",
+    "quantileflow/cadenas.py": "32b97728c5b7e28b62ef98d2e7bbc74058afc8bfbe9396eae3e31e8ab120865c",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "experiments/estabilidad_superficie_20261014/evaluar.py": "9feff60ca60032cbf9b99a72f8e9190d3538e8e3c3340a76c75d623faa9f9c45",
+    "experiments/forward_superficies_20261014/metodo.py": "e29c8d3ea55649beaca97efde43cc872e66357323051ec3814b756108ca2dbde"
+  },
+  "privados_sha256": {
+    "2026-10-02_0945_evaluacion.parquet": "b7765ac8bf7222eac0eb4177713eaac83557d4bddac6ac305f2115c129ade34a",
+    "2026-10-02_0945_modelos.json": "40793af929ad9a51e5dfb4415d9bc1633c6ed72c0ec11c247e3de71065d4087e",
+    "2026-10-02_1000_evaluacion.parquet": "505324ccb1b02a12ec329463dfaca5566be534818a25645e846902e3ed1b6590",
+    "2026-10-02_1000_modelos.json": "b7abe529448df3ef7937ba30c0ae5fa1925cd025b17dab6d636337716116b6c0",
+    "2026-10-05_0945_evaluacion.parquet": "b89c1111779f35ec38dfdfbe375bc3bb322a4b8852c026b67b70e5eea095de95",
+    "2026-10-05_0945_modelos.json": "71e68c223709b36fc3f89c055eb828766c771683f2cc062a43e69f87999fd83e",
+    "2026-10-05_1000_evaluacion.parquet": "a388cccb3dfb4c96f2c82e7ddbdadb651828f55380f157b3be5adf360d75f1e4",
+    "2026-10-05_1000_modelos.json": "65ae12bfe087bc019fa48b325c215e6d7f43e062335848115a30e90d9fdbc582",
+    "2026-10-06_0945_evaluacion.parquet": "869ef1436d9fe20b6ccfed2e5e4343ff7aa375923b32796c57794d04b4b1a979",
+    "2026-10-06_0945_modelos.json": "3d4a59d45af3853d08b4b1f6105d6880a4d28e25b3a776d45850171e8b20706f",
+    "2026-10-06_1000_evaluacion.parquet": "f32cdce36ad8fd61dbf036c5ae9938e0e46e56fcd69e336555dffce49aeca9af",
+    "2026-10-06_1000_modelos.json": "66ee0fce67b46bec3b6601978951ae8c5bdf9072904c656db72651e2b68bf907",
+    "2026-10-07_0945_evaluacion.parquet": "4c32ef3dfd9280b06e51e13cffcd2c6eac872c2ad21da03e5567a05a7df4f671",
+    "2026-10-07_0945_modelos.json": "98d9ce3d336958d56eb675a01053be9ab0433a1aa572d87d7288c262b891543f",
+    "2026-10-07_1000_evaluacion.parquet": "5a15b3dac93c05219aae13b47f52931ba27343fb8b798eb1b0eb037a6183724d",
+    "2026-10-07_1000_modelos.json": "b1b4b2bbb2d4f044c6d568051211d908eb5ac7c3a0c6957bf1f1429c89ce1cb3",
+    "2026-10-08_0945_evaluacion.parquet": "617b83a835a4f14994e3aa0c777062552fee76d4ee685df35f83f7fc1329ac08",
+    "2026-10-08_0945_modelos.json": "90d756d69954c4c0069b57dc960fe43600818dcdb3f8316a60954fd9f94a6824",
+    "2026-10-08_1000_evaluacion.parquet": "0b607243029f1b3c58f75d05d9c34b137343e372e690cc2e5bbabfc5199bf13e",
+    "2026-10-08_1000_modelos.json": "13158fbd580d825032df0b7661bad191acab78d6afc42f771e455826d20a7558",
+    "2026-10-09_0945_evaluacion.parquet": "381879c9b35c624c8b992c272c4a501a753ee785b3905d5aeb6cb326740b4dec",
+    "2026-10-09_0945_modelos.json": "09bd1a702675eeb4421ce713f18f8ca8d6f82241158442586df5688b6defee59",
+    "2026-10-09_1000_evaluacion.parquet": "97f5bf2b20454b6ecb375900d26f87e42e7b2d5e62c3a200ef78df2c0b886e9e",
+    "2026-10-09_1000_modelos.json": "0dc6250ef5862fd44e8609f7159c192be6def99390f458ba9acb832526807006"
+  }
+}

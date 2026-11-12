@@ -1,0 +1,4343 @@
+{
+  "naturaleza": "Exploratorio: seis sesiones conocidas; sin test temporal ni señal de trading",
+  "presupuesto_datos": 0,
+  "protocolo": {
+    "version": "forward-superficies-0.1",
+    "fecha_protocolo": "2026-10-14",
+    "alcance": "Exploratorio: seis sesiones conocidas; sin test temporal ni señal de trading",
+    "fechas": [
+      "2026-10-02",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09"
+    ],
+    "horas": [
+      "09:45",
+      "10:00"
+    ],
+    "preferencia": 0.5,
+    "peso_mid": 0.02,
+    "forward": "Mínimo convexo de distancia a bandas de paridad + 0.02 hacia su mid; solo training",
+    "universo": "Conservar filas/split de skew_bandas_20261010; no refiltrar con el nuevo F",
+    "contraste": "2x2: forward declarado/estimado x IV plana/SSVI",
+    "estres_tasa": [
+      0.03,
+      0.04,
+      0.05
+    ],
+    "estres_dividendo": [
+      0.003,
+      0.013,
+      0.023
+    ],
+    "sensibilidad_carry": "Diagnóstico de paridad; no recalibración de superficies para cada shock",
+    "figura_ejemplo": "Primera foto cronológica: 2026-10-02 09:45; no seleccionar por holdout",
+    "criterio_uso": "Indicative y falta de referencia independiente impiden recomendación operativa, aun si mejora el ajuste",
+    "prospectivo": "Reglas congeladas hoy; NO llamar independientes a sesiones 12-14 oct ya transcurridas"
+  },
+  "integridad": {
+    "manifiestos": 32,
+    "paginas_unicas": 163,
+    "estado": "huellas correctas",
+    "tablas_sha256": {
+      "cotizaciones": "76dacfbdf6281fc77ee8174d906bf0fbf73965b6fb61b2091f39099ddc887e66",
+      "subyacente": "c434779dfccfaf95b57272755f1d77a31a946831d6cbe95514f3646a956c775b"
+    },
+    "manifiesto_normalizacion_sha256": "0e3e6e6b915e1df30ca8447da5f981d3e259fd44b45ff6ec49820c1d644d5a34"
+  },
+  "config_sha256": "f28539e3fa4512ea40c819afffd7318c09e8802286b40c8f5cd3691eb1b7bd34",
+  "entorno": {
+    "python": "3.12.14",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.0.6"
+  },
+  "fuentes_historicas_sha256_lf": {
+    "experiments/skew_bandas_20261010/evaluar.py": "72e9f5e4c31cbcede22e33a44d8e6c3ac34f706228a67896c97caec17642777f",
+    "experiments/skew_bandas_20261010/protocolo.toml": "7de1754c36d503cab603e30772880a87a833d5487ee3e1e9581de30d2aa4222e",
+    "quantileflow/ajuste_bandas.py": "e95d092ff478bf21aae0e2ec16c184e2fec2a414f2cc5931c993d8791a11a5a0",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "quantileflow/escenarios.py": "455f2a2d7e011baf0492664181ddfa1f298b7a098ce9ad67de9a50d20c492364",
+    "quantileflow/adaptador_comparador.py": "edb1f339afb56d5473b9a1244411510d0338bd21ba97cc4b503316bb286216b9",
+    "quantileflow/opciones.py": "697647ff2abaad624138fbfac7d2b836d351a104a343941d16c9bfd9efe81ff4",
+    "quantileflow/cadenas.py": "32b97728c5b7e28b62ef98d2e7bbc74058afc8bfbe9396eae3e31e8ab120865c",
+    "quantileflow/contrato.py": "66b24c670355cc82717b461b060691eed88d29d4a4c903a58ab944a6b3e30cf9",
+    "quantileflow/calendario.py": "e43c66b06d013758f6c182b465bb2611b8676d1c3bcbb07b57ec3207275e6ceb",
+    "experiments/cadena_comparador_20261010/evaluar_cadena.py": "f80ee91ea02b893a1ecbdfe744bdc1c5cd61a545f59d53f6cbd174136894472e"
+  },
+  "origen_resumen_sha256": "4b1ca1e331af1f5cb1fc704260dce2c88010c1d07a04444dc7cf9d7b09e65504",
+  "fuentes_sha256_lf": {
+    "experiments/forward_superficies_20261014/evaluar.py": "429715ee2baec097a3eb542816b591a9df242816e3d4e1d2018659b63bd85b10",
+    "experiments/forward_superficies_20261014/metodo.py": "e29c8d3ea55649beaca97efde43cc872e66357323051ec3814b756108ca2dbde",
+    "experiments/forward_superficies_20261014/protocolo.toml": "f8b1c766f5e065ed60049b3636fe528f242b7c5e57a63c939e7b9dfe8eae9439",
+    "experiments/forward_superficies_20261014/graficas.py": "b9fed5bbb6330a9b41b460bc56a55202f8eee7f936646fe4b4418ae9daa146e3",
+    "experiments/forward_superficies_20261014/verificar.py": "6ce5970ccfd94aad07bd7f7e4e27313673254388593c1cddc9d723af9f5a8864",
+    "experiments/forward_superficies_20261014/control_pdf.py": "9a465a70d004a32f801e3a2ee76d2c2c891166a0501abf3dc6f9333c8966ce23",
+    "quantileflow/ajuste_bandas.py": "e95d092ff478bf21aae0e2ec16c184e2fec2a414f2cc5931c993d8791a11a5a0",
+    "quantileflow/superficies.py": "488ef5854ceabc0d80f3e25f0494ff1db330defc64ff472e8479d983a9a36bca",
+    "quantileflow/opciones.py": "697647ff2abaad624138fbfac7d2b836d351a104a343941d16c9bfd9efe81ff4"
+  },
+  "privado_sha256": {
+    "2026-10-02_0945_evaluacion.parquet": "7a51984590456cecd74082f0f5ac7166c579ef25e893b8305d7fbc7d626471f8",
+    "2026-10-02_0945_parametros.json": "c153f5636a25ae60cc94a8b40d956f416ec15c56bc1e93e547a49e651fbc8c5b",
+    "2026-10-02_1000_evaluacion.parquet": "5ac3dbf75a7b1c4dd40de53f96703f026e63811b88ec6fca9d0d54bd5f1883ca",
+    "2026-10-02_1000_parametros.json": "2e958b7cfd43edbcf1b752336d814d6c8797e31cd765ee89e2ba4309466d9e6d",
+    "2026-10-05_0945_evaluacion.parquet": "dde9327c9a9cf10d75e086a7cccc066c5ab7c8f482b4611d09cdb8ca7828ab79",
+    "2026-10-05_0945_parametros.json": "e05423d2460107cfd190083ce9ed5dc0723d25eb51fcd2f775c8023a55f7beeb",
+    "2026-10-05_1000_evaluacion.parquet": "a403a3253fb308ecc23398c096f91cf1d2ad1bdec4b63641ffe07e0152230f6d",
+    "2026-10-05_1000_parametros.json": "c70301dc422c47d7ea1a626d45467eb8c17eb15775f0a62ea4a9bf83c2bbcd86",
+    "2026-10-06_0945_evaluacion.parquet": "a5b814300ac47f8c6d499da333ff002d74b39ccbdddb78d07749b535ad48da9b",
+    "2026-10-06_0945_parametros.json": "ad97a6c3dcf3cb62e70a0e3ee3f3ab7d7604f5d5476405ba4c4e6d0bc331afa9",
+    "2026-10-06_1000_evaluacion.parquet": "aaa92942190eb3fbbdd8824a622724f3a8c1b17d4243ff91055e97ba886922c3",
+    "2026-10-06_1000_parametros.json": "38371d0e16ed32b13ee911be4a8a94b2ef4bd03fa74f0910a04b978b51f265f4",
+    "2026-10-07_0945_evaluacion.parquet": "df5f106d360fddcab65b57f42cd82216f2f7d0d05f323c4ff511fc53ce2308f5",
+    "2026-10-07_0945_parametros.json": "54ec3f2c8a134893efea2d4ef3ea0be055b4aef9cad36aba95ade20f08d14ebd",
+    "2026-10-07_1000_evaluacion.parquet": "493b2ee5fc3d2c27c1225bee060e37559c8e9050d7c5f00be20e201ef4296cc1",
+    "2026-10-07_1000_parametros.json": "a7d3a7460e959d420bcc85b1553ca38eb4621d1d04b5e96de2f9315356ed4fee",
+    "2026-10-08_0945_evaluacion.parquet": "a0cab5c0932de1536192bf73cb7cc00a358675a7150ebb0db4249dbc9154a48f",
+    "2026-10-08_0945_parametros.json": "3e059cd37343c58762fd85b5748d2a51253869570b4dc1839de61b8b3a71c799",
+    "2026-10-08_1000_evaluacion.parquet": "91aaaf9ab15df8b2d38230c06fe9363e254380a8e0065af105c43481e673b7a2",
+    "2026-10-08_1000_parametros.json": "f69cafb0148a87444ed802e8585a8aed3633a2c8f6c39cc5c3b08c7adae3f854",
+    "2026-10-09_0945_evaluacion.parquet": "bab35819ac87859fbd34b908dfea005a34db5da8b9e77ee2356f8ab59703a94d",
+    "2026-10-09_0945_parametros.json": "0452a47b9e79577441aae78040357994cfa449d6d2afd9218008777488653695",
+    "2026-10-09_1000_evaluacion.parquet": "7bab8dd05aa16764dc65bad5172f2cb87f58e21144be2158f14baad53548d585",
+    "2026-10-09_1000_parametros.json": "03fb00282da39e4181118a3efb16b29588013961c3825018ef21fa2e6ceea2da"
+  },
+  "cortes": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.25718287894458236,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 272,
+              "dentro": 11,
+              "mediana_error_semispreads": 10.671923894291474
+            },
+            "holdout": {
+              "filas": 138,
+              "dentro": 8,
+              "mediana_error_semispreads": 8.43216822389719
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 272,
+              "dentro": 52,
+              "mediana_error_semispreads": 2.6250377098858
+            },
+            "holdout": {
+              "filas": 138,
+              "dentro": 24,
+              "mediana_error_semispreads": 2.434266145949227
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.2575477715972647,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 272,
+              "dentro": 23,
+              "mediana_error_semispreads": 8.687766144937552
+            },
+            "holdout": {
+              "filas": 138,
+              "dentro": 11,
+              "mediana_error_semispreads": 7.953567904086
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 272,
+              "dentro": 111,
+              "mediana_error_semispreads": 1.4517960725512382
+            },
+            "holdout": {
+              "filas": 138,
+              "dentro": 52,
+              "mediana_error_semispreads": 1.4236294788556738
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 27.260416666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 6.845799732977842
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 8,
+                "mediana_error_semispreads": 1.6455575537803653
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 3,
+                "mediana_error_semispreads": 7.5252731136098765
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.2289466216368952
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 20,
+              "minimo_cotizaciones_fuera": 20
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 12
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 28.260416666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 62,
+                "dentro": 4,
+                "mediana_error_semispreads": 12.24817821644455
+              },
+              "ssvi": {
+                "filas": 62,
+                "dentro": 8,
+                "mediana_error_semispreads": 3.289081848575565
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 62,
+                "dentro": 6,
+                "mediana_error_semispreads": 11.152912847293011
+              },
+              "ssvi": {
+                "filas": 62,
+                "dentro": 24,
+                "mediana_error_semispreads": 1.2130040834951363
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 62,
+              "incompatibles": 57,
+              "minimo_cotizaciones_fuera": 57
+            },
+            "declarado_holdout": {
+              "pares": 31,
+              "incompatibles": 29,
+              "minimo_cotizaciones_fuera": 29
+            },
+            "estimado": {
+              "pares": 62,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "estimado_holdout": {
+              "pares": 31,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "minimo_incompatibles": 19
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 31.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 24,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.996439915438385
+              },
+              "ssvi": {
+                "filas": 24,
+                "dentro": 3,
+                "mediana_error_semispreads": 1.7884280941408308
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 24,
+                "dentro": 2,
+                "mediana_error_semispreads": 6.288700312458161
+              },
+              "ssvi": {
+                "filas": 24,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.2977407963705452
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 23,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "declarado_holdout": {
+              "pares": 12,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 23,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "estimado_holdout": {
+              "pares": 12,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 32.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 24,
+                "dentro": 1,
+                "mediana_error_semispreads": 7.825977637075784
+              },
+              "ssvi": {
+                "filas": 24,
+                "dentro": 5,
+                "mediana_error_semispreads": 2.5565051017182983
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 24,
+                "dentro": 0,
+                "mediana_error_semispreads": 6.834014545156782
+              },
+              "ssvi": {
+                "filas": 24,
+                "dentro": 5,
+                "mediana_error_semispreads": 4.26457968266895
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 23,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 12,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 23,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "estimado_holdout": {
+              "pares": 12,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 7
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2557379552960879,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 276,
+              "dentro": 13,
+              "mediana_error_semispreads": 10.069681199755692
+            },
+            "holdout": {
+              "filas": 144,
+              "dentro": 6,
+              "mediana_error_semispreads": 12.6721702785153
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 276,
+              "dentro": 35,
+              "mediana_error_semispreads": 4.520810314641565
+            },
+            "holdout": {
+              "filas": 144,
+              "dentro": 13,
+              "mediana_error_semispreads": 4.451254959975175
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25789692365653516,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 276,
+              "dentro": 23,
+              "mediana_error_semispreads": 9.855788987953481
+            },
+            "holdout": {
+              "filas": 144,
+              "dentro": 4,
+              "mediana_error_semispreads": 10.902592850910764
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 276,
+              "dentro": 110,
+              "mediana_error_semispreads": 1.5745147967956021
+            },
+            "holdout": {
+              "filas": 144,
+              "dentro": 50,
+              "mediana_error_semispreads": 1.9496244811160666
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 27.25,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 1,
+                "mediana_error_semispreads": 12.789430523199488
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 3,
+                "mediana_error_semispreads": 4.7906820541859485
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 0,
+                "mediana_error_semispreads": 10.960024093798818
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.2141794544745266
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "declarado_holdout": {
+              "pares": 15,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 15,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 9
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 28.25,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 62,
+                "dentro": 1,
+                "mediana_error_semispreads": 15.001690291822563
+              },
+              "ssvi": {
+                "filas": 62,
+                "dentro": 5,
+                "mediana_error_semispreads": 4.451254959975175
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 62,
+                "dentro": 1,
+                "mediana_error_semispreads": 12.260632163463448
+              },
+              "ssvi": {
+                "filas": 62,
+                "dentro": 20,
+                "mediana_error_semispreads": 1.9496244811160666
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 62,
+              "incompatibles": 56,
+              "minimo_cotizaciones_fuera": 56
+            },
+            "declarado_holdout": {
+              "pares": 31,
+              "incompatibles": 30,
+              "minimo_cotizaciones_fuera": 30
+            },
+            "estimado": {
+              "pares": 62,
+              "incompatibles": 33,
+              "minimo_cotizaciones_fuera": 33
+            },
+            "estimado_holdout": {
+              "pares": 31,
+              "incompatibles": 16,
+              "minimo_cotizaciones_fuera": 16
+            },
+            "minimo_incompatibles": 26
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 31.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.736214668829288
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 4,
+                "mediana_error_semispreads": 3.6769041659518042
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 3,
+                "mediana_error_semispreads": 6.2496424387207306
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 9,
+                "mediana_error_semispreads": 2.2391597115313235
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 24,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 24,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 32.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 12.007446002512227
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 1,
+                "mediana_error_semispreads": 4.362496013748241
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 0,
+                "mediana_error_semispreads": 9.066437518560711
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 8,
+                "mediana_error_semispreads": 2.6624192950869117
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 24,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado": {
+              "pares": 24,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 7
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2568560928131315,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 216,
+              "dentro": 18,
+              "mediana_error_semispreads": 6.053833324759513
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 5,
+              "mediana_error_semispreads": 6.173969325382668
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 216,
+              "dentro": 51,
+              "mediana_error_semispreads": 2.149513483623731
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 30,
+              "mediana_error_semispreads": 2.2553805340751603
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.2569527259787514,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 216,
+              "dentro": 20,
+              "mediana_error_semispreads": 5.553781423173535
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 13,
+              "mediana_error_semispreads": 5.45074680113831
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 216,
+              "dentro": 114,
+              "mediana_error_semispreads": 0.9270393012398657
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 52,
+              "mediana_error_semispreads": 1.1618015668663766
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 6.415786691486385
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 7,
+                "mediana_error_semispreads": 2.5862716971210844
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 8.062497034391333
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 14,
+                "mediana_error_semispreads": 1.0494370859789124
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 20,
+              "minimo_cotizaciones_fuera": 20
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 5
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 5.253165684121569
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 8,
+                "mediana_error_semispreads": 1.8347420588962562
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 5.00322580803623
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 16,
+                "mediana_error_semispreads": 0.8896992828029278
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 0,
+                "mediana_error_semispreads": 4.950781100447774
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.6092117576699976
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 5.395196529766773
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.2696501091745653
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 31.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 0,
+                "mediana_error_semispreads": 7.425623366749168
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 5,
+                "mediana_error_semispreads": 2.9600940097970483
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 3,
+                "mediana_error_semispreads": 6.172258138620489
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 9,
+                "mediana_error_semispreads": 1.8960245939524665
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 7
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.25686347720364994,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 216,
+              "dentro": 18,
+              "mediana_error_semispreads": 5.647915705975029
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 5,
+              "mediana_error_semispreads": 5.87491632965852
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 216,
+              "dentro": 54,
+              "mediana_error_semispreads": 2.684694262534701
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 22,
+              "mediana_error_semispreads": 3.1239364714879407
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25617919099010444,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 216,
+              "dentro": 20,
+              "mediana_error_semispreads": 4.857553286159787
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 9,
+              "mediana_error_semispreads": 5.769518589110909
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 216,
+              "dentro": 126,
+              "mediana_error_semispreads": 0.816432253339602
+            },
+            "holdout": {
+              "filas": 112,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.0534928494214284
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 5.419098425189442
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 7,
+                "mediana_error_semispreads": 2.694581055672536
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 6.0716147357965635
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 15,
+                "mediana_error_semispreads": 0.7196471594690295
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 5
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 7.333198181034829
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 3.0372732032568037
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 4.9934473638987384
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 11,
+                "mediana_error_semispreads": 1.1241282532279773
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 3
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 5.212707156158039
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 5,
+                "mediana_error_semispreads": 2.477307495073369
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 4.229341447554446
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.7008532980664441
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 23,
+              "minimo_cotizaciones_fuera": 23
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 2
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 31.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 8.206099358412182
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 6,
+                "mediana_error_semispreads": 3.943608261726423
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 6.598518216276938
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 17,
+                "mediana_error_semispreads": 0.6719708053924209
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 27,
+              "incompatibles": 23,
+              "minimo_cotizaciones_fuera": 23
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 27,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 1,
+              "minimo_cotizaciones_fuera": 1
+            },
+            "minimo_incompatibles": 6
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2638269931571485,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 254,
+              "dentro": 10,
+              "mediana_error_semispreads": 11.070606065669175
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 4,
+              "mediana_error_semispreads": 9.42663287608903
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 254,
+              "dentro": 48,
+              "mediana_error_semispreads": 3.567880720223054
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 32,
+              "mediana_error_semispreads": 3.1567138581986782
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25739582431466085,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 254,
+              "dentro": 10,
+              "mediana_error_semispreads": 7.973220792193233
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 6,
+              "mediana_error_semispreads": 7.729368726069083
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 254,
+              "dentro": 111,
+              "mediana_error_semispreads": 1.2561119119273192
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 49,
+              "mediana_error_semispreads": 1.3876099860196092
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.996731587440551
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 5,
+                "mediana_error_semispreads": 5.3528323236605715
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.474757448581489
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 8,
+                "mediana_error_semispreads": 2.0706561357390227
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 26,
+              "incompatibles": 25,
+              "minimo_cotizaciones_fuera": 25
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado": {
+              "pares": 26,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 5.456209996869317
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 12,
+                "mediana_error_semispreads": 1.1390016526811428
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 2,
+                "mediana_error_semispreads": 3.5561469921906665
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 11,
+                "mediana_error_semispreads": 1.2425438429822047
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 26,
+              "incompatibles": 20,
+              "minimo_cotizaciones_fuera": 20
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "estimado": {
+              "pares": 26,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 3
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 0,
+                "mediana_error_semispreads": 21.38037854218568
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 6,
+                "mediana_error_semispreads": 2.8527744281439853
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 0,
+                "mediana_error_semispreads": 12.666851506179142
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 7,
+                "mediana_error_semispreads": 1.3939426616259365
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 25,
+              "incompatibles": 23,
+              "minimo_cotizaciones_fuera": 23
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado": {
+              "pares": 25,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "minimo_incompatibles": 11
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 31.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 52,
+                "dentro": 0,
+                "mediana_error_semispreads": 9.752986091158295
+              },
+              "ssvi": {
+                "filas": 52,
+                "dentro": 9,
+                "mediana_error_semispreads": 3.5876151465559136
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 52,
+                "dentro": 2,
+                "mediana_error_semispreads": 8.053622954108704
+              },
+              "ssvi": {
+                "filas": 52,
+                "dentro": 23,
+                "mediana_error_semispreads": 1.1615868462862258
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 50,
+              "incompatibles": 49,
+              "minimo_cotizaciones_fuera": 49
+            },
+            "declarado_holdout": {
+              "pares": 26,
+              "incompatibles": 25,
+              "minimo_cotizaciones_fuera": 25
+            },
+            "estimado": {
+              "pares": 50,
+              "incompatibles": 18,
+              "minimo_cotizaciones_fuera": 18
+            },
+            "estimado_holdout": {
+              "pares": 26,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 17
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.256313136246673,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 250,
+              "dentro": 20,
+              "mediana_error_semispreads": 6.847452032989417
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 15,
+              "mediana_error_semispreads": 7.648360381778696
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 250,
+              "dentro": 60,
+              "mediana_error_semispreads": 2.2939108033690463
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 43,
+              "mediana_error_semispreads": 1.9444975004565959
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.2574093746464966,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 250,
+              "dentro": 35,
+              "mediana_error_semispreads": 6.620156982255197
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 21,
+              "mediana_error_semispreads": 5.825054804614943
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 250,
+              "dentro": 125,
+              "mediana_error_semispreads": 1.0150096713202084
+            },
+            "holdout": {
+              "filas": 130,
+              "dentro": 64,
+              "mediana_error_semispreads": 1.0327679585534926
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 4,
+                "mediana_error_semispreads": 7.993772088339577
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.4672858786907015
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 4,
+                "mediana_error_semispreads": 7.832936903356621
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 13,
+                "mediana_error_semispreads": 0.9929854215080285
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 25,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado": {
+              "pares": 25,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 3,
+                "mediana_error_semispreads": 3.634899751017118
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.7784792506977647
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 5,
+                "mediana_error_semispreads": 3.8459829884356376
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 13,
+                "mediana_error_semispreads": 0.9806432244390373
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 25,
+              "incompatibles": 14,
+              "minimo_cotizaciones_fuera": 14
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado": {
+              "pares": 25,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 5
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 4,
+                "mediana_error_semispreads": 10.73191622283127
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 10,
+                "mediana_error_semispreads": 1.8112427883636137
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 6,
+                "mediana_error_semispreads": 16.5333724161252
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.0000437457010658
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 25,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado": {
+              "pares": 25,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 4
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 31.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 52,
+                "dentro": 4,
+                "mediana_error_semispreads": 8.274691587977589
+              },
+              "ssvi": {
+                "filas": 52,
+                "dentro": 13,
+                "mediana_error_semispreads": 2.976237293727621
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 52,
+                "dentro": 6,
+                "mediana_error_semispreads": 5.53139875960988
+              },
+              "ssvi": {
+                "filas": 52,
+                "dentro": 25,
+                "mediana_error_semispreads": 1.141352981096821
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 50,
+              "incompatibles": 37,
+              "minimo_cotizaciones_fuera": 37
+            },
+            "declarado_holdout": {
+              "pares": 26,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "estimado": {
+              "pares": 50,
+              "incompatibles": 17,
+              "minimo_cotizaciones_fuera": 17
+            },
+            "estimado_holdout": {
+              "pares": 26,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "minimo_incompatibles": 11
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2660867938030314,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 286,
+              "dentro": 17,
+              "mediana_error_semispreads": 9.901774758624367
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 10,
+              "mediana_error_semispreads": 8.400643615818124
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 286,
+              "dentro": 51,
+              "mediana_error_semispreads": 3.0116007222870644
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 28,
+              "mediana_error_semispreads": 3.2225898445071
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25597785260376943,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 286,
+              "dentro": 20,
+              "mediana_error_semispreads": 9.091523809371518
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 14,
+              "mediana_error_semispreads": 8.231552515965243
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 286,
+              "dentro": 119,
+              "mediana_error_semispreads": 1.4456658313527684
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 53,
+              "mediana_error_semispreads": 1.3529631648611022
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 7.40076771426202
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 7,
+                "mediana_error_semispreads": 2.2079260125767854
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.612330254372468
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 12,
+                "mediana_error_semispreads": 1.2254372343397737
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 26,
+              "minimo_cotizaciones_fuera": 26
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 16,
+              "minimo_cotizaciones_fuera": 16
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 2,
+              "minimo_cotizaciones_fuera": 2
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 1,
+                "mediana_error_semispreads": 9.666166114322335
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 3,
+                "mediana_error_semispreads": 4.232697509159916
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 10.302126457050235
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 14,
+                "mediana_error_semispreads": 1.2054228566204457
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 26,
+              "minimo_cotizaciones_fuera": 26
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 14,
+              "minimo_cotizaciones_fuera": 14
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 2,
+                "mediana_error_semispreads": 8.545158168468037
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 12,
+                "mediana_error_semispreads": 4.685692878658049
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 5,
+                "mediana_error_semispreads": 8.428121123372037
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 17,
+                "mediana_error_semispreads": 1.3277876210428992
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 55,
+              "incompatibles": 52,
+              "minimo_cotizaciones_fuera": 52
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 27,
+              "minimo_cotizaciones_fuera": 27
+            },
+            "estimado": {
+              "pares": 55,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "minimo_incompatibles": 17
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 33.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 3,
+                "mediana_error_semispreads": 10.570685339998745
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 6,
+                "mediana_error_semispreads": 2.5134183319965837
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 3,
+                "mediana_error_semispreads": 6.965066306176553
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 10,
+                "mediana_error_semispreads": 2.1048199240324807
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 24,
+              "minimo_cotizaciones_fuera": 24
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 8
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2672026448298329,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 286,
+              "dentro": 9,
+              "mediana_error_semispreads": 11.18744991160045
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 9,
+              "mediana_error_semispreads": 10.065778741510023
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 286,
+              "dentro": 43,
+              "mediana_error_semispreads": 3.8586736390846315
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 25,
+              "mediana_error_semispreads": 3.181395602755202
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25838560867737054,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 286,
+              "dentro": 18,
+              "mediana_error_semispreads": 9.592326324949179
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 12,
+              "mediana_error_semispreads": 8.14267879581276
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 286,
+              "dentro": 118,
+              "mediana_error_semispreads": 1.3165818937017881
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 61,
+              "mediana_error_semispreads": 1.2865161613822271
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 3,
+                "mediana_error_semispreads": 7.379275867399283
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 5,
+                "mediana_error_semispreads": 2.585909665626148
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 2,
+                "mediana_error_semispreads": 6.828105648551821
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 11,
+                "mediana_error_semispreads": 1.7395929280445488
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 24,
+              "minimo_cotizaciones_fuera": 24
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 15,
+              "minimo_cotizaciones_fuera": 15
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 1,
+                "mediana_error_semispreads": 12.833421270327271
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 9,
+                "mediana_error_semispreads": 4.282351134698694
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 9.958541270586661
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 15,
+                "mediana_error_semispreads": 1.1944118603702534
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 29,
+              "minimo_cotizaciones_fuera": 29
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 15,
+              "minimo_cotizaciones_fuera": 15
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "minimo_incompatibles": 8
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 30.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 3,
+                "mediana_error_semispreads": 15.703201405342398
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 4,
+                "mediana_error_semispreads": 4.237977917292171
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 3,
+                "mediana_error_semispreads": 9.663512889119133
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 19,
+                "mediana_error_semispreads": 1.3420872970843616
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 55,
+              "incompatibles": 54,
+              "minimo_cotizaciones_fuera": 54
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 28,
+              "minimo_cotizaciones_fuera": 28
+            },
+            "estimado": {
+              "pares": 55,
+              "incompatibles": 20,
+              "minimo_cotizaciones_fuera": 20
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "minimo_incompatibles": 17
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 33.29166666666667,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 6.882153376003096
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 7,
+                "mediana_error_semispreads": 2.561221848050826
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 3,
+                "mediana_error_semispreads": 6.53730362078022
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 16,
+                "mediana_error_semispreads": 0.8136632779100713
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 26,
+              "minimo_cotizaciones_fuera": 26
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 15,
+              "minimo_cotizaciones_fuera": 15
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 11
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.25432111496188325,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 276,
+              "dentro": 12,
+              "mediana_error_semispreads": 8.1264681575187
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 9,
+              "mediana_error_semispreads": 9.579131789562933
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 276,
+              "dentro": 46,
+              "mediana_error_semispreads": 3.641168817349751
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 23,
+              "mediana_error_semispreads": 3.9555216895942014
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25643549612658095,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 276,
+              "dentro": 18,
+              "mediana_error_semispreads": 7.363859546945271
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 2,
+              "mediana_error_semispreads": 8.446471996451887
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 276,
+              "dentro": 122,
+              "mediana_error_semispreads": 1.2171367694793647
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 56,
+              "mediana_error_semispreads": 1.4297995004270332
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 6.664089858810858
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 7,
+                "mediana_error_semispreads": 3.125673563745096
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 0,
+                "mediana_error_semispreads": 5.71041128979482
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 19,
+                "mediana_error_semispreads": 0.8647428642116994
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 30,
+              "minimo_cotizaciones_fuera": 30
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 15,
+              "minimo_cotizaciones_fuera": 15
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 5
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 3,
+                "mediana_error_semispreads": 9.919015308226488
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 11,
+                "mediana_error_semispreads": 4.158955392245746
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 0,
+                "mediana_error_semispreads": 8.766491008516734
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 20,
+                "mediana_error_semispreads": 1.4585745905614114
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 54,
+              "incompatibles": 53,
+              "minimo_cotizaciones_fuera": 53
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 28,
+              "minimo_cotizaciones_fuera": 28
+            },
+            "estimado": {
+              "pares": 54,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 9,
+              "minimo_cotizaciones_fuera": 9
+            },
+            "minimo_incompatibles": 14
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 32.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 10.27043999901163
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 3.589693724128379
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 9.97056762080987
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 9,
+                "mediana_error_semispreads": 2.2148109768948245
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 25,
+              "minimo_cotizaciones_fuera": 25
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 14,
+              "minimo_cotizaciones_fuera": 14
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "minimo_incompatibles": 10
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 33.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 0,
+                "mediana_error_semispreads": 13.239139660947815
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 1,
+                "mediana_error_semispreads": 6.405623038690921
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 1,
+                "mediana_error_semispreads": 9.580892085645115
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 8,
+                "mediana_error_semispreads": 2.5745240108734517
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 26,
+              "incompatibles": 24,
+              "minimo_cotizaciones_fuera": 24
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "estimado": {
+              "pares": 26,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 9
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.2582063493731008,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 278,
+              "dentro": 15,
+              "mediana_error_semispreads": 7.597149665434399
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 8,
+              "mediana_error_semispreads": 9.473060911638816
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 278,
+              "dentro": 39,
+              "mediana_error_semispreads": 3.074755859757877
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 15,
+              "mediana_error_semispreads": 3.3174796124341706
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.2566541614010371,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 278,
+              "dentro": 20,
+              "mediana_error_semispreads": 7.087402500563567
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 8,
+              "mediana_error_semispreads": 7.499140183062369
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 278,
+              "dentro": 115,
+              "mediana_error_semispreads": 1.1872426162765617
+            },
+            "holdout": {
+              "filas": 142,
+              "dentro": 63,
+              "mediana_error_semispreads": 1.1179196191593537
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 28.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 3,
+                "mediana_error_semispreads": 8.779902744866515
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 5,
+                "mediana_error_semispreads": 2.441416486115588
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 7.332120752425553
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 7,
+                "mediana_error_semispreads": 2.331593525873624
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 27,
+              "minimo_cotizaciones_fuera": 27
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 15,
+              "minimo_cotizaciones_fuera": 15
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 29.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 2,
+                "mediana_error_semispreads": 10.059760762724878
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 2,
+                "mediana_error_semispreads": 3.887126978718098
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 2,
+                "mediana_error_semispreads": 8.996491408450023
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 26,
+                "mediana_error_semispreads": 1.1791714503594708
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 55,
+              "incompatibles": 54,
+              "minimo_cotizaciones_fuera": 54
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 28,
+              "minimo_cotizaciones_fuera": 28
+            },
+            "estimado": {
+              "pares": 55,
+              "incompatibles": 18,
+              "minimo_cotizaciones_fuera": 18
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 16
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 32.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 2,
+                "mediana_error_semispreads": 11.499463712008295
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 4,
+                "mediana_error_semispreads": 3.8981747989855418
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 28,
+                "dentro": 1,
+                "mediana_error_semispreads": 8.413673018813528
+              },
+              "ssvi": {
+                "filas": 28,
+                "dentro": 14,
+                "mediana_error_semispreads": 0.9911409961743423
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 26,
+              "minimo_cotizaciones_fuera": 26
+            },
+            "declarado_holdout": {
+              "pares": 14,
+              "incompatibles": 14,
+              "minimo_cotizaciones_fuera": 14
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 14,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 33.29166666666667,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 1,
+                "mediana_error_semispreads": 5.218767135876951
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 4,
+                "mediana_error_semispreads": 1.9894094049273776
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 26,
+                "dentro": 1,
+                "mediana_error_semispreads": 5.538805392529225
+              },
+              "ssvi": {
+                "filas": 26,
+                "dentro": 16,
+                "mediana_error_semispreads": 0.6198621472692505
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 26,
+              "incompatibles": 26,
+              "minimo_cotizaciones_fuera": 26
+            },
+            "declarado_holdout": {
+              "pares": 13,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado": {
+              "pares": 26,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado_holdout": {
+              "pares": 13,
+              "incompatibles": 2,
+              "minimo_cotizaciones_fuera": 2
+            },
+            "minimo_incompatibles": 4
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.25687694834446834,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 284,
+              "dentro": 19,
+              "mediana_error_semispreads": 7.306234562860833
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 13,
+              "mediana_error_semispreads": 6.996951171069357
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 284,
+              "dentro": 93,
+              "mediana_error_semispreads": 1.6075483241835011
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 51,
+              "mediana_error_semispreads": 1.5760527797613058
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25629303794375,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 284,
+              "dentro": 20,
+              "mediana_error_semispreads": 6.874289426481244
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 13,
+              "mediana_error_semispreads": 6.192893970262142
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 284,
+              "dentro": 172,
+              "mediana_error_semispreads": 0.7023733484475743
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 98,
+              "mediana_error_semispreads": 0.6148105889432016
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 27.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 2,
+                "mediana_error_semispreads": 7.524254563576408
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.366931664302761
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 1,
+                "mediana_error_semispreads": 7.441281593708117
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 22,
+                "mediana_error_semispreads": 0.5590449633928318
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 31,
+              "incompatibles": 21,
+              "minimo_cotizaciones_fuera": 21
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 13,
+              "minimo_cotizaciones_fuera": 13
+            },
+            "estimado": {
+              "pares": 31,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 28.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 4,
+                "mediana_error_semispreads": 7.598787774366481
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 11,
+                "mediana_error_semispreads": 2.3187463077376527
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 5,
+                "mediana_error_semispreads": 5.817140859101295
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 37,
+                "mediana_error_semispreads": 0.6972228345000113
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 55,
+              "incompatibles": 45,
+              "minimo_cotizaciones_fuera": 45
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 25,
+              "minimo_cotizaciones_fuera": 25
+            },
+            "estimado": {
+              "pares": 55,
+              "incompatibles": 11,
+              "minimo_cotizaciones_fuera": 11
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 10
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 31.302083333333332,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 4,
+                "mediana_error_semispreads": 6.92256228129691
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 15,
+                "mediana_error_semispreads": 0.9851628757518427
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 4,
+                "mediana_error_semispreads": 6.419079577481219
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 20,
+                "mediana_error_semispreads": 0.556417252732932
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 19,
+              "minimo_cotizaciones_fuera": 19
+            },
+            "declarado_holdout": {
+              "pares": 15,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado_holdout": {
+              "pares": 15,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "minimo_incompatibles": 6
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 32.302083333333336,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 3,
+                "mediana_error_semispreads": 6.34660213421539
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 12,
+                "mediana_error_semispreads": 1.6288126889503232
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 3,
+                "mediana_error_semispreads": 5.853799777814376
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 19,
+                "mediana_error_semispreads": 0.6035507161797597
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 18,
+              "minimo_cotizaciones_fuera": 18
+            },
+            "declarado_holdout": {
+              "pares": 15,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 7,
+              "minimo_cotizaciones_fuera": 7
+            },
+            "estimado_holdout": {
+              "pares": 15,
+              "incompatibles": 3,
+              "minimo_cotizaciones_fuera": 3
+            },
+            "minimo_incompatibles": 5
+          }
+        }
+      ]
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "apto_puntual": false,
+      "bloqueos": [
+        "feed indicative: cotizaciones modificadas, no precios ejecutables",
+        "SPX implícito por paridad, sin referencia independiente",
+        "referencia desfasada respecto del corte"
+      ],
+      "medidas": {
+        "declarado": {
+          "g_min_malla": 0.25506447852270003,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 282,
+              "dentro": 22,
+              "mediana_error_semispreads": 7.955794236059933
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 15,
+              "mediana_error_semispreads": 8.020063760929322
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 282,
+              "dentro": 93,
+              "mediana_error_semispreads": 1.5307605943494056
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 51,
+              "mediana_error_semispreads": 1.460049177776146
+            }
+          }
+        },
+        "estimado": {
+          "g_min_malla": 0.25578305153322384,
+          "condiciones": {
+            "calendario_theta_creciente": true,
+            "gamma_en_(0,1/2]": true,
+            "eta(1+|rho|)<=2": true,
+            "mariposa_1": true,
+            "mariposa_2": true
+          },
+          "plano": {
+            "train": {
+              "filas": 282,
+              "dentro": 25,
+              "mediana_error_semispreads": 8.067921508691882
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 13,
+              "mediana_error_semispreads": 7.902306747269385
+            }
+          },
+          "ssvi": {
+            "train": {
+              "filas": 282,
+              "dentro": 169,
+              "mediana_error_semispreads": 0.7029852383465783
+            },
+            "holdout": {
+              "filas": 148,
+              "dentro": 93,
+              "mediana_error_semispreads": 0.6749179146557434
+            }
+          }
+        }
+      },
+      "por_vencimiento": [
+        {
+          "indice_vencimiento": 1,
+          "dias": 27.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 4,
+                "mediana_error_semispreads": 5.995847135051649
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 13,
+                "mediana_error_semispreads": 1.3882785601830325
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 32,
+                "dentro": 2,
+                "mediana_error_semispreads": 5.20485005294656
+              },
+              "ssvi": {
+                "filas": 32,
+                "dentro": 23,
+                "mediana_error_semispreads": 0.4971685686791974
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 30,
+              "incompatibles": 17,
+              "minimo_cotizaciones_fuera": 17
+            },
+            "declarado_holdout": {
+              "pares": 16,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado": {
+              "pares": 30,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 16,
+              "incompatibles": 2,
+              "minimo_cotizaciones_fuera": 2
+            },
+            "minimo_incompatibles": 3
+          }
+        },
+        {
+          "indice_vencimiento": 2,
+          "dias": 28.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 5,
+                "mediana_error_semispreads": 8.61403121426944
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 18,
+                "mediana_error_semispreads": 1.5507991156194576
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 56,
+                "dentro": 6,
+                "mediana_error_semispreads": 9.346065362088279
+              },
+              "ssvi": {
+                "filas": 56,
+                "dentro": 37,
+                "mediana_error_semispreads": 0.6749179146557434
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 55,
+              "incompatibles": 41,
+              "minimo_cotizaciones_fuera": 41
+            },
+            "declarado_holdout": {
+              "pares": 28,
+              "incompatibles": 22,
+              "minimo_cotizaciones_fuera": 22
+            },
+            "estimado": {
+              "pares": 55,
+              "incompatibles": 10,
+              "minimo_cotizaciones_fuera": 10
+            },
+            "estimado_holdout": {
+              "pares": 28,
+              "incompatibles": 5,
+              "minimo_cotizaciones_fuera": 5
+            },
+            "minimo_incompatibles": 7
+          }
+        },
+        {
+          "indice_vencimiento": 3,
+          "dias": 31.291666666666668,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 4,
+                "mediana_error_semispreads": 5.1785936240519295
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 11,
+                "mediana_error_semispreads": 1.3958009182825397
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 2,
+                "mediana_error_semispreads": 5.84356720939997
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 15,
+                "mediana_error_semispreads": 1.0161855404185043
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 16,
+              "minimo_cotizaciones_fuera": 16
+            },
+            "declarado_holdout": {
+              "pares": 15,
+              "incompatibles": 8,
+              "minimo_cotizaciones_fuera": 8
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 6,
+              "minimo_cotizaciones_fuera": 6
+            },
+            "estimado_holdout": {
+              "pares": 15,
+              "incompatibles": 2,
+              "minimo_cotizaciones_fuera": 2
+            },
+            "minimo_incompatibles": 3
+          }
+        },
+        {
+          "indice_vencimiento": 4,
+          "dias": 32.291666666666664,
+          "metricas": {
+            "declarado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 2,
+                "mediana_error_semispreads": 8.354813043409727
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 9,
+                "mediana_error_semispreads": 1.7200509574663898
+              }
+            },
+            "estimado": {
+              "plano": {
+                "filas": 30,
+                "dentro": 3,
+                "mediana_error_semispreads": 9.104241608065763
+              },
+              "ssvi": {
+                "filas": 30,
+                "dentro": 18,
+                "mediana_error_semispreads": 0.5791714487479723
+              }
+            }
+          },
+          "paridad": {
+            "declarado": {
+              "pares": 28,
+              "incompatibles": 17,
+              "minimo_cotizaciones_fuera": 17
+            },
+            "declarado_holdout": {
+              "pares": 15,
+              "incompatibles": 12,
+              "minimo_cotizaciones_fuera": 12
+            },
+            "estimado": {
+              "pares": 28,
+              "incompatibles": 4,
+              "minimo_cotizaciones_fuera": 4
+            },
+            "estimado_holdout": {
+              "pares": 15,
+              "incompatibles": 1,
+              "minimo_cotizaciones_fuera": 1
+            },
+            "minimo_incompatibles": 3
+          }
+        }
+      ]
+    }
+  ],
+  "total": {
+    "declarado": {
+      "plano": {
+        "filas": 1642,
+        "dentro": 107,
+        "medianas_por_corte": [
+          8.43216822389719,
+          12.6721702785153,
+          6.173969325382668,
+          5.87491632965852,
+          9.42663287608903,
+          7.648360381778696,
+          8.400643615818124,
+          10.065778741510023,
+          9.579131789562933,
+          9.473060911638816,
+          6.996951171069357,
+          8.020063760929322
+        ]
+      },
+      "ssvi": {
+        "filas": 1642,
+        "dentro": 357,
+        "medianas_por_corte": [
+          2.434266145949227,
+          4.451254959975175,
+          2.2553805340751603,
+          3.1239364714879407,
+          3.1567138581986782,
+          1.9444975004565959,
+          3.2225898445071,
+          3.181395602755202,
+          3.9555216895942014,
+          3.3174796124341706,
+          1.5760527797613058,
+          1.460049177776146
+        ]
+      },
+      "paridad": {
+        "declarado": {
+          "pares": 1588,
+          "incompatibles": 1337
+        },
+        "declarado_holdout": {
+          "pares": 821,
+          "incompatibles": 691
+        }
+      }
+    },
+    "estimado": {
+      "plano": {
+        "filas": 1642,
+        "dentro": 126,
+        "medianas_por_corte": [
+          7.953567904086,
+          10.902592850910764,
+          5.45074680113831,
+          5.769518589110909,
+          7.729368726069083,
+          5.825054804614943,
+          8.231552515965243,
+          8.14267879581276,
+          8.446471996451887,
+          7.499140183062369,
+          6.192893970262142,
+          7.902306747269385
+        ]
+      },
+      "ssvi": {
+        "filas": 1642,
+        "dentro": 744,
+        "medianas_por_corte": [
+          1.4236294788556738,
+          1.9496244811160666,
+          1.1618015668663766,
+          1.0534928494214284,
+          1.3876099860196092,
+          1.0327679585534926,
+          1.3529631648611022,
+          1.2865161613822271,
+          1.4297995004270332,
+          1.1179196191593537,
+          0.6148105889432016,
+          0.6749179146557434
+        ]
+      },
+      "paridad": {
+        "estimado": {
+          "pares": 1588,
+          "incompatibles": 514
+        },
+        "estimado_holdout": {
+          "pares": 821,
+          "incompatibles": 271
+        }
+      }
+    }
+  },
+  "carry": [
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 136,
+      "declarado": 136,
+      "estimado": 51,
+      "minimo": 44
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 136,
+      "declarado": 120,
+      "estimado": 51,
+      "minimo": 45
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 136,
+      "declarado": 58,
+      "estimado": 51,
+      "minimo": 44
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 136,
+      "declarado": 59,
+      "estimado": 51,
+      "minimo": 45
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 136,
+      "declarado": 136,
+      "estimado": 51,
+      "minimo": 45
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 138,
+      "estimado": 61,
+      "minimo": 47
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 118,
+      "estimado": 63,
+      "minimo": 48
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 65,
+      "estimado": 65,
+      "minimo": 48
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 138,
+      "declarado": 63,
+      "estimado": 63,
+      "minimo": 48
+    },
+    {
+      "fecha": "2026-10-02",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 138,
+      "declarado": 138,
+      "estimado": 63,
+      "minimo": 48
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 106,
+      "estimado": 33,
+      "minimo": 23
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 86,
+      "estimado": 34,
+      "minimo": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 32,
+      "estimado": 34,
+      "minimo": 23
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 108,
+      "declarado": 34,
+      "estimado": 34,
+      "minimo": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 108,
+      "declarado": 107,
+      "estimado": 34,
+      "minimo": 24
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 108,
+      "estimado": 22,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 87,
+      "estimado": 22,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 108,
+      "declarado": 26,
+      "estimado": 24,
+      "minimo": 15
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 108,
+      "declarado": 26,
+      "estimado": 22,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-05",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 108,
+      "declarado": 108,
+      "estimado": 22,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 127,
+      "declarado": 127,
+      "estimado": 51,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 127,
+      "declarado": 117,
+      "estimado": 45,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 127,
+      "declarado": 44,
+      "estimado": 48,
+      "minimo": 37
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 127,
+      "declarado": 43,
+      "estimado": 45,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 127,
+      "declarado": 127,
+      "estimado": 45,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 125,
+      "declarado": 121,
+      "estimado": 37,
+      "minimo": 27
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 125,
+      "declarado": 89,
+      "estimado": 36,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 125,
+      "declarado": 41,
+      "estimado": 34,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 125,
+      "declarado": 39,
+      "estimado": 36,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-06",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 125,
+      "declarado": 121,
+      "estimado": 36,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 143,
+      "estimado": 46,
+      "minimo": 37
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 128,
+      "estimado": 49,
+      "minimo": 39
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 51,
+      "estimado": 52,
+      "minimo": 40
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 143,
+      "declarado": 51,
+      "estimado": 49,
+      "minimo": 39
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 143,
+      "declarado": 143,
+      "estimado": 49,
+      "minimo": 39
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 143,
+      "estimado": 56,
+      "minimo": 43
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 133,
+      "estimado": 56,
+      "minimo": 43
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 143,
+      "declarado": 68,
+      "estimado": 57,
+      "minimo": 42
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 143,
+      "declarado": 65,
+      "estimado": 56,
+      "minimo": 43
+    },
+    {
+      "fecha": "2026-10-07",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 143,
+      "declarado": 143,
+      "estimado": 56,
+      "minimo": 43
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 138,
+      "estimado": 50,
+      "minimo": 36
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 132,
+      "estimado": 51,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 138,
+      "declarado": 49,
+      "estimado": 50,
+      "minimo": 36
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 138,
+      "declarado": 48,
+      "estimado": 51,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 138,
+      "declarado": 138,
+      "estimado": 51,
+      "minimo": 38
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 139,
+      "declarado": 139,
+      "estimado": 42,
+      "minimo": 35
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 139,
+      "declarado": 133,
+      "estimado": 44,
+      "minimo": 34
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 139,
+      "declarado": 43,
+      "estimado": 42,
+      "minimo": 34
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 139,
+      "declarado": 43,
+      "estimado": 44,
+      "minimo": 34
+    },
+    {
+      "fecha": "2026-10-08",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 139,
+      "declarado": 139,
+      "estimado": 44,
+      "minimo": 34
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 142,
+      "declarado": 142,
+      "estimado": 37,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 142,
+      "declarado": 103,
+      "estimado": 37,
+      "minimo": 27
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 142,
+      "declarado": 55,
+      "estimado": 34,
+      "minimo": 26
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 142,
+      "declarado": 55,
+      "estimado": 37,
+      "minimo": 27
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "09:45",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 142,
+      "declarado": 142,
+      "estimado": 37,
+      "minimo": 27
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "tasa": 0.03,
+      "q": 0.013,
+      "pares": 141,
+      "declarado": 141,
+      "estimado": 27,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.013,
+      "pares": 141,
+      "declarado": 91,
+      "estimado": 26,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "tasa": 0.05,
+      "q": 0.013,
+      "pares": 141,
+      "declarado": 49,
+      "estimado": 26,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.003,
+      "pares": 141,
+      "declarado": 49,
+      "estimado": 26,
+      "minimo": 16
+    },
+    {
+      "fecha": "2026-10-09",
+      "hora": "10:00",
+      "tasa": 0.04,
+      "q": 0.023,
+      "pares": 141,
+      "declarado": 141,
+      "estimado": 26,
+      "minimo": 16
+    }
+  ],
+  "desplazamiento_forward_pct": {
+    "mediana": 0.07040598157795896,
+    "minimo": 0.025707656707618654,
+    "maximo": 0.11091335643966804
+  }
+}

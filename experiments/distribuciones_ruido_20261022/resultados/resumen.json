@@ -1,0 +1,659 @@
+{
+  "protocolo": {
+    "version": "distribuciones-ruido-0.1",
+    "fecha": "2026-10-22",
+    "presupuesto_datos": 0,
+    "universo": "SPXW europeo; snapshot original, seis sesiones conocidas, training ancho 0.10",
+    "filtros": [
+      "todos",
+      "frescas_5s",
+      "otm",
+      "otm_frescas_5s"
+    ],
+    "edad_maxima_segundos": 5.0,
+    "edad": "recibido_utc - sello_evento_utc; 0 <= edad <= 5 y disponible_utc <= recibido_utc",
+    "otm": "Call K>=F_ancla; put K<F_ancla. F anclado al training central previo.",
+    "margenes_spreads": [
+      0.1,
+      0.5,
+      1.0
+    ],
+    "tolerancia": "rho mínimo del training + margen predefinido; modelo determinista, no estimador de ruido verdadero",
+    "comparacion_filtros": [
+      "rho_propio+0.5",
+      "rho_todos+0.5"
+    ],
+    "ratios_cdf": [
+      0.94,
+      0.97,
+      1.0,
+      1.03,
+      1.06
+    ],
+    "soporte_maximo": 2.0,
+    "control_soporte_maximo": 4.0,
+    "epsilon_cdf": 0.0025,
+    "control_epsilon_cdf": 0.00125,
+    "forward_banda_relativa": 0.0025,
+    "shock_tasa_anual": 0.01,
+    "referencias": "Principal F/D fijos; control continuo F +/-0.25% y tasa implícita +/-1 punto, sin recalibrar rho",
+    "holdout": "Tres calls reservados más cercanos a K/F=0.97,1,1.03 por vencimiento; solo diagnóstico de solapamiento",
+    "calendario": "Cada vencimiento independiente; no imponer calendario, dinámica ni transición entre capturas",
+    "salida": "CDF neutral al riesgo, envolventes puntuales y medidas extremas; no PDF suavizada ni confianza física",
+    "control_cdf_alcanzada": "Además de rampas exteriores, optimizar el indicador exacto en los estados declarados y guardar dos medidas que alcancen esos valores. Cotas interiores discretas, no extremos globales de la CDF continua.",
+    "regla_decision": "No promover al comparador ni cambiar filtros de producción. Reportar sensibilidad completa, sin escoger margen por resultado atractivo."
+  },
+  "scipy": "1.17.1",
+  "sesiones": 6,
+  "cortes": 12,
+  "total_lp": 15300,
+  "diagnosticos": {
+    "primal": 3.552713678800501e-15,
+    "dual": 8.383267413591966e-10,
+    "gap": 8.526512829121202e-13
+  },
+  "reparaciones": [
+    {
+      "filtro": "frescas_5s",
+      "rebanadas": 48,
+      "filas": 5112,
+      "rho_mediana": 2.346333653907859,
+      "rho_max": 17.42503454361351,
+      "sin_reparar": 0
+    },
+    {
+      "filtro": "otm",
+      "rebanadas": 48,
+      "filas": 3208,
+      "rho_mediana": 0.5562284911769122,
+      "rho_max": 3.4835164835165195,
+      "sin_reparar": 1
+    },
+    {
+      "filtro": "otm_frescas_5s",
+      "rebanadas": 48,
+      "filas": 2981,
+      "rho_mediana": 0.5562284911769018,
+      "rho_max": 3.4835164835164747,
+      "sin_reparar": 1
+    },
+    {
+      "filtro": "todos",
+      "rebanadas": 48,
+      "filas": 5912,
+      "rho_mediana": 2.365343529636963,
+      "rho_max": 17.425034543613094,
+      "sin_reparar": 0
+    },
+    {
+      "filtro": "todos_referencias_en_banda",
+      "rebanadas": 48,
+      "filas": 5912,
+      "rho_mediana": 1.738086203341647,
+      "rho_max": 11.775956284153738,
+      "sin_reparar": 0
+    }
+  ],
+  "agregado": [
+    {
+      "caso": "frescas_5s_rho_comun",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07337231465907157,
+          "mediana_ancho_alcanzado": 0.07097475183383903,
+          "min_ancho": 0.0119799805287885,
+          "max_ancho": 0.13614020456178688
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.12441052058687574,
+          "mediana_ancho_alcanzado": 0.12271169550324895,
+          "min_ancho": 0.010574949847100806,
+          "max_ancho": 0.22679516661894672
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.18876464909598245,
+          "mediana_ancho_alcanzado": 0.1845589529075222,
+          "min_ancho": 0.06028983368862295,
+          "max_ancho": 0.4871575149640171
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.23719490236625324,
+          "mediana_ancho_alcanzado": 0.2128816100863652,
+          "min_ancho": 0.13304599485043145,
+          "max_ancho": 0.4545622442471142
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.07197957536691241,
+          "mediana_ancho_alcanzado": 0.06417859070980886,
+          "min_ancho": 0.04750983561401878,
+          "max_ancho": 0.1284981675112431
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 124,
+      "mediana_holdout_ancho_spreads": 4.602944863914045
+    },
+    {
+      "caso": "frescas_5s_rho_propio",
+      "rebanadas": 48,
+      "mediana_rho": 2.846333653907859,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07132815436666615,
+          "mediana_ancho_alcanzado": 0.06954597626398004,
+          "min_ancho": 0.011979980528780076,
+          "max_ancho": 0.12508309684730773
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.12179054236342908,
+          "mediana_ancho_alcanzado": 0.12127778430879803,
+          "min_ancho": 0.010574949847088677,
+          "max_ancho": 0.22679516661908666
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.18718020693348608,
+          "mediana_ancho_alcanzado": 0.1789162017221162,
+          "min_ancho": 0.060289833688589645,
+          "max_ancho": 0.4871575149640197
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.23116361254171347,
+          "mediana_ancho_alcanzado": 0.2044881187347199,
+          "min_ancho": 0.13304599485043156,
+          "max_ancho": 0.4545622442471139
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.07104619163761039,
+          "mediana_ancho_alcanzado": 0.06319805530106642,
+          "min_ancho": 0.04750983561401878,
+          "max_ancho": 0.12849816751124354
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_holdout_ancho_spreads": 4.376073372720333
+    },
+    {
+      "caso": "otm_frescas_5s_rho_comun",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.08102483508113509,
+          "mediana_ancho_alcanzado": 0.07830697886881682,
+          "min_ancho": 0.021729188341562025,
+          "max_ancho": 0.14210286703417668
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.14150066998474964,
+          "mediana_ancho_alcanzado": 0.14030056131944188,
+          "min_ancho": 0.03643634446972874,
+          "max_ancho": 0.2584552894857749
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.2416412631735284,
+          "mediana_ancho_alcanzado": 0.23293947936912457,
+          "min_ancho": 0.06028983368864388,
+          "max_ancho": 0.5071565635644953
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.24929260347700544,
+          "mediana_ancho_alcanzado": 0.21613017757478664,
+          "min_ancho": 0.13304599485043123,
+          "max_ancho": 0.45700296861990264
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.07197957536691224,
+          "mediana_ancho_alcanzado": 0.06417859070980875,
+          "min_ancho": 0.047509835614019,
+          "max_ancho": 0.12849816751124354
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 129,
+      "mediana_holdout_ancho_spreads": 5.625616515039431
+    },
+    {
+      "caso": "otm_frescas_5s_rho_propio",
+      "rebanadas": 48,
+      "mediana_rho": 1.0562284911769018,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06089533583642148,
+          "mediana_ancho_alcanzado": 0.05745078324412205,
+          "min_ancho": 0.01574063383482418,
+          "max_ancho": 0.09771467638534023
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.09933196262757041,
+          "mediana_ancho_alcanzado": 0.09850168559586372,
+          "min_ancho": 0.017480031755367137,
+          "max_ancho": 0.17423863525170008
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1467130224917154,
+          "mediana_ancho_alcanzado": 0.14337140791406117,
+          "min_ancho": 0.03994511797617445,
+          "max_ancho": 0.2592608952351534
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.1780334689919909,
+          "mediana_ancho_alcanzado": 0.1569540973352263,
+          "min_ancho": 0.07214874101563984,
+          "max_ancho": 0.2734231412063176
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.058724976578181265,
+          "mediana_ancho_alcanzado": 0.054702697052480154,
+          "min_ancho": 0.035413912910230216,
+          "max_ancho": 0.09845226431984433
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 119,
+      "mediana_holdout_ancho_spreads": 3.1825864851840944
+    },
+    {
+      "caso": "otm_rho_comun",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07920315375590786,
+          "mediana_ancho_alcanzado": 0.07590398232802803,
+          "min_ancho": 0.02172918834156208,
+          "max_ancho": 0.13095650217738458
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.14150066998474906,
+          "mediana_ancho_alcanzado": 0.14030056131944188,
+          "min_ancho": 0.03643634446972874,
+          "max_ancho": 0.25845528948577495
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.2416412631735284,
+          "mediana_ancho_alcanzado": 0.23293947936912332,
+          "min_ancho": 0.06028983368864388,
+          "max_ancho": 0.5071565635644956
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.24711691338605635,
+          "mediana_ancho_alcanzado": 0.21389339451240563,
+          "min_ancho": 0.13304599485043123,
+          "max_ancho": 0.4570029686199025
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.069697088154144,
+          "mediana_ancho_alcanzado": 0.06130096100414584,
+          "min_ancho": 0.047060169397614815,
+          "max_ancho": 0.12849816751124343
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 129,
+      "mediana_holdout_ancho_spreads": 5.37668156046929
+    },
+    {
+      "caso": "otm_rho_propio",
+      "rebanadas": 48,
+      "mediana_rho": 1.056228491176912,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.05969592571424767,
+          "mediana_ancho_alcanzado": 0.05570875129906526,
+          "min_ancho": 0.015740633834824096,
+          "max_ancho": 0.08029023012251853
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.09933196262757031,
+          "mediana_ancho_alcanzado": 0.09783514635597264,
+          "min_ancho": 0.017480031755366332,
+          "max_ancho": 0.1716808521909248
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.14671302249171933,
+          "mediana_ancho_alcanzado": 0.14337140791403902,
+          "min_ancho": 0.03994511797617145,
+          "max_ancho": 0.2592608952351534
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.1691687685955609,
+          "mediana_ancho_alcanzado": 0.15667318350774534,
+          "min_ancho": 0.07214874101563995,
+          "max_ancho": 0.2734231412063176
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.05505267016035076,
+          "mediana_ancho_alcanzado": 0.04712331420271115,
+          "min_ancho": 0.03217955783401927,
+          "max_ancho": 0.08129750642127165
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 119,
+      "mediana_holdout_ancho_spreads": 3.106880573191964
+    },
+    {
+      "caso": "rampa_mitad",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0688806772320611,
+          "mediana_ancho_alcanzado": 0.06606974686543136,
+          "min_ancho": 0.011979980528786557,
+          "max_ancho": 0.1250830968473082
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11990154108117468,
+          "mediana_ancho_alcanzado": 0.1189392225962156,
+          "min_ancho": 0.010574949847089177,
+          "max_ancho": 0.22679516661893295
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1887646490959756,
+          "mediana_ancho_alcanzado": 0.18455895290752627,
+          "min_ancho": 0.06028983368856705,
+          "max_ancho": 0.48715751496401366
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.22979178880667195,
+          "mediana_ancho_alcanzado": 0.21087688910850078,
+          "min_ancho": 0.13304599485043112,
+          "max_ancho": 0.45456224424711433
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06953196290415559,
+          "mediana_ancho_alcanzado": 0.06466610235264025,
+          "min_ancho": 0.04706016939761504,
+          "max_ancho": 0.12849816751124354
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_holdout_ancho_spreads": 4.544447816673111
+    },
+    {
+      "caso": "referencias_en_banda",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07813397131820056,
+          "mediana_ancho_alcanzado": 0.07498253777569269,
+          "min_ancho": 0.02176840393359518,
+          "max_ancho": 0.130199809307084
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1331777862444799,
+          "mediana_ancho_alcanzado": 0.12953496465768738,
+          "min_ancho": 0.03671549597630688,
+          "max_ancho": 0.2475228487644993
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.19587349029591006,
+          "mediana_ancho_alcanzado": 0.19085052775587302,
+          "min_ancho": 0.08367023015715586,
+          "max_ancho": 0.5060879147879086
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.23365062652512802,
+          "mediana_ancho_alcanzado": 0.20600729137238177,
+          "min_ancho": 0.13337779802129557,
+          "max_ancho": 0.4549905353581881
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.0697624946451818,
+          "mediana_ancho_alcanzado": 0.061352679045846514,
+          "min_ancho": 0.047105864062461644,
+          "max_ancho": 0.12861193725765507
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 133,
+      "mediana_holdout_ancho_spreads": 5.184202382670877
+    },
+    {
+      "caso": "soporte_4F",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0688806772320611,
+          "mediana_ancho_alcanzado": 0.06591602724192142,
+          "min_ancho": 0.011979980528777148,
+          "max_ancho": 0.1250830968473082
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11990154108117418,
+          "mediana_ancho_alcanzado": 0.11893922259622164,
+          "min_ancho": 0.010574949847073328,
+          "max_ancho": 0.22679516661895854
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.18876464909597163,
+          "mediana_ancho_alcanzado": 0.18455895290751378,
+          "min_ancho": 0.060289833688561,
+          "max_ancho": 0.4871575149640146
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.229791788806671,
+          "mediana_ancho_alcanzado": 0.20572990975067246,
+          "min_ancho": 0.133045994850431,
+          "max_ancho": 0.45456224424711444
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06960590856969245,
+          "mediana_ancho_alcanzado": 0.06109368816678401,
+          "min_ancho": 0.04706016939761526,
+          "max_ancho": 0.12849816751124365
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_holdout_ancho_spreads": 4.544447816673117
+    },
+    {
+      "caso": "todos_margen_0.1",
+      "rebanadas": 48,
+      "mediana_rho": 2.4653435296369635,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.06266294552688227,
+          "mediana_ancho_alcanzado": 0.06021524242758524,
+          "min_ancho": 0.00908257534123235,
+          "max_ancho": 0.12152603996218186
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.10403892993122357,
+          "mediana_ancho_alcanzado": 0.10252579027872229,
+          "min_ancho": 0.0021149899694083707,
+          "max_ancho": 0.2218332096051858
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.16677215866882278,
+          "mediana_ancho_alcanzado": 0.15365680471129461,
+          "min_ancho": 0.0158320184661761,
+          "max_ancho": 0.4837279692925738
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.21484124336287902,
+          "mediana_ancho_alcanzado": 0.19548073590053633,
+          "min_ancho": 0.12591431068814485,
+          "max_ancho": 0.45020872157912195
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06517345172599848,
+          "mediana_ancho_alcanzado": 0.05786909854048383,
+          "min_ancho": 0.04438716315495217,
+          "max_ancho": 0.12652327319762335
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 120,
+      "mediana_holdout_ancho_spreads": 4.142177884459648
+    },
+    {
+      "caso": "todos_margen_0.5",
+      "rebanadas": 48,
+      "mediana_rho": 2.865343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.0688806772320611,
+          "mediana_ancho_alcanzado": 0.06591602724192142,
+          "min_ancho": 0.011979980528786849,
+          "max_ancho": 0.1250830968473082
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.11990154108117418,
+          "mediana_ancho_alcanzado": 0.11893922259621034,
+          "min_ancho": 0.010574949847092119,
+          "max_ancho": 0.2267951666189468
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.1887646490959792,
+          "mediana_ancho_alcanzado": 0.18455895290754185,
+          "min_ancho": 0.06028983368859164,
+          "max_ancho": 0.48715751496401105
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.22979178880667106,
+          "mediana_ancho_alcanzado": 0.20572990975067235,
+          "min_ancho": 0.13304599485043134,
+          "max_ancho": 0.45456224424711444
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.06953196290415548,
+          "mediana_ancho_alcanzado": 0.06101821280672248,
+          "min_ancho": 0.04706016939761504,
+          "max_ancho": 0.12849816751124377
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 123,
+      "mediana_holdout_ancho_spreads": 4.544447816673179
+    },
+    {
+      "caso": "todos_margen_1",
+      "rebanadas": 48,
+      "mediana_rho": 3.365343529636963,
+      "cdf": [
+        {
+          "ratio": 0.94,
+          "mediana_ancho": 0.07409565341670062,
+          "mediana_ancho_alcanzado": 0.07138746274613952,
+          "min_ancho": 0.012777807236793337,
+          "max_ancho": 0.12952941795371617
+        },
+        {
+          "ratio": 0.97,
+          "mediana_ancho": 0.1312413865949777,
+          "mediana_ancho_alcanzado": 0.1312413865949805,
+          "min_ancho": 0.02114989969418951,
+          "max_ancho": 0.23299761288617554
+        },
+        {
+          "ratio": 1.0,
+          "mediana_ancho": 0.2090533966784997,
+          "mediana_ancho_alcanzado": 0.20601757988818176,
+          "min_ancho": 0.08117811481690573,
+          "max_ancho": 0.49096270167168127
+        },
+        {
+          "ratio": 1.03,
+          "mediana_ancho": 0.24699874383142578,
+          "mediana_ancho_alcanzado": 0.2183369621113218,
+          "min_ancho": 0.14196060005328903,
+          "max_ancho": 0.45785603321175117
+        },
+        {
+          "ratio": 1.06,
+          "mediana_ancho": 0.07396424361281656,
+          "mediana_ancho_alcanzado": 0.06539075864999616,
+          "min_ancho": 0.04961026424271098,
+          "max_ancho": 0.13096678540326867
+        }
+      ],
+      "holdout_n": 144,
+      "holdout_solapan": 127,
+      "mediana_holdout_ancho_spreads": 5.205335275405152
+    }
+  ],
+  "origen_resumen_sha256_lf": "3dab7d24db94201f6f529725f500f4ef83c040adf7baee3c48c06b71fd99d7d4",
+  "codigo_sha256_lf": {
+    "experiments/distribuciones_ruido_20261022/evaluar.py": "a99becdaeb4b5bff1d2501557bfc7b9f7b5a2c71440ca976d4a968a5915b679d",
+    "experiments/distribuciones_ruido_20261022/metodo.py": "18720d9d475009b97a162876ec640e1958d356efb8cf34594a6caa987c1fb67f",
+    "experiments/distribuciones_ruido_20261022/protocolo.toml": "383d21bdc271886477262112770ad1e1bb8bd8d6a9dd9239240d5e877a7313da"
+  },
+  "privados_sha256": {
+    "2026-10-02_0945_medidas.json": "a5867a2c88c847bbc3fd707672e2209474e5fe4de6c6c8cf370491b5a166a52e",
+    "2026-10-02_1000_medidas.json": "c9ba55050a7888aa1e5f8824333c57347c259a7eb18152c104840b5487069025",
+    "2026-10-05_0945_medidas.json": "4a2a005915ba2b97a1a4fbd9a677d90ae96404fd05a93567df120b7d3615d0f2",
+    "2026-10-05_1000_medidas.json": "94eccc97d2505959689c63e526fa19cae3269d4f1e33ec784a5412037e9901d5",
+    "2026-10-06_0945_medidas.json": "5fe873929399683638c7423def900e4e58b981a2899ce582eeaef7ce75c4cd75",
+    "2026-10-06_1000_medidas.json": "1463a8c91691cf667380e91826d9262160cdd42241fd9aa6059002560bc4399f",
+    "2026-10-07_0945_medidas.json": "742d3f26e1f4335b950aeb56e495f9e3c8de9dc737259a39414a30da84d2234b",
+    "2026-10-07_1000_medidas.json": "a1cd9d5ef9539d046d807f6af9f2150e89e24894b27083261f6d7b814584f077",
+    "2026-10-08_0945_medidas.json": "5c32ebb08127dcb0392550190b758c8f0369f568a8ef72327beee10fde61b52b",
+    "2026-10-08_1000_medidas.json": "9bbb0c8c25c30b3b8fc5960a5556f79dd208fed7b28957a2b6c28b241af062c0",
+    "2026-10-09_0945_medidas.json": "584bb8cd55f9f8e9600664dd6be2e27fa702c6d1f1d09d74e6dbcc7e9ad5982c",
+    "2026-10-09_1000_medidas.json": "cfafad848874657ec5038e33906f4a761cc3b24e7a26d0c678acb26cafcc01b4"
+  }
+}

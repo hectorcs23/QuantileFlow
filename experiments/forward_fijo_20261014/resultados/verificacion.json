@@ -1,0 +1,15 @@
+{
+  "precios_reproducidos": 53754,
+  "max_error_precio": 3.637978807091713e-12,
+  "anclas_congeladas_verificadas": 144,
+  "origen_y_split_intactos": true,
+  "paridad_y_minimo_F_libre_reproducidos": true,
+  "comprobaciones_pares_incompatibles_con_precio_fuera": 16278,
+  "nota_conteo": "Los pares se revisan repetidamente entre ventanas, anclas y regiones; no son observaciones independientes",
+  "huellas_correctas": true,
+  "resumen_sha256": "bda324d69fc053b1d37294b83000d816e065b695c8357092b7cd7103f221470d",
+  "fuentes_sha256_lf": {
+    "verificar.py": "79f043699c650160584c67ded7957ef2a66bc02f97e5424c846f9086dfe02d97",
+    "graficas.py": "22fc4264ebdfc27e26e586a23829b92433066b3323bf7cc82bb4772c05ec98b3"
+  }
+}

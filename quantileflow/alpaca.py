@@ -51,6 +51,7 @@ import datetime as dt
 import gzip
 import http.client
 import json
+import math
 import os
 import stat
 import sys
@@ -904,6 +905,30 @@ def elegir_vencimientos(vencimientos, liquidacion, corte_utc, objetivo_dias=30.0
     elegidos = set(antes) | set(despues)
     if cercano and plazos:
         elegidos.add(min(plazos, key=plazos.get))
+    return sorted(elegidos), plazos
+
+
+def elegir_vencimientos_multiples(vencimientos, liquidacion, corte_utc, objetivos_dias,
+                                 por_lado=2, cercano=False, base_dias=365.0, codigo=CALENDARIO):
+    """Unión sin solicitudes duplicadas de los vencimientos de varios objetivos.
+
+    Selección para capturar, no interpolación ni garantía de cobertura: un
+    objetivo sin ambos lados seguirá ausente en el análisis. ``cercano``
+    mantiene la referencia implícita existente; no significa 0DTE.
+    """
+    objetivos = list(objetivos_dias)
+    if (not objetivos or any(isinstance(d, bool) or not isinstance(d, (int, float))
+                            or not math.isfinite(d) or d <= 0 for d in objetivos)
+            or len(set(objetivos)) != len(objetivos)):
+        raise ValueError("objetivos_dias requiere plazos positivos, finitos y únicos")
+    if isinstance(por_lado, bool) or not isinstance(por_lado, int) or por_lado < 1:
+        raise ValueError("por_lado debe ser un entero positivo")
+    vencimientos = list(vencimientos)  # también admite un generador
+    elegidos, plazos = set(), {}
+    for objetivo in objetivos:
+        seleccion, plazos = elegir_vencimientos(
+            vencimientos, liquidacion, corte_utc, objetivo, por_lado, cercano, base_dias, codigo)
+        elegidos.update(seleccion)
     return sorted(elegidos), plazos
 
 

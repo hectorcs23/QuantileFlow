@@ -1,0 +1,96 @@
+{
+  "snapshot_privado": "8adb35f6abcaaa238c2bca48169d4a23dc9c99b1",
+  "fecha": "2026-10-09",
+  "manifiestos": {
+    "capturas": 13,
+    "historico": 30,
+    "eventos": 8
+  },
+  "paginas_unicas_verificadas": 195,
+  "integridad_huellas": "correcta",
+  "dia": [
+    {
+      "tipo": "capturas",
+      "hora": "09:45",
+      "estado": "completa",
+      "feed": "indicative",
+      "codigo": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9",
+      "paginas": 14,
+      "tardias": 0,
+      "errores": 0,
+      "duracion_s": 0.694082,
+      "sha256_manifiesto": "f89460df65215cbced670dead989638921bfc22a811486ff55058ceeb2393bd5"
+    },
+    {
+      "tipo": "capturas",
+      "hora": "10:00",
+      "estado": "completa",
+      "feed": "indicative",
+      "codigo": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9",
+      "paginas": 14,
+      "tardias": 0,
+      "errores": 0,
+      "duracion_s": 0.745207,
+      "sha256_manifiesto": "9162ffe70e6a85ddac9af4f835b111f32fb379e10aa1838341740e7569d8ba4f"
+    },
+    {
+      "tipo": "historico",
+      "hora": "09:45",
+      "estado": "completa",
+      "feed": "sip",
+      "codigo": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9",
+      "paginas": 1,
+      "tardias": 0,
+      "errores": 0,
+      "duracion_s": 0.496398,
+      "sha256_manifiesto": "2f027005ab073e8f9fb8ef2656319ce6caff5433541e99c4d652eda121c4bd7e"
+    },
+    {
+      "tipo": "historico",
+      "hora": "10:00",
+      "estado": "completa",
+      "feed": "sip",
+      "codigo": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9",
+      "paginas": 1,
+      "tardias": 0,
+      "errores": 0,
+      "duracion_s": 0.372467,
+      "sha256_manifiesto": "a4c667403ca6bf3d87aa15a2a1ee5d0993d2aeaddfeb2e1feaf0df3382eb1677"
+    },
+    {
+      "tipo": "eventos",
+      "hora": null,
+      "estado": "completa",
+      "feed": null,
+      "codigo": "4ffde8acda8c661b31d67e56dcde2dc0fb9c41f9",
+      "paginas": 1,
+      "tardias": 0,
+      "errores": 0,
+      "duracion_s": 0.208489,
+      "sha256_manifiesto": "2bc927bce6258cd79493ff79df7910c7ca1a46bc0581231b485ab4765e62be09"
+    }
+  ],
+  "dimension_seleccion": {
+    "SPXW": {
+      "expiraciones_en_metadata": 30,
+      "cadenas_actuales": 5,
+      "union_ampliada_solo_con_metadata_disponible": 15,
+      "objetivos_con_dos_lados": [
+        7,
+        14,
+        30
+      ]
+    },
+    "SPY": {
+      "expiraciones_en_metadata": 16,
+      "cadenas_actuales": 4,
+      "union_ampliada_solo_con_metadata_disponible": 12,
+      "objetivos_con_dos_lados": [
+        7,
+        14,
+        30
+      ]
+    }
+  },
+  "limite": "huellas verifican integridad del archivo; no veracidad de precios indicative"
+}

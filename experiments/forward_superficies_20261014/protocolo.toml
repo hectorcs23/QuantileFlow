@@ -1,0 +1,16 @@
+version = "forward-superficies-0.1"
+fecha_protocolo = "2026-10-14"
+alcance = "Exploratorio: seis sesiones conocidas; sin test temporal ni señal de trading"
+fechas = ["2026-10-02", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09"]
+horas = ["09:45", "10:00"]
+preferencia = 0.5
+peso_mid = 0.02
+forward = "Mínimo convexo de distancia a bandas de paridad + 0.02 hacia su mid; solo training"
+universo = "Conservar filas/split de skew_bandas_20261010; no refiltrar con el nuevo F"
+contraste = "2x2: forward declarado/estimado x IV plana/SSVI"
+estres_tasa = [0.03, 0.04, 0.05]
+estres_dividendo = [0.003, 0.013, 0.023]
+sensibilidad_carry = "Diagnóstico de paridad; no recalibración de superficies para cada shock"
+figura_ejemplo = "Primera foto cronológica: 2026-10-02 09:45; no seleccionar por holdout"
+criterio_uso = "Indicative y falta de referencia independiente impiden recomendación operativa, aun si mejora el ajuste"
+prospectivo = "Reglas congeladas hoy; NO llamar independientes a sesiones 12-14 oct ya transcurridas"

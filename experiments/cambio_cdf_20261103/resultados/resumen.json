@@ -1,0 +1,205 @@
+{
+  "estadisticas": [
+    {
+      "cohorte": "conocidas",
+      "sesiones": 6,
+      "pares": 24,
+      "iguales_conjuntos": 24,
+      "casos": {
+        "principal": {
+          "puntos": 120,
+          "dentro_apoyo": 119,
+          "estados": {
+            "cero_alcanzable": 120
+          },
+          "ancho_mediano_en_F_pp": 35.70733415201294
+        },
+        "referencias": {
+          "puntos": 120,
+          "dentro_apoyo": 119,
+          "estados": {
+            "cero_alcanzable": 120
+          },
+          "ancho_mediano_en_F_pp": 38.679509233375434
+        },
+        "estricto": {
+          "puntos": 120,
+          "dentro_apoyo": 119,
+          "estados": {
+            "cero_alcanzable": 120
+          },
+          "ancho_mediano_en_F_pp": 31.452025664559258
+        },
+        "uniforme": {
+          "puntos": 120,
+          "dentro_apoyo": 119,
+          "estados": {
+            "cero_alcanzable": 120
+          },
+          "ancho_mediano_en_F_pp": 39.36303373847504
+        }
+      }
+    },
+    {
+      "cohorte": "nuevas",
+      "sesiones": 5,
+      "pares": 20,
+      "iguales_conjuntos": 19,
+      "casos": {
+        "principal": {
+          "puntos": 100,
+          "dentro_apoyo": 100,
+          "estados": {
+            "cero_alcanzable": 99,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 31.30307363674456
+        },
+        "referencias": {
+          "puntos": 100,
+          "dentro_apoyo": 100,
+          "estados": {
+            "cero_alcanzable": 99,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 35.71991879970321
+        },
+        "estricto": {
+          "puntos": 100,
+          "dentro_apoyo": 100,
+          "estados": {
+            "cero_alcanzable": 99,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 28.004336394896377
+        },
+        "uniforme": {
+          "puntos": 100,
+          "dentro_apoyo": 100,
+          "estados": {
+            "cero_alcanzable": 99,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 35.62666391002088
+        }
+      }
+    },
+    {
+      "cohorte": "total",
+      "sesiones": 11,
+      "pares": 44,
+      "iguales_conjuntos": 43,
+      "casos": {
+        "principal": {
+          "puntos": 220,
+          "dentro_apoyo": 219,
+          "estados": {
+            "cero_alcanzable": 219,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 33.85611541661513
+        },
+        "referencias": {
+          "puntos": 220,
+          "dentro_apoyo": 219,
+          "estados": {
+            "cero_alcanzable": 219,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 38.169819350307996
+        },
+        "estricto": {
+          "puntos": 220,
+          "dentro_apoyo": 219,
+          "estados": {
+            "cero_alcanzable": 219,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 29.069252424076065
+        },
+        "uniforme": {
+          "puntos": 220,
+          "dentro_apoyo": 219,
+          "estados": {
+            "cero_alcanzable": 219,
+            "indeterminado": 1
+          },
+          "ancho_mediano_en_F_pp": 38.65441100958469
+        }
+      }
+    }
+  ],
+  "sin_pareja": [],
+  "protocolo": {
+    "version": "cambio-cdf-1",
+    "fecha": "2026-11-03",
+    "origen": "f0e578a7dd6a62909402e6c5b630dca5cab683ba",
+    "costo_datos_usd": 0,
+    "horas": [
+      "09:45",
+      "10:00"
+    ],
+    "fechas": [
+      "2026-10-02",
+      "2026-10-05",
+      "2026-10-06",
+      "2026-10-07",
+      "2026-10-08",
+      "2026-10-09",
+      "2026-10-12",
+      "2026-10-13",
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+    ],
+    "ratios": [
+      0.94,
+      0.97,
+      1.0,
+      1.03,
+      1.06
+    ],
+    "ancla": "K = ratio * F_0945 de cada vencimiento. Reexpresar ese mismo K en unidades de F de cada corte.",
+    "pareo": "Fecha y vencimiento exactos, SPXW europeo PM; documentar faltantes. No emparejar por DTE redondeado.",
+    "principal": "tope y minimo L1 verificados por corte, margen medio +0.1; F/D fijos propios, soporte original 2F de cada corte",
+    "controles": [
+      "margen medio +0.05",
+      "F +/-0.25%, tasa +/-1pp, presupuesto principal",
+      "uniforme al mismo tope"
+    ],
+    "epsilon": 0.0025,
+    "rampa": "Ancho absoluto comun epsilon * F_0945 en ambas fotos",
+    "tolerancia": 1e-07,
+    "regla": "Cambio = CDF_1000 - CDF_0945. Signo identificado solo si la banda exterior excluye 0 por mas de la tolerancia. Si el rango interior cruza 0 hay un cambio nulo alcanzable en ese umbral; en otro caso, indeterminado.",
+    "conjunto": "Principal: minimizar maxima diferencia de cinco CDF discretas en dos medidas simultaneas. Valor <= tolerancia con testigos factibles certifica igualdad numerica en esos cinco niveles; valor positivo en malla no prueba imposibilidad en continuo.",
+    "alcance": "Dos conjuntos marginales sin acoplamiento dinamico. Cambios neutrales al riesgo en 15 minutos: ni derivada instantanea ni prediccion de retornos."
+  },
+  "fecha_primera": "2026-10-02",
+  "fecha_ultima": "2026-10-16",
+  "scipy": "1.17.1",
+  "total_lp": 7084,
+  "certificados_max": {
+    "primal": 1.2878587085651816e-14,
+    "dual": 9.558789315633476e-10,
+    "gap": 1.942751515215946e-12
+  },
+  "fuente_verificada_sha256": "1680d57ce6a4461f01b430c8ea5be96d79d3623314c1155888797f567d57e05b",
+  "codigo_sha256_lf": {
+    "metodo.py": "d98082e31e4b2f4c398bdbc943404dd2b45da6ac60028df35a7fbbb6d1674c11",
+    "evaluar.py": "1304f8ddc87ccefe8fa5339b758e7735cf9b4d49cdfa277cf064f18e32d618c6",
+    "protocolo.toml": "e27a86bc9ec9bab1e019de6845a0a581a948294324de28de96110f36ea2b075d"
+  },
+  "testigos_privados_sha256": {
+    "2026-10-02_testigos.json": "462ea9e7e9050298f74160c10868b5568dfdd87143934c510e48b67550aaedb6",
+    "2026-10-05_testigos.json": "1c842d440b5545318c8083b7832761b2961af91dbbd84471b6b09a67f69a626d",
+    "2026-10-06_testigos.json": "f28a47a0ce622b1c0f14f4da9b0fb34728c42347fb7aab7039530cc47c611375",
+    "2026-10-07_testigos.json": "0d1b8896df73174164d67d82026e7d40e92284947188e9ae5d823dce2a9e5d27",
+    "2026-10-08_testigos.json": "bff16562e0598bd3008932ca8703d67001bcde3e1c479c7069e8137261cb06cd",
+    "2026-10-09_testigos.json": "a359da31e99b3fe589330fa0137faa073a0a8c9d09fa3ea26d622dfbc3413552",
+    "2026-10-12_testigos.json": "ea3b14ca2bb4ea7d0bff7d92dbffc77c96bc754449fe297ccb3ff7c23ef7f648",
+    "2026-10-13_testigos.json": "282af05f53d3075c527d3cfebbbcf737913e4800f2289f8c4f440fdc4b59e6e3",
+    "2026-10-14_testigos.json": "49f078cf36d4fcd3f4986e2ec0248b57c2cdacc2ac662990b4428d8bcafe445d",
+    "2026-10-15_testigos.json": "f9ef15dd03af1245138abc9c8dded858780deb2c06586c2e32de7a2fdd70c5d5",
+    "2026-10-16_testigos.json": "8f30079e99451810a0ecd52b87941c804641a33a07525197a94089063dfc71b0"
+  }
+}

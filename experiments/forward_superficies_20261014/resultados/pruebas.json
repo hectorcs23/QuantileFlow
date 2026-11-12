@@ -1,0 +1,24 @@
+{
+  "pruebas": 368,
+  "grupos": [
+    {
+      "pruebas": 340,
+      "estado": "pasaron",
+      "alcance": "tests + test_metodo + test_control_forward"
+    },
+    {
+      "pruebas": 28,
+      "estado": "pasaron",
+      "alcance": "expiraciones + intradia + evaluar_cadena"
+    }
+  ],
+  "nuevas": 5,
+  "codigo_sha256_lf": {
+    "experiments/forward_superficies_20261014/control_pdf.py": "9a465a70d004a32f801e3a2ee76d2c2c891166a0501abf3dc6f9333c8966ce23",
+    "experiments/forward_superficies_20261014/evaluar.py": "429715ee2baec097a3eb542816b591a9df242816e3d4e1d2018659b63bd85b10",
+    "experiments/forward_superficies_20261014/graficas.py": "b9fed5bbb6330a9b41b460bc56a55202f8eee7f936646fe4b4418ae9daa146e3",
+    "experiments/forward_superficies_20261014/metodo.py": "e29c8d3ea55649beaca97efde43cc872e66357323051ec3814b756108ca2dbde",
+    "experiments/forward_superficies_20261014/test_metodo.py": "565234d445c35ddabfc9d867b74a1cc58a39b65b58b12d70fa3b08977c69b7e6",
+    "experiments/forward_superficies_20261014/verificar.py": "6ce5970ccfd94aad07bd7f7e4e27313673254388593c1cddc9d723af9f5a8864"
+  }
+}

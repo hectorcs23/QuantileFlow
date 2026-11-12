@@ -1,0 +1,99 @@
+<div id="qf-sensibilidad">
+  <h2>Movimiento esperado → contratos y distribución</h2>
+  <div class="text-small text-muted">Ejemplo sintético · subyacente US$100 · IV inicial 25% · tasa 4% · sin dividendos</div>
+  <div class="viz-controls">
+    <label class="form-label">Movimiento del subyacente <output id="qf-move-value"></output><input id="qf-move" class="form-range" type="range" min="-10" max="15" step="0.5" value="5"></label>
+    <label class="form-label">Tiempo hasta el movimiento <output id="qf-days-value"></output><input id="qf-days" class="form-range" type="range" min="1" max="21" step="1" value="14"></label>
+    <label class="form-label">Cambio de IV <output id="qf-iv-value"></output><input id="qf-iv" class="form-range" type="range" min="-15" max="20" step="1" value="0"></label>
+    <label class="form-label" for="qf-budget">Presupuesto (US$)<input id="qf-budget" class="form-control" type="number" min="25" max="100000" step="25" value="500"></label>
+    <label class="form-label" for="qf-expiry">Vencimiento de la PDF<select id="qf-expiry" class="form-select"><option value="30">30 días</option><option value="60">60 días</option><option value="90">90 días</option></select></label>
+  </div>
+  <div id="qf-error" role="alert" class="text-destructive" hidden></div>
+  <h3>Distribución neutral al riesgo del precio al vencimiento</h3>
+  <div class="viz-row text-small" id="qf-legend">
+    <span><span style="color:var(--viz-series-1)">━</span> Inicial</span>
+    <span><span style="color:var(--viz-series-2)">┄</span> Solo cambia el precio</span>
+    <span><span style="color:var(--viz-series-3)">━</span> Precio + tiempo + IV</span>
+  </div>
+  <svg id="qf-pdf" role="img" aria-label="Densidades lognormales sintéticas; comparación del desplazamiento y de la forma"></svg>
+  <div id="qf-tooltip" class="tooltip" role="tooltip" hidden></div>
+  <h3>Calls ordenados por ganancia en tu escenario</h3>
+  <div class="text-small text-muted">Spread supuesto US$0.08 · comisión US$0.65 por contrato por lado · escenario adverso: −2%, 7 días tarde, IV −5 puntos</div>
+  <div class="table-responsive"><table class="table table-sm">
+    <thead><tr><th>Strike / DTE inicial</th><th class="text-end">Cantidad</th><th class="text-end">Desembolso</th><th class="text-end">PnL escenario</th><th class="text-end">PnL adverso</th></tr></thead><tbody id="qf-ranking"></tbody>
+  </table></div>
+  <div id="qf-selection" class="text-small" aria-live="polite"></div>
+</div>
+<style>
+#qf-sensibilidad #qf-pdf {width:100%;height:260px;display:block}
+#qf-sensibilidad {position:relative}
+#qf-sensibilidad #qf-tooltip {position:absolute;pointer-events:none;background:var(--popover);color:var(--popover-foreground)}
+#qf-sensibilidad .qf-axis text,#qf-sensibilidad .axis-title {fill:var(--foreground)}
+#qf-sensibilidad .qf-axis path,#qf-sensibilidad .qf-axis line {stroke:var(--border)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(() => {
+  const root = document.getElementById('qf-sensibilidad');
+  const get = id => root.querySelector('#'+id);
+  const fields = ['move','days','iv','budget','expiry'];
+  const money = x => new Intl.NumberFormat('es-MX',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(x);
+  const cdf = x => {const a=Math.abs(x),t=1/(1+.2316419*a),p=Math.exp(-a*a/2)/Math.sqrt(2*Math.PI)*t*(.319381530+t*(-.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));return x>=0?1-p:p;};
+  const call = (S,K,days,sigma) => {if(days<=0)return Math.max(S-K,0);const T=days/365,v=sigma*Math.sqrt(T),d1=(Math.log(S/K)+(.04+.5*sigma*sigma)*T)/v;return S*cdf(d1)-K*Math.exp(-.04*T)*cdf(d1-v);};
+  const density = (x,S,days,sigma) => {const T=days/365,v=sigma*Math.sqrt(T),z=(Math.log(x/S)-(.04-.5*sigma*sigma)*T)/v;return Math.exp(-z*z/2)/(x*v*Math.sqrt(2*Math.PI));};
+  const inputState = () => Object.fromEntries(fields.map(k=>[k,Number(get('qf-'+k).value)]));
+  function restore(state) {
+    const s=state?.modelContent?.escenario;
+    if(!s)return;
+    fields.forEach(k=>{const el=get('qf-'+k),v=s[k];if(Number.isFinite(v)&&v>=Number(el.min||0)&&v<=Number(el.max||100000)&&(!el.options||[...el.options].some(o=>Number(o.value)===v)))el.value=v;});
+  }
+  function render(animate=false) {
+    const s=inputState();
+    if(!Number.isFinite(s.budget)||s.budget<=0||s.budget>100000){get('qf-error').hidden=false;get('qf-error').textContent='Presupuesto válido: mayor a cero y hasta US$100,000.';get('qf-ranking').innerHTML='';get('qf-selection').textContent='';return;}
+    get('qf-error').hidden=true;
+    get('qf-move-value').textContent=`${s.move>0?'+':''}${s.move}%`;
+    get('qf-days-value').textContent=`${s.days} días naturales`;
+    get('qf-iv-value').textContent=`${s.iv>0?'+':''}${s.iv} puntos`;
+    const S=100*(1+s.move/100),vol=.25+s.iv/100;
+    const series=[{S:100,days:s.expiry,vol:.25,color:1,dash:false},{S,days:s.expiry,vol:.25,color:2,dash:true},{S,days:s.expiry-s.days,vol,color:3,dash:false}];
+    const bounds=series.flatMap(p=>{const T=p.days/365,m=Math.log(p.S)+(.04-.5*p.vol*p.vol)*T,v=p.vol*Math.sqrt(T);return [Math.exp(m-4*v),Math.exp(m+4*v)];});
+    const [lo,hi]=d3.extent(bounds);
+    const samples=series.map(p=>({p,values:d3.range(181).map(i=>{const x=lo+(hi-lo)*i/180;return{x,y:density(x,p.S,p.days,p.vol)};})}));
+    const svg=d3.select(get('qf-pdf')),width=Math.max(280,get('qf-pdf').getBoundingClientRect().width),height=260;
+    const pad={l:66,r:16,t:15,b:52},x=d3.scaleLinear().domain([lo,hi]).range([pad.l,width-pad.r]),y=d3.scaleLinear().domain([0,d3.max(samples.flatMap(p=>p.values),d=>d.y)*1.08]).range([height-pad.b,pad.t]);
+    svg.attr('viewBox',`0 0 ${width} ${height}`);
+    svg.selectAll('.qf-axis,.axis-title,rect').remove();
+    svg.insert('rect',':first-child').attr('data-chart-frame','').attr('x',pad.l).attr('y',pad.t).attr('width',width-pad.r-pad.l).attr('height',height-pad.b-pad.t).attr('fill','none').attr('stroke','var(--border)');
+    svg.append('g').attr('class','qf-axis').attr('transform',`translate(0,${height-pad.b})`).call(d3.axisBottom(x).ticks(width<400?3:6));
+    svg.append('g').attr('class','qf-axis').attr('transform',`translate(${pad.l},0)`).call(d3.axisLeft(y).ticks(3).tickFormat(d3.format('.2f')));
+    svg.selectAll('.qf-axis').attr('font-size',12);
+    svg.append('text').attr('class','axis-title').attr('data-axis','x').attr('x',(width+pad.l-pad.r)/2).attr('y',height-8).attr('text-anchor','middle').text('Precio al vencimiento (US$)');
+    svg.append('text').attr('class','axis-title').attr('data-axis','y').attr('transform',`translate(15,${height/2-15}) rotate(-90)`).attr('text-anchor','middle').text('Densidad (1/US$)');
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y));
+    const paths=svg.selectAll('path.qf-density').data(samples).join('path').attr('class','qf-density').attr('fill','none').attr('stroke',d=>`var(--viz-series-${d.p.color})`).attr('stroke-width',2).attr('stroke-dasharray',d=>d.p.dash?'5 4':null);
+    if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)paths.transition().duration(180).attr('d',d=>line(d.values));else paths.attr('d',d=>line(d.values));
+    svg.selectAll('[data-chart-hover-guide],[data-chart-hover-marker]').remove();
+    const guide=svg.append('line').attr('data-chart-hover-guide','').attr('y1',pad.t).attr('y2',height-pad.b).attr('stroke','var(--border)').attr('visibility','hidden');
+    const marks=svg.selectAll('[data-chart-hover-marker]').data(series).join('circle').attr('data-chart-hover-marker','').attr('r',3).attr('fill',d=>`var(--viz-series-${d.color})`).attr('visibility','hidden');
+    const overlay=svg.append('rect').attr('data-chart-hit','').attr('data-chart-hover-overlay','cross-series').attr('x',pad.l).attr('y',pad.t).attr('width',width-pad.r-pad.l).attr('height',height-pad.b-pad.t).attr('fill','transparent');
+    const show=event=>{const [px]=d3.pointer(event,svg.node()),price=x.invert(Math.max(pad.l,Math.min(width-pad.r,px))),rootBox=root.getBoundingClientRect(),tip=get('qf-tooltip');guide.attr('x1',x(price)).attr('x2',x(price)).attr('visibility','visible');marks.attr('cx',x(price)).attr('cy',d=>y(density(price,d.S,d.days,d.vol))).attr('visibility','visible');tip.hidden=false;tip.textContent=`US$${price.toFixed(1)} · densidad inicial ${density(price,100,s.expiry,.25).toFixed(3)} · solo precio ${density(price,S,s.expiry,.25).toFixed(3)} · completa ${density(price,S,s.expiry-s.days,vol).toFixed(3)}`;tip.style.left='0px';tip.style.top=(get('qf-pdf').getBoundingClientRect().top-rootBox.top+12)+'px';};
+    overlay.on('pointermove',show).on('pointerdown',show).on('pointerleave',()=>{guide.attr('visibility','hidden');marks.attr('visibility','hidden');get('qf-tooltip').hidden=true;});
+    const rows=[];
+    for(const days of [7,14,30,60,90])for(const K of [90,95,100,105,110,115]){
+      if(days<s.days+7)continue;
+      const ask=call(100,K,days,.25)+.04,n=Math.floor(s.budget/(ask*100+1.30));
+      if(n<1)continue;
+      const cost=n*(ask*100+.65),value=Math.max(0,call(S,K,days-s.days,vol)-.04),bad=Math.max(0,call(98,K,days-s.days-7,.20)-(days===s.days+7?0:.04));
+      rows.push({K,days,n,cost,pnl:n*(100*value-.65)-cost,bad:n*(100*bad-.65)-cost});
+    }
+    rows.sort((a,b)=>b.pnl-a.pnl||a.cost-b.cost);
+    get('qf-ranking').innerHTML=rows.slice(0,5).map(r=>`<tr><td>US$${r.K} / ${r.days} días</td><td class="text-end">${r.n}</td><td class="text-end">${money(r.cost)}</td><td class="text-end">${money(r.pnl)}</td><td class="text-end">${money(r.bad)}</td></tr>`).join('');
+    get('qf-selection').textContent=rows.length?'Comparación condicional: no estima probabilidad de ganar. Capital completo de cada posición en riesgo.':'No hay contratos sintéticos que cumplan presupuesto y plazo.';
+  }
+  restore(window.openai?.widgetState);
+  render();
+  fields.forEach(k=>get('qf-'+k).addEventListener('input',()=>{render(true);if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{escenario:inputState()},privateContent:null}).catch(()=>{});}));
+  window.addEventListener('openai:set_globals',e=>{if(e.detail?.globals?.widgetState){restore(e.detail.globals.widgetState);render();}});
+  new ResizeObserver(()=>render()).observe(get('qf-pdf'));
+})();
+</script>

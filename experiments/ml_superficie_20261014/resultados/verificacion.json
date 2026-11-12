@@ -1,0 +1,11 @@
+{
+  "precios_reproducidos": 14454,
+  "max_error_precio": 2.7284841053187847e-12,
+  "error_masa_max": 7.105427357601002e-15,
+  "error_media_max": 7.105427357601002e-15,
+  "calendario_min": -1.482147737874584e-14,
+  "split_y_huellas_correctos": true,
+  "datos_individuales_fuera_de_git": true,
+  "resumen_sha256": "5ec4963c158142ba444b9abc8c27aeacb31f69bd8686b86dc4c040a7fa71f0b1",
+  "codigo_sha256_lf": "3c874546b608ebfb9550c1215ada7422e3d0db1212a6a2bbfc1e70743590ddd5"
+}
