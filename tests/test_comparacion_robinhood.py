@@ -250,9 +250,9 @@ def test_plan_agrega_spy_con_su_precio_y_sus_vencimientos():
                                                  par=("2026-12-10", "2026-12-11"))))
     p = comparar.plan(r)
     assert p["vencimiento"] == "2026-12-11" and p["spy"]["vencimiento"] == "2026-12-11"
-    assert p["spy"]["strikes"] == [726, 736, 746, 756, 766, 776, 786]
-    assert len(p["simbolos"]) == 28 and p["simbolos"][14:16] == ["SPY261211C00726000", "SPY261211P00726000"]
-    assert p["instrumentos"][7] == {"chain_symbol": "SPY", "expiration_dates": "2026-12-11", "strike_price": "726.0000"}
+    assert p["spy"]["strikes"] == [725, 735, 745, 755, 765, 775, 785]  # 756.4 -> 755
+    assert len(p["simbolos"]) == 28 and p["simbolos"][14:16] == ["SPY261211C00725000", "SPY261211P00725000"]
+    assert p["instrumentos"][7] == {"chain_symbol": "SPY", "expiration_dates": "2026-12-11", "strike_price": "725.0000"}
     ids = {s: f"id{i}" for i, s in enumerate(p["simbolos"])}
     assert [len(x) for x in comparar.plan(r, ids)["lotes"]] == [10, 10, 8]
     # Sin precio de SPY el día sigue solo con SPXW.

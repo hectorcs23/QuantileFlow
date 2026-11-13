@@ -38,8 +38,8 @@ solo llegan agregados. El conector nunca se usa para órdenes ni para ver la cue
 - ventanas en UTC sacadas de `corte_utc`, así que siguen el cambio de horario del 1 de noviembre.
 
 **SPY, desde el 12 de noviembre.** El plan agrega 14 contratos de SPY con el mismo criterio: vencimiento
-del par de SPY a 30 días más cercano a 30 días; strikes en el dólar más cercano al precio de IEX de las
-09:45, ±10, ±20 y ±30 (el mismo 1.3 % a 4 % que en SPX). Son 28 contratos en total. Sirve para medir la
+del par de SPY a 30 días más cercano a 30 días; strikes en el múltiplo de 5 más cercano al precio de IEX
+de las 09:45 (desde el 13 de noviembre; el 12 se usó el dólar más cercano), ±10, ±20 y ±30 (el mismo 1.3 % a 4 % que en SPX). Son 28 contratos en total. Sirve para medir la
 calidad de las cotizaciones de SPY que usa el [comparador de contratos](../../docs/contratos_observados_spy.md).
 Los resultados de SPY van en claves aparte (`opciones_spy`, `vivo_spy`): los de SPXW no cambian. Si un día
 falta el precio de SPY, el plan sigue solo con SPXW.

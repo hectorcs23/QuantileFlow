@@ -123,7 +123,9 @@ def plan(resumen: dict, instrumentos=None, paso=100, lado=3, dias_objetivo=30) -
     # vencimientos, el día sigue solo con SPXW.
     venc_spy, spot_spy = _vencimiento_30d(primera, "SPY", fecha, dias_objetivo), primera.get("spot_spy_iex")
     if venc_spy is not None and spot_spy:
-        strikes_spy = [round(spot_spy) + PASO_SPY * j for j in range(-lado, lado + 1)]
+        # Centro en el múltiplo de 5 más cercano: lejos del dinero, SPY no lista todos los dólares
+        # (el 13 de noviembre faltó el 724 del 11 de diciembre).
+        strikes_spy = [5 * round(spot_spy / 5) + PASO_SPY * j for j in range(-lado, lado + 1)]
         salida["spy"] = {"vencimiento": venc_spy, "nivel": spot_spy, "strikes": strikes_spy}
         salida["simbolos"] += [simbolo_occ("SPY", venc_spy, t, k) for k in strikes_spy for t in ("call", "put")]
         salida["instrumentos"] += [{"chain_symbol": "SPY", "expiration_dates": venc_spy,

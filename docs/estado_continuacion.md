@@ -179,8 +179,8 @@ cierre anticipado, y seis días degradados a propósito:
       Con el presupuesto en US$0 desde el 9 de octubre, se sigue con `indicative` y OPRA queda en suspenso
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 5).
 - [ ] Comparación diaria con Robinhood: cuánto se alejan el SPX implícito, los mids y los spreads de
-      `indicative` de un dato mejor, sin pagar. Al 6 de noviembre, el SPX implícito lleva 50 cortes; las
-      opciones, 13 de las unas 20 sesiones que hacen falta para concluir ([comparación](comparacion_robinhood.md)).
+      `indicative` de un dato mejor, sin pagar. Al 13 de noviembre, el SPX implícito lleva 59 cortes; las
+      opciones, 18 de las unas 20 sesiones que hacen falta para concluir. Desde el 12, también SPY ([comparación](comparacion_robinhood.md)).
 - [ ] Margen de minutos de Actions: se gastan unos 85 por sesión, unos 1 870 al mes, cerca de los 2 000
       de GitHub Free. Lanzar `captura-1000` a las 09:35 ahorraría unos 400 al mes; lo decide el usuario
       ([revisión del PDE](respuesta_pde_captura_gratis.md), sección 6). Ya no lo recomiendo: el 27 de
@@ -191,9 +191,9 @@ cierre anticipado, y seis días degradados a propósito:
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [x] Piloto real en `reports/piloto/`: 21 sesiones, del 2 al 30 de octubre, con `piloto-0.3`. Dictamen:
       apto con limitaciones ([revisión](revision_piloto.md)).
-- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5, 7, 6, 4 y 3 minutos del 27 de
-      octubre al 12 de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 de noviembre, y el
-      30 quedó lista solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5, 7, 6, 4, 3 y 40 minutos del 27
+      de octubre al 13 de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 y el 13 de
+      noviembre, y el 30 de octubre quedó lista solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
       (antes de la ventana en que las rutinas se atrasan), con las dos horas en dos jobs encadenados; las
       rutinas de las 09:14 y las 09:32 quedan de respaldo con los workflows por hora, que pierden sus cron
       inútiles (unos 170 minutos de Actions al mes). La plantilla está lista y validada con actionlint en
@@ -203,7 +203,7 @@ cierre anticipado, y seis días degradados a propósito:
       30 días es de 17 a 70 ticks a las 10:00, frente a 7 a 13 del 27 al 30 de octubre, y la banda del RR25
       a 30 días pasó de 0.14–0.21 a 0.36–0.73 puntos. A las 09:45 el cambio es menor. Coincide con una
       semana de mucho movimiento (elecciones del 3 de noviembre) y puede deberse a datos que se publican a
-      las 10:00. Del 9 al 12 de noviembre no se repitió; si vuelve, conviene medir cuánto afecta al
+      las 10:00. Del 9 al 13 de noviembre no se repitió; si vuelve, conviene medir cuánto afecta al
       criterio de estabilidad del piloto
       ([aceptación](aceptacion_operacion.md), sección 12).
 - [x] Umbrales de calidad y del dictamen revisados y congelados en `piloto-0.4` (6 de noviembre):
