@@ -1,0 +1,213 @@
+{
+  "procedencia": {
+    "generado_utc": "2026-10-02T04:52:33.656298+00:00",
+    "commit_base": "9ba0fb1ada58e167e1e7fb36571ef6ad47a518cb",
+    "codigo_sha256": {
+      "descargar_0dte_alpaca.py": "082e4960bdd6b16a773fa9f7a335e92c699cec81d1dbac2d28c87c9f9446e63e",
+      "skew_0dte_alpaca.py": "ab7a0d45280ee43923398f3c4e4edce9e01e92df6e566071cf25eac491e4172a",
+      "skew_cboe.py": "fe41502e71276fcbfb5505d7313fb087dc7609dc01a584a4c0b2751441c2f3b0",
+      "validacion_comun.py": "b178cd7f4c7f67d2fd63f50cd89e8be8510c151ab608a0b3e44dfedcec520109",
+      "validar_0dte.py": "8646bc596f79007b8651f81c44778885045771553050ae347b34bbd4c6e495eb",
+      "validar_cboe.py": "9a377ea9fe3a4b617bd04cefc6ea47304b017e3f963d3e21caed6625556e598a",
+      "validar_ruido.py": "f52a93b3d74b7e70e86f012ec4479ab586591f70bc25d6217e0ff8e6471750f8"
+    },
+    "archivos_sha256": {
+      "SKEW.csv": "4566ddab7e9bd261dfbeb22f5c8c954e6244bdf57aedeec86fd9672ab4c2d19c",
+      "VIX.csv": "2b28877e77b1b4b76875afb1a84c3a06eced2120a651c3b5ff7d91b32fa660b5",
+      "spy_diario.json": "a8679f41072cf89becf277274fc53d538e14a056b22c8eb907aa3893cc0cedc3"
+    },
+    "parametros": {
+      "desde": "2016-01-01",
+      "hasta": "2026-10-01",
+      "corte_oos": "2021-01-01",
+      "ajuste": "OLS expansivo; etiquetas maduras antes de la fecha de pronóstico",
+      "primario": "reducción MSE rv5_posterior al añadir zskew a vix+abs_r",
+      "riesgo_objetivo": "raíz de (retorno próxima apertura-cierre)^2 + siguientes 4 retornos cierre-cierre^2",
+      "prediccion_riesgo_minimo": 1e-06,
+      "bootstrap": {
+        "bloque": 10,
+        "repeticiones": 3000,
+        "semilla": 1729
+      },
+      "ajuste_minimo": 500,
+      "calendario": "XNYS; preservar sesiones ausentes, sin comprimir objetivos"
+    },
+    "python": "3.12.14",
+    "dependencias": {
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "scipy": "1.17.1",
+      "exchange_calendars": "4.13.2"
+    },
+    "diseno": "Validación retrospectiva; la historia ya fue examinada, no es un holdout nuevo."
+  },
+  "sesiones_spy": 2702,
+  "fechas_spy_ausentes": [],
+  "fechas_skew_ausentes": [
+    "2017-09-14",
+    "2018-12-03",
+    "2019-07-05",
+    "2024-11-29"
+  ],
+  "riesgo_oos_primario": {
+    "n": 1437,
+    "periodo": [
+      "2021-01-04",
+      "2026-09-24"
+    ],
+    "mse_referencia": 8.306687853191895e-05,
+    "mse_con_skew": 8.204986977536321e-05,
+    "reduccion_mse_pct": 1.2243252359181223,
+    "diferencia_perdida_media": 1.0170087565557283e-06,
+    "ic95_diferencia_bloques_10_sesiones": [
+      -1.6783894665323604e-06,
+      3.856399615032603e-06
+    ],
+    "r2_oos_referencia": 0.4052365668888269,
+    "r2_oos_con_skew": 0.41251840569442
+  },
+  "direccion_oos_secundaria": {
+    "n": 1440,
+    "periodo": [
+      "2021-01-04",
+      "2026-09-30"
+    ],
+    "mse_referencia": 7.517695963976998e-05,
+    "mse_con_skew": 7.532511773158489e-05,
+    "reduccion_mse_pct": -0.19707912174800057,
+    "diferencia_perdida_media": -1.4815809181491542e-07,
+    "ic95_diferencia_bloques_10_sesiones": [
+      -3.1295042207301615e-07,
+      6.047773728320028e-09
+    ],
+    "r2_oos_referencia": -0.002041534970207648,
+    "r2_oos_con_skew": -0.004016349626877025
+  },
+  "riesgo_oos_control_vol_pasada_secundario": {
+    "n": 1437,
+    "periodo": [
+      "2021-01-04",
+      "2026-09-24"
+    ],
+    "mse_referencia": 8.357767139123711e-05,
+    "mse_con_skew": 8.253317884634602e-05,
+    "reduccion_mse_pct": 1.2497267840853032,
+    "diferencia_perdida_media": 1.0444925448910994e-06,
+    "ic95_diferencia_bloques_10_sesiones": [
+      -8.256443618653621e-07,
+      3.0553316413683082e-06
+    ],
+    "r2_oos_referencia": 0.4015792618355257,
+    "r2_oos_con_skew": 0.4090578860818881
+  },
+  "asociacion_riesgo_posterior": {
+    "n": 2568,
+    "zskew": {
+      "coef": -0.0010817585549309477,
+      "t": -3.2127681946884326
+    },
+    "vix": {
+      "coef": 0.0013011216330485612,
+      "t": 14.646280677228614
+    },
+    "abs_r": {
+      "coef": 0.15766396832381974,
+      "t": 1.8426102008317877
+    }
+  },
+  "sensibilidad_multiplicidad_asociacion": {
+    "p_asintotico": 0.0013146234528898166,
+    "bonferroni_8": 0.010516987623118533,
+    "bonferroni_14": 0.018404728340457432,
+    "nota": "Sensibilidades al tamaño de familia; no familia elegida después del resultado."
+  },
+  "sensibilidad_hac": {
+    "5": {
+      "n": 2568,
+      "zskew": {
+        "coef": -0.0010817585549309477,
+        "t": -3.2127681946884326
+      },
+      "vix": {
+        "coef": 0.0013011216330485612,
+        "t": 14.646280677228614
+      },
+      "abs_r": {
+        "coef": 0.15766396832381974,
+        "t": 1.8426102008317877
+      }
+    },
+    "10": {
+      "n": 2568,
+      "zskew": {
+        "coef": -0.0010817585549309477,
+        "t": -2.767218221985466
+      },
+      "vix": {
+        "coef": 0.0013011216330485612,
+        "t": 12.69628288428508
+      },
+      "abs_r": {
+        "coef": 0.15766396832381974,
+        "t": 1.6940759745170095
+      }
+    },
+    "20": {
+      "n": 2568,
+      "zskew": {
+        "coef": -0.0010817585549309477,
+        "t": -2.3999474649744026
+      },
+      "vix": {
+        "coef": 0.0013011216330485612,
+        "t": 11.44875618257722
+      },
+      "abs_r": {
+        "coef": 0.15766396832381974,
+        "t": 1.6429468345239715
+      }
+    }
+  },
+  "limitaciones": [
+    "Diseño retrospectivo: 2021–2026 ya fue examinado; requiere confirmación prospectiva.",
+    "No incluye precios de opciones ni utilidad económica después de costos.",
+    "SKEW diario no es el RR25 0DTE.",
+    "Objetivo posterior excluye el primer overnight; distinto al rv5 original."
+  ],
+  "riesgo_por_periodo": {
+    "2021-2023": {
+      "n": 753,
+      "periodo": [
+        "2021-01-04",
+        "2023-12-29"
+      ],
+      "mse_referencia": 6.80736318398292e-05,
+      "mse_con_skew": 6.452072419115973e-05,
+      "reduccion_mse_pct": 5.219212715180421,
+      "diferencia_perdida_media": 3.5529076486694717e-06,
+      "ic95_diferencia_bloques_10_sesiones": [
+        -2.2994268667105667e-07,
+        7.331939331166538e-06
+      ],
+      "r2_oos_referencia": 0.4719663362151053,
+      "r2_oos_con_skew": 0.49952553633579955
+    },
+    "2024-2026": {
+      "n": 684,
+      "periodo": [
+        "2024-01-02",
+        "2026-09-24"
+      ],
+      "mse_referencia": 9.95726018640002e-05,
+      "mse_con_skew": 0.00010134730636148196,
+      "reduccion_mse_pct": -1.7823221089529495,
+      "diferencia_perdida_media": -1.7747044974817706e-06,
+      "ic95_diferencia_bloques_10_sesiones": [
+        -5.097160841511489e-06,
+        1.8979087083861635e-06
+      ],
+      "r2_oos_referencia": 0.342721391939955,
+      "r2_oos_con_skew": 0.3310065699910827
+    }
+  }
+}
