@@ -87,6 +87,164 @@ tocar datos reales. Los controles corren sin red ni credenciales:
 | sin mirar al futuro | el panel en `t` nunca usa una cotización posterior a `t` |
 | identidad `H_exec` | se cumple a precisión de máquina en los ocho niveles de comisión |
 
+## 4. Resultados
+
+### 4.0 Lo primero no es del mercado: el complejo no tiene huecos
+
+Antes de mirar un precio. En el grafo cripto completo de Alpaca —37 monedas,
+73 pares, conexo— hay **60 triángulos y el espacio de ciclos tiene dimensión
+37**, y los 60 triángulos lo generan entero. Por lo tanto **b₁ = 0**: la parte
+armónica es cero *por construcción*, diga lo que diga el mercado. Lo mismo en
+el subgrafo medido: 9 monedas, 26 pares, 34 triángulos, rango de ciclos 18,
+b₁ = 0.
+
+La razón es la forma del grafo: USD, USDC y USDT son centros conectados a casi
+todo, y cualquier ciclo pasa por un centro, de modo que algún triángulo lo
+rellena. **El análogo de c₁ no existe en este mercado**, salvo que se le quiten
+caras. Eso convierte la parte armónica en una cantidad endógena a la liquidez,
+y es lo que mide §4.5.
+
+### 4.1 Los datos
+
+Siete días, del 10 al 16 de noviembre de 2026. **7 883 051 cotizaciones**, de
+las que se descarta el **0.147 %**: casi todo son bids en cero de USDC/USD
+(unas 1 500 al día) más entre 0 y 136 spreads absurdos. **En toda la semana no
+hay un solo mercado cruzado ni bloqueado.** Quedan **1 471 222 instantes
+triángulo-sincronizados** a Δt = 1 s, repartidos entre 34 triángulos.
+
+No todos los triángulos son medibles. `USD → USDC → USDT`, el de las
+stablecoins puras, deja **4 instantes al día**: USDC/USD cotiza 1.2 veces por
+minuto y nunca coincide con las otras dos patas dentro de un segundo. Se
+reporta, no se interpreta.
+
+### 4.2 Cuánta curvatura hay
+
+| | rango entre los 32 triángulos medibles |
+| --- | --- |
+| mediana de \|H_mid\| | 1.4 a 19 pb |
+| mediana del medio spread del ciclo | 16 a 90 pb |
+| **mediana de \|H_mid\| / medio spread** | **0.035 a 0.26** |
+| p99 de esa razón | 0.15 a 0.86 |
+
+La curvatura existe y se mide, pero vive **dentro del spread**: en la mediana,
+entre el 3 % y el 26 % de lo que cuesta cruzar el ciclo.
+
+Hay estructura clara en la sección cruzada. Los triángulos que pasan por USDC
+llevan de 8 a 19 pb de holonomía mediana; los que van por USD o USDT, de 1.4 a
+4 pb. `BTC → USD → USDT` y `ETH → USD → USDT` son los más consistentes del
+mercado, con 1.4 pb.
+
+El peor instante de la semana llega a **razón 2.99** (`BTC → LTC → USD`), y hay
+otros dos triángulos que pasan de 1: `BTC → USD → USDT` (1.26) y
+`BCH → BTC → USD` (1.16). Los 29 restantes nunca lo hacen. En total, **57 de
+1 471 222 instantes** —unos 4 de cada 100 000— tienen \|H_mid\| por encima del
+medio spread de su ciclo.
+
+### 4.3 Nada de eso es ejecutable
+
+El umbral es el medio spread acumulado más tres comisiones *taker* de 25 pb:
+entre **91 y 165 pb** según el triángulo. La holonomía media no se le acerca.
+
+> **Cero instantes con `H_exec > 0`**, en 34 triángulos por 7 días. El mejor
+> momento de la semana entera deja **−73.6 pb**: perder un 0.74 % por vuelta.
+
+El resultado no depende del esquema de comisiones, pero conviene decirlo con
+precisión. Las comisiones son 75 de los ~120 pb del umbral típico; el resto es
+spread. Con comisión **cero**, el umbral sería el medio spread, y la razón de
+§4.2 lo cruza en 4 de cada 100 000 instantes, sólo en 3 de 32 triángulos. Es
+decir: incluso un participante sin comisiones que cruce el spread encontraría
+oportunidades rarísimas y en ciclos concretos. Queda fuera del alcance la
+estrategia pasiva *maker*, que no cruza el spread pero asume riesgo de pata.
+
+### 4.4 No es asincronía, y no es redondeo
+
+Este es el control que decide si lo medido es mercado o artefacto.
+
+| Δt | BTC→ETH→USD | BTC→ETH→USDT | BTC→LTC→USD |
+| --- | --- | --- | --- |
+| 0.01 s | 1.62 pb | 2.12 pb | 1.48 pb |
+| 1 s | 1.55 pb | 2.26 pb | 2.29 pb |
+| 10 s | 1.50 pb | 2.22 pb | 2.14 pb |
+
+**Plano en tres órdenes de magnitud.** En el mercado sintético asíncrono de los
+tests —consistente en todo instante, muestreado a ritmos distintos— apretar la
+ventana cien veces corta la mediana más de diez, monótonamente. Aquí no la
+mueve ni un 15 %.
+
+Tampoco es granularidad de precio: el tick observado es de 0.0001 pb en
+BTC/USD, 0.0024 en ETH/USD y 0.036 en ETH/BTC, entre 40 y 15 000 veces por
+debajo de la holonomía medida.
+
+### 4.5 Local contra global: el armónico no es medible aquí
+
+Barrido de Δt sobre el grafo entero de 26 pares, un instante cada 30 s:
+
+| Δt | aristas vivas (de 26) | caras | b₁ | rotacional | armónico | grafo entero |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 s | 4 | 0 | 0 | — | — | 0.0 % |
+| 5 s | 9 | 3 | 0 | 1.82 pb | 0 | 0.0 % |
+| 15 s | 16 | 8 | 0 | 4.08 pb | 0 | 0.1 % |
+| 60 s | 26 | 34 | 0 | 7.89 pb | 0 | 99.7 % |
+| 300 s | 26 | 34 | 0 | 7.89 pb | 0 | 99.9 % |
+
+Hay un compromiso que no se puede esquivar: **o se sincroniza, o se tiene el
+grafo**. A Δt = 1 s viven 4 de 26 aristas y no hay un solo triángulo completo;
+a Δt = 60 s vive el grafo entero, pero las patas lentas llevan hasta un minuto
+de retraso, y la norma rotacional crece monótonamente con Δt —de 1.8 a 7.9 pb—
+que es exactamente la firma de la rancidez, no del mercado.
+
+**La parte armónica sale cero en todos los Δt**, y la mediana de b₁ del
+complejo vivo también. No porque el mercado sea globalmente consistente, sino
+porque el complejo vivo nunca tiene un hueco: cuando es denso, los triángulos
+lo rellenan; cuando es ralo, no tiene ni ciclos. Con este grafo, la afirmación
+del preprint de agosto sobre vigilar la componente armónica **no se puede ni
+confirmar ni refutar**: no hay armónico que vigilar.
+
+### 4.6 Persistencia: segundos
+
+La vida media de `H_mid` es de **1.0 a 1.4 segundos** según el triángulo. La
+autocorrelación a un segundo es 0.83 para `BTC → ETH → USD` y ya es
+indistinguible de cero a los cinco. Las inconsistencias se cierran en segundos:
+ni en milisegundos ni en minutos.
+
+Con una advertencia: los instantes sincronizados son a ráfagas, y cubren sólo
+el 6–10 % de los segundos del día, así que la ACF se calcula saltando huecos.
+
+### 4.7 Régimen: sí, pero poco
+
+Hay más curvatura cuando hay más actividad, con correlación de Spearman 0.35
+contra la volatilidad realizada de BTC/USD a 5 minutos (0.31 contra la
+intensidad de cotizaciones). Pero el efecto es muy sublineal: **del octil más
+tranquilo al más agitado la volatilidad se multiplica por 3.6 y la holonomía
+sólo por 1.4.**
+
+### 4.8 Veredicto según §2.7
+
+Es el **resultado negativo válido** del criterio: `|H_mid|` vive dentro del
+medio spread y no hay arbitraje ejecutable en ningún momento de la semana. Pero
+no es un resultado vacío, porque sí hay estructura:
+
+1. **Sección cruzada**: la ruta por USDC lleva sistemáticamente de 5 a 10 veces
+   más curvatura que la ruta por USD o USDT.
+2. **Escala de tiempo propia**: vida media de ~1.4 s, sin ambigüedad.
+3. **Régimen**: positivo y claramente sublineal en la volatilidad.
+4. **Estructural**: el grafo cripto de Alpaca no admite parte armónica, y eso
+   es una propiedad del mercado (todo pasa por tres centros), no del método.
+
+### 4.9 Qué haría falta para la pregunta armónica
+
+La Fase 1 responde la pregunta de tamaño y la de persistencia, y deja la
+pregunta de §0 —cuánta inconsistencia es *global*— sin responder por falta de
+topología, no por falta de datos. Para abrir un hueco de verdad hacen falta
+ciclos que ningún triángulo operable rellene, y eso pide una de dos cosas:
+
+* **Varios exchanges.** El mismo par en dos venues es una arista distinta, y
+  los ciclos entre venues no se cierran con triángulos: ahí hay b₁ > 0 por
+  construcción. Es el camino natural, y además es donde la literatura dice que
+  sí hay arbitraje cripto.
+* **Un grafo con más cruces cripto-cripto y sin centro.** Alpaca sólo cotiza
+  cinco cruces contra BTC; no alcanza.
+
 ## 5. Novedad
 
 El encuadre conceptual **ya está publicado**. Mishra,

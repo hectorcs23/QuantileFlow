@@ -46,9 +46,13 @@ def figura_razon(resumen: pd.DataFrame) -> None:
     cuesta llegar a ella. Por encima de 1 habría arbitraje aunque las
     comisiones fueran cero.
     """
-    r = (resumen[resumen["instantes"] > 500]
-         .groupby("ciclo")[["razon_mediana", "razon_p99", "razon_max"]]
-         .median().sort_values("razon_max"))
+    # El peor caso se agrega con max sobre los días, no con mediana: si no, la
+    # figura enseña «el peor día típico» y esconde el peor instante real.
+    r = (resumen[resumen["instantes"] > 500].groupby("ciclo")
+         .agg(razon_mediana=("razon_mediana", "median"),
+              razon_p99=("razon_p99", "median"),
+              razon_max=("razon_max", "max"))
+         .sort_values("razon_max"))
     k = range(len(r))
 
     plt.figure()
