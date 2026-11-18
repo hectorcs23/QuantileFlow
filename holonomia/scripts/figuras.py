@@ -38,6 +38,32 @@ def serie_insignia(dia: str, delta_t: float = 1.0) -> pd.DataFrame:
     return limpieza.serie_de_ciclo(p, INSIGNIA, Comisiones.alpaca(1), delta_t=delta_t)
 
 
+# -- 0. el resultado central: curvatura en unidades de su propio costo ----
+def figura_razon(resumen: pd.DataFrame) -> None:
+    """``|H_mid|`` dividido por el medio spread del ciclo, por triángulo.
+
+    Es la medida adimensional: cuánta curvatura hay en unidades de lo que
+    cuesta llegar a ella. Por encima de 1 habría arbitraje aunque las
+    comisiones fueran cero.
+    """
+    r = (resumen[resumen["instantes"] > 500]
+         .groupby("ciclo")[["razon_mediana", "razon_p99", "razon_max"]]
+         .median().sort_values("razon_max"))
+    k = range(len(r))
+
+    plt.figure()
+    plt.plot(k, r["razon_max"], 'ro', label='Worst instant of the week')
+    plt.plot(k, r["razon_p99"], 'o', label='99th percentile')
+    plt.plot(k, r["razon_mediana"], 'gs', label='Median')
+    plt.axhline(1.0, label='Break-even with zero fees')
+    plt.xlabel('Triangle, ordered by worst case')
+    plt.ylabel('|H_mid| divided by the half-spread of the cycle')
+    plt.title('Curvature in units of its own cost, 7 days')
+    plt.legend()
+    plt.savefig(RES / "fig0_razon_contra_spread.png")
+    plt.show()
+
+
 # -- 1. distribución de H_mid frente al medio spread ---------------------
 def figura_distribucion(serie: pd.DataFrame, dia: str) -> None:
     h = serie["h_mid"].to_numpy() * PB
@@ -214,12 +240,16 @@ def main() -> int:
     serie = serie_insignia(args.dia)
     print(f"  {len(serie):,} instantes sincronizados")
 
+    figura_razon(resumen)
     figura_distribucion(serie, args.dia)
     figura_curvatura_contra_costo(resumen)
     figura_sensibilidad(sens)
     figura_persistencia(pers)
     figura_reparto(rep)
     figura_regimen(serie, act, args.dia)
+    barrido = RES / "barrido_hodge.csv"
+    if barrido.exists():
+        figura_reparto_por_delta_t(pd.read_csv(barrido))
     print("figuras escritas en", RES)
     return 0
 

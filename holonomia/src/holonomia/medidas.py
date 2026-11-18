@@ -28,6 +28,11 @@ def resumen_de_ciclo(p: pd.DataFrame, ciclo, comisiones: Comisiones | None = Non
     if s.empty:
         return {"ciclo": " → ".join(ciclo), "longitud": len(ciclo), "instantes": 0}
     h = s["h_mid"].to_numpy()
+    # La razón |H| / medio spread es la medida adimensional del asunto: dice
+    # cuánta curvatura hay *en unidades de lo que cuesta llegar a ella*. Si
+    # nunca llega a 1, el mercado es plano dentro de sus propias cotizaciones,
+    # y eso no depende de la volatilidad del día ni de la moneda.
+    razon = (np.abs(h) / s["medio_spread"].to_numpy())
     return {
         "ciclo": " → ".join(ciclo),
         "longitud": len(ciclo),
@@ -38,6 +43,9 @@ def resumen_de_ciclo(p: pd.DataFrame, ciclo, comisiones: Comisiones | None = Non
         "sesgo_h_mid_pb": float(np.mean(h) * PB),
         "mediana_medio_spread_pb": float(s["medio_spread"].median() * PB),
         "mediana_umbral_pb": float(s["umbral"].median() * PB),
+        "razon_mediana": float(np.median(razon)),
+        "razon_p99": float(np.quantile(razon, 0.99)),
+        "razon_max": float(np.max(razon)),
         "frac_fuera_del_spread": float((np.abs(h) > s["medio_spread"]).mean()),
         "frac_h_exec_positiva": float((s["h_exec"] > 0).mean()),
         "max_h_exec_pb": float(s["h_exec"].max() * PB),

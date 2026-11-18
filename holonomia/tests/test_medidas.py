@@ -204,3 +204,22 @@ def test_la_holonomia_no_depende_de_la_antiguedad_si_el_mercado_es_consistente()
     tabla = medidas.holonomia_por_antiguedad(p, ["BTC", "ETH", "USD"], delta_t=2.0)
     assert len(tabla) >= 4
     assert tabla["mediana_abs_h_mid_pb"].max() < 1e-8
+
+
+def test_la_razon_contra_el_medio_spread_es_adimensional_y_coherente():
+    """``razon_max < 1`` es exactamente «plano dentro del spread»."""
+    p = limpieza.panel(mercado_asincrono(n=4_000, periodos=(0.03, 0.03, 0.03)))
+    r = medidas.resumen_de_ciclo(p, ["BTC", "ETH", "USD"], delta_t=0.001)
+    assert r["razon_max"] == pytest.approx(0.0, abs=1e-6)
+    assert r["frac_fuera_del_spread"] == 0.0
+
+
+def test_la_razon_pasa_de_uno_cuando_el_arbitraje_supera_el_spread():
+    """Control positivo: con un ε mayor que el medio spread, la razón > 1."""
+    df = mercado_asincrono(n=4_000, periodos=(0.03, 0.03, 0.03), medio_spread=1e-4)
+    cruce = df["par"] == "ETH/BTC"
+    df.loc[cruce, ["bid", "ask"]] *= np.exp(1e-3)      # 10 pb, diez veces el spread
+    p = limpieza.panel(df)
+    r = medidas.resumen_de_ciclo(p, ["BTC", "ETH", "USD"], delta_t=0.001)
+    assert r["razon_mediana"] > 1.0
+    assert r["frac_fuera_del_spread"] == pytest.approx(1.0)

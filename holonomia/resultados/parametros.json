@@ -1,0 +1,49 @@
+{
+  "delta_t_s": 1.0,
+  "comision_taker": 0.0025,
+  "pares": [
+    "BTC/USD",
+    "BTC/USDT",
+    "BTC/USDC",
+    "ETH/USD",
+    "ETH/USDT",
+    "ETH/USDC",
+    "ETH/BTC",
+    "LTC/USD",
+    "LTC/USDT",
+    "LTC/USDC",
+    "LTC/BTC",
+    "BCH/USD",
+    "BCH/USDT",
+    "BCH/USDC",
+    "BCH/BTC",
+    "LINK/USD",
+    "LINK/USDT",
+    "LINK/USDC",
+    "LINK/BTC",
+    "UNI/USD",
+    "UNI/USDT",
+    "UNI/USDC",
+    "UNI/BTC",
+    "USDT/USD",
+    "USDT/USDC",
+    "USDC/USD"
+  ],
+  "dias": [
+    "quotes-2026-11-10",
+    "quotes-2026-11-11",
+    "quotes-2026-11-12",
+    "quotes-2026-11-13",
+    "quotes-2026-11-14",
+    "quotes-2026-11-15",
+    "quotes-2026-11-16"
+  ],
+  "grafo": {
+    "monedas": 9,
+    "aristas": 26,
+    "triangulos": 34,
+    "rango_ciclos": 18,
+    "b1": 0
+  },
+  "paso_hodge_s": 10
+}
