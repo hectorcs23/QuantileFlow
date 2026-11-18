@@ -1,0 +1,4 @@
+datos_crudos/
+__pycache__/
+*.pyc
+.pytest_cache/

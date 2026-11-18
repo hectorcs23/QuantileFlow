@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "holonomia"
+version = "0.1.0"
+description = "Holonomía, descomposición de Hodge y área de Lévy en datos de mercado."
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.24", "scipy>=1.10", "pandas>=2.1", "networkx>=3.0",
+                "matplotlib>=3.7", "pyarrow>=14"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
