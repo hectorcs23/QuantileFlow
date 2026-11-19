@@ -295,3 +295,26 @@ def test_spy_va_aparte_y_no_cambia_los_totales_de_spxw(tmp_path, monkeypatch):
     total = comparar.acumulado(tmp_path)
     assert total["opciones"]["todas"]["n"] == 1 and total["vivo"]["todas"]["n"] == 1
     assert total["opciones_spy"]["dias"] == 1 and total["vivo_spy"]["todas"]["n"] == 1
+
+
+def test_acumulado_deja_fuera_las_cotizaciones_viejas_de_alpaca(tmp_path):
+    rh = {"SPY261218C00740000": {"bid": 12.2, "ask": 12.3, "marca": 12.25, "delta": 0.44,
+                                 "actualizado_utc": "2026-11-19T15:29:50Z"}}
+    vieja = {"SPY261218C00740000": {"bid": 12.6, "ask": 12.7, "t": "2026-11-18T21:14:59Z"}}
+    vivo = comparar.comparar_vivo(rh, vieja)
+    assert vivo["n"] == 1 and vivo["frescas"] == 0 and not vivo["contratos"][0]["fresca"]
+    assert comparar.comparar_vivo(rh, {**vieja, "SPY261218C00740000": {
+        **vieja["SPY261218C00740000"], "t": "2026-11-19T15:29:20Z"}})["frescas"] == 1
+    barras = {"corte_utc": "2026-11-19T14:45:00Z", "barras": {"SPY261218C00740000": {"14:44:45": [15.4] * 4}}}
+    opciones = comparar.comparar_opciones(barras, {"SPY261218C00740000": {"bid": 12.6, "ask": 12.7,
+                                                                          "edad_s": 63000.0}}, nivel=738.2)
+    assert opciones["frescas"] == 0
+    comparar._escribir(tmp_path / "2026-11-18" / "resultados.json", {
+        "opciones": [{"hora": "09:45", "contratos": [{"diferencia": 0.1, "diferencia_relativa": 0.01,
+                                                       "dentro_del_spread": True, "fresca": True,
+                                                       "fuera_del_dinero": True}]}]})
+    comparar._escribir(tmp_path / "2026-11-19" / "resultados.json", {
+        "opciones": [{"hora": "09:45", **opciones}], "vivo_spy": vivo})
+    total = comparar.acumulado(tmp_path)
+    assert total["dias"] == 2 and total["opciones"]["dias"] == 1 and total["opciones"]["todas"]["n"] == 1
+    assert "vivo_spy" not in total  # sin una sola cotización fresca de SPY no hay bloque

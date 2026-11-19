@@ -330,7 +330,12 @@ def cotizaciones_alpaca(datos, fecha, hora, simbolos) -> dict:
     return {}
 
 
-def comparar_opciones(barras_rh: dict, alpaca_q: dict, nivel=None, edad_maxima_s=60.0) -> dict:
+# Una cotización de Alpaca más vieja que esto no entra en los totales: el 19 de noviembre de 2026 todo SPY
+# llegó con la del cierre anterior.
+EDAD_MAXIMA_S = 60.0
+
+
+def comparar_opciones(barras_rh: dict, alpaca_q: dict, nivel=None, edad_maxima_s=EDAD_MAXIMA_S) -> dict:
     """Mid de Alpaca frente a la marca de Robinhood al cierre de la barra de 15 s anterior al corte.
 
     ``barras_rh``: el JSON de barras de un corte. La diferencia en medios spreads
@@ -371,7 +376,7 @@ def _bloque_vivo(filas):
             "diferencia_relativa": _resumen([f["diferencia_relativa"] for f in filas]),
             "razon_spread": _resumen([f["razon_spread"] for f in filas if f["razon_spread"] is not None]),
             "igual": sum(f["igual"] for f in filas), "alpaca_contiene": sum(f["alpaca_contiene"] for f in filas),
-            "marca_dentro": sum(f["marca_dentro"] for f in filas)}
+            "marca_dentro": sum(f["marca_dentro"] for f in filas), "frescas": sum(f.get("fresca", True) for f in filas)}
 
 
 def comparar_vivo(rh: dict, alp: dict) -> dict:
@@ -379,7 +384,8 @@ def comparar_vivo(rh: dict, alp: dict) -> dict:
 
     ``rh`` sale de importar_cotizaciones y ``alp`` de foto_alpaca.py. La diferencia es mid de Alpaca menos
     marca de Robinhood; ``razon_spread`` es el spread de Alpaca entre el de Robinhood; ``alpaca_contiene``
-    dice si el bid y el ask de Alpaca encierran los de Robinhood. Fuera del dinero: |delta| < 0.5.
+    dice si el bid y el ask de Alpaca encierran los de Robinhood. Fuera del dinero: |delta| < 0.5. ``fresca``:
+    la cotización de Alpaca no se aparta más de ``EDAD_MAXIMA_S`` de la de Robinhood.
     """
     filas = []
     for simbolo, r in sorted(rh.items()):
@@ -387,6 +393,7 @@ def comparar_vivo(rh: dict, alp: dict) -> dict:
         if q.get("bid") is None or q.get("ask") is None or not 0 < q["bid"] <= q["ask"] or not 0 < r["bid"] <= r["ask"]:
             continue
         mid, spread_rh, spread_alp = 0.5 * (q["bid"] + q["ask"]), r["ask"] - r["bid"], q["ask"] - q["bid"]
+        desfase = (pd.Timestamp(q["t"]) - pd.Timestamp(r["actualizado_utc"])).total_seconds() if q.get("t") else None
         filas.append({"simbolo": simbolo, "diferencia": mid - r["marca"],
                       "diferencia_relativa": (mid - r["marca"]) / r["marca"],
                       "spread_robinhood": spread_rh, "spread_alpaca": spread_alp,
@@ -395,8 +402,7 @@ def comparar_vivo(rh: dict, alp: dict) -> dict:
                       and math.isclose(q["ask"], r["ask"], abs_tol=1e-6),
                       "alpaca_contiene": q["bid"] <= r["bid"] + 1e-9 and r["ask"] <= q["ask"] + 1e-9,
                       "marca_dentro": q["bid"] <= r["marca"] <= q["ask"],
-                      "desfase_s": (pd.Timestamp(q["t"]) - pd.Timestamp(r["actualizado_utc"])).total_seconds()
-                      if q.get("t") else None,
+                      "desfase_s": desfase, "fresca": desfase is None or abs(desfase) <= EDAD_MAXIMA_S,
                       "fuera_del_dinero": None if r.get("delta") is None else abs(r["delta"]) < 0.5})
     return {"contratos": filas, **_bloque_vivo(filas),
             "fuera_del_dinero": _bloque_vivo([f for f in filas if f["fuera_del_dinero"]])}
@@ -439,22 +445,28 @@ def _bloque_opciones(filas):
 
 
 def acumulado(privado: Path) -> dict:
-    """Agregados de todos los ``<fecha>/resultados.json``: lo que se publica."""
+    """Agregados de todos los ``<fecha>/resultados.json``: lo que se publica.
+
+    Solo cuentan las cotizaciones de Alpaca frescas (``fresca``); un día cuenta si aporta al menos una.
+    """
     dias = [_leer(p) for p in sorted(privado.glob("*/resultados.json"))]
     spx = [f for d in dias for f in (d.get("spx") or {}).get("cortes", [])]
     salida = {"dias": len(dias),
               "spx": {"diferencia": _resumen([f["diferencia"] for f in spx]),
                       "dentro_del_minuto": sum(f["dentro"] for f in spx)}}
     for sufijo in ("", "_spy"):
-        opciones = [f for d in dias for c in d.get("opciones" + sufijo, []) for f in c["contratos"]]
-        vivo = [f for d in dias for f in (d.get("vivo" + sufijo) or {}).get("contratos", [])]
+        por_dia = [([f for c in d.get("opciones" + sufijo, []) for f in c["contratos"] if f.get("fresca", True)],
+                    [f for f in (d.get("vivo" + sufijo) or {}).get("contratos", []) if f.get("fresca", True)])
+                   for d in dias]
+        opciones = [f for o, _ in por_dia for f in o]
+        vivo = [f for _, v in por_dia for f in v]
         if sufijo and not (opciones or vivo):
             continue
         salida["opciones" + sufijo] = {
-            "dias": sum(bool(d.get("opciones" + sufijo)) for d in dias), "todas": _bloque_opciones(opciones),
+            "dias": sum(bool(o) for o, _ in por_dia), "todas": _bloque_opciones(opciones),
             "fuera_del_dinero": _bloque_opciones([f for f in opciones if f["fuera_del_dinero"]])}
         salida["vivo" + sufijo] = {
-            "dias": sum(bool(d.get("vivo" + sufijo)) for d in dias), "todas": _bloque_vivo(vivo),
+            "dias": sum(bool(v) for _, v in por_dia), "todas": _bloque_vivo(vivo),
             "fuera_del_dinero": _bloque_vivo([f for f in vivo if f["fuera_del_dinero"]])}
     return salida
 

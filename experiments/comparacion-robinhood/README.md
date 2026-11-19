@@ -98,6 +98,10 @@ instrumentos y cotizaciones se pueden omitir los campos que no se usan, pero nun
 su máximo y mínimo, una marca que no es el punto medio o un contrato que falta. Si algo falla, se vuelve a
 pedir y a copiar; no se corrige a mano.
 
+`acumulado` deja fuera las cotizaciones de Alpaca con más de 60 s (`EDAD_MAXIMA_S`): al corte, contra la hora
+del corte; en vivo, contra la de Robinhood. Quedan en `resultados.json` marcadas con `fresca`. Hasta el 18 de
+noviembre ninguna pasó de 30 s; el 19, todo SPY llegó con la cotización del cierre anterior.
+
 ## Cómo validar
 
 ```bash
