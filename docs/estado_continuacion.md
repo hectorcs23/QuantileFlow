@@ -191,8 +191,8 @@ cierre anticipado, y seis días degradados a propósito:
       ([revisión del PDE](respuesta_pde_captura_gratis.md), secciones 3 y 5).
 - [x] Piloto real en `reports/piloto/`: 21 sesiones, del 2 al 30 de octubre, con `piloto-0.3`. Dictamen:
       apto con limitaciones ([revisión](revision_piloto.md)).
-- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5, 7, 6, 4, 3, 40, 6, 4, 4, 3, 4, 6, 3 y 1
-      minutos del 27 de octubre al 25 de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 y el 13 de
+- [ ] Atraso de las rutinas de Claude: 28, 24, 35, 45, 34, 2, 3, 3, 5, 7, 6, 4, 3, 40, 6, 4, 4, 3, 4, 6, 3, 1 y 0
+      minutos del 27 de octubre al 26 de noviembre. Se perdió la hora de las 09:45 el 29 de octubre y el 2 y el 13 de
       noviembre, y el 30 de octubre quedó lista solo 84 s antes del corte. **Decidido el 6 de noviembre:** `captura-temprana`, lanzada a las 08:47
       (antes de la ventana en que las rutinas se atrasan), con las dos horas en dos jobs encadenados; las
       rutinas de las 09:14 y las 09:32 quedan de respaldo con los workflows por hora, que pierden sus cron
